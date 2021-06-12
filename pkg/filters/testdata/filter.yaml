@@ -1,0 +1,37 @@
+title: Filter title
+params:
+  boolean_param:
+    description: A boolean parameter
+    type: checkbox
+    default: true
+  another_boolean:
+    description: A disabled boolean parameter
+    type: checkbox
+    default: false
+  string_param:
+    description: A string parameter
+    default: René Coty
+    type: string
+  string_list:
+    description: A list of strings
+    type: list
+    default: [ "abc", "123" ]
+template: |
+  {{#each string_list}}
+  {{ . }}
+  {{/each}}
+tests:
+  - params:
+      boolean_param: true
+      string_param: ignored
+      string_list:
+        - one
+        - two
+        - three
+    output: |
+      one
+      two
+      three
+---
+
+## Test description title
