@@ -64,7 +64,7 @@ func TestParseFilter(t *testing.T) {
 	require.NoError(t, err)
 	defer file.Close()
 
-	filter, err := ParseFilter("simple", file)
+	filter, err := parseFilter("simple", file)
 	require.NoError(t, err)
 
 	assert.EqualValues(t, &expectedFilter, filter)

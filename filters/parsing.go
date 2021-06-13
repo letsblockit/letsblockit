@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func ParseFilter(name string, reader io.Reader) (*Filter, error) {
+func parseFilter(name string, reader io.Reader) (*Filter, error) {
 	filter := &Filter{
 		Name: name,
 	}
