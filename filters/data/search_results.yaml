@@ -1,14 +1,14 @@
 title: "Hide websites from search results"
 params:
-  google:
+  - name: google
     description: Generate rules for Google Search
     type: checkbox
     default: true
-  duckduckgo:
+  - name: duckduckgo
     description: Generate rules for Duck Duck Go
     type: checkbox
     default: false
-  sites:
+  - name: sites
     description: Sites to hide
     type: list
     default: [ ".pinterest.", "snapcraft.io" ]

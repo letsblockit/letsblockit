@@ -13,30 +13,34 @@ import (
 var expectedFilter = Filter{
 	Name:  "simple",
 	Title: "Filter title",
-	Params: map[string]FilterParam{
-		"boolean_param": {
+	Params: []FilterParam{
+		{
+			Name:        "boolean_param",
 			Description: "A boolean parameter",
 			Type:        BooleanParam,
 			Default:     true,
 		},
-		"another_boolean": {
+		{
+			Name:        "another_boolean",
 			Description: "A disabled boolean parameter",
 			Type:        BooleanParam,
 			Default:     false,
 		},
-		"string_param": {
+		{
+			Name:        "string_param",
 			Description: "A string parameter",
 			Type:        StringParam,
 			Default:     "René Coty",
 		},
-		"string_list": {
+		{
+			Name:        "string_list",
 			Description: "A list of strings",
 			Type:        StringListParam,
 			Default:     []interface{}{"abc", "123"},
 		},
 	},
-	Template: "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
-	Parsed: raymond.MustParse("{{#each string_list}}\n{{ . }}\n{{/each}}\n"),
+	Template:    "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
+	Parsed:      raymond.MustParse("{{#each string_list}}\n{{ . }}\n{{/each}}\n"),
 	Description: []byte("<h2>Test description title</h2>\n"),
 }
 
@@ -122,18 +126,21 @@ func TestValidateFilter(t *testing.T) {
 				Title:       "title",
 				Template:    "template",
 				Description: []byte("desc"),
-				Params: map[string]FilterParam{
-					"param1": {
+				Params: []FilterParam{
+					{
+						Name:        "param1",
 						Description: "desc",
 						Type:        BooleanParam,
 						Default:     true,
 					},
-					"param2": {
+					{
+						Name:        "param2",
 						Description: "desc",
 						Type:        StringParam,
 						Default:     "example",
 					},
-					"param3": {
+					{
+						Name:        "param3",
 						Description: "desc",
 						Type:        StringListParam,
 						Default:     []string{"abc", "123"},
@@ -147,8 +154,9 @@ func TestValidateFilter(t *testing.T) {
 				Title:       "title",
 				Template:    "template",
 				Description: []byte("desc"),
-				Params: map[string]FilterParam{
-					"param": {
+				Params: []FilterParam{
+					{
+						Name:        "param",
 						Description: "desc",
 						Type:        "bad",
 						Default:     true,
@@ -156,8 +164,8 @@ func TestValidateFilter(t *testing.T) {
 				},
 			},
 			err: vErrs{
-				"Filter.Params[param].Type":    "oneof",
-				"Filter.Params[param].Default": "valid_default",
+				"Filter.Params[0].Type":    "oneof",
+				"Filter.Params[0].Default": "valid_default",
 			},
 		},
 		"param_empty": {
@@ -166,14 +174,15 @@ func TestValidateFilter(t *testing.T) {
 				Title:       "title",
 				Template:    "template",
 				Description: []byte("desc"),
-				Params: map[string]FilterParam{
-					"param": {},
+				Params: []FilterParam{
+					{},
 				},
 			},
 			err: vErrs{
-				"Filter.Params[param].Description": "required",
-				"Filter.Params[param].Type":        "required",
-				"Filter.Params[param].Default":     "valid_default",
+				"Filter.Params[0].Name":        "required",
+				"Filter.Params[0].Description": "required",
+				"Filter.Params[0].Type":        "required",
+				"Filter.Params[0].Default":     "valid_default",
 			},
 		},
 	}

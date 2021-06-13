@@ -1,18 +1,18 @@
 title: Filter title
 params:
-  boolean_param:
+  - name: boolean_param
     description: A boolean parameter
     type: checkbox
     default: true
-  another_boolean:
+  - name: another_boolean
     description: A disabled boolean parameter
     type: checkbox
     default: false
-  string_param:
+  - name: string_param
     description: A string parameter
     default: René Coty
     type: string
-  string_list:
+  - name: string_list
     description: A list of strings
     type: list
     default: [ "abc", "123" ]

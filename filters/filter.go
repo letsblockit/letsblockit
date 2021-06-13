@@ -19,11 +19,11 @@ type filter interface {
 }
 
 type Filter struct {
-	Name        string                 `validate:"required"`
-	Title       string                 `validate:"required"`
-	Params      map[string]FilterParam `validate:"dive"`
-	Template    string                 `validate:"required"`
-	Description []byte                 `validate:"required"` // Rendered HTML bytes
+	Name        string        `validate:"required"`
+	Title       string        `validate:"required"`
+	Params      []FilterParam `validate:"dive"`
+	Template    string        `validate:"required"`
+	Description []byte        `validate:"required"` // Rendered HTML bytes
 	Parsed      *raymond.Template
 }
 
@@ -33,6 +33,7 @@ type filterAndTests struct {
 }
 
 type FilterParam struct {
+	Name        string      `validate:"required"`
 	Description string      `validate:"required"`
 	Type        ParamType   `validate:"required,oneof=checkbox string list"`
 	Default     interface{} `validate:"valid_default"`
