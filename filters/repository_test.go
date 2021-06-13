@@ -13,6 +13,7 @@ import (
 //go:embed testdata
 var testDefinitionFiles embed.FS
 
+// Check that all filter definitions parse OK
 func TestLoadFilters(t *testing.T) {
 	repo, err := LoadFilters()
 	require.NoError(t, err, "Filter parsing error")

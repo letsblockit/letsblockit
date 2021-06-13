@@ -32,7 +32,7 @@ func load(input fs.FS) (*Repository, error) {
 	err := utils.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
 		f, e := parseFilter(name, file)
 		if e != nil {
-			return fmt.Errorf("cannot parse %s: %w", name, e)
+			return e
 		}
 		repo.fMap[name] = f
 		repo.fList = append(repo.fList, f) // list is naturally sorted because Walkdir iterates on lexical order
