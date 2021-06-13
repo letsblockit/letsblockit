@@ -1,0 +1,7 @@
+title: Hello filter
+template: "Hello"
+tests:
+  - output: "Hello"
+---
+
+## Description title

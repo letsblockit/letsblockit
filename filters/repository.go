@@ -15,7 +15,8 @@ var definitionFiles embed.FS
 
 // Repository holds parsed Filters ready for use
 type Repository struct {
-	filters map[string]*Filter
+	fMap  map[string]*Filter
+	fList []*Filter
 }
 
 // LoadFilters parses all filter definitions found in the data folder
@@ -25,15 +26,16 @@ func LoadFilters() (*Repository, error) {
 
 func load(input fs.FS) (*Repository, error) {
 	repo := &Repository{
-		filters: make(map[string]*Filter),
+		fMap: make(map[string]*Filter),
 	}
 
 	err := utils.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
-		var e error
-		repo.filters[name], e = parseFilter(name, file)
+		f, e := parseFilter(name, file)
 		if e != nil {
 			return fmt.Errorf("cannot parse %s: %w", name, e)
 		}
+		repo.fMap[name] = f
+		repo.fList = append(repo.fList, f) // list is naturally sorted because Walkdir iterates on lexical order
 		return nil
 	})
 
@@ -60,8 +62,14 @@ func (r *Repository) RenderPage(name string, template *raymond.Template) (string
 	return template.Exec(filter)
 }
 
+// RenderIndex renders a filter index page.
+// The passed template object will be given the full []Filter list as input.
+func (r *Repository) RenderIndex(template *raymond.Template) (string, error) {
+	return template.Exec(r.fList)
+}
+
 func (r *Repository) getFilter(name string) (*Filter, error) {
-	filter, found := r.filters[name]
+	filter, found := r.fMap[name]
 	if !found {
 		return nil, fmt.Errorf("unknown filter %s", name)
 	}
