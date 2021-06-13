@@ -1,12 +1,17 @@
 package filters
 
 import (
+	"embed"
 	"fmt"
+	"io"
 	"io/fs"
-	"strings"
 
 	"github.com/aymerick/raymond"
+	"github.com/xvello/weblock/utils"
 )
+
+//go:embed data
+var definitionFiles embed.FS
 
 // Repository holds parsed Filters ready for use
 type Repository struct {
@@ -15,23 +20,19 @@ type Repository struct {
 
 // LoadFilters parses all filter definitions found in the data folder
 func LoadFilters() (*Repository, error) {
+	return load(definitionFiles)
+}
+
+func load(input fs.FS) (*Repository, error) {
 	repo := &Repository{
 		filters: make(map[string]*Filter),
 	}
 
-	err := fs.WalkDir(inputFiles, "data", func(path string, d fs.DirEntry, _ error) error {
-		if d.IsDir() || !strings.HasSuffix(d.Name(), filenameSuffix) {
-			return nil
-		}
-		name := strings.TrimSuffix(d.Name(), filenameSuffix)
-		file, e := inputFiles.Open(path)
-		if e != nil {
-			return fmt.Errorf("cannot open %s: %w", path, e)
-		}
+	err := utils.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
+		var e error
 		repo.filters[name], e = parseFilter(name, file)
-		_ = file.Close()
 		if e != nil {
-			return fmt.Errorf("cannot parse %s: %w", path, e)
+			return fmt.Errorf("cannot parse %s: %w", name, e)
 		}
 		return nil
 	})

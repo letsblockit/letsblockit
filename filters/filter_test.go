@@ -2,29 +2,35 @@ package filters
 
 import (
 	"fmt"
-	"io/fs"
+	"io"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/xvello/weblock/utils"
 )
 
 func TestValidateFilters(t *testing.T) {
 	validate := buildValidator(t)
+	seen := make(map[string]struct{}) // Ensure uniqueness of filter names
 
-	err := fs.WalkDir(inputFiles, "data", func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() || !strings.HasSuffix(d.Name(), filenameSuffix) {
-			return nil
-		}
-		name := strings.TrimSuffix(d.Name(), filenameSuffix)
+	err := utils.Walk(definitionFiles, filenameSuffix, func(name string, file io.Reader) error {
+		t.Run("Name/"+name, func(t *testing.T) {
+			if name != strings.ToLower(name) {
+				assert.Fail(t, "name can only be lowercase", name)
+			}
+			if _, found := seen[name]; found {
+				assert.Fail(t, "duplicate name found", name)
+			}
+			seen[name] = struct{}{}
+		})
+
 		var filter *filterAndTests
+		var e error
 		t.Run("Parse/"+name, func(t *testing.T) {
-			file, err := inputFiles.Open(path)
-			require.NoError(t, err)
-			filter, err = parseFilterAndTest(name, file)
-			require.NoError(t, file.Close())
-			require.NoError(t, err, "Filter did not parse OK")
+			filter, e = parseFilterAndTest(name, file)
+			require.NoError(t, e, "Filter did not parse OK")
 			assert.NoError(t, validate.Struct(filter), "Filter did no pass input validation")
 		})
 

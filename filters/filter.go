@@ -1,13 +1,8 @@
 package filters
 
 import (
-	"embed"
-
 	"github.com/aymerick/raymond"
 )
-
-//go:embed data
-var inputFiles embed.FS
 
 var filenameSuffix = ".yaml"
 var yamlSeparator = []byte("\n---")

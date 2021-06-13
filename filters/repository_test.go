@@ -1,7 +1,7 @@
 package filters
 
 import (
-	"os"
+	"embed"
 	"testing"
 
 	"github.com/aymerick/raymond"
@@ -9,6 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
+
+//go:embed testdata
+var testDefinitionFiles embed.FS
 
 func TestLoadFilters(t *testing.T) {
 	repo, err := LoadFilters()
@@ -25,13 +28,8 @@ type SimpleFilterSuite struct {
 
 func (s *SimpleFilterSuite) SetupTest() {
 	var err error
-	s.filterName = "____simple____filter____"
-	s.repository, err = LoadFilters()
-	require.NoError(s.T(), err)
-	file, err := os.Open("testdata/simple.yaml")
-	require.NoError(s.T(), err)
-	defer file.Close()
-	s.repository.filters[s.filterName], err = parseFilter(s.filterName, file)
+	s.filterName = "simple"
+	s.repository, err = load(testDefinitionFiles)
 	require.NoError(s.T(), err)
 }
 
