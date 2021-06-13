@@ -15,19 +15,19 @@ func LoadFilters() (*Repository, error) {
 		filters: make(map[string]*Filter),
 	}
 
-	err := fs.WalkDir(inputFiles, "data", func(path string, d fs.DirEntry, err error) error {
+	err := fs.WalkDir(inputFiles, "data", func(path string, d fs.DirEntry, _ error) error {
 		if d.IsDir() || !strings.HasSuffix(d.Name(), filenameSuffix) {
 			return nil
 		}
 		name := strings.TrimSuffix(d.Name(), filenameSuffix)
-		file, err := inputFiles.Open(path)
-		if err != nil {
-			return fmt.Errorf("cannot open %s: %w", path, err)
+		file, e := inputFiles.Open(path)
+		if e != nil {
+			return fmt.Errorf("cannot open %s: %w", path, e)
 		}
-		repo.filters[name], err = parseFilter(name, file)
+		repo.filters[name], e = parseFilter(name, file)
 		_ = file.Close()
-		if err != nil {
-			return fmt.Errorf("cannot parse %s: %w", path, err)
+		if e != nil {
+			return fmt.Errorf("cannot parse %s: %w", path, e)
 		}
 		return nil
 	})

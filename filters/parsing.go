@@ -28,6 +28,9 @@ func parseFilterAndTest(name string, reader io.Reader) (*filterAndTests, error) 
 func parse(reader io.Reader, filter filter) error {
 	// Read the whole input file and parse the YAML block
 	input, err := io.ReadAll(reader)
+	if err != nil {
+		return err
+	}
 	err = yaml.Unmarshal(input, filter)
 	if err != nil {
 		return err

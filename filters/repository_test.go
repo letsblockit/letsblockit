@@ -23,10 +23,11 @@ func TestRenderSimple(t *testing.T) {
 	require.NoError(t, err)
 	defer file.Close()
 	repo.filters[filterName], err = parseFilter(filterName, file)
-
+	require.NoError(t, err)
 	params := map[string][]string {
 		"string_list": []string{"one line", "another line"},
 	}
 	out, err := repo.Render(filterName, params)
-	assert.Equal(t, "one line\nanother line", out)
+	require.NoError(t, err)
+	assert.Equal(t, "one line\nanother line\n", out)
 }
