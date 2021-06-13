@@ -37,4 +37,4 @@ tests:
       google.*##a[href*="snapcraft.io"]:upward(1)
       duckduckgo.com##a.result__a[href*="snapcraft.io"]:upward(3)
 ---
-## Test
+## Hide websites from search results

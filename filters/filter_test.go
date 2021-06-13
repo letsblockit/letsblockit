@@ -14,12 +14,12 @@ func TestValidateFilters(t *testing.T) {
 	validate := buildValidator(t)
 
 	err := fs.WalkDir(inputFiles, "data", func(path string, d fs.DirEntry, err error) error {
-		if d.IsDir() || !strings.HasSuffix(d.Name(), filenameSuffix){
+		if d.IsDir() || !strings.HasSuffix(d.Name(), filenameSuffix) {
 			return nil
 		}
 		name := strings.TrimSuffix(d.Name(), filenameSuffix)
 		var filter *filterAndTests
-		t.Run("Parse | "+name, func(t *testing.T) {
+		t.Run("Parse/"+name, func(t *testing.T) {
 			file, err := inputFiles.Open(path)
 			require.NoError(t, err)
 			filter, err = parseFilterAndTest(name, file)
@@ -28,8 +28,12 @@ func TestValidateFilters(t *testing.T) {
 			assert.NoError(t, validate.Struct(filter), "Filter did no pass input validation")
 		})
 
+		t.Run("Desc/"+name, func(t *testing.T) {
+			assert.Equal(t, []byte("<h2>"), filter.Description[0:4], "Description must start with a second-level header")
+		})
+
 		for i, tc := range filter.Tests {
-			t.Run(fmt.Sprintf("Test | %s | %d", name, i), func(t *testing.T) {
+			t.Run(fmt.Sprintf("Test/%s/%d", name, i), func(t *testing.T) {
 				out, err := filter.Parsed.Exec(tc.Params)
 				assert.NoError(t, err)
 				assert.Equal(t, tc.Output, out)
