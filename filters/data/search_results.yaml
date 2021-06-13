@@ -1,0 +1,40 @@
+title: "Hide websites from search results"
+params:
+  google:
+    description: Generate rules for Google Search
+    type: checkbox
+    default: true
+  duckduckgo:
+    description: Generate rules for Duck Duck Go
+    type: checkbox
+    default: false
+  sites:
+    description: Sites to hide
+    type: list
+    default: [ ".pinterest.", "snapcraft.io" ]
+template: |
+  {{#each sites}}
+  {{#if ../google}}
+  google.*##.g:has(a[href*="{{this}}"])
+  google.*##a[href*="{{this}}"]:upward(1)
+  {{/if}}
+  {{#if ../duckduckgo}}
+  duckduckgo.com##a.result__a[href*="{{this}}"]:upward(3)
+  {{/if}}
+  {{/each}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      google: true
+      duckduckgo: true
+      sites: [ ".pinterest.", "snapcraft.io" ]
+    output: |
+      google.*##.g:has(a[href*=".pinterest."])
+      google.*##a[href*=".pinterest."]:upward(1)
+      duckduckgo.com##a.result__a[href*=".pinterest."]:upward(3)
+      google.*##.g:has(a[href*="snapcraft.io"])
+      google.*##a[href*="snapcraft.io"]:upward(1)
+      duckduckgo.com##a.result__a[href*="snapcraft.io"]:upward(3)
+---
+## Test

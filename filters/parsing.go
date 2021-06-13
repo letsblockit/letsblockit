@@ -5,13 +5,9 @@ import (
 	"errors"
 	"io"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/russross/blackfriday/v2"
 	"gopkg.in/yaml.v2"
 )
-
-var validate = validator.New()
-
 
 func ParseFilter(name string, reader io.Reader) (*Filter, error) {
 	filter := &Filter{
@@ -46,6 +42,5 @@ func parse(reader io.Reader, filter filter) error {
 	pos += bytes.Index(input[pos:], newLine)
 	filter.SetDescription(blackfriday.Run(input[pos:]))
 
-	// Run input validation
-	return validate.Struct(filter)
+	return nil
 }

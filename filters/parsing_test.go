@@ -9,6 +9,25 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func buildValidator(t *testing.T) *validator.Validate {
+	var validate = validator.New()
+	err := validate.RegisterValidation("valid_default", func(fl validator.FieldLevel) bool {
+		paramType := ParamType(fl.Parent().FieldByName("Type").String())
+		switch fl.Field().Interface().(type) {
+		case bool:
+			return paramType == BooleanParam
+		case string:
+			return paramType == StringParam
+		case []string, []interface{}:
+			return paramType == StringListParam
+		default:
+			return false
+		}
+	})
+	require.NoError(t, err)
+	return validate
+}
+
 func TestParseFilter(t *testing.T) {
 	file, err := os.Open("testdata/filter.yaml")
 	require.NoError(t, err)
@@ -130,10 +149,20 @@ func TestValidateFilter(t *testing.T) {
 				Template:    "template",
 				Description: []byte("desc"),
 				Params: map[string]FilterParam{
-					"param": {
+					"param1": {
 						Description: "desc",
-						Type:        "checkbox",
+						Type:        BooleanParam,
 						Default:     true,
+					},
+					"param2": {
+						Description: "desc",
+						Type:        StringParam,
+						Default:     "example",
+					},
+					"param3": {
+						Description: "desc",
+						Type:        StringListParam,
+						Default:     []string{"abc", "123"},
 					},
 				},
 			},
@@ -153,7 +182,8 @@ func TestValidateFilter(t *testing.T) {
 				},
 			},
 			err: vErrs{
-				"Filter.Params[param].Type": "oneof",
+				"Filter.Params[param].Type":    "oneof",
+				"Filter.Params[param].Default": "valid_default",
 			},
 		},
 		"param_empty": {
@@ -169,9 +199,12 @@ func TestValidateFilter(t *testing.T) {
 			err: vErrs{
 				"Filter.Params[param].Description": "required",
 				"Filter.Params[param].Type":        "required",
+				"Filter.Params[param].Default":     "valid_default",
 			},
 		},
 	}
+
+	validate := buildValidator(t)
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			if tc.err == nil {
