@@ -42,5 +42,5 @@ func parse(reader io.Reader, filter filter) error {
 	pos += bytes.Index(input[pos:], newLine)
 	filter.SetDescription(blackfriday.Run(input[pos:]))
 
-	return nil
+	return filter.Parse()
 }

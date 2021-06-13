@@ -4,10 +4,41 @@ import (
 	"os"
 	"testing"
 
+	"github.com/aymerick/raymond"
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+var expectedFilter = Filter{
+	Name:  "simple",
+	Title: "Filter title",
+	Params: map[string]FilterParam{
+		"boolean_param": {
+			Description: "A boolean parameter",
+			Type:        BooleanParam,
+			Default:     true,
+		},
+		"another_boolean": {
+			Description: "A disabled boolean parameter",
+			Type:        BooleanParam,
+			Default:     false,
+		},
+		"string_param": {
+			Description: "A string parameter",
+			Type:        StringParam,
+			Default:     "René Coty",
+		},
+		"string_list": {
+			Description: "A list of strings",
+			Type:        StringListParam,
+			Default:     []interface{}{"abc", "123"},
+		},
+	},
+	Template: "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
+	Parsed: raymond.MustParse("{{#each string_list}}\n{{ . }}\n{{/each}}\n"),
+	Description: []byte("<h2>Test description title</h2>\n"),
+}
 
 func buildValidator(t *testing.T) *validator.Validate {
 	var validate = validator.New()
@@ -29,83 +60,26 @@ func buildValidator(t *testing.T) *validator.Validate {
 }
 
 func TestParseFilter(t *testing.T) {
-	file, err := os.Open("testdata/filter.yaml")
+	file, err := os.Open("testdata/simple.yaml")
 	require.NoError(t, err)
 	defer file.Close()
 
-	filter, err := ParseFilter("named", file)
+	filter, err := ParseFilter("simple", file)
 	require.NoError(t, err)
 
-	assert.EqualValues(t, &Filter{
-		Name:  "named",
-		Title: "Filter title",
-		Params: map[string]FilterParam{
-			"boolean_param": {
-				Description: "A boolean parameter",
-				Type:        BooleanParam,
-				Default:     true,
-			},
-			"another_boolean": {
-				Description: "A disabled boolean parameter",
-				Type:        BooleanParam,
-				Default:     false,
-			},
-			"string_param": {
-				Description: "A string parameter",
-				Type:        StringParam,
-				Default:     "René Coty",
-			},
-			"string_list": {
-				Description: "A list of strings",
-				Type:        StringListParam,
-				Default:     []interface{}{"abc", "123"},
-			},
-		},
-		Template: `{{#each string_list}}
-{{ . }}
-{{/each}}
-`,
-		Description: []byte("<h2>Test description title</h2>\n"),
-	}, filter)
+	assert.EqualValues(t, &expectedFilter, filter)
 }
 
 func TestParseFilterAndTest(t *testing.T) {
-	file, err := os.Open("testdata/filter.yaml")
+	file, err := os.Open("testdata/simple.yaml")
 	require.NoError(t, err)
 	defer file.Close()
 
-	filter, err := parseFilterAndTest("named", file)
+	filter, err := parseFilterAndTest("simple", file)
 	require.NoError(t, err)
 
 	assert.EqualValues(t, &filterAndTests{
-		Filter: Filter{
-			Name:  "named",
-			Title: "Filter title",
-			Params: map[string]FilterParam{
-				"boolean_param": {
-					Description: "A boolean parameter",
-					Type:        BooleanParam,
-					Default:     true,
-				},
-				"another_boolean": {
-					Description: "A disabled boolean parameter",
-					Type:        BooleanParam,
-					Default:     false,
-				},
-				"string_param": {
-					Description: "A string parameter",
-					Type:        StringParam,
-					Default:     "René Coty",
-				},
-				"string_list": {
-					Description: "A list of strings",
-					Type:        StringListParam,
-					Default:     []interface{}{"abc", "123"},
-				},
-			},
-			Template:    "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
-			Description: []byte("<h2>Test description title</h2>\n"),
-		},
+		Filter: expectedFilter,
 		Tests: []testCase{{
 			Params: map[string]interface{}{
 				"boolean_param": true,

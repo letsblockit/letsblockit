@@ -30,7 +30,9 @@ func TestValidateFilters(t *testing.T) {
 
 		for i, tc := range filter.Tests {
 			t.Run(fmt.Sprintf("Test | %s | %d", name, i), func(t *testing.T) {
-				assert.NotNil(t, tc.Output)
+				out, err := filter.Parsed.Exec(tc.Params)
+				assert.NoError(t, err)
+				assert.Equal(t, tc.Output, out)
 			})
 		}
 
