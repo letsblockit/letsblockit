@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/styles.min.css">
+    {{#if title}}
+        <title>{{ title }}</title>
+    {{else}}
+        <title>Hello Bulma!</title>
+    {{/if}}
+</head>
+<body>
+<div class="container">
+{{> content }}
+</div>
+<script src="/assets/js/bootstrap.bundle.min.js"></script>
+{{#if import_handlebars}}
+    <script src="/assets/js/handlebars.min.js"></script>
+{{/if}}
+</body>
+</html>

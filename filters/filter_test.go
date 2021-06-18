@@ -35,7 +35,7 @@ func TestValidateFilters(t *testing.T) {
 		})
 
 		t.Run("Desc/"+name, func(t *testing.T) {
-			assert.Equal(t, []byte("<h2>"), filter.Description[0:4], "Description must start with a second-level header")
+			assert.True(t, strings.HasPrefix(filter.Description, "<h2>"), "Description must start with a second-level header")
 		})
 
 		for i, tc := range filter.Tests {

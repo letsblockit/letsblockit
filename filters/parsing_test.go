@@ -41,7 +41,7 @@ var expectedFilter = Filter{
 	},
 	Template:    "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
 	Parsed:      raymond.MustParse("{{#each string_list}}\n{{ . }}\n{{/each}}\n"),
-	Description: []byte("<h2>Test description title</h2>\n"),
+	Description: "<h2>Test description title</h2>\n",
 }
 
 func buildValidator(t *testing.T) *validator.Validate {
@@ -107,7 +107,7 @@ func TestValidateFilter(t *testing.T) {
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
-				Description: []byte("desc"),
+				Description: "desc",
 			},
 			err: nil,
 		},
@@ -125,7 +125,7 @@ func TestValidateFilter(t *testing.T) {
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
-				Description: []byte("desc"),
+				Description: "desc",
 				Params: []FilterParam{
 					{
 						Name:        "param1",
@@ -153,7 +153,7 @@ func TestValidateFilter(t *testing.T) {
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
-				Description: []byte("desc"),
+				Description: "desc",
 				Params: []FilterParam{
 					{
 						Name:        "param",
@@ -173,7 +173,7 @@ func TestValidateFilter(t *testing.T) {
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
-				Description: []byte("desc"),
+				Description: "desc",
 				Params: []FilterParam{
 					{},
 				},

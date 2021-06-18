@@ -45,7 +45,7 @@ func load(input fs.FS) (*Repository, error) {
 // RenderFilter takes arguments and returns the result of filter
 // templating for inclusion in an adblock filter list.
 func (r *Repository) RenderFilter(name string, data interface{}) (string, error) {
-	filter, err := r.getFilter(name)
+	filter, err := r.GetFilter(name)
 	if err != nil {
 		return "", err
 	}
@@ -55,7 +55,7 @@ func (r *Repository) RenderFilter(name string, data interface{}) (string, error)
 // RenderPage renders the description page for a given filter.
 // The passed template object will be given the full Filter object as input.
 func (r *Repository) RenderPage(name string, template *raymond.Template) (string, error) {
-	filter, err := r.getFilter(name)
+	filter, err := r.GetFilter(name)
 	if err != nil {
 		return "", err
 	}
@@ -68,10 +68,14 @@ func (r *Repository) RenderIndex(template *raymond.Template) (string, error) {
 	return template.Exec(r.fList)
 }
 
-func (r *Repository) getFilter(name string) (*Filter, error) {
+func (r *Repository) GetFilter(name string) (*Filter, error) {
 	filter, found := r.fMap[name]
 	if !found {
 		return nil, fmt.Errorf("unknown filter %s", name)
 	}
 	return filter, nil
+}
+
+func (r *Repository) GetFilters() []*Filter {
+	return r.fList
 }

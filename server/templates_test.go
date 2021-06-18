@@ -11,5 +11,5 @@ import (
 func TestLoadTemplates(t *testing.T) {
 	templates, err := loadTemplates()
 	assert.NoError(t, err)
-	require.Greater(t, len(templates), 0, "Expected at least one template")
+	require.Greater(t, len(templates.templates), 0, "Expected at least one template")
 }

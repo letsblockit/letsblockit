@@ -9,7 +9,7 @@ var yamlSeparator = []byte("\n---")
 var newLine = []byte("\n")
 
 type filter interface {
-	SetDescription([]byte)
+	SetDescription(string)
 	Parse() error
 }
 
@@ -18,7 +18,7 @@ type Filter struct {
 	Title       string        `validate:"required"`
 	Params      []FilterParam `validate:"dive"`
 	Template    string        `validate:"required"`
-	Description []byte        `validate:"required"` // Rendered HTML bytes
+	Description string        `validate:"required"`
 	Parsed      *raymond.Template
 }
 
@@ -47,7 +47,7 @@ type testCase struct {
 	Output string `validate:"required"`
 }
 
-func (f *Filter) SetDescription(desc []byte) {
+func (f *Filter) SetDescription(desc string) {
 	f.Description = desc
 }
 
@@ -57,7 +57,7 @@ func (f *Filter) Parse() error {
 	return err
 }
 
-func (f *filterAndTests) SetDescription(desc []byte) {
+func (f *filterAndTests) SetDescription(desc string) {
 	f.Filter.SetDescription(desc)
 }
 
