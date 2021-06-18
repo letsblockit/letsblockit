@@ -1,0 +1,17 @@
+{
+  "name": "webpack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "css": "node-sass --output-style compressed --omit-source-map-url styles.scss ../server/assets/css/styles.min.css",
+    "fonts": "install node_modules/@fortawesome/fontawesome-free/webfonts/*.woff2 -t ../server/assets/fonts/",
+    "js": "install node_modules/handlebars/dist/handlebars.min.js node_modules/bootstrap/dist/js/bootstrap.bundle.min.js -t ../server/assets/js/",
+    "assets": "npm run css && npm run fonts && npm run js"
+  },
+  "devDependencies": {
+    "node-sass": "^6.0.0",
+    "@fortawesome/fontawesome-free": "^5.15.3",
+    "handlebars": "^4.7.7",
+    "bootstrap": "^5.0.1"
+  }
+}
