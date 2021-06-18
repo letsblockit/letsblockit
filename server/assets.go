@@ -3,7 +3,6 @@ package server
 import (
 	"embed"
 	"io/fs"
-	"path"
 )
 
 //go:embed assets
@@ -27,8 +26,7 @@ func (w wrappedAssets) Open(name string) (fs.File, error) {
 	if isDir {
 		return nil, fs.ErrNotExist
 	}
-	fullName := path.Join("assets", name)
-	file, err := w.root.Open(fullName)
+	file, err := w.root.Open(name)
 	if err != nil {
 		return nil, err
 	}

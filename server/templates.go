@@ -2,13 +2,12 @@ package server
 
 import (
 	"embed"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
 
 	"github.com/aymerick/raymond"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 	"github.com/xvello/weblock/utils"
 )
 
@@ -54,16 +53,14 @@ func loadTemplates() (*templates, error) {
 	return &repo, err
 }
 
-func (t *templates) render(c *gin.Context, name string, ctx interface{}) {
-	if tpl, found := t.templates[name]; found {
-		contents, err := tpl.Exec(ctx)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-		} else {
-			c.Header("Content-Type", "text/html; charset=utf-8")
-			c.String(http.StatusOK, contents)
-		}
-	} else {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("template %s not found", name))
+func (t *templates) render(c echo.Context, name string, data interface{}) error {
+	tpl, found := t.templates[name]
+	if !found {
+		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
 	}
+	contents, err := tpl.Exec(data)
+	if err != nil {
+		return err
+	}
+	return c.HTML(http.StatusOK, contents)
 }
