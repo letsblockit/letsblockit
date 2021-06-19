@@ -39,6 +39,7 @@ var expectedFilter = Filter{
 			Default:     []interface{}{"abc", "123"},
 		},
 	},
+	Tags:        []string{"tag1", "tag2"},
 	Template:    "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
 	Parsed:      raymond.MustParse("{{#each string_list}}\n{{ . }}\n{{/each}}\n"),
 	Description: "<h2>Test description title</h2>\n",
@@ -183,6 +184,18 @@ func TestValidateFilter(t *testing.T) {
 				"Filter.Params[0].Description": "required",
 				"Filter.Params[0].Type":        "required",
 				"Filter.Params[0].Default":     "valid_default",
+			},
+		},
+		"invalid_tags": {
+			input: &Filter{
+				Name:        "name",
+				Title:       "title",
+				Template:    "template",
+				Description: "desc",
+				Tags:        []string{"abc", "%%"},
+			},
+			err: vErrs{
+				"Filter.Tags[1]": "alphaunicode",
 			},
 		},
 	}

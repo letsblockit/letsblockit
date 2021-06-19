@@ -12,6 +12,11 @@ params:
     description: Sites to hide
     type: list
     default: [ ".pinterest.", "snapcraft.io" ]
+tags:
+  - google
+  - duckduckgo
+  - ddg
+  - pinterest
 template: |
   {{#each sites}}
   {{#if ../google}}

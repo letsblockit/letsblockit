@@ -17,6 +17,7 @@ type Filter struct {
 	Name        string        `validate:"required"`
 	Title       string        `validate:"required"`
 	Params      []FilterParam `validate:"dive"`
+	Tags        []string      `validate:"dive,alphaunicode"`
 	Template    string        `validate:"required"`
 	Description string        `validate:"required"`
 	Parsed      *raymond.Template

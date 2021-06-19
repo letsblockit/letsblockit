@@ -1,8 +1,19 @@
 <a href="{{href "list-filters" ""}}">Back to list</a>
 
-{{{ filter.description }}}
-
-<h2>Parameters</h2>
+<div class="clearfix">
+    <div class="card col-md-3 float-md-end mb-3 ms-md-3">
+        <div class="card-body">
+            <h5 class="card-title">Tags</h5>
+            <ul class="list-group list-group-flush">
+                {{#each filter.tags}}
+                    <li class="list-group-item">{{.}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+    {{{ filter.description }}}
+</div>
+<h2>Try it out!</h2>
 
 <ul>
     {{#each filter.params}}

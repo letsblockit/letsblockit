@@ -16,6 +16,7 @@ params:
     description: A list of strings
     type: list
     default: [ "abc", "123" ]
+tags: ["tag1", "tag2"]
 template: |
   {{#each string_list}}
   {{ . }}
