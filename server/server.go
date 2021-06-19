@@ -45,12 +45,17 @@ func (s *Server) setupRouter() {
 	})
 
 	s.echo.GET("/filters", func(c echo.Context) error {
-		return s.pages.render(c, "list-filters", s.repo.GetFilters())
+		return s.pages.render(c, "list-filters", map[string]interface{} {
+			"title": "Available uBlock filter templates",
+			"filters": s.repo.GetFilters(),
+		})
 	}).Name = "list-filters"
 
 	s.echo.GET("/filters/:name", func(c echo.Context) error {
 		if filter, err := s.repo.GetFilter(c.Param("name")); err == nil {
-			return s.pages.render(c, "view-filter", filter)
+			return s.pages.render(c, "view-filter", map[string]interface{} {
+				"filter": filter,
+			})
 		} else {
 			return echo.NewHTTPError(http.StatusNotFound)
 		}
