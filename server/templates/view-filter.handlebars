@@ -9,19 +9,42 @@
             </ul>
         </div>
     </div>
-    <div class="col">
+    <div class="col col-lg-9">
         {{{ filter.description }}}
         <h2>Try it out!</h2>
 
-        <ul>
+        <form id="filter_input">
             {{#each filter.params}}
-                <li>{{name}}: {{description}}</li>
+                {{#equal type "checkbox"}}
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="{{name}}" name="{{name}}"
+                               {{#equal true (lookup @root.params name)}}checked{{/equal}}>
+                        <label class="form-check-label" for="{{name}}">{{description}}</label>
+                    </div>
+                {{/equal}}
+                {{#equal type "string"}}
+                    <div class="mb-3">
+                        <label class="form-label" for="{{name}}">{{description}}:</label>
+                        <input class="form-control" id="{{name}}" name="{{name}}" value="{{lookup @root.params name}}">
+                    </div>
+                {{/equal}}
+                {{#equal type "list"}}
+                    <div class="mb-3">
+                        <label class="form-label">{{description}}:</label>
+                        {{#each (lookup_list @root.params name)}}
+                            <input class="form-control" name="{{name}}" value="{{this}}">
+                        {{/each}}
+                        <input class="form-control" name="{{name}}">
+                        <input class="form-control" name="{{name}}">
+                    </div>
+                {{/equal}}
             {{/each}}
-        </ul>
+            <button type="submit" class="btn btn-primary">Render</button>
+        </form>
 
         {{#if rendered}}
             <h2>Result</h2>
-            <code>{{rendered}}</code>
+            <code id="filter_output" style="white-space:pre-line">{{rendered}}</code>
         {{/if}}
     </div>
 </div>

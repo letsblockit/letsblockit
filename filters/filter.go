@@ -11,7 +11,6 @@ var newLine = []byte("\n")
 type filter interface {
 	setDescription(string)
 	parse() error
-
 }
 
 type Filter struct {

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -12,6 +13,20 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 	return map[string]interface{}{
 		"href": func(route string, args string) string {
 			return href(e, route, args)
+		},
+		"lookup_list": func(obj map[string]interface{}, key string) []string {
+			switch values := obj[key].(type) {
+			case []string:
+				return values
+			case []interface{}:
+				var converted []string
+				for _, v := range values {
+					converted = append(converted, fmt.Sprintf("%v", v))
+				}
+				return converted
+			default:
+				return nil
+			}
 		},
 	}
 }

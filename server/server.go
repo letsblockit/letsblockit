@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -88,6 +87,16 @@ func (s *Server) viewFilter(c echo.Context) error {
 	}
 	if params != nil {
 		hc["rendered"], err = filter.Render(params)
+		if err != nil {
+			return err
+		}
+		hc["params"] = params
+	} else {
+		defaultParams := make(map[string]interface{})
+		for _, p := range filter.Params {
+			defaultParams[p.Name] = p.Default
+		}
+		hc["params"] = defaultParams
 	}
 	return s.pages.render(c, "view-filter", hc)
 }
@@ -139,11 +148,17 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 	for _, p := range filter.Params {
 		switch p.Type {
 		case filters.StringListParam:
-			params[p.Name] = formParams[p.Name]
+			var values []string
+			for _, v := range formParams[p.Name] {
+				if v != "" {
+					values = append(values, v)
+				}
+			}
+			params[p.Name] = values
 		case filters.StringParam:
 			params[p.Name] = formParams.Get(p.Name)
 		case filters.BooleanParam:
-			params[p.Name], _ = strconv.ParseBool(formParams.Get(p.Name))
+			params[p.Name] = formParams.Get(p.Name) == "on"
 		default:
 			return nil, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
 		}

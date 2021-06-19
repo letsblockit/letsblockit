@@ -23,6 +23,7 @@ func (m *mockedEcho) Reverse(name string, params ...interface{}) string {
 func TestHelpers(t *testing.T) {
 	tests := map[string]struct {
 		input    string
+		ctx      map[string]interface{}
 		expected string
 	}{
 		"href_noarg": {
@@ -37,6 +38,26 @@ func TestHelpers(t *testing.T) {
 			input:    `{{href "name" "one/two/three"}}`,
 			expected: "//name//one//two//three",
 		},
+		"lookup_list_strings": {
+			input: `-{{#each (lookup_list params "name")}}{{this}}-{{/each}}`,
+			ctx: map[string]interface{}{
+				"params": map[string]interface{}{
+					"simple": "single",
+					"name":   []string{"one", "two"},
+				},
+			},
+			expected: "-one-two-",
+		},
+		"lookup_list_interface": {
+			input: `-{{#each (lookup_list params "name")}}{{this}}-{{/each}}`,
+			ctx: map[string]interface{}{
+				"params": map[string]interface{}{
+					"simple": "single",
+					"name":   []interface{}{"one", 2},
+				},
+			},
+			expected: "-one-2-",
+		},
 	}
 	helpers := buildHelpers(&mockedEcho{})
 
@@ -44,7 +65,7 @@ func TestHelpers(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			tpl := raymond.MustParse(tc.input)
 			tpl.RegisterHelpers(helpers)
-			assert.Equal(t, tc.expected, tpl.MustExec(nil))
+			assert.Equal(t, tc.expected, tpl.MustExec(tc.ctx))
 		})
 	}
 }
