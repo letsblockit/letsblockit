@@ -5,9 +5,7 @@ import (
 )
 
 func main() {
-	e, err := server.SetupRouter()
-	if err != nil {
+	if err := server.NewServer().Start(); err != nil {
 		panic(err)
 	}
-	e.Logger.Fatal(e.Start(":8080"))
 }

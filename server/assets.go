@@ -8,11 +8,11 @@ import (
 //go:embed assets
 var assetFiles embed.FS
 
-func openAssets() (fs.FS, error) {
+func openAssets() fs.FS {
 	return &wrappedAssets{
 		root:  assetFiles,
 		isDir: make(map[string]bool),
-	}, nil
+	}
 }
 
 // wrappedAssets wraps the fs.Open call to forbid access to folders
