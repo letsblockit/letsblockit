@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -68,15 +69,27 @@ func (s *Server) setupRouter() {
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
-	s.echo.GET("/filters/:name", func(c echo.Context) error {
-		if filter, err := s.repo.GetFilter(c.Param("name")); err == nil {
-			hc := buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", filter.Title))
-			hc["filter"] = filter
-			return s.pages.render(c, "view-filter", hc)
-		} else {
-			return echo.NewHTTPError(http.StatusNotFound)
-		}
-	}).Name = "view-filter"
+	s.echo.GET("/filters/:name", s.viewFilter).Name = "view-filter"
+	s.echo.POST("/filters/:name", s.viewFilter)
+}
+
+func (s *Server) viewFilter(c echo.Context) error {
+	filter, err := s.repo.GetFilter(c.Param("name"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound)
+	}
+	hc := buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", filter.Title))
+	hc["filter"] = filter
+
+	// Parse filters param and render output if non empty
+	params, err := parseFilterParams(c, filter)
+	if err != nil {
+		return err
+	}
+	if params != nil {
+		hc["rendered"], err = filter.Render(params)
+	}
+	return s.pages.render(c, "view-filter", hc)
 }
 
 func buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
@@ -87,7 +100,6 @@ func buildHandlebarsContext(c echo.Context, title string) map[string]interface{}
 			break
 		}
 	}
-
 	return map[string]interface{}{
 		"navLinks":   navigationLinks,
 		"navCurrent": section,
@@ -113,4 +125,28 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 		}(&wg)
 	}
 	wg.Wait()
+}
+
+func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, error) {
+	formParams, err := c.FormParams()
+	if err != nil {
+		return nil, err
+	}
+	if len(formParams) == 0 {
+		return nil, nil
+	}
+	params := make(map[string]interface{})
+	for _, p := range filter.Params {
+		switch p.Type {
+		case filters.StringListParam:
+			params[p.Name] = formParams[p.Name]
+		case filters.StringParam:
+			params[p.Name] = formParams.Get(p.Name)
+		case filters.BooleanParam:
+			params[p.Name], _ = strconv.ParseBool(formParams.Get(p.Name))
+		default:
+			return nil, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
+		}
+	}
+	return params, err
 }

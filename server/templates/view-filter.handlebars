@@ -12,10 +12,16 @@
     <div class="col">
         {{{ filter.description }}}
         <h2>Try it out!</h2>
+
         <ul>
             {{#each filter.params}}
                 <li>{{name}}: {{description}}</li>
             {{/each}}
         </ul>
+
+        {{#if rendered}}
+            <h2>Result</h2>
+            <code>{{rendered}}</code>
+        {{/if}}
     </div>
 </div>
