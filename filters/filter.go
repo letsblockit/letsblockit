@@ -9,8 +9,9 @@ var yamlSeparator = []byte("\n---")
 var newLine = []byte("\n")
 
 type filter interface {
-	SetDescription(string)
-	Parse() error
+	setDescription(string)
+	parse() error
+
 }
 
 type Filter struct {
@@ -48,20 +49,24 @@ type testCase struct {
 	Output string `validate:"required"`
 }
 
-func (f *Filter) SetDescription(desc string) {
+func (f *Filter) Render(data interface{}) (string, error) {
+	return f.Parsed.Exec(data)
+}
+
+func (f *Filter) setDescription(desc string) {
 	f.Description = desc
 }
 
-func (f *Filter) Parse() error {
+func (f *Filter) parse() error {
 	var err error
 	f.Parsed, err = raymond.Parse(f.Template)
 	return err
 }
 
-func (f *filterAndTests) SetDescription(desc string) {
-	f.Filter.SetDescription(desc)
+func (f *filterAndTests) setDescription(desc string) {
+	f.Filter.setDescription(desc)
 }
 
-func (f *filterAndTests) Parse() error {
-	return f.Filter.Parse()
+func (f *filterAndTests) parse() error {
+	return f.Filter.parse()
 }

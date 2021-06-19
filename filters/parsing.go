@@ -43,7 +43,7 @@ func parse(reader io.Reader, filter filter) error {
 	}
 	pos += len(yamlSeparator)
 	pos += bytes.Index(input[pos:], newLine)
-	filter.SetDescription(string(blackfriday.Run(input[pos:])))
+	filter.setDescription(string(blackfriday.Run(input[pos:])))
 
-	return filter.Parse()
+	return filter.parse()
 }
