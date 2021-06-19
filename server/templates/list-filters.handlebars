@@ -1,0 +1,7 @@
+<h2>All available filters</h2>
+
+<ul>
+    {{#each .}}
+        <li><a href="{{href "view-filter" name}}">{{name}}</a>: {{title}}</li>
+    {{/each}}
+</ul>

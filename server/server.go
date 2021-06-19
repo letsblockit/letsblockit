@@ -45,16 +45,16 @@ func (s *Server) setupRouter() {
 	})
 
 	s.echo.GET("/filters", func(c echo.Context) error {
-		return s.pages.render(c, "list_filters", s.repo.GetFilters())
-	}).Name = "list_filters"
+		return s.pages.render(c, "list-filters", s.repo.GetFilters())
+	}).Name = "list-filters"
 
 	s.echo.GET("/filters/:name", func(c echo.Context) error {
 		if filter, err := s.repo.GetFilter(c.Param("name")); err == nil {
-			return s.pages.render(c, "view_filter", filter)
+			return s.pages.render(c, "view-filter", filter)
 		} else {
 			return echo.NewHTTPError(http.StatusNotFound)
 		}
-	}).Name = "view_filter"
+	}).Name = "view-filter"
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {
