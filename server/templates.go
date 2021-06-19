@@ -20,7 +20,7 @@ type templates struct {
 }
 
 // loadTemplates parses all web templates found in the templates folder
-func loadTemplates() (*templates, error) {
+func loadTemplates(helpers map[string]interface{}) (*templates, error) {
 	// Parse toplevel layout template
 	contents, err := templateFiles.ReadFile("templates/_layout.handlebars")
 	if err != nil {
@@ -30,6 +30,10 @@ func loadTemplates() (*templates, error) {
 	if err != nil {
 		return nil, err
 	}
+	if helpers != nil {
+		layout.RegisterHelpers(helpers)
+	}
+
 	// Parse pages
 	repo := templates{make(map[string]*raymond.Template)}
 	err = utils.Walk(templateFiles, ".handlebars", func(name string, file io.Reader) error {

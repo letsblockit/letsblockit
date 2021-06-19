@@ -9,7 +9,7 @@ import (
 
 // Check that all web templates parse OK
 func TestLoadTemplates(t *testing.T) {
-	templates, err := loadTemplates()
+	templates, err := loadTemplates(nil)
 	assert.NoError(t, err)
 	require.Greater(t, len(templates.templates), 0, "Expected at least one template")
 }
