@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -10,6 +11,19 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/xvello/weblock/filters"
 )
+
+type navigationLink struct {
+	Name   string
+	Target string
+}
+
+var navigationLinks = []navigationLink{{
+	Name:   "Filter list",
+	Target: "filters",
+}, {
+	Name:   "About",
+	Target: "about",
+}}
 
 type Server struct {
 	echo  *echo.Echo
@@ -44,22 +58,41 @@ func (s *Server) setupRouter() {
 		return c.String(http.StatusOK, "pong")
 	})
 
+	s.echo.GET("/about", func(c echo.Context) error {
+		return s.pages.render(c, "about", buildHandlebarsContext(c, "About weBlock"))
+	}).Name = "list-filters"
+
 	s.echo.GET("/filters", func(c echo.Context) error {
-		return s.pages.render(c, "list-filters", map[string]interface{} {
-			"title": "Available uBlock filter templates",
-			"filters": s.repo.GetFilters(),
-		})
+		hc := buildHandlebarsContext(c, "Available uBlock filter templates")
+		hc["filters"] = s.repo.GetFilters()
+		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
 	s.echo.GET("/filters/:name", func(c echo.Context) error {
 		if filter, err := s.repo.GetFilter(c.Param("name")); err == nil {
-			return s.pages.render(c, "view-filter", map[string]interface{} {
-				"filter": filter,
-			})
+			hc := buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", filter.Title))
+			hc["filter"] = filter
+			return s.pages.render(c, "view-filter", hc)
 		} else {
 			return echo.NewHTTPError(http.StatusNotFound)
 		}
 	}).Name = "view-filter"
+}
+
+func buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
+	var section string
+	for _, s := range strings.Split(c.Path(), "/") {
+		if s != "" {
+			section = s
+			break
+		}
+	}
+
+	return map[string]interface{}{
+		"navLinks":   navigationLinks,
+		"navCurrent": section,
+		"title":      title,
+	}
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {

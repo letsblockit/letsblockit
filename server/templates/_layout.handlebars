@@ -5,19 +5,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/css/styles.min.css">
-    {{#if filter}}
-        <title>How to {{ filter.title }} with uBlock or Adblock</title>
-    {{else}}
-        <title>{{ title }}</title>
-    {{/if}}
+    <title>{{ title }}</title>
 </head>
 <body>
-<div class="container">
-{{> content }}
-</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary" aria-label="Main navigation">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">weBlock</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
+            {{#each navLinks}}
+                <a class="nav-link{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
+                        href="/{{target}}">{{name}}</a>
+            {{/each}}
+        </div>
+    </div>
+</nav>
+
+<main class="container p-5">
+    <div class="container">
+        {{> content }}
+    </div>
+</main>
+
 <script src="/assets/js/bootstrap.bundle.min.js"></script>
-{{#if import_handlebars}}
-    <script src="/assets/js/handlebars.min.js"></script>
-{{/if}}
-</body>
-</html>
+{{#each jsImports}}
+    <script src="/assets/js/{{.}}"></script>
+{{/each}}
+
