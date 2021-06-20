@@ -90,9 +90,7 @@ func (s *Server) setupRouter() {
 		return c.String(http.StatusOK, "pong")
 	})
 
-	s.echo.GET("/about", func(c echo.Context) error {
-		return s.pages.render(c, "about", buildHandlebarsContext(c, "About weBlock"))
-	}).Name = "list-filters"
+	s.addStatic("/about", "about", "About the weBlock project")
 
 	s.echo.GET("/filters", func(c echo.Context) error {
 		hc := buildHandlebarsContext(c, "Available uBlock filter templates")
@@ -102,6 +100,12 @@ func (s *Server) setupRouter() {
 
 	s.echo.GET("/filters/:name", s.viewFilter).Name = "view-filter"
 	s.echo.POST("/filters/:name", s.viewFilter)
+}
+
+func (s *Server) addStatic(url, page, title string) {
+	s.echo.GET(url, func(c echo.Context) error {
+		return s.pages.render(c, page, buildHandlebarsContext(c, title))
+	}).Name = page
 }
 
 func (s *Server) viewFilter(c echo.Context) error {
@@ -118,10 +122,11 @@ func (s *Server) viewFilter(c echo.Context) error {
 		return err
 	}
 	if params != nil {
-		hc["rendered"], err = filter.Render(params)
-		if err != nil {
+		var buf strings.Builder
+		if err = filter.Render(&buf, params); err != nil {
 			return err
 		}
+		hc["rendered"] = buf.String()
 		hc["params"] = params
 	} else {
 		defaultParams := make(map[string]interface{})

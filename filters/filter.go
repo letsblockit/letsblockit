@@ -1,7 +1,9 @@
 package filters
 
 import (
-	"github.com/aymerick/raymond"
+	"io"
+
+	"github.com/imantung/mario"
 )
 
 var filenameSuffix = ".yaml"
@@ -20,7 +22,7 @@ type Filter struct {
 	Tags        []string      `validate:"dive,alphaunicode"`
 	Template    string        `validate:"required"`
 	Description string        `validate:"required"`
-	Parsed      *raymond.Template
+	Parsed      *mario.Template
 }
 
 type filterAndTests struct {
@@ -48,8 +50,8 @@ type testCase struct {
 	Output string `validate:"required"`
 }
 
-func (f *Filter) Render(data interface{}) (string, error) {
-	return f.Parsed.Exec(data)
+func (f *Filter) Render(w io.Writer, ctx interface{}) error {
+	return f.Parsed.Execute(w, ctx)
 }
 
 func (f *Filter) setDescription(desc string) {
@@ -58,7 +60,7 @@ func (f *Filter) setDescription(desc string) {
 
 func (f *Filter) parse() error {
 	var err error
-	f.Parsed, err = raymond.Parse(f.Template)
+	f.Parsed, err = mario.New().Parse(f.Template)
 	return err
 }
 

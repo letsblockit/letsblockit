@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/fs"
 
-	"github.com/aymerick/raymond"
 	"github.com/xvello/weblock/utils"
 )
 
@@ -40,32 +39,6 @@ func load(input fs.FS) (*Repository, error) {
 	})
 
 	return repo, err
-}
-
-// RenderFilter takes arguments and returns the result of filter
-// templating for inclusion in an adblock filter list.
-func (r *Repository) RenderFilter(name string, data interface{}) (string, error) {
-	filter, err := r.GetFilter(name)
-	if err != nil {
-		return "", err
-	}
-	return filter.Parsed.Exec(data)
-}
-
-// RenderPage renders the description page for a given filter.
-// The passed template object will be given the full Filter object as input.
-func (r *Repository) RenderPage(name string, template *raymond.Template) (string, error) {
-	filter, err := r.GetFilter(name)
-	if err != nil {
-		return "", err
-	}
-	return template.Exec(filter)
-}
-
-// RenderIndex renders a filter index page.
-// The passed template object will be given the full []Filter list as input.
-func (r *Repository) RenderIndex(template *raymond.Template) (string, error) {
-	return template.Exec(r.fList)
 }
 
 func (r *Repository) GetFilter(name string) (*Filter, error) {

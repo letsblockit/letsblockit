@@ -30,6 +30,6 @@
 
 <main class="container p-5">
     <div class="container">
-        {{> content }}
+        {{#if _page.partial}}{{>(_page.partial)}}{{else}}{{{_page.contents}}}{{/if}}
     </div>
 </main>

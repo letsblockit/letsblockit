@@ -8,34 +8,43 @@ import (
 
 	"github.com/aymerick/raymond"
 	"github.com/labstack/echo/v4"
+	"github.com/russross/blackfriday/v2"
 	"github.com/xvello/weblock/utils"
 )
 
 //go:embed templates/*
 var templateFiles embed.FS
 
-// templates holds parsed web templates
+type page struct {
+	Partial  string
+	Contents string
+}
+
+// templates holds parsed pages ready for rendering
 type templates struct {
-	templates map[string]*raymond.Template
+	main  *raymond.Template
+	pages map[string]*page
 }
 
 // loadTemplates parses all web templates found in the templates folder
 func loadTemplates(helpers map[string]interface{}) (*templates, error) {
+	tpl := templates{
+		pages: make(map[string]*page),
+	}
 	// Parse toplevel layout template
 	contents, err := templateFiles.ReadFile("templates/_layout.handlebars")
 	if err != nil {
 		return nil, err
 	}
-	layout, err := raymond.Parse(string(contents))
+	tpl.main, err = raymond.Parse(string(contents))
 	if err != nil {
 		return nil, err
 	}
 	if helpers != nil {
-		layout.RegisterHelpers(helpers)
+		tpl.main.RegisterHelpers(helpers)
 	}
 
-	// Parse pages
-	repo := templates{make(map[string]*raymond.Template)}
+	// Parse handlebars templates
 	err = utils.Walk(templateFiles, ".handlebars", func(name string, file io.Reader) error {
 		if strings.HasPrefix(name, "_") {
 			return nil
@@ -48,21 +57,37 @@ func loadTemplates(helpers map[string]interface{}) (*templates, error) {
 		if e != nil {
 			return e
 		}
-		page := layout.Clone()
-		page.RegisterPartialTemplate("content", partial)
-		repo.templates[name] = page
+		tpl.main.RegisterPartialTemplate(name, partial)
+		tpl.pages[name] = &page{Partial: name}
+		return e
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse markdown pages
+	err = utils.Walk(templateFiles, ".md", func(name string, file io.Reader) error {
+		if strings.HasPrefix(name, "_") {
+			return nil
+		}
+		rawContents, e := io.ReadAll(file)
+		if e != nil {
+			return e
+		}
+		tpl.pages[name] = &page{Contents: string(blackfriday.Run(rawContents))}
 		return e
 	})
 
-	return &repo, err
+	return &tpl, err
 }
 
-func (t *templates) render(c echo.Context, name string, data interface{}) error {
-	tpl, found := t.templates[name]
+func (t *templates) render(c echo.Context, name string, ctx map[string]interface{}) error {
+	var found bool
+	ctx["_page"], found = t.pages[name]
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
 	}
-	contents, err := tpl.Exec(data)
+	contents, err := t.main.Exec(ctx)
 	if err != nil {
 		return err
 	}
