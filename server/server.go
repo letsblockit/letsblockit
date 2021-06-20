@@ -55,7 +55,7 @@ func (s *Server) Start() error {
 			s.assetHash = computeAssetsHash()
 			s.assetETag = fmt.Sprintf("\"%s\"", s.assetHash)
 		},
-		func(errs []error) { s.pages, errs[0] = loadTemplates() },
+		func(errs []error) { s.pages, errs[0] = loadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(_ []error) { s.setupRouter() },
 	})

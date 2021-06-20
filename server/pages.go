@@ -27,8 +27,8 @@ type pages struct {
 	pages map[string]*page
 }
 
-// loadTemplates parses all web pages found in the pages folder
-func loadTemplates() (*pages, error) {
+// loadPages parses all web pages found in the pages folder
+func loadPages() (*pages, error) {
 	pp := pages{
 		pages: make(map[string]*page),
 	}
