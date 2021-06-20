@@ -24,8 +24,20 @@ func TestHelpers(t *testing.T) {
 	tests := map[string]struct {
 		input    string
 		ctx      map[string]interface{}
+		assetHash string
 		expected string
 	}{
+		"assert_hash_present": {
+			input: `.css{{assetHash}}`,
+			ctx: nil,
+			assetHash: "1234",
+			expected: ".css?h=1234",
+		},
+		"assert_hash_absent": {
+			input: `.css{{assetHash}}`,
+			ctx: nil,
+			expected: ".css",
+		},
 		"href_noarg": {
 			input:    `{{href "name" ""}}`,
 			expected: "//name",
@@ -59,10 +71,10 @@ func TestHelpers(t *testing.T) {
 			expected: "-one-2-",
 		},
 	}
-	helpers := buildHelpers(&mockedEcho{})
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+			helpers := buildHelpers(&mockedEcho{}, tc.assetHash)
 			tpl := raymond.MustParse(tc.input)
 			tpl.RegisterHelpers(helpers)
 			assert.Equal(t, tc.expected, tpl.MustExec(tc.ctx))

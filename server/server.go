@@ -26,9 +26,10 @@ var navigationLinks = []navigationLink{{
 }}
 
 type Server struct {
-	echo  *echo.Echo
-	pages *templates
-	repo  *filters.Repository
+	echo      *echo.Echo
+	pages     *templates
+	filters   *filters.Repository
+	assetETag string
 }
 
 func NewServer() *Server {
@@ -37,8 +38,12 @@ func NewServer() *Server {
 
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
-		func(errs []error) { s.pages, errs[0] = loadTemplates(buildHelpers(s.echo)) },
-		func(errs []error) { s.repo, errs[0] = filters.LoadFilters() },
+		func(errs []error) {
+			assetHash := computeAssetsHash()
+			s.assetETag = fmt.Sprintf("\"%s\"", assetHash)
+			s.pages, errs[0] = loadTemplates(buildHelpers(s.echo, assetHash))
+		},
+		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(_ []error) { s.setupRouter() },
 	})
 	return s.echo.Start(":8080")
@@ -52,7 +57,19 @@ func (s *Server) setupRouter() {
 		return c.Redirect(http.StatusFound, "/filters")
 	}).Name = "index"
 
-	s.echo.GET("/assets/*", echo.WrapHandler(http.FileServer(http.FS(openAssets()))))
+	assetsServer := http.FileServer(http.FS(openAssets()))
+	s.echo.GET("/assets/*", func(c echo.Context) error {
+		if c.Request().Header.Get("If-None-Match") == s.assetETag {
+			return c.NoContent(http.StatusNotModified)
+		}
+		c.Response().Before(func() {
+			c.Response().Header().Set("Vary", "Accept-Encoding")
+			c.Response().Header().Set("Cache-Control", "public, max-age=86400")
+			c.Response().Header().Set("ETag", s.assetETag)
+		})
+		assetsServer.ServeHTTP(c.Response(), c.Request())
+		return nil
+	})
 
 	s.echo.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong")
@@ -64,7 +81,7 @@ func (s *Server) setupRouter() {
 
 	s.echo.GET("/filters", func(c echo.Context) error {
 		hc := buildHandlebarsContext(c, "Available uBlock filter templates")
-		hc["filters"] = s.repo.GetFilters()
+		hc["filters"] = s.filters.GetFilters()
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
@@ -73,7 +90,7 @@ func (s *Server) setupRouter() {
 }
 
 func (s *Server) viewFilter(c echo.Context) error {
-	filter, err := s.repo.GetFilter(c.Param("name"))
+	filter, err := s.filters.GetFilter(c.Param("name"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}

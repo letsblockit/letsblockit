@@ -9,15 +9,15 @@ type echoInterface interface {
 	Reverse(name string, params ...interface{}) string
 }
 
-func buildHelpers(e echoInterface) map[string]interface{} {
-	assetHash := computeAssetHash()
+func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
+	var assetHashQuery string
 	if assetHash != "" {
-		assetHash = "?h=" + assetHash
+		assetHashQuery = "?h=" + assetHash
 	}
 
 	return map[string]interface{}{
 		"assetHash": func() string {
-			return assetHash
+			return assetHashQuery
 		},
 		"href": func(route string, args string) string {
 			return href(e, route, args)

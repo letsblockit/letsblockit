@@ -48,7 +48,8 @@ func (w wrappedAssets) Open(name string) (fs.File, error) {
 	return file, nil
 }
 
-func computeAssetHash() string {
+// computeAssetsHash walks the assets filesystem to compute an FNV hash of all files.
+func computeAssetsHash() string {
 	hash := fnv.New128()
 	err := utils.Walk(assetFiles, "", func(name string, reader io.Reader) error {
 		hash.Write([]byte(name))
