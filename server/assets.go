@@ -2,7 +2,12 @@ package server
 
 import (
 	"embed"
+	"encoding/base64"
+	"hash/fnv"
+	"io"
 	"io/fs"
+
+	"github.com/xvello/weblock/utils"
 )
 
 //go:embed assets
@@ -41,4 +46,17 @@ func (w wrappedAssets) Open(name string) (fs.File, error) {
 		}
 	}
 	return file, nil
+}
+
+func computeAssetHash() string {
+	hash := fnv.New128()
+	err := utils.Walk(assetFiles, "", func(name string, reader io.Reader) error {
+		hash.Write([]byte(name))
+		_, e := io.Copy(hash, reader)
+		return e
+	})
+	if err != nil {
+		return ""
+	}
+	return base64.RawURLEncoding.EncodeToString(hash.Sum(nil))
 }

@@ -4,10 +4,10 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/assets/css/styles.min.css">
-    <script defer src="/assets/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/assets/css/styles.min.css{{assetHash}}">
+    <script defer src="/assets/js/bootstrap.bundle.min.js{{assetHash}}"></script>
     {{#each jsImports}}
-        <script defer src="/assets/js/{{.}}"></script>
+        <script defer src="/assets/js/{{this}}{{assetHash}}"></script>
     {{/each}}
     <title>{{ title }}</title>
 </head>

@@ -10,7 +10,15 @@ type echoInterface interface {
 }
 
 func buildHelpers(e echoInterface) map[string]interface{} {
+	assetHash := computeAssetHash()
+	if assetHash != "" {
+		assetHash = "?h=" + assetHash
+	}
+
 	return map[string]interface{}{
+		"assetHash": func() string {
+			return assetHash
+		},
 		"href": func(route string, args string) string {
 			return href(e, route, args)
 		},
