@@ -3,29 +3,59 @@ package server
 import (
 	"embed"
 	"encoding/base64"
+	"fmt"
 	"io"
 	"io/fs"
+	"net/http"
 
 	"github.com/DataDog/mmh3"
+	"github.com/labstack/echo/v4"
 	"github.com/xvello/weblock/utils"
 )
 
 //go:embed assets
 var assetFiles embed.FS
 
-func openAssets() fs.FS {
-	return &wrappedAssets{
+/* wrappedAssets handles serving static assets. It:
+ *  - wraps the fs.Open call to forbid access to folders
+ *  - pre-computes a hash of the assets to use for cache management
+ *  - exposes a echo handler
+ */
+type wrappedAssets struct {
+	root   fs.FS
+	isDir  map[string]bool
+	hash   string
+	eTag   string
+	server http.Handler
+}
+
+func loadAssets() *wrappedAssets {
+	hash := computeAssetsHash()
+	assets := &wrappedAssets{
 		root:  assetFiles,
 		isDir: make(map[string]bool),
+		hash:  hash,
+		eTag:  fmt.Sprintf("\"%s\"", hash),
 	}
+	assets.server = http.FileServer(http.FS(assets))
+
+	return assets
 }
 
-// wrappedAssets wraps the fs.Open call to forbid access to folders
-type wrappedAssets struct {
-	root  fs.FS
-	isDir map[string]bool
+func (w *wrappedAssets) serve(c echo.Context) error {
+	if c.Request().Header.Get("If-None-Match") == w.eTag {
+		return c.NoContent(http.StatusNotModified)
+	}
+	c.Response().Before(func() {
+		c.Response().Header().Set("Vary", "Accept-Encoding")
+		c.Response().Header().Set("Cache-Control", "public, max-age=86400")
+		c.Response().Header().Set("ETag", w.eTag)
+	})
+	w.server.ServeHTTP(c.Response(), c.Request())
+	return nil
 }
 
+// Open implements http.Filesystem while denying access to directory listings
 func (w wrappedAssets) Open(name string) (fs.File, error) {
 	isDir, found := w.isDir[name]
 	if isDir {
@@ -48,7 +78,7 @@ func (w wrappedAssets) Open(name string) (fs.File, error) {
 	return file, nil
 }
 
-// computeAssetsHash walks the assets filesystem to compute an FNV hash of all files.
+// computeAssetsHash walks the assets filesystem to compute a hash of all files.
 func computeAssetsHash() string {
 	hash := &mmh3.HashWriter128{}
 	err := utils.Walk(assetFiles, "", func(name string, reader io.Reader) error {

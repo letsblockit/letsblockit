@@ -20,12 +20,10 @@ type Options struct {
 	Address string `default:"127.0.0.1:8765" help:"address to listen to"`
 }
 
-type navigationLink struct {
+var navigationLinks = []struct {
 	Name   string
 	Target string
-}
-
-var navigationLinks = []navigationLink{{
+}{{
 	Name:   "Filter list",
 	Target: "filters",
 }, {
@@ -34,12 +32,11 @@ var navigationLinks = []navigationLink{{
 }}
 
 type Server struct {
-	options   *Options
-	echo      *echo.Echo
-	pages     *pages
-	filters   *filters.Repository
-	assetHash string
-	assetETag string
+	options *Options
+	echo    *echo.Echo
+	pages   *pages
+	filters *filters.Repository
+	assets  *wrappedAssets
 }
 
 func NewServer(options *Options) *Server {
@@ -51,15 +48,13 @@ func NewServer(options *Options) *Server {
 
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
-		func(_ []error) {
-			s.assetHash = computeAssetsHash()
-			s.assetETag = fmt.Sprintf("\"%s\"", s.assetHash)
-		},
+		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = loadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
-		func(_ []error) { s.setupRouter() },
 	})
-	s.pages.registerHelpers(buildHelpers(s.echo, s.assetHash))
+
+	s.pages.registerHelpers(buildHelpers(s.echo, s.assets.hash))
+	s.setupRouter()
 	if s.options.DryRun {
 		return DryRunFinished
 	}
@@ -70,27 +65,11 @@ func (s *Server) setupRouter() {
 	s.echo.Use(middleware.Logger())
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 
+	s.echo.GET("/assets/*", s.assets.serve)
+
 	s.echo.GET("/", func(c echo.Context) error {
 		return c.Redirect(http.StatusFound, "/filters")
 	}).Name = "index"
-
-	assetsServer := http.FileServer(http.FS(openAssets()))
-	s.echo.GET("/assets/*", func(c echo.Context) error {
-		if c.Request().Header.Get("If-None-Match") == s.assetETag {
-			return c.NoContent(http.StatusNotModified)
-		}
-		c.Response().Before(func() {
-			c.Response().Header().Set("Vary", "Accept-Encoding")
-			c.Response().Header().Set("Cache-Control", "public, max-age=86400")
-			c.Response().Header().Set("ETag", s.assetETag)
-		})
-		assetsServer.ServeHTTP(c.Response(), c.Request())
-		return nil
-	})
-
-	s.echo.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
 
 	s.addStatic("/about", "about", "About the weBlock project")
 
@@ -108,36 +87,6 @@ func (s *Server) addStatic(url, page, title string) {
 	s.echo.GET(url, func(c echo.Context) error {
 		return s.pages.render(c, page, buildHandlebarsContext(c, title))
 	}).Name = page
-}
-
-func (s *Server) viewFilter(c echo.Context) error {
-	filter, err := s.filters.GetFilter(c.Param("name"))
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound)
-	}
-	hc := buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", filter.Title))
-	hc["filter"] = filter
-
-	// Parse filters param and render output if non empty
-	params, err := parseFilterParams(c, filter)
-	if err != nil {
-		return err
-	}
-	if params != nil {
-		var buf strings.Builder
-		if err = filter.Render(&buf, params); err != nil {
-			return err
-		}
-		hc["rendered"] = buf.String()
-		hc["params"] = params
-	} else {
-		defaultParams := make(map[string]interface{})
-		for _, p := range filter.Params {
-			defaultParams[p.Name] = p.Default
-		}
-		hc["params"] = defaultParams
-	}
-	return s.pages.render(c, "view-filter", hc)
 }
 
 func buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
@@ -176,34 +125,4 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 	}
 	wg.Wait()
 	fmt.Println(output.String())
-}
-
-func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, error) {
-	formParams, err := c.FormParams()
-	if err != nil {
-		return nil, err
-	}
-	if len(formParams) == 0 {
-		return nil, nil
-	}
-	params := make(map[string]interface{})
-	for _, p := range filter.Params {
-		switch p.Type {
-		case filters.StringListParam:
-			var values []string
-			for _, v := range formParams[p.Name] {
-				if v != "" {
-					values = append(values, v)
-				}
-			}
-			params[p.Name] = values
-		case filters.StringParam:
-			params[p.Name] = formParams.Get(p.Name)
-		case filters.BooleanParam:
-			params[p.Name] = formParams.Get(p.Name) == "on"
-		default:
-			return nil, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
-		}
-	}
-	return params, err
 }
