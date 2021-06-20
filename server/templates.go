@@ -28,7 +28,7 @@ type templates struct {
 }
 
 // loadTemplates parses all web templates found in the templates folder
-func loadTemplates(helpers map[string]interface{}) (*templates, error) {
+func loadTemplates() (*templates, error) {
 	tpl := templates{
 		pages: make(map[string]*page),
 	}
@@ -40,9 +40,6 @@ func loadTemplates(helpers map[string]interface{}) (*templates, error) {
 	tpl.main, err = mario.New().Parse(string(contents))
 	if err != nil {
 		return nil, err
-	}
-	for n, h := range helpers {
-		_ = tpl.main.WithHelperFunc(n, h)
 	}
 
 	// Parse handlebars templates
@@ -80,6 +77,12 @@ func loadTemplates(helpers map[string]interface{}) (*templates, error) {
 	})
 
 	return &tpl, err
+}
+
+func (t *templates) registerHelpers(helpers map[string]interface{}) {
+	for n, h := range helpers {
+		_ = t.main.WithHelperFunc(n, h)
+	}
 }
 
 func (t *templates) render(c echo.Context, name string, ctx map[string]interface{}) error {

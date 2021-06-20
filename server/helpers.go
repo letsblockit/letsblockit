@@ -10,10 +10,7 @@ type echoInterface interface {
 }
 
 func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
-	var assetHashQuery string
-	if assetHash != "" {
-		assetHashQuery = "?h=" + assetHash
-	}
+	assetHashQuery := "?h=" + assetHash
 
 	return map[string]interface{}{
 		"assetHash": func() string {

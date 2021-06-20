@@ -38,6 +38,7 @@ type Server struct {
 	echo      *echo.Echo
 	pages     *templates
 	filters   *filters.Repository
+	assetHash string
 	assetETag string
 }
 
@@ -50,14 +51,15 @@ func NewServer(options *Options) *Server {
 
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
-		func(errs []error) {
-			assetHash := computeAssetsHash()
-			s.assetETag = fmt.Sprintf("\"%s\"", assetHash)
-			s.pages, errs[0] = loadTemplates(buildHelpers(s.echo, assetHash))
+		func(_ []error) {
+			s.assetHash = computeAssetsHash()
+			s.assetETag = fmt.Sprintf("\"%s\"", s.assetHash)
 		},
+		func(errs []error) { s.pages, errs[0] = loadTemplates() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(_ []error) { s.setupRouter() },
 	})
+	s.pages.registerHelpers(buildHelpers(s.echo, s.assetHash))
 	if s.options.DryRun {
 		return DryRunFinished
 	}
