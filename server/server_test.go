@@ -12,3 +12,10 @@ func TestServerDryRun(t *testing.T) {
 	server := NewServer(&Options{DryRun: true})
 	assert.Equal(t, DryRunFinished, server.Start())
 }
+
+func BenchmarkCurrent(b *testing.B) {
+	o := &Options{DryRun: true}
+	for n := 0; n < b.N; n++ {
+		_ = NewServer(o).Start()
+	}
+}
