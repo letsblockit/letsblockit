@@ -13,7 +13,7 @@ import (
 	"github.com/xvello/weblock/utils"
 )
 
-//go:embed templates/*
+//go:embed pages/*
 var templateFiles embed.FS
 
 type page struct {
@@ -21,28 +21,28 @@ type page struct {
 	Contents string
 }
 
-// templates holds parsed pages ready for rendering
-type templates struct {
+// pages holds parsed pages ready for rendering
+type pages struct {
 	main  *mario.Template
 	pages map[string]*page
 }
 
-// loadTemplates parses all web templates found in the templates folder
-func loadTemplates() (*templates, error) {
-	tpl := templates{
+// loadTemplates parses all web pages found in the pages folder
+func loadTemplates() (*pages, error) {
+	pp := pages{
 		pages: make(map[string]*page),
 	}
 	// Parse toplevel layout template
-	contents, err := templateFiles.ReadFile("templates/_layout.handlebars")
+	contents, err := templateFiles.ReadFile("pages/_layout.handlebars")
 	if err != nil {
 		return nil, err
 	}
-	tpl.main, err = mario.New().Parse(string(contents))
+	pp.main, err = mario.New().Parse(string(contents))
 	if err != nil {
 		return nil, err
 	}
 
-	// Parse handlebars templates
+	// Parse handlebars pages
 	err = utils.Walk(templateFiles, ".handlebars", func(name string, file io.Reader) error {
 		if strings.HasPrefix(name, "_") {
 			return nil
@@ -55,8 +55,8 @@ func loadTemplates() (*templates, error) {
 		if e != nil {
 			return e
 		}
-		_ = tpl.main.WithPartial(name, partial)
-		tpl.pages[name] = &page{Partial: name}
+		_ = pp.main.WithPartial(name, partial)
+		pp.pages[name] = &page{Partial: name}
 		return e
 	})
 	if err != nil {
@@ -72,20 +72,20 @@ func loadTemplates() (*templates, error) {
 		if e != nil {
 			return e
 		}
-		tpl.pages[name] = &page{Contents: string(blackfriday.Run(rawContents))}
+		pp.pages[name] = &page{Contents: string(blackfriday.Run(rawContents))}
 		return e
 	})
 
-	return &tpl, err
+	return &pp, err
 }
 
-func (t *templates) registerHelpers(helpers map[string]interface{}) {
+func (t *pages) registerHelpers(helpers map[string]interface{}) {
 	for n, h := range helpers {
 		_ = t.main.WithHelperFunc(n, h)
 	}
 }
 
-func (t *templates) render(c echo.Context, name string, ctx map[string]interface{}) error {
+func (t *pages) render(c echo.Context, name string, ctx map[string]interface{}) error {
 	var found bool
 	ctx["_page"], found = t.pages[name]
 	if !found {

@@ -36,7 +36,7 @@ var navigationLinks = []navigationLink{{
 type Server struct {
 	options   *Options
 	echo      *echo.Echo
-	pages     *templates
+	pages     *pages
 	filters   *filters.Repository
 	assetHash string
 	assetETag string
