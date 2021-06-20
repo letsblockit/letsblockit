@@ -27,16 +27,11 @@ func TestHelpers(t *testing.T) {
 		assetHash string
 		expected  string
 	}{
-		"assert_hash_present": {
+		"assert_hash": {
 			input:     `.css{{assetHash}}`,
 			ctx:       nil,
 			assetHash: "1234",
 			expected:  ".css?h=1234",
-		},
-		"assert_hash_absent": {
-			input:    `.css{{assetHash}}`,
-			ctx:      nil,
-			expected: ".css",
 		},
 		"href_noarg": {
 			input:    `{{href "name" ""}}`,
