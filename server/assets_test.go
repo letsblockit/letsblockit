@@ -3,39 +3,43 @@ package server
 import (
 	"encoding/base64"
 	"io"
+	"io/fs"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/suite"
 )
 
-// Define the suite, and absorb the built-in basic suite
-// functionality from testify - including a T() method which
-// returns the current testing context
+const cssDir = "assets/css"
+const cssFile = cssDir + "/styles.min.css"
+
 type WrappedAssetsTestSuite struct {
 	suite.Suite
 	assets *wrappedAssets
 }
 
-// embed.Open currently returns a seekable, ensure this is true in future go versions
-func (s *WrappedAssetsTestSuite) TestSeekable() {
-	file, err := s.assets.Open("assets/css/styles.min.css")
+func (s *WrappedAssetsTestSuite) TestEmbedIsSeekable() {
+	file, err := s.assets.Open(cssFile)
 	s.NoError(err)
+	// embed.Open currently returns a seekable, ensure this is true in future go versions
 	pos, err := file.Seek(0, io.SeekEnd)
 	s.NoError(err)
 	s.True(pos > 0)
 }
 
 func (s *WrappedAssetsTestSuite) TestOpenDir() {
-	// Confirm we can open a stat a regular file
-	f, err := s.assets.Open("assets/css/styles.min.css")
+	// Confirm we can open and stat a regular file
+	f, err := s.assets.Open(cssFile)
 	s.NoError(err)
 	info, err := f.Stat()
 	s.NoError(err)
-	s.Equal("styles.min.css", info.Name())
+	s.False(info.IsDir())
 
-	// Confirm we cannot open its parent directory
-	f, err = s.assets.Open("assets/css")
-	s.Error(err)
+	// Confirm we deny opening the parent directory
+	f, err = s.assets.Open(cssDir)
+	s.Equal(fs.ErrNotExist, err)
 	s.Nil(f)
 }
 
@@ -48,6 +52,46 @@ func (s *WrappedAssetsTestSuite) TestHash() {
 func (s *WrappedAssetsTestSuite) TestETag() {
 	expectedETag := "\"" + s.assets.hash + "\""
 	s.Equal(expectedETag, s.assets.eTag)
+}
+
+func (s *WrappedAssetsTestSuite) TestServe_OK() {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/"+cssFile, nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	s.NoError(s.assets.serve(c))
+	s.Equal(http.StatusOK, rec.Result().StatusCode)
+	s.Equal(s.assets.eTag, rec.Header().Get("etag"))
+	s.Equal("text/css; charset=utf-8", rec.Header().Get("content-type"))
+	s.Contains(rec.Header().Get("cache-control"), "max-age=")
+}
+
+func (s *WrappedAssetsTestSuite) TestServe_NotModified() {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/"+cssFile, nil)
+	req.Header.Set("If-None-Match", s.assets.eTag)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	s.NoError(s.assets.serve(c))
+	s.Equal(http.StatusNotModified, rec.Result().StatusCode)
+}
+
+func (s *WrappedAssetsTestSuite) TestServe_NotFound() {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/un/kn/own/fi/le", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	s.NoError(s.assets.serve(c))
+	s.Equal(http.StatusNotFound, rec.Result().StatusCode)
+}
+
+func (s *WrappedAssetsTestSuite) TestServe_DenyFolder() {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/"+cssDir, nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	s.NoError(s.assets.serve(c))
+	s.Equal(http.StatusNotFound, rec.Result().StatusCode)
 }
 
 func TestWrappedAssetsTestSuite(t *testing.T) {

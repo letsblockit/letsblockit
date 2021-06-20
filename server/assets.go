@@ -18,8 +18,8 @@ import (
 var assetFiles embed.FS
 
 /* wrappedAssets handles serving static assets. It:
- *  - wraps the fs.Open call to forbid access to folders
- *  - pre-computes a hash of the assets to use for cache management
+ *  - wraps an embed.FS and blocks access to folders
+ *  - pre-computes a global hash of the assets to use for cache management
  *  - exposes a echo handler
  */
 type wrappedAssets struct {
