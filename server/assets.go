@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
+	"strings"
 
 	"github.com/DataDog/mmh3"
 	"github.com/labstack/echo/v4"
@@ -37,8 +38,7 @@ func loadAssets() *wrappedAssets {
 		hash:  hash,
 		eTag:  fmt.Sprintf("\"%s\"", hash),
 	}
-	assets.server = http.FileServer(http.FS(assets))
-
+	assets.server = http.FileServer(assets)
 	return assets
 }
 
@@ -56,7 +56,8 @@ func (w *wrappedAssets) serve(c echo.Context) error {
 }
 
 // Open implements http.Filesystem while denying access to directory listings
-func (w wrappedAssets) Open(name string) (fs.File, error) {
+func (w wrappedAssets) Open(name string) (http.File, error) {
+	name = strings.TrimPrefix(name, "/")
 	isDir, found := w.isDir[name]
 	if isDir {
 		return nil, fs.ErrNotExist
@@ -75,7 +76,7 @@ func (w wrappedAssets) Open(name string) (fs.File, error) {
 			return nil, fs.ErrNotExist
 		}
 	}
-	return file, nil
+	return &wrappedFile{file}, nil
 }
 
 // computeAssetsHash walks the assets filesystem to compute a hash of all files.
@@ -91,3 +92,14 @@ func computeAssetsHash() string {
 	}
 	return base64.RawURLEncoding.EncodeToString(hash.Sum128().Bytes())
 }
+
+// wrappedFile implements http.File while denying directory listing
+type wrappedFile struct{ fs.File }
+
+// Seek works because embed files implement Seek
+func (w *wrappedFile) Seek(offset int64, whence int) (int64, error) {
+	return w.File.(io.Seeker).Seek(offset, whence)
+}
+
+// Readdir is denied
+func (w *wrappedFile) Readdir(_ int) ([]fs.FileInfo, error) { return nil, fs.ErrPermission }
