@@ -1,12 +1,13 @@
 package server
 
 import (
+	"bytes"
 	"embed"
 	"io"
 	"net/http"
 	"strings"
 
-	"github.com/aymerick/raymond"
+	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
 	"github.com/russross/blackfriday/v2"
 	"github.com/xvello/weblock/utils"
@@ -22,7 +23,7 @@ type page struct {
 
 // templates holds parsed pages ready for rendering
 type templates struct {
-	main  *raymond.Template
+	main  *mario.Template
 	pages map[string]*page
 }
 
@@ -36,12 +37,12 @@ func loadTemplates(helpers map[string]interface{}) (*templates, error) {
 	if err != nil {
 		return nil, err
 	}
-	tpl.main, err = raymond.Parse(string(contents))
+	tpl.main, err = mario.New().Parse(string(contents))
 	if err != nil {
 		return nil, err
 	}
-	if helpers != nil {
-		tpl.main.RegisterHelpers(helpers)
+	for n, h := range helpers {
+		_ = tpl.main.WithHelperFunc(n, h)
 	}
 
 	// Parse handlebars templates
@@ -53,11 +54,11 @@ func loadTemplates(helpers map[string]interface{}) (*templates, error) {
 		if e != nil {
 			return e
 		}
-		partial, e := raymond.Parse(string(contents))
+		partial, e := mario.New().Parse(string(contents))
 		if e != nil {
 			return e
 		}
-		tpl.main.RegisterPartialTemplate(name, partial)
+		_ = tpl.main.WithPartial(name, partial)
 		tpl.pages[name] = &page{Partial: name}
 		return e
 	})
@@ -87,9 +88,9 @@ func (t *templates) render(c echo.Context, name string, ctx map[string]interface
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
 	}
-	contents, err := t.main.Exec(ctx)
-	if err != nil {
+	buf := new(bytes.Buffer)
+	if err := t.main.Execute(buf, ctx); err != nil {
 		return err
 	}
-	return c.HTML(http.StatusOK, contents)
+	return c.HTMLBlob(http.StatusOK, buf.Bytes())
 }

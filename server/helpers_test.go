@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aymerick/raymond"
+	"github.com/imantung/mario"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -75,9 +75,14 @@ func TestHelpers(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			helpers := buildHelpers(&mockedEcho{}, tc.assetHash)
-			tpl := raymond.MustParse(tc.input)
-			tpl.RegisterHelpers(helpers)
-			assert.Equal(t, tc.expected, tpl.MustExec(tc.ctx))
+			tpl, err := mario.New().Parse(tc.input)
+			assert.NoError(t, err)
+			for n, f := range helpers {
+				tpl.WithHelperFunc(n, f)
+			}
+			buf := new(strings.Builder)
+			assert.NoError(t, tpl.Execute(buf, tc.ctx))
+			assert.Equal(t, tc.expected, buf.String())
 		})
 	}
 }
