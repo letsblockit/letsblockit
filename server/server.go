@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,6 +12,13 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/xvello/weblock/filters"
 )
+
+var DryRunFinished = errors.New("dry run finished")
+
+type Options struct {
+	DryRun  bool   `arg:"--dry-run" help:"instantiate all components and exit"`
+	Address string `default:"127.0.0.1:8765" help:"address to listen to"`
+}
 
 type navigationLink struct {
 	Name   string
@@ -26,14 +34,18 @@ var navigationLinks = []navigationLink{{
 }}
 
 type Server struct {
+	options   *Options
 	echo      *echo.Echo
 	pages     *templates
 	filters   *filters.Repository
 	assetETag string
 }
 
-func NewServer() *Server {
-	return &Server{echo: echo.New()}
+func NewServer(options *Options) *Server {
+	return &Server{
+		options: options,
+		echo:    echo.New(),
+	}
 }
 
 func (s *Server) Start() error {
@@ -46,7 +58,10 @@ func (s *Server) Start() error {
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(_ []error) { s.setupRouter() },
 	})
-	return s.echo.Start(":8080")
+	if s.options.DryRun {
+		return DryRunFinished
+	}
+	return s.echo.Start(s.options.Address)
 }
 
 func (s *Server) setupRouter() {
@@ -135,6 +150,8 @@ func buildHandlebarsContext(c echo.Context, title string) map[string]interface{}
 
 func concurrentRunOrPanic(tasks []func([]error)) {
 	var wg sync.WaitGroup
+	var output strings.Builder
+	output.WriteString("Startup tasks finished |")
 	for i, f := range tasks {
 		wg.Add(1)
 		f := f
@@ -147,10 +164,11 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 			if errs[0] != nil {
 				panic(errs[0])
 			}
-			fmt.Printf("Task %d took %s\n", i, time.Since(start))
+			output.WriteString(fmt.Sprintf(" %d: %s |", i, time.Since(start)))
 		}(&wg)
 	}
 	wg.Wait()
+	fmt.Println(output.String())
 }
 
 func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, error) {

@@ -22,20 +22,20 @@ func (m *mockedEcho) Reverse(name string, params ...interface{}) string {
 
 func TestHelpers(t *testing.T) {
 	tests := map[string]struct {
-		input    string
-		ctx      map[string]interface{}
+		input     string
+		ctx       map[string]interface{}
 		assetHash string
-		expected string
+		expected  string
 	}{
 		"assert_hash_present": {
-			input: `.css{{assetHash}}`,
-			ctx: nil,
+			input:     `.css{{assetHash}}`,
+			ctx:       nil,
 			assetHash: "1234",
-			expected: ".css?h=1234",
+			expected:  ".css?h=1234",
 		},
 		"assert_hash_absent": {
-			input: `.css{{assetHash}}`,
-			ctx: nil,
+			input:    `.css{{assetHash}}`,
+			ctx:      nil,
 			expected: ".css",
 		},
 		"href_noarg": {
