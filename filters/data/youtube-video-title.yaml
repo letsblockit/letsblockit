@@ -1,0 +1,29 @@
+title: "Hide Youtube videos by title contents"
+params:
+  - name: keywords
+    description: Words to search for
+    type: list
+    default: [ "#shorts" ]
+tags:
+  - youtube
+template: |
+  {{#each keywords}}
+  www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="{{ . }}" i])
+  www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="{{ . }}" i])
+  www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="{{ . }}" i])
+  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="{{ . }}" i])
+  {{/each}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      keywords: [ "#shorts" ]
+    output: |
+      www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="#shorts" i])
+      www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="#shorts" i])
+      www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="#shorts" i])
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="#shorts" i])
+---
+## Hide websites from search results
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
