@@ -23,25 +23,22 @@ func (s *Server) viewFilter(c echo.Context) error {
 		return err
 	}
 
-	// If filter has no params, always render it
-	if len(filter.Params) == 0 {
+	// If no params are passed, inject the default ones
+	if params == nil {
 		params = make(map[string]interface{})
+		for _, p := range filter.Params {
+			params[p.Name] = p.Default
+		}
 	}
 
-	if params != nil {
-		var buf strings.Builder
-		if err = s.filters.Render(&buf, filter.Name, params); err != nil {
-			return err
-		}
-		hc["rendered"] = buf.String()
-		hc["params"] = params
-	} else {
-		defaultParams := make(map[string]interface{})
-		for _, p := range filter.Params {
-			defaultParams[p.Name] = p.Default
-		}
-		hc["params"] = defaultParams
+	// Render the filter template
+	var buf strings.Builder
+	if err = s.filters.Render(&buf, filter.Name, params); err != nil {
+		return err
 	}
+	hc["rendered"] = buf.String()
+	hc["params"] = params
+
 	return s.pages.render(c, "view-filter", hc)
 }
 
