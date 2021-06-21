@@ -12,10 +12,13 @@ import (
 )
 
 func TestValidateFilters(t *testing.T) {
+	repo, err := LoadFilters()
+	assert.NoError(t, err)
+
 	validate := buildValidator(t)
 	seen := make(map[string]struct{}) // Ensure uniqueness of filter names
 
-	err := utils.Walk(definitionFiles, filenameSuffix, func(name string, file io.Reader) error {
+	err = utils.Walk(definitionFiles, filenameSuffix, func(name string, file io.Reader) error {
 		t.Run("Name/"+name, func(t *testing.T) {
 			if name != strings.ToLower(name) {
 				assert.Fail(t, "name can only be lowercase", name)
@@ -41,7 +44,11 @@ func TestValidateFilters(t *testing.T) {
 		for i, tc := range filter.Tests {
 			t.Run(fmt.Sprintf("Test/%s/%d", name, i), func(t *testing.T) {
 				var buf strings.Builder
-				assert.NoError(t, filter.Parsed.Execute(&buf, tc.Params))
+				ctx := make(map[string]interface{})
+				for k, v := range tc.Params {
+					ctx[k] = v
+				}
+				assert.NoError(t, repo.Render(&buf, filter.Name, ctx))
 				assert.Equal(t, tc.Output, buf.String())
 			})
 		}

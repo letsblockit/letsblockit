@@ -3,6 +3,7 @@ package server
 import (
 	"bytes"
 	"embed"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -39,7 +40,7 @@ func loadPages() (*pages, error) {
 	}
 	pp.main, err = mario.New().Parse(string(contents))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse toplevel template: %w", err)
 	}
 
 	// Parse handlebars pages

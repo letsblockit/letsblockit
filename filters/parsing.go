@@ -45,10 +45,5 @@ func parse(reader io.Reader, filter filter) error {
 	pos += len(yamlSeparator)
 	pos += bytes.Index(input[pos:], newLine)
 	filter.setDescription(string(blackfriday.Run(input[pos:])))
-
-	err = filter.parse()
-	if err != nil {
-		return fmt.Errorf("invalid template: %w", err)
-	}
 	return nil
 }

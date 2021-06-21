@@ -22,9 +22,15 @@ func (s *Server) viewFilter(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	if params != nil || len(filter.Params) == 0 {
+
+	// If filter has no params, always render it
+	if len(filter.Params) == 0 {
+		params = make(map[string]interface{})
+	}
+
+	if params != nil {
 		var buf strings.Builder
-		if err = filter.Render(&buf, params); err != nil {
+		if err = s.filters.Render(&buf, filter.Name, params); err != nil {
 			return err
 		}
 		hc["rendered"] = buf.String()

@@ -1,18 +1,11 @@
 package filters
 
-import (
-	"io"
-
-	"github.com/imantung/mario"
-)
-
 var filenameSuffix = ".yaml"
 var yamlSeparator = []byte("\n---")
 var newLine = []byte("\n")
 
 type filter interface {
 	setDescription(string)
-	parse() error
 }
 
 type Filter struct {
@@ -22,7 +15,6 @@ type Filter struct {
 	Tags        []string      `validate:"dive,alphaunicode"`
 	Template    string        `validate:"required"`
 	Description string        `validate:"required"`
-	Parsed      *mario.Template
 }
 
 type filterAndTests struct {
@@ -50,24 +42,10 @@ type testCase struct {
 	Output string `validate:"required"`
 }
 
-func (f *Filter) Render(w io.Writer, ctx interface{}) error {
-	return f.Parsed.Execute(w, ctx)
-}
-
 func (f *Filter) setDescription(desc string) {
 	f.Description = desc
 }
 
-func (f *Filter) parse() error {
-	var err error
-	f.Parsed, err = mario.New().Parse(f.Template)
-	return err
-}
-
 func (f *filterAndTests) setDescription(desc string) {
 	f.Filter.setDescription(desc)
-}
-
-func (f *filterAndTests) parse() error {
-	return f.Filter.parse()
 }

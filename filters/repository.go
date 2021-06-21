@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"net/http"
+	"strings"
 
+	"github.com/imantung/mario"
+	"github.com/labstack/echo/v4"
 	"github.com/xvello/weblock/utils"
 )
 
@@ -14,6 +18,7 @@ var definitionFiles embed.FS
 
 // Repository holds parsed Filters ready for use
 type Repository struct {
+	main  *mario.Template
 	fMap  map[string]*Filter
 	fList []*Filter
 }
@@ -24,15 +29,28 @@ func LoadFilters() (*Repository, error) {
 }
 
 func load(input fs.FS) (*Repository, error) {
+	main, err := mario.New().Parse("{{>(_filter)}}")
+	main.WithHelperFunc("string_split", func(args string) []string{
+		return strings.Split(args, " ")
+	})
 	repo := &Repository{
+		main: main,
 		fMap: make(map[string]*Filter),
 	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse toplevel template: %w", err)
+	}
 
-	err := utils.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
+	err = utils.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
 		f, e := parseFilter(name, file)
 		if e != nil {
 			return e
 		}
+		partial, e := mario.New().Parse(f.Template)
+		if e != nil {
+			return fmt.Errorf("failed to parse filter template: %w", err)
+		}
+		_ = main.WithPartial(name, partial)
 		repo.fMap[name] = f
 		repo.fList = append(repo.fList, f) // list is naturally sorted because Walkdir iterates on lexical order
 		return nil
@@ -51,4 +69,13 @@ func (r *Repository) GetFilter(name string) (*Filter, error) {
 
 func (r *Repository) GetFilters() []*Filter {
 	return r.fList
+}
+
+func (r *Repository) Render(w io.Writer, name string, ctx map[string]interface{}) error {
+	_, found := r.fMap[name]
+	if !found {
+		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
+	}
+	ctx["_filter"] = name
+	return  r.main.Execute(w, ctx)
 }

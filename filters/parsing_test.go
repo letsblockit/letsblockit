@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/imantung/mario"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -41,7 +40,6 @@ var expectedFilter = Filter{
 	},
 	Tags:        []string{"tag1", "tag2"},
 	Template:    "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
-	Parsed:      mario.Must(mario.New().Parse("{{#each string_list}}\n{{ . }}\n{{/each}}\n")),
 	Description: "<h2>Test description title</h2>\n",
 }
 
