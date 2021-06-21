@@ -79,6 +79,23 @@ func (s *Server) setupRouter() {
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
+	s.echo.GET("/filters/tag/:tag", func(c echo.Context) error {
+		tag := c.Param("tag")
+		hc := buildHandlebarsContext(c, "Filter templates for "+tag)
+		var matching []*filters.Filter
+		for _, f := range s.filters.GetFilters() {
+			for _, t := range f.Tags {
+				if t == tag {
+					matching = append(matching, f)
+					break
+				}
+			}
+		}
+		hc["filters"] = matching
+		// TODO: link to go back to all tags
+		return s.pages.render(c, "list-filters", hc)
+	}).Name = "filters-for-tag"
+
 	s.echo.GET("/filters/:name", s.viewFilter).Name = "view-filter"
 	s.echo.POST("/filters/:name", s.viewFilter)
 }

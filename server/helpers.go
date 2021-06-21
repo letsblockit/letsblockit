@@ -16,6 +16,11 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 		"assetHash": func() string {
 			return assetHashQuery
 		},
+		"tag": func(name string) string {
+			return fmt.Sprintf(
+				`<a href="%s" class="badge rounded-pill bg-secondary text-decoration-none me-2">%s</a>`,
+				href(e, "filters-for-tag", name), name)
+		},
 		"href": func(route string, args string) string {
 			return href(e, route, args)
 		},
