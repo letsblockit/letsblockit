@@ -3,6 +3,7 @@ package filters
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 
 	"github.com/russross/blackfriday/v2"
@@ -33,7 +34,7 @@ func parse(reader io.Reader, filter filter) error {
 	}
 	err = yaml.Unmarshal(input, filter)
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid metadata: %w", err)
 	}
 
 	// Find the separator and parse the markdown after it
@@ -45,5 +46,9 @@ func parse(reader io.Reader, filter filter) error {
 	pos += bytes.Index(input[pos:], newLine)
 	filter.setDescription(string(blackfriday.Run(input[pos:])))
 
-	return filter.parse()
+	err = filter.parse()
+	if err != nil {
+		return fmt.Errorf("invalid template: %w", err)
+	}
+	return nil
 }
