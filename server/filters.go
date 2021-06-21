@@ -22,7 +22,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	if params != nil {
+	if params != nil || len(filter.Params) == 0 {
 		var buf strings.Builder
 		if err = filter.Render(&buf, params); err != nil {
 			return err
