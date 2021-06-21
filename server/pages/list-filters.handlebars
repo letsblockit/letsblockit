@@ -1,7 +1,18 @@
 <h2>{{title}}</h2>
 
-<ul>
+<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
     {{#each filters}}
-        <li><a href="{{href "view-filter" name}}">{{name}}</a>: {{title}}</li>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <a href="{{href "view-filter" name}}" class="stretched-link text-reset text-decoration-none">
+                        <h5 class="card-title">{{title}}</h5>
+                    </a>
+                </div>
+                <div class="card-footer">
+                    {{#each tags}}<span class="badge rounded-pill bg-secondary me-2">{{this}}</span>{{/each}}
+                </div>
+            </div>
+        </div>
     {{/each}}
-</ul>
+</div>
