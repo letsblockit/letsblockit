@@ -12,7 +12,7 @@
     <title>{{ title }}</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary" aria-label="Main navigation">
+<nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">weBlock</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -21,9 +21,11 @@
         </button>
         <div class="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
             {{#each navLinks}}
-                <a class="nav-link{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
+                <a class="nav-link ms-2 me-2{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
                         href="/{{target}}">{{name}}</a>
             {{/each}}
+            <a class="ms-2 nav-link" href="https://github.com/xvello/weblock" title="Github repository">
+                <i class="fab fa-lg fa-github"></i></a>
         </div>
     </div>
 </nav>
