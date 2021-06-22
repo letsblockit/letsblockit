@@ -20,12 +20,16 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
+            <div class="navbar-nav ms-md-auto me-md-auto">
             {{#each navLinks}}
                 <a class="nav-link ms-2 me-2{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
                         href="/{{target}}">{{name}}</a>
             {{/each}}
-            <a class="ms-2 nav-link" href="https://github.com/xvello/weblock" title="Github repository">
-                <i class="fab fa-lg fa-github"></i></a>
+            </div>
+            <div class="navbar-nav">
+                <a class="ms-2 me-2 nav-link" href="https://github.com/xvello/weblock" title="Github">
+                    <i class="fab fa-lg fa-github"></i></a>
+            </div>
         </div>
     </div>
 </nav>
