@@ -6,6 +6,7 @@ require (
 	github.com/DataDog/mmh3 v0.0.0-20200805151601-30884ca2197a
 	github.com/alexflint/go-arg v1.4.2
 	github.com/go-playground/validator/v10 v10.6.1
+	github.com/honeycombio/beeline-go v1.1.2
 	github.com/imantung/mario v0.9.0
 	github.com/labstack/echo/v4 v4.3.0
 	github.com/russross/blackfriday/v2 v2.1.0

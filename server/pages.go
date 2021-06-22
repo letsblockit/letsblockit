@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/honeycombio/beeline-go"
 	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
 	"github.com/russross/blackfriday/v2"
@@ -86,14 +87,16 @@ func (t *pages) registerHelpers(helpers map[string]interface{}) {
 	}
 }
 
-func (t *pages) render(c echo.Context, name string, ctx map[string]interface{}) error {
+func (t *pages) render(c echo.Context, name string, data map[string]interface{}) error {
+	_, span := beeline.StartSpan(c.Request().Context(), "render_page")
+	defer span.Send()
 	var found bool
-	ctx["_page"], found = t.pages[name]
+	data["_page"], found = t.pages[name]
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
 	}
 	buf := new(bytes.Buffer)
-	if err := t.main.Execute(buf, ctx); err != nil {
+	if err := t.main.Execute(buf, data); err != nil {
 		return err
 	}
 	return c.HTMLBlob(http.StatusOK, buf.Bytes())
