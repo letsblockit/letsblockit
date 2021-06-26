@@ -136,8 +136,7 @@ func buildHandlebarsContext(c echo.Context, title string) map[string]interface{}
 
 func concurrentRunOrPanic(tasks []func([]error)) {
 	var wg sync.WaitGroup
-	var output strings.Builder
-	output.WriteString("Startup tasks finished |")
+	timings := make([]time.Duration, len(tasks))
 	for i, f := range tasks {
 		wg.Add(1)
 		f := f
@@ -150,9 +149,15 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 			if errs[0] != nil {
 				panic(errs[0])
 			}
-			output.WriteString(fmt.Sprintf(" %d: %s |", i, time.Since(start)))
+			timings[i] = time.Since(start)
 		}(&wg)
 	}
 	wg.Wait()
+
+	var output strings.Builder
+	output.WriteString("Startup tasks finished |")
+	for i, d := range timings {
+		output.WriteString(fmt.Sprintf(" %d: %s |", i, d))
+	}
 	fmt.Println(output.String())
 }
