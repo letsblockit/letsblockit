@@ -1,7 +1,6 @@
 package server
 
 import (
-	"embed"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -11,11 +10,8 @@ import (
 
 	"github.com/DataDog/mmh3"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/weblock/utils"
+	"github.com/xvello/weblock/data"
 )
-
-//go:embed assets
-var assetFiles embed.FS
 
 /* wrappedAssets handles serving static assets. It:
  *  - wraps an embed.FS and blocks access to folders
@@ -33,7 +29,7 @@ type wrappedAssets struct {
 func loadAssets() *wrappedAssets {
 	hash := computeAssetsHash()
 	assets := &wrappedAssets{
-		root:  assetFiles,
+		root:  data.Assets,
 		isDir: make(map[string]bool),
 		hash:  hash,
 		eTag:  fmt.Sprintf("\"%s\"", hash),
@@ -82,7 +78,7 @@ func (w wrappedAssets) Open(name string) (http.File, error) {
 // computeAssetsHash walks the assets filesystem to compute a hash of all files.
 func computeAssetsHash() string {
 	hash := &mmh3.HashWriter128{}
-	err := utils.Walk(assetFiles, "", func(name string, reader io.Reader) error {
+	err := data.Walk(data.Assets, "", func(name string, reader io.Reader) error {
 		hash.AddString(name)
 		_, e := io.Copy(hash, reader)
 		return e

@@ -1,4 +1,2 @@
 weblock
-/webpack/node_modules/
-
-.idea
+/src/assets/node_modules/

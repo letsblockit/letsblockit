@@ -2,7 +2,6 @@ package server
 
 import (
 	"bytes"
-	"embed"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,11 +11,8 @@ import (
 	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
 	"github.com/russross/blackfriday/v2"
-	"github.com/xvello/weblock/utils"
+	"github.com/xvello/weblock/data"
 )
-
-//go:embed pages/*
-var templateFiles embed.FS
 
 type page struct {
 	Partial  string
@@ -35,7 +31,7 @@ func loadPages() (*pages, error) {
 		pages: make(map[string]*page),
 	}
 	// Parse toplevel layout template
-	contents, err := templateFiles.ReadFile("pages/_layout.handlebars")
+	contents, err := data.Pages.ReadFile("pages/_layout.handlebars")
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +41,7 @@ func loadPages() (*pages, error) {
 	}
 
 	// Parse handlebars pages
-	err = utils.Walk(templateFiles, ".handlebars", func(name string, file io.Reader) error {
+	err = data.Walk(data.Pages, ".handlebars", func(name string, file io.Reader) error {
 		if strings.HasPrefix(name, "_") {
 			return nil
 		}
@@ -66,7 +62,7 @@ func loadPages() (*pages, error) {
 	}
 
 	// Parse markdown pages
-	err = utils.Walk(templateFiles, ".md", func(name string, file io.Reader) error {
+	err = data.Walk(data.Pages, ".md", func(name string, file io.Reader) error {
 		if strings.HasPrefix(name, "_") {
 			return nil
 		}

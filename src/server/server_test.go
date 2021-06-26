@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/weblock/filters"
+	"github.com/xvello/weblock/src/filters"
 )
 
 // Checks that the server can instantiate all its components.

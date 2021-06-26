@@ -2,7 +2,6 @@ package filters
 
 import (
 	"context"
-	"embed"
 	"fmt"
 	"io"
 	"io/fs"
@@ -12,11 +11,8 @@ import (
 	"github.com/honeycombio/beeline-go"
 	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/weblock/utils"
+	"github.com/xvello/weblock/data"
 )
-
-//go:embed data
-var definitionFiles embed.FS
 
 // Repository holds parsed Filters ready for use
 type Repository struct {
@@ -27,12 +23,12 @@ type Repository struct {
 
 // LoadFilters parses all filter definitions found in the data folder
 func LoadFilters() (*Repository, error) {
-	return load(definitionFiles)
+	return load(data.Filters)
 }
 
 func load(input fs.FS) (*Repository, error) {
 	main, err := mario.New().Parse("{{>(_filter)}}")
-	main.WithHelperFunc("string_split", func(args string) []string{
+	main.WithHelperFunc("string_split", func(args string) []string {
 		return strings.Split(args, " ")
 	})
 	repo := &Repository{
@@ -43,7 +39,7 @@ func load(input fs.FS) (*Repository, error) {
 		return nil, fmt.Errorf("failed to parse toplevel template: %w", err)
 	}
 
-	err = utils.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
+	err = data.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
 		f, e := parseFilter(name, file)
 		if e != nil {
 			return e
@@ -81,5 +77,5 @@ func (r *Repository) Render(ctx context.Context, w io.Writer, name string, data 
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
 	}
 	data["_filter"] = name
-	return  r.main.Execute(w, data)
+	return r.main.Execute(w, data)
 }

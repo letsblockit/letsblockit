@@ -1,11 +1,21 @@
-package utils
+package data
 
 import (
+	"embed"
 	"fmt"
 	"io"
 	"io/fs"
 	"strings"
 )
+
+//go:embed assets
+var Assets embed.FS
+
+//go:embed filters
+var Filters embed.FS
+
+//go:embed pages/*
+var Pages embed.FS
 
 // Walk warps fs.WalkDir with simpler invocation pattern:
 //  - only files with a given suffix are passed opened

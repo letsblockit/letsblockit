@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/weblock/filters"
+	"github.com/xvello/weblock/src/filters"
 )
 
 func (s *Server) viewFilter(c echo.Context) error {

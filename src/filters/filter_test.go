@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/xvello/weblock/utils"
+	"github.com/xvello/weblock/data"
 )
 
 func TestValidateFilters(t *testing.T) {
@@ -19,7 +19,7 @@ func TestValidateFilters(t *testing.T) {
 	validate := buildValidator(t)
 	seen := make(map[string]struct{}) // Ensure uniqueness of filter names
 
-	err = utils.Walk(definitionFiles, filenameSuffix, func(name string, file io.Reader) error {
+	err = data.Walk(data.Filters, filenameSuffix, func(name string, file io.Reader) error {
 		t.Run("Name/"+name, func(t *testing.T) {
 			if name != strings.ToLower(name) {
 				assert.Fail(t, "name can only be lowercase", name)
