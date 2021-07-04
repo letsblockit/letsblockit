@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/weblock/src/filters"
@@ -14,7 +16,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
-	hc := buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", filter.Title))
+	hc := buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
 	hc["filter"] = filter
 
 	// Parse filters param and render output if non empty
@@ -70,4 +72,13 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 		}
 	}
 	return params, err
+}
+
+
+func lowerFirst(s string) string {
+	if s == "" {
+		return ""
+	}
+	r, n := utf8.DecodeRuneInString(s)
+	return string(unicode.ToLower(r)) + s[n:]
 }
