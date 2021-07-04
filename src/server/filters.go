@@ -74,7 +74,6 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 	return params, err
 }
 
-
 func lowerFirst(s string) string {
 	if s == "" {
 		return ""

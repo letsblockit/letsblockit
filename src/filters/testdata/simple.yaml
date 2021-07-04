@@ -1,4 +1,5 @@
 title: Filter title
+blurb: Filter blurb
 params:
   - name: boolean_param
     description: A boolean parameter

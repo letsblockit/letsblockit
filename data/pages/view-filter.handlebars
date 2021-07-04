@@ -7,12 +7,16 @@
         <div class="card-body">
             <h5 class="card-title">Contribute</h5>
             <p class="card-text">
-                <a href="https://github.com/xvello/weblock/blob/main/data/filters/{{filter.name}}.yaml">Filter source</a>
+                <a href="https://github.com/xvello/weblock/blob/main/data/filters/{{filter.name}}.yaml">Filter
+                    source</a>
             </p>
         </div>
     </div>
     <div class="col col-lg-9">
+        <h2>{{filter.title}}</h2>
+        <p class="lead">{{filter.blurb}}</p>
         {{{ filter.description }}}
+
         {{#if filter.params}}
             <h2>Try it out!</h2>
 

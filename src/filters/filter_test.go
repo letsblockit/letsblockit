@@ -38,10 +38,6 @@ func TestValidateFilters(t *testing.T) {
 			assert.NoError(t, validate.Struct(filter), "Filter did no pass input validation")
 		})
 
-		t.Run("Desc/"+name, func(t *testing.T) {
-			assert.True(t, strings.HasPrefix(filter.Description, "<h2>"), "Description must start with a second-level header")
-		})
-
 		for i, tc := range filter.Tests {
 			t.Run(fmt.Sprintf("Test/%s/%d", name, i), func(t *testing.T) {
 				var buf strings.Builder

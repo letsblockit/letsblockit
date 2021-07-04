@@ -1,4 +1,5 @@
-title: "Hide websites from search results"
+title: Hide websites from search results
+blurb: No pinterest, I don't need 900+ ideas.
 params:
   - name: google
     description: Generate rules for Google Search
@@ -7,11 +8,11 @@ params:
   - name: duckduckgo
     description: Generate rules for Duck Duck Go
     type: checkbox
-    default: false
+    default: true
   - name: sites
     description: Sites to hide
     type: list
-    default: [ ".pinterest.", "snapcraft.io" ]
+    default: [ ".pinterest.", "snapcraft.io/install" ]
 tags:
   - google
   - duckduckgo
@@ -32,15 +33,23 @@ tests:
   - params:
       google: true
       duckduckgo: true
-      sites: [ ".pinterest.", "snapcraft.io" ]
+      sites: [ ".pinterest.", "snapcraft.io/install" ]
     output: |
       google.*##.g:has(a[href*=".pinterest."])
       google.*##a[href*=".pinterest."]:upward(1)
       duckduckgo.com##a.result__a[href*=".pinterest."]:upward(3)
-      google.*##.g:has(a[href*="snapcraft.io"])
-      google.*##a[href*="snapcraft.io"]:upward(1)
-      duckduckgo.com##a.result__a[href*="snapcraft.io"]:upward(3)
+      google.*##.g:has(a[href*="snapcraft.io/install"])
+      google.*##a[href*="snapcraft.io/install"]:upward(1)
+      duckduckgo.com##a.result__a[href*="snapcraft.io/install"]:upward(3)
 ---
-## Hide websites from search results
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Some websites are famous for being better at [Search Engine Optimization](https://news.ycombinator.com/item?id=25538586) than providing useful content. While there is not much we can do ourselves to avoid SEO abuse, we can cleanup the search results that are returned to us by search engines.
+
+![example of pinterest search results](/assets/images/filters/search-results-pinterest.png)
+
+This template allows you to remove search results based on their URL for **both text and image searches**. It supports Google and DuckDuckGo, but contributions are welcome to support more search engines.
+
+Results will be hidden if their link destination contains one of the values you pass. For example:
+
+- pinterest publishes content on an army of subdomains and country-specific domains ; using `.pinterest.` allows to block them all
+- snapcraft.io's SEO efforts focus on `snapcraft.io/install/X/Y` pages ; using `snapscraft.io/install` limits the blocking to these pages

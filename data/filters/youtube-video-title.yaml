@@ -1,9 +1,10 @@
-title: "Hide Youtube videos by title contents"
+title: Hide Youtube videos by title
+blurb: Remove content you are not interested in.
 params:
   - name: keywords
     description: Words to search for
     type: list
-    default: [ "#shorts" ]
+    default: [ "lofi" ]
 tags:
   - youtube
 template: |
@@ -17,13 +18,15 @@ tests:
   - params: {}
     output: ""
   - params:
-      keywords: [ "#shorts" ]
+      keywords: [ "lofi" ]
     output: |
-      www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="#shorts" i])
-      www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="#shorts" i])
-      www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="#shorts" i])
-      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="#shorts" i])
+      www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="lofi" i])
+      www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="lofi" i])
+      www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="lofi" i])
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="lofi" i])
 ---
-## Hide websites from search results
+Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. This this filter, you can remove videos with a given word in their title.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<div class="alert alert-warning" role="alert">
+In order to reduce false-positives, the filter matches full words (with spaces around them, or at the start/end of the title). It does a case-insentive match though (`lofi` will also match `LoFi`).
+</div>
