@@ -4,13 +4,19 @@
             <h5 class="card-title">Tags</h5>
             <p class="card-text">{{#each filter.tags}}{{{tag this}}}{{/each}}</p>
         </div>
+        <div class="card-body">
+            <h5 class="card-title">Contribute</h5>
+            <p class="card-text">
+                <a href="https://github.com/xvello/weblock/blob/main/data/filters/{{filter.name}}.yaml">Filter source</a>
+            </p>
+        </div>
     </div>
     <div class="col col-lg-9">
         {{{ filter.description }}}
         {{#if filter.params}}
             <h2>Try it out!</h2>
 
-            <form id="filter_input">
+            <form id="filter_input" action="#output-card">
                 {{#each filter.params}}
                     {{#equal type "checkbox"}}
                         <div class="mb-3 form-check">
@@ -30,10 +36,10 @@
                         <div class="mb-3">
                             <label class="form-label">{{description}}:</label>
                             {{#each (lookup_list @root.params name)}}
-                                <input class="form-control" name="{{name}}" value="{{this}}">
+                                <input class="form-control ms-4 mb-1 w-75" name="{{name}}" value="{{this}}">
                             {{/each}}
-                            <input class="form-control" name="{{name}}">
-                            <input class="form-control" name="{{name}}">
+                            <input class="form-control ms-4 mb-1 w-75" name="{{name}}">
+                            <input class="form-control ms-4 mb-1 w-75" name="{{name}}">
                         </div>
                     {{/equal}}
                 {{/each}}
@@ -43,6 +49,22 @@
             <h2>Filter contents</h2>
             <p>This filter does not have any parameters.</p>
         {{/if}}
-        <code id="filter_output" style="white-space:pre-line">{{rendered}}</code>
+        <div id="output-card" class="card mt-4" style="cursor: pointer" onclick="copyOutput();">
+            <div class="card-body">
+                <code id="output-code" class="card-text text-primary" style="white-space:pre-line">{{rendered}}</code>
+            </div>
+            <div id="output-footer" class="card-footer text-end">Click to copy to clipboard</div>
+        </div>
     </div>
 </div>
+
+<script>
+    function copyOutput() {
+        navigator.clipboard.writeText(document.getElementById("output-code").innerHTML);
+        document.getElementById("output-card").classList.add("border-success")
+
+        const footer = document.getElementById("output-footer");
+        footer.innerText = "Copied to clipboard";
+        footer.classList.add("bg-success", "text-white")
+    }
+</script>
