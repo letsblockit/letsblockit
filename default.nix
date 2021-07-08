@@ -4,6 +4,6 @@ pkgs.buildGoModule.override{
 } {
   pname = "weblock";
   version = "1.0";
-  vendorSha256 = "0dv610gilwwqlchqhhxy74717s16v8dzirp6bisvn5ga1qh96fhw";
+  vendorSha256 = "07lk7pbfvyf3y3nk097jq494kcq7cm5al6kpigcgfyzqa3rp5m31";
   src = ./.;
 }
