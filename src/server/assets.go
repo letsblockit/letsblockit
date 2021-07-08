@@ -39,7 +39,7 @@ func loadAssets() *wrappedAssets {
 }
 
 func (w *wrappedAssets) serve(c echo.Context) error {
-	if c.Request().Header.Get("If-None-Match") == w.eTag {
+	if strings.HasSuffix(c.Request().Header.Get("If-None-Match"), w.eTag) {
 		return c.NoContent(http.StatusNotModified)
 	}
 	c.Response().Before(func() {
