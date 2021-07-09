@@ -15,7 +15,7 @@ import (
 	"github.com/xvello/weblock/src/filters"
 )
 
-var DryRunFinished = errors.New("dry run finished")
+var ErrDryRunFinished = errors.New("dry run finished")
 
 type Options struct {
 	DryRun         bool   `arg:"--dry-run" help:"instantiate all components and exit"`
@@ -69,7 +69,7 @@ func (s *Server) Start() error {
 	s.pages.registerHelpers(buildHelpers(s.echo, s.assets.hash))
 	s.setupRouter()
 	if s.options.DryRun {
-		return DryRunFinished
+		return ErrDryRunFinished
 	}
 	return s.echo.Start(s.options.Address)
 }

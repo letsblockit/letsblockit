@@ -15,7 +15,7 @@ func main() {
 	err := server.NewServer(options).Start()
 
 	switch err {
-	case server.DryRunFinished:
+	case server.ErrDryRunFinished:
 		fmt.Printf("Dry-run checks finished in %s\n", time.Since(start))
 	default:
 		panic(err)

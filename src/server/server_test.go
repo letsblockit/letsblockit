@@ -11,7 +11,7 @@ import (
 // This includes parsing all pages and filters.
 func TestServerDryRun(t *testing.T) {
 	server := NewServer(&Options{DryRun: true})
-	assert.Equal(t, DryRunFinished, server.Start())
+	assert.Equal(t, ErrDryRunFinished, server.Start())
 }
 
 func BenchmarkServerStart(b *testing.B) {
