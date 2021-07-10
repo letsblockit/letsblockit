@@ -11,7 +11,7 @@ import (
 	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
 	"github.com/russross/blackfriday/v2"
-	"github.com/xvello/weblock/data"
+	"github.com/xvello/letsblockit/data"
 )
 
 type page struct {

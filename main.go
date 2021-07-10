@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/alexflint/go-arg"
-	"github.com/xvello/weblock/src/server"
+	"github.com/xvello/letsblockit/src/server"
 )
 
 func main() {

@@ -11,7 +11,7 @@ import (
 	"github.com/honeycombio/beeline-go"
 	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/weblock/data"
+	"github.com/xvello/letsblockit/data"
 )
 
 // Repository holds parsed Filters ready for use

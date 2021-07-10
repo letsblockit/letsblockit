@@ -1,4 +1,4 @@
-module github.com/xvello/weblock
+module github.com/xvello/letsblockit
 
 go 1.16
 

@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/weblock/src/filters"
+	"github.com/xvello/letsblockit/src/filters"
 )
 
 func (s *Server) viewFilter(c echo.Context) error {

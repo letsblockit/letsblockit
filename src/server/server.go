@@ -12,7 +12,7 @@ import (
 	"github.com/honeycombio/beeline-go/wrappers/hnyecho"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/xvello/weblock/src/filters"
+	"github.com/xvello/letsblockit/src/filters"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -54,7 +54,7 @@ func (s *Server) Start() error {
 	if s.options.HoneycombKey != "" || s.options.HoneycombDebug {
 		beeline.Init(beeline.Config{
 			WriteKey: s.options.HoneycombKey,
-			Dataset:  "weblock",
+			Dataset:  "letsblockit",
 			STDOUT:   s.options.HoneycombDebug,
 		})
 		s.echo.Use(hnyecho.New().Middleware())
