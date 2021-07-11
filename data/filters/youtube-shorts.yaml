@@ -15,3 +15,7 @@ tests:
 Youtube is pushing forward a new low-effort format with videos under 60 seconds. So far, Youtube recommends add `#shorts` to the video title. We can use this to our advantage by hiding with this keyword in their title.
 
 [Original idea](https://old.reddit.com/r/uBlockOrigin/comments/m9znll/hide_youtube_shorts_from_video_lists/), expanded here to cover all pages.
+
+<div class="alert alert-warning" role="alert">
+As the #shorts tag is not compulsory, some shorts might still go through this filter. Contributions are welcome to improve this  filter.
+</div>

@@ -84,7 +84,7 @@ func (s *Server) setupRouter() {
 		return c.Redirect(http.StatusFound, "/filters")
 	}).Name = "index"
 
-	s.addStatic("/about", "about", "About the weBlock project")
+	s.addStatic("/about", "about", "About: Let’s block it!")
 
 	s.echo.GET("/filters", func(c echo.Context) error {
 		hc := buildHandlebarsContext(c, "Available uBlock filter templates")
