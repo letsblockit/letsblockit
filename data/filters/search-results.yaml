@@ -16,7 +16,6 @@ params:
 tags:
   - google
   - duckduckgo
-  - pinterest
 template: |
   {{#each sites}}
   {{#if ../google}}
