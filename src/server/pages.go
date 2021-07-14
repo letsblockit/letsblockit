@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/honeycombio/beeline-go"
 	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
 	"github.com/russross/blackfriday/v2"
@@ -84,8 +83,6 @@ func (t *pages) registerHelpers(helpers map[string]interface{}) {
 }
 
 func (t *pages) render(c echo.Context, name string, data map[string]interface{}) error {
-	_, span := beeline.StartSpan(c.Request().Context(), "render_page")
-	defer span.Send()
 	var found bool
 	data["_page"], found = t.pages[name]
 	if !found {

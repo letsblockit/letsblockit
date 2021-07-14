@@ -8,8 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/honeycombio/beeline-go"
-	"github.com/honeycombio/beeline-go/wrappers/hnyecho"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/xvello/letsblockit/src/filters"
@@ -18,10 +16,8 @@ import (
 var ErrDryRunFinished = errors.New("dry run finished")
 
 type Options struct {
-	DryRun         bool   `arg:"--dry-run" help:"instantiate all components and exit"`
-	Address        string `default:"127.0.0.1:8765" help:"address to listen to"`
-	HoneycombKey   string `arg:"--honeycomb-key" help:"write key for honeycomb.io trace submission"`
-	HoneycombDebug bool   `arg:"--honeycomb-debug" help:"write traces to stdout instead"`
+	DryRun  bool   `arg:"--dry-run" help:"instantiate all components and exit"`
+	Address string `default:"127.0.0.1:8765" help:"address to listen to"`
 }
 
 var navigationLinks = []struct {
@@ -51,15 +47,6 @@ func NewServer(options *Options) *Server {
 }
 
 func (s *Server) Start() error {
-	if s.options.HoneycombKey != "" || s.options.HoneycombDebug {
-		beeline.Init(beeline.Config{
-			WriteKey: s.options.HoneycombKey,
-			Dataset:  "letsblockit",
-			STDOUT:   s.options.HoneycombDebug,
-		})
-		s.echo.Use(hnyecho.New().Middleware())
-		defer beeline.Close()
-	}
 	concurrentRunOrPanic([]func([]error){
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = loadPages() },

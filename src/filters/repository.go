@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/honeycombio/beeline-go"
 	"github.com/imantung/mario"
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/data"
@@ -70,8 +69,6 @@ func (r *Repository) GetFilters() []*Filter {
 }
 
 func (r *Repository) Render(ctx context.Context, w io.Writer, name string, data map[string]interface{}) error {
-	_, span := beeline.StartSpan(ctx, "render_filter")
-	defer span.Send()
 	_, found := r.fMap[name]
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
