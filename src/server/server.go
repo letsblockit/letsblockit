@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/DataDog/datadog-go/statsd"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/xvello/letsblockit/src/filters"
@@ -18,6 +19,7 @@ var ErrDryRunFinished = errors.New("dry run finished")
 type Options struct {
 	DryRun  bool   `arg:"--dry-run" help:"instantiate all components and exit"`
 	Address string `default:"127.0.0.1:8765" help:"address to listen to"`
+	Statsd  string `help:"address to send statsd metrics to"`
 }
 
 var navigationLinks = []struct {
@@ -52,6 +54,14 @@ func (s *Server) Start() error {
 		func(errs []error) { s.pages, errs[0] = loadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 	})
+
+	if s.options.Statsd != "" {
+		dsd, err := statsd.New(s.options.Statsd)
+		if err != nil {
+			return err
+		}
+		s.echo.Use(buildDogstatsMiddleware(dsd))
+	}
 
 	s.pages.registerHelpers(buildHelpers(s.echo, s.assets.hash))
 	s.setupRouter()
@@ -147,4 +157,18 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 		output.WriteString(fmt.Sprintf(" %d: %s |", i, d))
 	}
 	fmt.Println(output.String())
+}
+
+func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			start := time.Now()
+			if err := next(c); err != nil {
+				c.Error(err)
+			}
+			duration := time.Since(start)
+			_ = dsd.Distribution("letsblockit.request_duration", float64(duration.Nanoseconds()), nil, 1)
+			return nil
+		}
+	}
 }

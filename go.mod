@@ -3,7 +3,9 @@ module github.com/xvello/letsblockit
 go 1.16
 
 require (
+	github.com/DataDog/datadog-go v4.8.0+incompatible
 	github.com/DataDog/mmh3 v0.0.0-20200805151601-30884ca2197a
+	github.com/Microsoft/go-winio v0.5.0 // indirect
 	github.com/alexflint/go-arg v1.4.2
 	github.com/go-playground/validator/v10 v10.7.0
 	github.com/imantung/mario v0.9.0
