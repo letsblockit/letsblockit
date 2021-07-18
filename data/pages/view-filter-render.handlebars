@@ -1,0 +1,10 @@
+<div id="output-card" class="card mt-4 shadow-sm">
+    <div id="output-header" class="card-header d-flex justify-content-between align-items-center">
+        Copy this to your uBlock filters:
+        <button type="button" class="btn btn-sm btn-outline-success" onclick="copyOutput();">Copy to clipboard
+        </button>
+    </div>
+    <div class="card-body">
+        <code id="output-code" class="card-text text-primary" style="white-space:pre-line">{{rendered}}</code>
+    </div>
+</div>

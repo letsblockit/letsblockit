@@ -21,8 +21,9 @@
             <h2>Try it out!</h2>
             <div class="card shadow-sm">
                 <div class="card-header">Tune the following options and click Render:</div>
-                <form id="filter_input" class="card-body" action="#output-card"
-                      hx-get="#output-card" hx-target="#output-card" hx-select="#output-card" hx-swap="outerHTML">
+                <form id="filter_input" class="card-body" method="POST" action="#output-card"
+                      hx-post="{{href "view-filter-render" filter.name}}" hx-target="#output-card"
+                      hx-swap="outerHTML show:top">
                     {{#each filter.params}}
                         {{#equal type "checkbox"}}
                             <div class="mb-3 form-check">
@@ -79,16 +80,7 @@
             <h2>Filter contents</h2>
             <p>This filter does not have any parameters.</p>
         {{/if}}
-        <div id="output-card" class="card mt-4 shadow-sm">
-            <div id="output-header" class="card-header d-flex justify-content-between align-items-center">
-                Copy this to your uBlock filters:
-                <button type="button" class="btn btn-sm btn-outline-success" onclick="copyOutput();">Copy to clipboard
-                </button>
-            </div>
-            <div class="card-body">
-                <code id="output-code" class="card-text text-primary" style="white-space:pre-line">{{rendered}}</code>
-            </div>
-        </div>
+        {{>view-filter-render}}
     </div>
 </div>
 

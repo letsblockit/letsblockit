@@ -21,6 +21,7 @@ type page struct {
 // pages holds parsed pages ready for rendering
 type pages struct {
 	main  *mario.Template
+	naked *mario.Template
 	pages map[string]*page
 }
 
@@ -39,6 +40,16 @@ func loadPages() (*pages, error) {
 		return nil, fmt.Errorf("failed to parse toplevel template: %w", err)
 	}
 
+	// Parse toplevel naked template
+	contents, err = data.Pages.ReadFile("pages/_naked.handlebars")
+	if err != nil {
+		return nil, err
+	}
+	pp.naked, err = mario.New().Parse(string(contents))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse naked template: %w", err)
+	}
+
 	// Parse handlebars pages
 	err = data.Walk(data.Pages, ".handlebars", func(name string, file io.Reader) error {
 		if strings.HasPrefix(name, "_") {
@@ -53,6 +64,8 @@ func loadPages() (*pages, error) {
 			return e
 		}
 		_ = pp.main.WithPartial(name, partial)
+		_ = pp.naked.WithPartial(name, partial)
+
 		pp.pages[name] = &page{Partial: name}
 		return e
 	})
@@ -88,8 +101,12 @@ func (t *pages) render(c echo.Context, name string, data map[string]interface{})
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
 	}
+	tpl := t.main
+	if _, found := data["_naked"]; found {
+		tpl = t.naked
+	}
 	buf := new(bytes.Buffer)
-	if err := t.main.Execute(buf, data); err != nil {
+	if err := tpl.Execute(buf, data); err != nil {
 		return err
 	}
 	return c.HTMLBlob(http.StatusOK, buf.Bytes())

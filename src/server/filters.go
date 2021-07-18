@@ -44,6 +44,38 @@ func (s *Server) viewFilter(c echo.Context) error {
 	return s.pages.render(c, "view-filter", hc)
 }
 
+func (s *Server) viewFilterRender(c echo.Context) error {
+	filter, err := s.filters.GetFilter(c.Param("name"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound)
+	}
+
+	// Parse filters param and render output if non empty
+	params, err := parseFilterParams(c, filter)
+	if err != nil {
+		return err
+	}
+
+	// If no params are passed, inject the default ones
+	if params == nil {
+		params = make(map[string]interface{})
+		for _, p := range filter.Params {
+			params[p.Name] = p.Default
+		}
+	}
+
+	// Render the filter template
+	var buf strings.Builder
+	if err = s.filters.Render(c.Request().Context(), &buf, filter.Name, params); err != nil {
+		return err
+	}
+	hc := map[string]interface{}{
+		"_naked":   true,
+		"rendered": buf.String(),
+	}
+	return s.pages.render(c, "view-filter-render", hc)
+}
+
 func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, error) {
 	formParams, err := c.FormParams()
 	if err != nil {
