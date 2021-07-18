@@ -17,8 +17,8 @@ $dark: #262432;
 
 @import "node_modules/bootstrap/scss/bootstrap";
 
-.btn-outline-success:hover {
-  color: $white;
+.btn-success, .btw-success:hover, .btn-outline-success:hover {
+  color: $white !important;
 }
 
 // Injected by htmx.js, but adding for noscript users

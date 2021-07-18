@@ -42,27 +42,32 @@
                         {{#equal type "list"}}
                             <fieldset class="row mb-3">
                                 <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
-                                <div class="col-sm-8 filter-values-list">
+                                <div class="col-sm-8">
                                     {{#each (lookup_list @root.params name)}}
                                         <div class="input-group mb-1">
                                             <input type="text" class="form-control" name="{{name}}" value="{{this}}">
                                             <button class="btn btn-outline-success" type="button"
-                                                    title="Add a row below"
-                                                    onclick="addRow(this);">+
+                                                    aria-label="Add a row below"
+                                                    title="Add a row below" onclick="addRow(this);">
+                                                <i class="fas fa-plus"></i>
                                             </button>
                                             <button class="btn btn-outline-primary" type="button"
-                                                    title="Delete this row"
-                                                    onclick="deleteRow(this);">–
-                                            </button>
+                                                    aria-label="Delete this row"
+                                                    title="Delete this row" onclick="deleteRow(this);">
+                                                <i class="far fa-trash-alt"></i>
                                         </div>
                                     {{/each}}
                                     <div class="input-group mb-1">
                                         <input type="text" class="form-control" name="{{name}}">
-                                        <button class="btn btn-outline-success" type="button" title="Add a row below"
-                                                onclick="addRow(this);">+
+                                        <button class="btn btn-outline-success" type="button"
+                                                aria-label="Add a row below"
+                                                title="Add a row below" onclick="addRow(this);">
+                                            <i class="fas fa-plus"></i>
                                         </button>
-                                        <button class="btn btn-outline-primary" type="button" title="Delete this row"
-                                                onclick="deleteRow(this);">–
+                                        <button class="btn btn-outline-primary" type="button"
+                                                aria-label="Delete this row"
+                                                title="Delete this row" onclick="deleteRow(this);">
+                                            <i class="far fa-trash-alt"></i>
                                         </button>
                                     </div>
                             </fieldset>
@@ -85,13 +90,11 @@
 </div>
 
 <script>
-    function copyOutput() {
+    function copyOutput(clicked) {
         navigator.clipboard.writeText(document.getElementById("output-code").innerHTML);
         document.getElementById("output-card").classList.add("border-success")
-
-        const footer = document.getElementById("output-header");
-        footer.innerText = "Copied to clipboard";
-        footer.classList.add("bg-success", "text-white")
+        clicked.innerHTML = "<i class=\"fas fa-clipboard-check me-1\"></i> Copied to clipboard"
+        clicked.classList.add("btn-success")
     }
 
     function deleteRow(clicked) {
