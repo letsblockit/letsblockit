@@ -5,12 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/assets/css/styles.min.css{{assetHash}}">
+    <script defer src="/assets/js/htmx.min.js{{assetHash}}"></script>
     {{#each jsImports}}
         <script defer src="/assets/js/{{this}}{{assetHash}}"></script>
     {{/each}}
     <title>{{ title }}</title>
 </head>
-<body>
+<body hx-boost="true">
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">Let's block it!</a>
@@ -20,10 +21,10 @@
         </button>
         <div class="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
             <div class="navbar-nav ms-md-auto me-md-auto">
-            {{#each navLinks}}
-                <a class="nav-link ms-2 me-2{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
-                        href="/{{target}}">{{name}}</a>
-            {{/each}}
+                {{#each navLinks}}
+                    <a class="nav-link ms-2 me-2{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
+                            href="/{{target}}">{{name}}</a>
+                {{/each}}
             </div>
             <div class="navbar-nav">
                 <a class="ms-2 me-2 nav-link" href="https://github.com/xvello/letsblockit" title="Github">

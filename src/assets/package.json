@@ -5,7 +5,7 @@
   "scripts": {
     "css": "node-sass --output-style compressed --omit-source-map-url styles.scss ../../data/assets/css/styles.min.css",
     "fonts": "install node_modules/@fortawesome/fontawesome-free/webfonts/*.woff2 -t ../../data/assets/fonts/",
-    "js": "install node_modules/handlebars/dist/handlebars.min.js node_modules/bootstrap/dist/js/bootstrap.bundle.min.js -t ../../data/assets/js/",
+    "js": "install node_modules/htmx.org/dist/htmx.min.js node_modules/handlebars/dist/handlebars.min.js node_modules/bootstrap/dist/js/bootstrap.bundle.min.js -t ../../data/assets/js/",
     "assets": "npm run css && npm run fonts && npm run js"
   },
   "devDependencies": {
@@ -13,6 +13,7 @@
     "bootstrap": "^5.0.2",
     "handlebars": "^4.7.7",
     "node-sass": "^6.0.1",
-    "trim-newlines": ">=3.0.1"
+    "trim-newlines": ">=3.0.1",
+    "htmx.org": "^1.5.0"
   }
 }
