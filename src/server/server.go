@@ -3,7 +3,6 @@ package server
 import (
 	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 	"sync"
 	"time"
@@ -75,14 +74,11 @@ func (s *Server) setupRouter() {
 	s.echo.Use(middleware.Logger())
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
-		"/favicon.ico":              "/assets/images/favicon.ico",
+		"/favicon.ico": "/assets/images/favicon.ico",
+		"/":            "/filters",
 	}))
 
 	s.echo.GET("/assets/*", s.assets.serve)
-
-	s.echo.GET("/", func(c echo.Context) error {
-		return c.Redirect(http.StatusFound, "/filters")
-	}).Name = "index"
 
 	s.addStatic("/about", "about", "About: Let’s block it!")
 
