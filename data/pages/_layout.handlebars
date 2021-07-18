@@ -4,6 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/logo-small.svg{{assetHash}}">
     <link rel="stylesheet" href="/assets/css/styles.min.css{{assetHash}}">
     <script defer src="/assets/js/bootstrap.bundle.min.js{{assetHash}}"></script>
     <script defer src="/assets/js/htmx.min.js{{assetHash}}"></script>
@@ -15,13 +16,16 @@
 <body hx-boost="true">
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">Let's block it!</a>
+        <a class="navbar-brand" href="/">
+            <img src="/assets/images/logo.svg{{assetHash}}"
+                 style="position:absolute; top: 0.5rem; left: 0.75rem; width: 5rem; height: 5rem">
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
-            <div class="navbar-nav ms-md-auto me-md-auto">
+            <div class="navbar-nav me-md-auto" style="margin-left: 5rem">
                 {{#each navLinks}}
                     <a class="nav-link ms-2 me-2{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
                             href="/{{target}}">{{name}}</a>
