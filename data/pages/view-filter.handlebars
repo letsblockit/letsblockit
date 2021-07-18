@@ -37,14 +37,30 @@
                         </div>
                     {{/equal}}
                     {{#equal type "list"}}
-                        <div class="mb-3">
-                            <label class="form-label">{{description}}:</label>
-                            {{#each (lookup_list @root.params name)}}
-                                <input class="form-control ms-4 mb-1 w-75" name="{{name}}" value="{{this}}">
-                            {{/each}}
-                            <input class="form-control ms-4 mb-1 w-75" name="{{name}}">
-                            <input class="form-control ms-4 mb-1 w-75" name="{{name}}">
-                        </div>
+                        <fieldset class="row mb-3">
+                            <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
+                            <div class="col-sm-8 filter-values-list">
+                                {{#each (lookup_list @root.params name)}}
+                                    <div class="input-group mb-1">
+                                        <input type="text" class="form-control" name="{{name}}" value="{{this}}">
+                                        <button class="btn btn-outline-success" type="button" title="Add a row below"
+                                                onclick="addRow(this);">+
+                                        </button>
+                                        <button class="btn btn-outline-primary" type="button" title="Delete this row"
+                                                onclick="deleteRow(this);">–
+                                        </button>
+                                    </div>
+                                {{/each}}
+                                <div class="input-group mb-1">
+                                    <input type="text" class="form-control" name="{{name}}">
+                                    <button class="btn btn-outline-success" type="button" title="Add a row below"
+                                            onclick="addRow(this);">+
+                                    </button>
+                                    <button class="btn btn-outline-primary" type="button" title="Delete this row"
+                                            onclick="deleteRow(this);">–
+                                    </button>
+                                </div>
+                        </fieldset>
                     {{/equal}}
                 {{/each}}
                 <button type="submit" class="btn btn-primary">Render</button>
@@ -70,5 +86,16 @@
         const footer = document.getElementById("output-footer");
         footer.innerText = "Copied to clipboard";
         footer.classList.add("bg-success", "text-white")
+    }
+
+    function deleteRow(clicked) {
+        clicked.closest(".input-group").remove()
+    }
+
+    function addRow(clicked) {
+        const thisGroup = clicked.closest(".input-group")
+        const clonedGroup = thisGroup.cloneNode(true)
+        clonedGroup.getElementsByTagName('input')[0].value = ""
+        thisGroup.parentNode.insertBefore(clonedGroup, thisGroup.nextSibling);
     }
 </script>
