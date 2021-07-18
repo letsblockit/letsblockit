@@ -8,7 +8,7 @@ $fa-font-path: "../fonts";
 
 $primary: #b83e51;
 $secondary: #DC926E;
-$success: #6c8d50;
+$success: #81a65e;
 $info: #242331;
 $warning: #ea7d18;
 $danger: #f44336;
@@ -16,3 +16,7 @@ $light: #F4F4F0;
 $dark: #262432;
 
 @import "node_modules/bootstrap/scss/bootstrap";
+
+.btn-outline-success:hover {
+  color: $white;
+}
