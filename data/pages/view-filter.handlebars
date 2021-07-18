@@ -42,7 +42,7 @@
                         {{#equal type "list"}}
                             <fieldset class="row mb-3">
                                 <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
-                                <div class="col-sm-8">
+                                <div class="col-lg-9">
                                     {{#each (lookup_list @root.params name)}}
                                         <div class="input-group mb-1">
                                             <input type="text" class="form-control" name="{{name}}" value="{{this}}">
@@ -93,7 +93,10 @@
     function copyOutput(clicked) {
         navigator.clipboard.writeText(document.getElementById("output-code").innerHTML);
         document.getElementById("output-card").classList.add("border-success")
-        clicked.innerHTML = "<i class=\"fas fa-clipboard-check me-1\"></i> Copied to clipboard"
+        document.getElementById("output-copy-text").innerText = "Copied to clipboard"
+        const icon = document.getElementById("output-copy-icon")
+        icon.classList.replace("far", "fas")
+        icon.classList.replace("fa-clipboard", "fa-clipboard-check")
         clicked.classList.add("btn-success")
     }
 
