@@ -19,30 +19,44 @@
 
         {{#if filter.params}}
             <h2>Try it out!</h2>
-
-            <form id="filter_input" action="#output-card">
-                {{#each filter.params}}
-                    {{#equal type "checkbox"}}
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="{{name}}" name="{{name}}"
-                                   {{#equal true (lookup @root.params name)}}checked{{/equal}}>
-                            <label class="form-check-label" for="{{name}}">{{description}}</label>
-                        </div>
-                    {{/equal}}
-                    {{#equal type "string"}}
-                        <div class="mb-3">
-                            <label class="form-label" for="{{name}}">{{description}}:</label>
-                            <input class="form-control" id="{{name}}" name="{{name}}"
-                                   value="{{lookup @root.params name}}">
-                        </div>
-                    {{/equal}}
-                    {{#equal type "list"}}
-                        <fieldset class="row mb-3">
-                            <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
-                            <div class="col-sm-8 filter-values-list">
-                                {{#each (lookup_list @root.params name)}}
+            <div class="card shadow-sm">
+                <div class="card-header">Tune the following options and click Render:</div>
+                <form id="filter_input" class="card-body" action="#output-card"
+                      hx-get="#output-card" hx-target="#output-card" hx-select="#output-card" hx-swap="outerHTML">
+                    {{#each filter.params}}
+                        {{#equal type "checkbox"}}
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="{{name}}" name="{{name}}"
+                                       {{#equal true (lookup @root.params name)}}checked{{/equal}}>
+                                <label class="form-check-label" for="{{name}}">{{description}}</label>
+                            </div>
+                        {{/equal}}
+                        {{#equal type "string"}}
+                            <div class="mb-3">
+                                <label class="form-label" for="{{name}}">{{description}}:</label>
+                                <input class="form-control" id="{{name}}" name="{{name}}"
+                                       value="{{lookup @root.params name}}">
+                            </div>
+                        {{/equal}}
+                        {{#equal type "list"}}
+                            <fieldset class="row mb-3">
+                                <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
+                                <div class="col-sm-8 filter-values-list">
+                                    {{#each (lookup_list @root.params name)}}
+                                        <div class="input-group mb-1">
+                                            <input type="text" class="form-control" name="{{name}}" value="{{this}}">
+                                            <button class="btn btn-outline-success" type="button"
+                                                    title="Add a row below"
+                                                    onclick="addRow(this);">+
+                                            </button>
+                                            <button class="btn btn-outline-primary" type="button"
+                                                    title="Delete this row"
+                                                    onclick="deleteRow(this);">–
+                                            </button>
+                                        </div>
+                                    {{/each}}
                                     <div class="input-group mb-1">
-                                        <input type="text" class="form-control" name="{{name}}" value="{{this}}">
+                                        <input type="text" class="form-control" name="{{name}}">
                                         <button class="btn btn-outline-success" type="button" title="Add a row below"
                                                 onclick="addRow(this);">+
                                         </button>
@@ -50,30 +64,25 @@
                                                 onclick="deleteRow(this);">–
                                         </button>
                                     </div>
-                                {{/each}}
-                                <div class="input-group mb-1">
-                                    <input type="text" class="form-control" name="{{name}}">
-                                    <button class="btn btn-outline-success" type="button" title="Add a row below"
-                                            onclick="addRow(this);">+
-                                    </button>
-                                    <button class="btn btn-outline-primary" type="button" title="Delete this row"
-                                            onclick="deleteRow(this);">–
-                                    </button>
-                                </div>
-                        </fieldset>
-                    {{/equal}}
-                {{/each}}
-                <button type="submit" class="btn btn-primary">Render</button>
-            </form>
+                            </fieldset>
+                        {{/equal}}
+                    {{/each}}
+                    <button type="submit" class="btn btn-primary">Render</button>
+                </form>
+            </div>
         {{else}}
             <h2>Filter contents</h2>
             <p>This filter does not have any parameters.</p>
         {{/if}}
-        <div id="output-card" class="card mt-4" style="cursor: pointer" onclick="copyOutput();">
+        <div id="output-card" class="card mt-4 shadow-sm">
+            <div id="output-header" class="card-header d-flex justify-content-between align-items-center">
+                Copy this to your uBlock filters:
+                <button type="button" class="btn btn-sm btn-outline-success" onclick="copyOutput();">Copy to clipboard
+                </button>
+            </div>
             <div class="card-body">
                 <code id="output-code" class="card-text text-primary" style="white-space:pre-line">{{rendered}}</code>
             </div>
-            <div id="output-footer" class="card-footer text-end">Click to copy to clipboard</div>
         </div>
     </div>
 </div>
@@ -83,7 +92,7 @@
         navigator.clipboard.writeText(document.getElementById("output-code").innerHTML);
         document.getElementById("output-card").classList.add("border-success")
 
-        const footer = document.getElementById("output-footer");
+        const footer = document.getElementById("output-header");
         footer.innerText = "Copied to clipboard";
         footer.classList.add("bg-success", "text-white")
     }
