@@ -100,14 +100,23 @@
         clicked.classList.add("btn-success")
     }
 
+    function resetRow(row) {
+        row.getElementsByTagName('input')[0].value = ""
+    }
+
     function deleteRow(clicked) {
-        clicked.closest(".input-group").remove()
+        const thisRow = clicked.closest(".input-group")
+        if (thisRow.parentNode.childElementCount === 1) {
+            resetRow(thisRow) // Don't allow removing the last row
+        } else {
+            thisRow.remove()
+        }
     }
 
     function addRow(clicked) {
-        const thisGroup = clicked.closest(".input-group")
-        const clonedGroup = thisGroup.cloneNode(true)
-        clonedGroup.getElementsByTagName('input')[0].value = ""
-        thisGroup.parentNode.insertBefore(clonedGroup, thisGroup.nextSibling);
+        const thisRow = clicked.closest(".input-group")
+        const clonedRow = thisRow.cloneNode(true)
+        resetRow(clonedRow)
+        thisRow.parentNode.insertBefore(clonedRow, thisRow.nextSibling);
     }
 </script>
