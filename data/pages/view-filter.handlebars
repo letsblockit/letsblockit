@@ -67,7 +67,12 @@
                             </fieldset>
                         {{/equal}}
                     {{/each}}
-                    <button type="submit" class="btn btn-primary">Render</button>
+                    <div class="d-flex align-items-center">
+                        <button type="submit" class="btn btn-primary">Render</button>
+                        <div class="ms-3 htmx-indicator spinner-border text-secondary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                 </form>
             </div>
         {{else}}

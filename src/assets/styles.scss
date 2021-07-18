@@ -20,3 +20,8 @@ $dark: #262432;
 .btn-outline-success:hover {
   color: $white;
 }
+
+// Injected by htmx.js, but adding for noscript users
+.htmx-indicator {
+  opacity: 0;
+}
