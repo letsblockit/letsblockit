@@ -10,7 +10,7 @@ jobs:
       - uses: cachix/install-nix-action@v13
         with:
           nix_path: nixpkgs=channel:nixos-21.05
-      - run: ./tests.nix.sh
+      - run: ./run_tests.nix.sh
   vendorSha256:
     runs-on: ubuntu-latest
     steps:
