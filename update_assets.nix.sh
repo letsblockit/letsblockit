@@ -1,6 +1,6 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p nodejs -p nodePackages.npm
-#! nix-shell --quiet
+#! nix-shell -i bash -p nodejs -p nodePackages.npm -p git
+#! nix-shell --pure --quiet
 
 # This script updates the assets by running npm
 
