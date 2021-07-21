@@ -91,7 +91,7 @@
 
 <script>
     function copyOutput(clicked) {
-        navigator.clipboard.writeText(document.getElementById("output-code").innerHTML);
+        navigator.clipboard.writeText(document.getElementById("output-code").innerText);
         document.getElementById("output-card").classList.add("border-success")
         document.getElementById("output-copy-text").innerText = "Copied to clipboard"
         const icon = document.getElementById("output-copy-icon")
