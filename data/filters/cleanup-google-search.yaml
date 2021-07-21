@@ -1,0 +1,54 @@
+title: Cleanup Google search result pages
+blurb: Let's get to the point please.
+params:
+  - name: related-questions
+    description: Hide the "People also ask" contextual content
+    type: checkbox
+    default: true
+  - name: related-searches
+    description: Hide the "Related searches" bottom content
+    type: checkbox
+    default: true
+  - name: only-results
+    description: Remove everything but simple search results
+    type: checkbox
+    default: false
+tags:
+  - google
+template: |
+  {{#if related-questions}}
+  google.*###rso > div:has(div.related-question-pair)
+  {{/if}}
+  {{#if related-searches}}
+  google.*###botstuff
+  {{/if}}
+  {{#if only-results}}
+  google.*###rso > :not(div.g):not(:has(:scope>div.g))
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      related-questions: true
+      related-searches: true
+    output: |
+      google.*###rso > div:has(div.related-question-pair)
+      google.*###botstuff
+  - params:
+      related-questions: true
+      related-searches: true
+      only-results: true
+    output: |
+      google.*###rso > div:has(div.related-question-pair)
+      google.*###botstuff
+      google.*###rso > :not(div.g):not(:has(:scope>div.g))
+---
+
+Google is adding more and more "contextual results" to its result page, with mixed usefulness. This filter will allow
+you to selectively remove these from the results, to only focus on the links.
+
+The last option (Remove everything but simple search results), will remove everything but simple `div.g` elements,
+removing images, videos, maps and most of other sections. It is disabled by default due to its greedy nature.
+
+Don't hesitate to [open a issue](https://github.com/xvello/letsblockit/issues/new) to suggest additions or fixes ;
+and check out the [Hide websites from search results](search-results) filter too.
