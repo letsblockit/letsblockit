@@ -4,6 +4,7 @@
   * (connection closed then successfully re-opened). This triggers a page reload.
   */
 
+let reconnectTimeout = 100
 let isConnected = false
 let watchEventSource = null;
 
@@ -19,9 +20,12 @@ function watchForRestart() {
         }
     }
     watchEventSource.onerror = function () {
-        if (watchEventSource.readyState === 2) {
-            setTimeout(watchForRestart, 100);
+        watchEventSource.close()
+        setTimeout(watchForRestart, reconnectTimeout);
+        if (reconnectTimeout < 2000) {
+            reconnectTimeout += 100
         }
     };
 }
+
 watchForRestart();
