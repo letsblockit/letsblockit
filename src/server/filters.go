@@ -16,7 +16,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
-	hc := buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
+	hc := s.buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
 	hc["filter"] = filter
 
 	// Parse filters param and render output if non empty

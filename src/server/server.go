@@ -19,6 +19,7 @@ type Options struct {
 	DryRun  bool   `arg:"--dry-run" help:"instantiate all components and exit"`
 	Address string `default:"127.0.0.1:8765" help:"address to listen to"`
 	Statsd  string `help:"address to send statsd metrics to"`
+	Reload  bool   `help:"reload frontend when the backend restarts"`
 }
 
 var navigationLinks = []struct {
@@ -78,19 +79,37 @@ func (s *Server) setupRouter() {
 		"/":            "/filters",
 	}))
 
+	if s.options.Reload {
+		s.echo.GET("/should-reload", func(c echo.Context) error {
+			// Set the headers related to event streaming.
+			c.Response().Header().Set("Content-Type", "text/event-stream")
+			c.Response().Header().Set("Cache-Control", "no-cache")
+			c.Response().Header().Set("Connection", "keep-alive")
+			c.Response().Header().Set("Transfer-Encoding", "chunked")
+			if _, err := fmt.Fprintln(c.Response(), "retry:1000"); err != nil {
+				return nil
+			}
+			c.Response().Flush()
+
+			// Block indefinitely to keep the SSE open
+			<-c.Request().Context().Done()
+			return nil
+		})
+	}
+
 	s.echo.GET("/assets/*", s.assets.serve)
 
 	s.addStatic("/about", "about", "About: Let’s block it!")
 
 	s.echo.GET("/filters", func(c echo.Context) error {
-		hc := buildHandlebarsContext(c, "Available uBlock filter templates")
+		hc := s.buildHandlebarsContext(c, "Available uBlock filter templates")
 		hc["filters"] = s.filters.GetFilters()
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
 	s.echo.GET("/filters/tag/:tag", func(c echo.Context) error {
 		tag := c.Param("tag")
-		hc := buildHandlebarsContext(c, "Filter templates for "+tag)
+		hc := s.buildHandlebarsContext(c, "Filter templates for "+tag)
 		var matching []*filters.Filter
 		for _, f := range s.filters.GetFilters() {
 			for _, t := range f.Tags {
@@ -112,11 +131,11 @@ func (s *Server) setupRouter() {
 
 func (s *Server) addStatic(url, page, title string) {
 	s.echo.GET(url, func(c echo.Context) error {
-		return s.pages.render(c, page, buildHandlebarsContext(c, title))
+		return s.pages.render(c, page, s.buildHandlebarsContext(c, title))
 	}).Name = page
 }
 
-func buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
+func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
 	var section string
 	for _, s := range strings.Split(c.Path(), "/") {
 		if s != "" {
@@ -124,11 +143,15 @@ func buildHandlebarsContext(c echo.Context, title string) map[string]interface{}
 			break
 		}
 	}
-	return map[string]interface{}{
+	context := map[string]interface{}{
 		"navLinks":   navigationLinks,
 		"navCurrent": section,
 		"title":      title,
 	}
+	if s.options.Reload {
+		context["jsImports"] = []string{"reload.js"}
+	}
+	return context
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {
