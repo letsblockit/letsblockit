@@ -5,9 +5,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "gomod" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "gomod"
+    directory: "/"
     schedule:
       interval: "daily"
-    assignees:
-      - "xvello"
+  - package-ecosystem: "npm"
+    directory: "/src/assets"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
