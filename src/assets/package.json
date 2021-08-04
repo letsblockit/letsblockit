@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
-    "bootstrap": "^5.0.2",
+    "bootstrap": "^5.1.0",
     "handlebars": "^4.7.7",
     "node-sass": "^6.0.1",
     "trim-newlines": ">=3.0.1",
