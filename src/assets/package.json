@@ -9,7 +9,7 @@
     "assets": "npm run css && npm run fonts && npm run js"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.3",
+    "@fortawesome/fontawesome-free": "^5.15.4",
     "bootstrap": "^5.0.2",
     "handlebars": "^4.7.7",
     "node-sass": "^6.0.1",
