@@ -9,7 +9,7 @@ require (
 	github.com/alexflint/go-arg v1.4.2
 	github.com/go-playground/validator/v10 v10.8.0
 	github.com/imantung/mario v0.9.0
-	github.com/labstack/echo/v4 v4.4.0
+	github.com/labstack/echo/v4 v4.5.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/yaml.v2 v2.4.0
