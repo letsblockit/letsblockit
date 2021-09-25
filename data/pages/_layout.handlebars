@@ -32,7 +32,8 @@
                 {{/each}}
             </div>
             {{#if logged}}
-                <a class="nav-link ms-2 me-2" href="{{href "user-account" ""}}">My account</a>
+                <a class="nav-link ms-2 me-2{{#equal "user" @root.navCurrent}} active" aria-current="page{{/equal}}"
+                        href="{{href "user-account" ""}}">My account</a>
             {{/if}}
             <div class="navbar-nav">
                 <a class="ms-2 me-2 nav-link" href="https://github.com/xvello/letsblockit" title="Github">
