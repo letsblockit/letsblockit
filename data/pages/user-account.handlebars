@@ -1,0 +1,17 @@
+{{#unless verified}}
+    <div class="card mb-3" hx-boost="false">
+        <div class="card-header">Unverified account</div>
+        <div class="card-body">
+            <p>You need to verify your e-mail address before you can create lists. Check your inbox and spam folder
+                for an e-mail from <em>no-reply@ory.sh</em>, or <a href="/.ory/init/verification">get a new link</a></p>
+        </div>
+    </div>
+{{/unless}}
+
+<div class="card mb-3" hx-boost="false">
+    <div class="card-header">My account</div>
+    <div class="card-body">
+        <p>Account management is provided by <a href="https://www.ory.sh/">the fine folks at Ory</a>.</p>
+        <a href="/.ory/init/settings" class="btn btn-primary">Change email or password</a>
+    </div>
+</div>

@@ -31,6 +31,9 @@
                             href="/{{target}}">{{name}}</a>
                 {{/each}}
             </div>
+            {{#if logged}}
+                <a class="nav-link ms-2 me-2" href="{{href "user-account" ""}}">My account</a>
+            {{/if}}
             <div class="navbar-nav">
                 <a class="ms-2 me-2 nav-link" href="https://github.com/xvello/letsblockit" title="Github">
                     <i class="fab fa-lg fa-github"></i></a>

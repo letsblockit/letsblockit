@@ -10,16 +10,19 @@ import (
 	"github.com/DataDog/datadog-go/statsd"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 	"github.com/xvello/letsblockit/src/filters"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
 
 type Options struct {
-	DryRun  bool   `arg:"--dry-run" help:"instantiate all components and exit"`
-	Address string `default:"127.0.0.1:8765" help:"address to listen to"`
-	Statsd  string `help:"address to send statsd metrics to"`
-	Reload  bool   `help:"reload frontend when the backend restarts"`
+	DryRun     bool   `arg:"--dry-run" help:"instantiate all components and exit"`
+	Address    string `default:"127.0.0.1:8765" help:"address to listen to"`
+	Statsd     string `help:"address to send statsd metrics to"`
+	OryProject string `help:"oxy cloud project to check credentials against"`
+	Reload     bool   `help:"reload frontend when the backend restarts"`
+	Debug      bool   `help:"log with debug level"`
 }
 
 var navigationLinks = []struct {
@@ -61,6 +64,14 @@ func (s *Server) Start() error {
 			return err
 		}
 		s.echo.Use(buildDogstatsMiddleware(dsd))
+	}
+
+	if s.options.OryProject != "" {
+		s.echo.Use(buildOryMiddleware(s.options.OryProject, s.echo.Logger))
+	}
+
+	if s.options.Debug {
+		s.echo.Logger.SetLevel(log.DEBUG)
 	}
 
 	s.pages.registerHelpers(buildHelpers(s.echo, s.assets.hash))
@@ -127,6 +138,9 @@ func (s *Server) setupRouter() {
 	s.echo.GET("/filters/:name", s.viewFilter).Name = "view-filter"
 	s.echo.POST("/filters/:name", s.viewFilter)
 	s.echo.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
+
+	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
+	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
 }
 
 func (s *Server) addStatic(url, page, title string) {
@@ -147,6 +161,7 @@ func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string
 		"navLinks":   navigationLinks,
 		"navCurrent": section,
 		"title":      title,
+		"logged":     c.Get(userContextKey) != nil,
 	}
 	if s.options.Reload {
 		context["jsImports"] = []string{"reload.js"}
