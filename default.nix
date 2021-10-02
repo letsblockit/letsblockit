@@ -6,6 +6,6 @@ pkgs.buildGoModule.override
 {
   pname = "letsblockit";
   version = "1.0";
-  vendorSha256 = "16i98h9xnc4j7dcykk1asvd7iqn5cgjbln7lsxip6r7psajr7f7j";
+  vendorSha256 = "1qd56hv517sxbsd4yg3r590bn7lzm7hiviy3xazx15y2sd78nyn7";
   src = ./.;
 }
