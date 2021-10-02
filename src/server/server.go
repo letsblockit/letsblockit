@@ -3,6 +3,8 @@ package server
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -12,17 +14,26 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/models"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
 
 type Options struct {
-	DryRun     bool   `arg:"--dry-run" help:"instantiate all components and exit"`
 	Address    string `default:"127.0.0.1:8765" help:"address to listen to"`
-	Statsd     string `help:"address to send statsd metrics to"`
+	DataFolder string `default:"var" help:"folder holding the persistent data"`
+	Debug      bool   `help:"log with debug level"`
+	DryRun     bool   `arg:"--dry-run" help:"instantiate all components and exit"`
+	Migrations bool   `help:"run gorm schema migrations on startup"`
 	OryProject string `help:"oxy cloud project to check credentials against"`
 	Reload     bool   `help:"reload frontend when the backend restarts"`
-	Debug      bool   `help:"log with debug level"`
+	Statsd     string `help:"address to send statsd metrics to"`
+}
+
+func (o *Options) dataPath(parts ...string) string {
+	return filepath.Join(o.DataFolder, filepath.Join(parts...))
 }
 
 var navigationLinks = []struct {
@@ -37,11 +48,12 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
-	options *Options
-	echo    *echo.Echo
-	pages   *pages
-	filters *filters.Repository
 	assets  *wrappedAssets
+	echo    *echo.Echo
+	filters *filters.Repository
+	gorm    *gorm.DB
+	options *Options
+	pages   *pages
 }
 
 func NewServer(options *Options) *Server {
@@ -56,6 +68,7 @@ func (s *Server) Start() error {
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = loadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
+		func(errs []error) { s.gorm, errs[0] = InitOrm(s.options) },
 	})
 
 	if s.options.Statsd != "" {
@@ -139,6 +152,8 @@ func (s *Server) setupRouter() {
 	s.echo.POST("/filters/:name", s.viewFilter)
 	s.echo.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 
+	s.echo.GET("/list/:token", s.renderList).Name = "render-filterlist"
+
 	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
 	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"
 	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
@@ -213,4 +228,27 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 			return nil
 		}
 	}
+}
+
+func InitOrm(options *Options) (*gorm.DB, error) {
+	if err := os.MkdirAll(options.DataFolder, 0700); err != nil {
+		return nil, err
+	}
+
+	db := sqlite.Open(options.dataPath("main.db"))
+	orm, err := gorm.Open(db, &gorm.Config{
+		PrepareStmt:                              true,
+		SkipDefaultTransaction:                   true,
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if options.Migrations {
+		err = orm.AutoMigrate(&models.FilterList{}, &models.FilterInstance{})
+		if err != nil {
+			return nil, err
+		}
+	}
+	return orm, nil
 }

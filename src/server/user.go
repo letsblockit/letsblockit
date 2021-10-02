@@ -35,7 +35,6 @@ func (s *Server) userAccount(c echo.Context) error {
 	hc := s.buildHandlebarsContext(c, "My account")
 	if user.IsVerified() {
 		hc["verified"] = true
-
 	}
 	return s.pages.render(c, "user-account", hc)
 }
