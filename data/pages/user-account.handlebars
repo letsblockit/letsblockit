@@ -2,7 +2,7 @@
     <div class="card mb-3">
         <div class="card-header">My filters</div>
         <div class="card-body">
-            {{#each user.FilterLists}}
+            {{#each filter_lists}}
                 <a href="{{list_href this.Token}}">{{this.Name}}</a>
             {{/each}}
         </div>
