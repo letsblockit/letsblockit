@@ -14,6 +14,17 @@ func (s *Server) userLogin(c echo.Context) error {
 	return s.pages.render(c, "user-login", hc)
 }
 
+func (s *Server) userLogout(c echo.Context) error {
+	if getUser(c) == nil {
+		return c.Redirect(http.StatusFound, "/user/login")
+	}
+	logout, err := getLogoutUrl(s.options.OryProject, c)
+	if err != nil {
+		return err
+	}
+	return c.Redirect(http.StatusFound, logout)
+}
+
 func (s *Server) userAccount(c echo.Context) error {
 	user := getUser(c)
 	if user == nil {

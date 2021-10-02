@@ -140,7 +140,9 @@ func (s *Server) setupRouter() {
 	s.echo.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 
 	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
+	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"
 	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
+
 }
 
 func (s *Server) addStatic(url, page, title string) {

@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -11,9 +12,10 @@ import (
 )
 
 const (
-	oryCookieNamePrefix = "ory_session_"
-	oryWhoamiPattern    = "https://%s.projects.oryapis.com/api/kratos/public/sessions/whoami"
-	userContextKey      = "_user"
+	oryCookieNamePrefix  = "ory_session_"
+	oryWhoamiPattern     = "https://%s.projects.oryapis.com/api/kratos/public/sessions/whoami"
+	oryLogoutInfoPattern = "https://%s.projects.oryapis.com/api/kratos/public/self-service/logout/browser"
+	userContextKey       = "_user"
 )
 
 // oryUser holds the parts of the kratos user we care about.
@@ -25,6 +27,10 @@ type oryUser struct {
 			Verified bool
 		} `json:"verifiable_addresses"`
 	}
+}
+
+type oryLogoutInfo struct {
+	LogoutUrl string `json:"logout_url"`
 }
 
 func (u *oryUser) Id() string {
@@ -98,6 +104,35 @@ func buildOryMiddleware(project string, logger echo.Logger) echo.MiddlewareFunc 
 			return next(c)
 		}
 	}
+}
+
+// getLogoutUrl retrieves the logout URL for the current session
+// and patches it to go through the proxy.
+func getLogoutUrl(project string, c echo.Context) (string, error) {
+	client := buildRetryableClient(c.Logger())
+	endpoint := fmt.Sprintf(oryLogoutInfoPattern, project)
+	req, err := retryablehttp.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to instantiate request: %w", err)
+	}
+	req.Header.Set(echo.HeaderCookie, c.Request().Header.Get(echo.HeaderCookie))
+	req.Header.Set("Accept", "application/json")
+	res, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to query kratos: %w", err)
+	}
+	defer res.Body.Close()
+
+	var info oryLogoutInfo
+	if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
+		return "", fmt.Errorf("failed to decode response: %w", err)
+	}
+	fmt.Println(info)
+	logout, err := url.Parse(info.LogoutUrl)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("/.ory%s?%s", logout.Path, logout.RawQuery), nil
 }
 
 func buildRetryableClient(logger echo.Logger) *retryablehttp.Client {
