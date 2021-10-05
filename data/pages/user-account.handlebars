@@ -2,9 +2,8 @@
     <div class="card mb-3">
         <div class="card-header">My filters</div>
         <div class="card-body">
-            {{#each filter_lists}}
-                <a href="{{list_href this.Token}}">{{this.Name}}</a>
-            {{/each}}
+            <a href="{{href "user-filters" filter_list.Token}}">Edit filters</a> &ndash;
+            <a href="{{list_href filter_list.Token}}" hx-boost="false">Render</a>
         </div>
     </div>
 {{else}}

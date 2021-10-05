@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -68,7 +69,7 @@ func (s *Server) Start() error {
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = loadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
-		func(errs []error) { s.gorm, errs[0] = InitOrm(s.options) },
+		func(errs []error) { s.gorm, errs[0] = initOrm(s.options) },
 	})
 
 	if s.options.Statsd != "" {
@@ -157,13 +158,17 @@ func (s *Server) setupRouter() {
 	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
 	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"
 	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
-
+	s.echo.GET("/user/filters", s.renderList).Name = "user-filters"
 }
 
 func (s *Server) addStatic(url, page, title string) {
 	s.echo.GET(url, func(c echo.Context) error {
 		return s.pages.render(c, page, s.buildHandlebarsContext(c, title))
 	}).Name = page
+}
+
+func (s *Server) redirect(c echo.Context, name string, params ...interface{}) error {
+	return c.Redirect(http.StatusFound, s.echo.Reverse(name, params...))
 }
 
 func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
@@ -178,7 +183,10 @@ func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string
 		"navLinks":   navigationLinks,
 		"navCurrent": section,
 		"title":      title,
-		"logged":     c.Get(userContextKey) != nil,
+	}
+	if u := getUser(c); u != nil {
+		context["logged"] = true
+		context["verified"] = u.IsVerified()
 	}
 	if s.options.Reload {
 		context["jsImports"] = []string{"reload.js"}
@@ -230,7 +238,7 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 	}
 }
 
-func InitOrm(options *Options) (*gorm.DB, error) {
+func initOrm(options *Options) (*gorm.DB, error) {
 	if err := os.MkdirAll(options.DataFolder, 0700); err != nil {
 		return nil, err
 	}

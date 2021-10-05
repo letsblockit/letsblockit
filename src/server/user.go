@@ -10,7 +10,7 @@ import (
 
 func (s *Server) userLogin(c echo.Context) error {
 	if getUser(c) != nil {
-		return c.Redirect(http.StatusFound, "/user/account")
+		return s.redirect(c, "user-account")
 	}
 	hc := s.buildHandlebarsContext(c, "Login")
 	return s.pages.render(c, "user-login", hc)
@@ -18,7 +18,7 @@ func (s *Server) userLogin(c echo.Context) error {
 
 func (s *Server) userLogout(c echo.Context) error {
 	if getUser(c) == nil {
-		return c.Redirect(http.StatusFound, "/user/login")
+		return s.redirect(c, "user-login")
 	}
 	logout, err := getLogoutUrl(s.options.OryProject, c)
 	if err != nil {
@@ -31,25 +31,24 @@ func (s *Server) userAccount(c echo.Context) error {
 	user := getUser(c)
 	if user == nil {
 		// Cannot find user session, redirect to login
-		return c.Redirect(http.StatusFound, "/user/login")
+		return s.redirect(c, "user-login")
 	}
 
 	hc := s.buildHandlebarsContext(c, "My account")
 	if user.IsVerified() {
-		// Retrieve filter lists, create one if none exists
-		var lists []models.FilterList
-		s.gorm.Where("user_id = ?", user.Id()).Find(&lists)
-		if len(lists) == 0 {
-			lists = append(lists, models.FilterList{
+		// Retrieve or create filter list
+		var list models.FilterList
+		s.gorm.Where("user_id = ?", user.Id()).First(&list)
+		if list.Token == "" {
+			list = models.FilterList{
 				UserID: user.Id(),
 				Name:   "My filters",
 				Token:  uuid.NewString(),
-			})
-			s.gorm.Create(&lists)
+			}
+			s.gorm.Create(&list)
 		}
 
-		hc["filter_lists"] = lists
-		hc["verified"] = true
+		hc["filter_list"] = &list
 	}
 	return s.pages.render(c, "user-account", hc)
 }
