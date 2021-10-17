@@ -43,6 +43,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 			s.gorm.Save(&f)
 		}
 		hc["saved_ok"] = true
+		hc["has_instance"] = true
 	}
 
 	// If no params are passed, source from the user's filters

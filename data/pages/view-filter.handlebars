@@ -95,7 +95,21 @@
             </div>
         {{else}}
             <h2>Filter contents</h2>
-            <p>This filter does not have any parameters.</p>
+            <div>
+                {{#if has_instance}}
+                    <button class="btn btn-primary" disabled>Filter already in your list.</button>
+                {{else if verified}}
+                    <form id="filter_input" method="POST" action="#output-card"
+                          hx-post="{{href "view-filter" filter.name}}"
+                          hx-select="#main" hx-target="#main" hx-swap="outerHTML">
+                        <button type="submit" name="__save" class="btn btn-primary">
+                            {{#if has_instance}}Update filter{{else}}Save filter{{/if}}
+                        </button>
+                    </form>
+                {{else}}
+                    This filter does not have any parameters.
+                {{/if}}
+            </div>
         {{/if}}
         {{>view-filter-render}}
     </div>

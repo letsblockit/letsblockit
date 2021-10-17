@@ -73,6 +73,9 @@ func (r *Repository) Render(ctx context.Context, w io.Writer, name string, data 
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
 	}
+	if data == nil {
+		data = make(map[string]interface{})
+	}
 	data["_filter"] = name
 	return r.main.Execute(w, data)
 }
