@@ -3,7 +3,7 @@
 <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
     {{#each filters}}
         <div class="col">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm {{#if (lookup @root.active_filters name)}}border-secondary{{/if}}">
                 <div class="card-body">
                     <a href="{{href "view-filter" name}}" class="text-reset text-decoration-none h-100">
                         <h5 class="card-title">{{title}}</h5>

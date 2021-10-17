@@ -34,14 +34,23 @@ type oryLogoutInfo struct {
 }
 
 func (u *oryUser) Id() string {
+	if u == nil {
+		return ""
+	}
 	return u.Identity.Id
 }
 
 func (u *oryUser) IsActive() bool {
+	if u == nil {
+		return false
+	}
 	return u.Active && u.Identity.Id != ""
 }
 
 func (u *oryUser) IsVerified() bool {
+	if u == nil {
+		return false
+	}
 	for _, addr := range u.Identity.Addresses {
 		if addr.Verified {
 			return true

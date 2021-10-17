@@ -36,19 +36,36 @@ func (s *Server) userAccount(c echo.Context) error {
 
 	hc := s.buildHandlebarsContext(c, "My account")
 	if user.IsVerified() {
-		// Retrieve or create filter list
-		var list models.FilterList
-		s.gorm.Where("user_id = ?", user.Id()).First(&list)
-		if list.Token == "" {
-			list = models.FilterList{
-				UserID: user.Id(),
-				Name:   "My filters",
-				Token:  uuid.NewString(),
-			}
-			s.gorm.Create(&list)
-		}
-
-		hc["filter_list"] = &list
+		hc["filter_list"] = s.getOrCreateFilterList(user)
 	}
 	return s.pages.render(c, "user-account", hc)
+}
+
+func (s *Server) getOrCreateFilterList(user *oryUser) *models.FilterList {
+	var list models.FilterList
+	s.gorm.Where("user_id = ?", user.Id()).First(&list)
+	if list.Token == "" {
+		list = models.FilterList{
+			UserID: user.Id(),
+			Name:   "My filters",
+			Token:  uuid.NewString(),
+		}
+		s.gorm.Create(&list)
+	}
+	return &list
+}
+
+func (s *Server) getActiveFilterNames(user *oryUser) map[string]bool {
+	var names []string
+	s.gorm.Model(&models.FilterInstance{}).Where("user_id = ?", user.Id()).
+		Distinct().Pluck("FilterName", &names)
+	if len(names) == 0 {
+		return nil
+	}
+
+	out := make(map[string]bool)
+	for _, n := range names {
+		out[n] = true
+	}
+	return out
 }

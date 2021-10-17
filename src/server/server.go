@@ -129,6 +129,9 @@ func (s *Server) setupRouter() {
 	s.echo.GET("/filters", func(c echo.Context) error {
 		hc := s.buildHandlebarsContext(c, "Available uBlock filter templates")
 		hc["filters"] = s.filters.GetFilters()
+		if u := getUser(c); u.IsVerified() {
+			hc["active_filters"] = s.getActiveFilterNames(u)
+		}
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
@@ -145,6 +148,9 @@ func (s *Server) setupRouter() {
 			}
 		}
 		hc["filters"] = matching
+		if u := getUser(c); u.IsVerified() {
+			hc["active_filters"] = s.getActiveFilterNames(u)
+		}
 		// TODO: link to go back to all tags
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "filters-for-tag"
