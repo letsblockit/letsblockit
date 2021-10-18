@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo/v4"
+	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/models"
 )
 
@@ -44,7 +45,8 @@ func (s *Server) renderList(c echo.Context) error {
 	return nil
 }
 
-func (s *Server) editList(c echo.Context) error {
+func (s *Server) filterList(c echo.Context) error {
+	// Check user is authenticated
 	user := getUser(c)
 	if user == nil {
 		// Cannot find user session, redirect to login
@@ -53,10 +55,25 @@ func (s *Server) editList(c echo.Context) error {
 	if !user.IsVerified() {
 		return s.redirect(c, "user-account")
 	}
-	var filters models.FilterInstance
-	s.gorm.Where("user_id = ?", user.Id()).Order("filter_name").Find(&filters)
+
+	// Handle deletion if requested, remove all instances matching a given name
+	if name := c.Request().PostFormValue("delete"); name != "" {
+		target := &models.FilterInstance{
+			UserID:     user.Id(),
+			FilterName: name,
+		}
+		s.gorm.Where(target).Delete(target)
+	}
+
+	// List filters and render list
+	var active []*filters.Filter
+	for name := range s.getActiveFilterNames(user) {
+		if f, err := s.filters.GetFilter(name); err == nil {
+			active = append(active, f)
+		}
+	}
 
 	hc := s.buildHandlebarsContext(c, "My filters")
-	hc["filters"] = &filters
-	return s.pages.render(c, "user-account", hc)
+	hc["filters"] = &active
+	return s.pages.render(c, "view-list", hc)
 }

@@ -164,7 +164,8 @@ func (s *Server) setupRouter() {
 	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
 	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"
 	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
-	s.echo.GET("/user/filters", s.renderList).Name = "user-filters"
+	s.echo.GET("/user/filters", s.filterList).Name = "user-filters"
+	s.echo.POST("/user/filters", s.filterList)
 }
 
 func (s *Server) addStatic(url, page, title string) {
