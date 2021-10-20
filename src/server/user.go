@@ -36,6 +36,9 @@ func (s *Server) userAccount(c echo.Context) error {
 
 	hc := s.buildHandlebarsContext(c, "My account")
 	if user.IsVerified() {
+		var filterCount int64
+		s.gorm.Model(&models.FilterInstance{}).Where("user_id = ?", user.Id()).Count(&filterCount)
+		hc["filter_count"] = filterCount
 		hc["filter_list"] = s.getOrCreateFilterList(user)
 	}
 	return s.pages.render(c, "user-account", hc)

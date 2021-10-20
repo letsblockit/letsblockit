@@ -95,7 +95,7 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	}
 
 	// Parse filters param and render output if non empty
-	params,_, _, err := parseFilterParams(c, filter)
+	params, _, _, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}

@@ -1,9 +1,14 @@
 {{#if verified}}
     <div class="card mb-3">
         <div class="card-header">My filters</div>
+        <p></p>
         <div class="card-body">
-            <a href="{{href "user-filters" filter_list.Token}}">Edit filters</a> &ndash;
-            <a href="{{list_href filter_list.Token}}" hx-boost="false">Render</a>
+            {{#if filter_count}}
+                <p>You have {{filter_count}} active filters, add more from the <a href="{{href "list-filters" ""}}">filter list page</a>.</p>
+            {{else}}
+                <p>Visit the <a href="{{href "list-filters" ""}}">filter list page</a> to start adding filters to your list.</p>
+            {{/if}}
+            <p>To use your filters in uBlock, add the following list: <a href="{{list_href filter_list.Token}}" hx-boost="false">{{list_href filter_list.Token}}</a></p>
         </div>
     </div>
 {{else}}
