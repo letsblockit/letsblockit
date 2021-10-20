@@ -53,7 +53,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 			FilterName: filter.Name,
 		}
 		s.gorm.Where(target).Delete(target)
-		params = nil
+		return s.redirect(c, "list-filters")
 	}
 
 	// If no params are passed, source from the user's filters
