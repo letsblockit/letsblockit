@@ -38,7 +38,7 @@ func (s *Server) renderList(c echo.Context) error {
 		}
 		err = s.filters.Render(c.Request().Context(), c.Response(), f.FilterName, f.Params)
 		if err != nil {
-			return err
+			c.Logger().Warnf("skipping filter %s in list %s: %s", f.FilterName, token, err.Error())
 		}
 	}
 	return nil
