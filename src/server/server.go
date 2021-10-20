@@ -157,8 +157,15 @@ func (s *Server) addStatic(url, page, title string) {
 	}).Name = page
 }
 
+// redirect the user to another page, either via htmx client-side redirect (form submissions)
+// or http 302 redirect (direct access, js disabled)
 func (s *Server) redirect(c echo.Context, name string, params ...interface{}) error {
-	return c.Redirect(http.StatusFound, s.echo.Reverse(name, params...))
+	target := s.echo.Reverse(name, params...)
+	if c.Request().Header.Get("HX-Request") == "true" {
+		c.Response().Header().Set("HX-Redirect", target)
+		return nil
+	}
+	return c.Redirect(http.StatusFound, target)
 }
 
 func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {

@@ -99,7 +99,7 @@ func (t *pages) render(c echo.Context, name string, data map[string]interface{})
 	var found bool
 	data["_page"], found = t.pages[name]
 	if !found {
-		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
+		return echo.NewHTTPError(http.StatusNotFound, "template not found: "+name)
 	}
 	tpl := t.main
 	if _, found := data["_naked"]; found {
