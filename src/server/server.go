@@ -128,29 +128,15 @@ func (s *Server) setupRouter() {
 
 	s.echo.GET("/filters", func(c echo.Context) error {
 		hc := s.buildHandlebarsContext(c, "Available uBlock filter templates")
-		hc["filters"] = s.filters.GetFilters()
-		if u := getUser(c); u.IsVerified() {
-			hc["active_filters"] = s.getActiveFilterNames(u)
-		}
+		s.addFiltersToContext(c, hc, "")
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
 	s.echo.GET("/filters/tag/:tag", func(c echo.Context) error {
 		tag := c.Param("tag")
-		hc := s.buildHandlebarsContext(c, "Filter templates for "+tag)
-		var matching []*filters.Filter
-		for _, f := range s.filters.GetFilters() {
-			for _, t := range f.Tags {
-				if t == tag {
-					matching = append(matching, f)
-					break
-				}
-			}
-		}
-		hc["filters"] = matching
-		if u := getUser(c); u.IsVerified() {
-			hc["active_filters"] = s.getActiveFilterNames(u)
-		}
+		hc := s.buildHandlebarsContext(c, "Available filter templates for "+tag)
+		hc["tag_search"] = tag
+		s.addFiltersToContext(c, hc, tag)
 		// TODO: link to go back to all tags
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "filters-for-tag"
@@ -199,6 +185,39 @@ func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string
 		context["jsImports"] = []string{"reload.js"}
 	}
 	return context
+}
+
+func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, tagSearch string) {
+	activeNames := s.getActiveFilterNames(getUser(c))
+
+	// Fast exit for landing page
+	if len(activeNames) == 0 && len(tagSearch) == 0 {
+		hc["available_filters"] = s.filters.GetFilters()
+		return
+	}
+
+	var active, available []*filters.Filter
+	for _, f := range s.filters.GetFilters() {
+		if tagSearch != "" {
+			matching := false
+			for _, t := range f.Tags {
+				if t == tagSearch {
+					matching = true
+					break
+				}
+			}
+			if !matching {
+				continue
+			}
+		}
+		if activeNames[f.Name] {
+			active = append(active, f)
+		} else {
+			available = append(available, f)
+		}
+	}
+	hc["active_filters"] = active
+	hc["available_filters"] = available
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {

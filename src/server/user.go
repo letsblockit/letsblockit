@@ -56,6 +56,9 @@ func (s *Server) getOrCreateFilterList(user *oryUser) *models.FilterList {
 }
 
 func (s *Server) getActiveFilterNames(user *oryUser) map[string]bool {
+	if !user.IsVerified() {
+		return nil
+	}
 	var names []string
 	s.gorm.Model(&models.FilterInstance{}).Where("user_id = ?", user.Id()).
 		Distinct().Pluck("FilterName", &names)

@@ -1,21 +1,18 @@
-<h2>{{title}}</h2>
+{{#if active_filters }}
+    <h2>Active filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
 
-<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
-    {{#each filters}}
-        <div class="col">
-            <div class="card h-100 shadow-sm {{#if (lookup @root.active_filters name)}}border-secondary{{/if}}">
-                <div class="card-body">
-                    <a href="{{href "view-filter" name}}" class="text-reset text-decoration-none h-100">
-                        <h5 class="card-title">{{title}}</h5>
-                        <p class="card-text">{{blurb}}</p>
-                    </a>
-                </div>
-                <div class="card-footer">
-                    {{#each tags}}{{{tag this}}}{{/each}}
-                </div>
-            </div>
-        </div>
-    {{/each}}
-</div>
+    <div class="p-2 mb-3 row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+        {{#each active_filters}}
+            {{>list-filter-card}}
+        {{/each}}
+    </div>
+{{/if}}
 
-<h2></h2>
+{{#if available_filters }}
+    <h2>Available filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
+    <div class="p-2 row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+        {{#each available_filters}}
+            {{>list-filter-card}}
+        {{/each}}
+    </div>
+{{/if}}
