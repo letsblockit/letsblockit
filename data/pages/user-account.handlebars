@@ -3,19 +3,23 @@
         <div class="card-header">My filters</div>
         <p></p>
         <div class="card-body">
-            {{#if filter_count}}
-                <p>You have {{filter_count}} active filters, add more from the <a href="{{href "list-filters" ""}}">filter list page</a>.</p>
-            {{else}}
-                <p>Visit the <a href="{{href "list-filters" ""}}">filter list page</a> to start adding filters to your list.</p>
-            {{/if}}
-            <p>To use your filters in uBlock, add the following list: <a href="{{list_href filter_list.Token}}" hx-boost="false">{{list_href filter_list.Token}}</a></p>
+            <p>
+                {{#if filter_count}}
+                    Your list has <b>{{filter_count}} active filters</b>, view them and add more
+                {{else}}
+                    Start adding filters to your list
+                {{/if}}
+                from the <a href="{{href "list-filters" ""}}">filter list page</a>.
+            </p>
+            <p>To use your filters in uBlock, add the following list:
+                <a href="{{list_href filter_list.Token}}" hx-boost="false">{{list_href filter_list.Token}}</a></p>
         </div>
     </div>
 {{else}}
     <div class="card mb-3" hx-boost="false">
         <div class="card-header">Unverified account</div>
         <div class="card-body">
-            <p>You need to verify your e-mail address before you can create lists. Check your inbox and spam folder
+            <p>You need to verify your e-mail address before you can add filters. Check your inbox and spam folder
                 for an e-mail from <em>no-reply@ory.sh</em>, or <a href="/.ory/init/verification">get a new link</a></p>
         </div>
     </div>
