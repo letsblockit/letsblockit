@@ -137,7 +137,6 @@ func (s *Server) setupRouter() {
 		hc := s.buildHandlebarsContext(c, "Available filter templates for "+tag)
 		hc["tag_search"] = tag
 		s.addFiltersToContext(c, hc, tag)
-		// TODO: link to go back to all tags
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "filters-for-tag"
 
@@ -216,6 +215,7 @@ func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, 
 	}
 	hc["active_filters"] = active
 	hc["available_filters"] = available
+	hc["filter_tags"] = s.filters.GetTags()
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {
