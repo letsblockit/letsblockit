@@ -6,6 +6,6 @@
 
 set -euox pipefail
 
-golangci-lint run
+golangci-lint run --timeout 5m
 go test -v -race ./...
 go run main.go --dry-run
