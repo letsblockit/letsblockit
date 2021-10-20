@@ -185,6 +185,7 @@ func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string
 }
 
 func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, tagSearch string) {
+	hc["filter_tags"] = s.filters.GetTags()
 	activeNames := s.getActiveFilterNames(getUser(c))
 
 	// Fast exit for landing page
@@ -215,7 +216,6 @@ func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, 
 	}
 	hc["active_filters"] = active
 	hc["available_filters"] = available
-	hc["filter_tags"] = s.filters.GetTags()
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {
