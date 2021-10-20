@@ -22,7 +22,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	u := getUser(c)
 
 	// Parse filters param and render output if non empty
-	params, save, err := parseFilterParams(c, filter)
+	params, save, disable, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
@@ -44,6 +44,16 @@ func (s *Server) viewFilter(c echo.Context) error {
 		}
 		hc["saved_ok"] = true
 		hc["has_instance"] = true
+	}
+
+	// Handle deletion if requested, remove all instances matching a given name
+	if disable && u.IsVerified() {
+		target := &models.FilterInstance{
+			UserID:     u.Id(),
+			FilterName: filter.Name,
+		}
+		s.gorm.Where(target).Delete(target)
+		params = nil
 	}
 
 	// If no params are passed, source from the user's filters
@@ -85,7 +95,7 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	}
 
 	// Parse filters param and render output if non empty
-	params, _, err := parseFilterParams(c, filter)
+	params,_, _, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
@@ -110,16 +120,17 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	return s.pages.render(c, "view-filter-render", hc)
 }
 
-func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, bool, error) {
+func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, bool, bool, error) {
 	formParams, err := c.FormParams()
 	if err != nil {
-		return nil, false, err
+		return nil, false, false, err
 	}
 	if len(formParams) == 0 {
-		return nil, false, nil
+		return nil, false, false, nil
 	}
 
 	_, save := formParams["__save"]
+	_, disable := formParams["__disable"]
 	params := make(map[string]interface{})
 	for _, p := range filter.Params {
 		switch p.Type {
@@ -136,10 +147,10 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 		case filters.BooleanParam:
 			params[p.Name] = formParams.Get(p.Name) == "on"
 		default:
-			return nil, false, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
+			return nil, false, false, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
 		}
 	}
-	return params, save, err
+	return params, save, disable, err
 }
 
 func lowerFirst(s string) string {

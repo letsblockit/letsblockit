@@ -90,14 +90,32 @@
                         <div class="ms-3 htmx-indicator spinner-border text-secondary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
+                        {{#if has_instance}}
+                            <button type="submit" name="__disable" class="btn btn-info ms-auto"
+                                    onSubmit="return confirm('Disable filter and delete its configuration?')"
+                                    hx-confirm="Disable filter and delete its configuration?"
+                                    hx-vals='{"__disable": ""}'
+                                    hx-post="{{href "view-filter" filter.name}}"
+                                    hx-select="#main" hx-target="#main" hx-swap="outerHTML">
+                                Disable filter
+                            </button>
+                        {{/if}}
                     </div>
                 </form>
             </div>
         {{else}}
             <h2>Filter contents</h2>
-            <div>
+            <div class="d-flex align-items-center">
                 {{#if has_instance}}
                     <button class="btn btn-primary" disabled>Filter already in your list.</button>
+                    <button type="submit" name="__disable" class="btn btn-info ms-auto"
+                            onSubmit="return confirm('Disable filter?')"
+                            hx-confirm="Disable filter?"
+                            hx-vals='{"__disable": ""}'
+                            hx-post="{{href "view-filter" filter.name}}"
+                            hx-select="#main" hx-target="#main" hx-swap="outerHTML">
+                        Disable filter
+                    </button>
                 {{else if verified}}
                     <form id="filter_input" method="POST" action="#output-card"
                           hx-post="{{href "view-filter" filter.name}}"
