@@ -3,19 +3,22 @@ blurb: My patience for them is growing short.
 tags:
   - youtube
 template: |
-  {{>youtube-video-title keywords=(string_split "#shorts")}}
+  www.youtube.com##ytd-browse ytd-grid-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
+  www.youtube.com##ytd-browse ytd-rich-item-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
+  www.youtube.com##ytd-search ytd-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
+  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
 tests:
   - output: |
-      www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="#shorts" i])
-      www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="#shorts" i])
-      www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="#shorts" i])
-      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="#shorts" i])
+      www.youtube.com##ytd-browse ytd-grid-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
+      www.youtube.com##ytd-browse ytd-rich-item-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
+      www.youtube.com##ytd-search ytd-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
 ---
 
-Youtube is pushing forward a new low-effort format with videos under 60 seconds. So far, Youtube recommends add `#shorts` to the video title. We can use this to our advantage by hiding with this keyword in their title.
+Youtube is pushing forward a new low-effort format with videos under 60 seconds.
 
-[Original idea](https://old.reddit.com/r/uBlockOrigin/comments/m9znll/hide_youtube_shorts_from_video_lists/), expanded here to cover all pages.
+This filter matches all videos under 70 seconds and hides them. This can create some false-positives, but catches all shorts,
+even the ones a few seconds over a minute and those without the `#shorts` tag in their title.
 
-<div class="alert alert-warning" role="alert">
-As the #shorts tag is not compulsory, some shorts might still go through this filter. Contributions are welcome to improve this  filter.
-</div>
+If you are concerned about false-positives, an alternative is to use the [Hide Youtube videos by title](/filters/youtube-video-title)
+filter, set to match on the `#shorts` and `#short` words.

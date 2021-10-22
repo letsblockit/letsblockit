@@ -4,7 +4,7 @@ params:
   - name: keywords
     description: Words to search for
     type: list
-    default: [ "lofi" ]
+    default: [ "lofi", "#shorts" ]
 tags:
   - youtube
 template: |
@@ -18,12 +18,16 @@ tests:
   - params: {}
     output: ""
   - params:
-      keywords: [ "lofi" ]
+      keywords: [ "lofi", "#shorts" ]
     output: |
       www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="lofi" i])
       www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="lofi" i])
       www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="lofi" i])
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="lofi" i])
+      www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="#shorts" i])
+      www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="#shorts" i])
+      www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="#shorts" i])
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="#shorts" i])
 ---
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. This this filter, you can remove videos with a given word in their title.
 
