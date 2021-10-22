@@ -1,21 +1,40 @@
-<h2>{{title}}</h2>
-
-<div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
-    {{#each filters}}
-        <div class="col">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <a href="{{href "view-filter" name}}" class="text-reset text-decoration-none h-100">
-                        <h5 class="card-title">{{title}}</h5>
-                        <p class="card-text">{{blurb}}</p>
-                    </a>
-                </div>
-                <div class="card-footer">
-                    {{#each tags}}{{{tag this}}}{{/each}}
-                </div>
-            </div>
+<div class="row">
+    <div class="col-12 col-lg-2 order-last">
+        <div class="card-body">
+            <h5 class="card-title">Tags</h5>
+            {{#if tag_search}}
+                <p class="card-text">
+                    <a href="{{href "list-filters" ""}}">← Back to all</a>
+                </p>
+            {{else}}
+                <p class="card-text">{{#each filter_tags}}{{{tag this}}}{{/each}}</p>
+            {{/if}}
         </div>
-    {{/each}}
-</div>
+        <div class="card-body">
+            <h5 class="card-title">Contribute</h5>
+            <p class="card-text">
+                <a href="https://github.com/xvello/letsblockit/blob/main/data/filters/">Filters data</a>
+            </p>
+        </div>
+    </div>
+    <div class="col col-lg-10">
+        {{#if active_filters }}
+            <h2>Active filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
 
-<h2></h2>
+            <div class="p-2 mb-3 row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+                {{#each active_filters}}
+                    {{>list-filter-card}}
+                {{/each}}
+            </div>
+        {{/if}}
+
+        {{#if available_filters }}
+            <h2>Available filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
+            <div class="p-2 row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
+                {{#each available_filters}}
+                    {{>list-filter-card}}
+                {{/each}}
+            </div>
+        {{/if}}
+    </div>
+</div>

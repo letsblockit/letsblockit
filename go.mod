@@ -8,6 +8,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.0 // indirect
 	github.com/alexflint/go-arg v1.4.2
 	github.com/go-playground/validator/v10 v10.9.0
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/imantung/mario v0.9.0
 	github.com/labstack/echo/v4 v4.6.1
@@ -15,4 +16,6 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/yaml.v2 v2.4.0
+	gorm.io/driver/sqlite v1.1.5 // indirect
+	gorm.io/gorm v1.21.15 // indirect
 )

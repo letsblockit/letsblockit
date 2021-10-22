@@ -24,6 +24,9 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 		"href": func(route string, args string) string {
 			return href(e, route, args)
 		},
+		"list_href": func(token string) string {
+			return "https://get.letsblock.it" + href(e, "render-filterlist", token)
+		},
 		"lookup_list": func(obj map[string]interface{}, key string) []string {
 			switch values := obj[key].(type) {
 			case []string:

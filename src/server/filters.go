@@ -9,6 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/models"
 )
 
 func (s *Server) viewFilter(c echo.Context) error {
@@ -18,14 +19,57 @@ func (s *Server) viewFilter(c echo.Context) error {
 	}
 	hc := s.buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
 	hc["filter"] = filter
+	u := getUser(c)
 
 	// Parse filters param and render output if non empty
-	params, err := parseFilterParams(c, filter)
+	params, save, disable, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
 
-	// If no params are passed, inject the default ones
+	// Save filter params if requested
+	if save && u.IsVerified() {
+		f := &models.FilterInstance{
+			UserID:     u.Id(),
+			FilterName: filter.Name,
+		}
+		s.gorm.Where(f).First(f)
+		f.Params = params
+		if f.FilterListID == 0 {
+			list := s.getOrCreateFilterList(u)
+			f.FilterListID = list.ID
+			s.gorm.Create(&f)
+		} else {
+			s.gorm.Save(&f)
+		}
+		hc["saved_ok"] = true
+		hc["has_instance"] = true
+	}
+
+	// Handle deletion if requested, remove all instances matching a given name
+	if disable && u.IsVerified() {
+		target := &models.FilterInstance{
+			UserID:     u.Id(),
+			FilterName: filter.Name,
+		}
+		s.gorm.Where(target).Delete(target)
+		return s.redirect(c, "list-filters")
+	}
+
+	// If no params are passed, source from the user's filters
+	if !save && params == nil && u.IsVerified() {
+		f := &models.FilterInstance{
+			UserID:     u.Id(),
+			FilterName: filter.Name,
+		}
+		s.gorm.Where(f).First(f)
+		if f.ID > 0 {
+			params = f.Params
+			hc["has_instance"] = true
+		}
+	}
+
+	// If no config found, inject the default ones
 	if params == nil {
 		params = make(map[string]interface{})
 		for _, p := range filter.Params {
@@ -51,7 +95,7 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	}
 
 	// Parse filters param and render output if non empty
-	params, err := parseFilterParams(c, filter)
+	params, _, _, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
@@ -69,21 +113,24 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	if err = s.filters.Render(c.Request().Context(), &buf, filter.Name, params); err != nil {
 		return err
 	}
-	hc := map[string]interface{}{
-		"_naked":   true,
-		"rendered": buf.String(),
-	}
+	hc := s.buildHandlebarsContext(c, "")
+	hc["_naked"] = true
+	hc["rendered"] = buf.String()
+
 	return s.pages.render(c, "view-filter-render", hc)
 }
 
-func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, error) {
+func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, bool, bool, error) {
 	formParams, err := c.FormParams()
 	if err != nil {
-		return nil, err
+		return nil, false, false, err
 	}
 	if len(formParams) == 0 {
-		return nil, nil
+		return nil, false, false, nil
 	}
+
+	_, save := formParams["__save"]
+	_, disable := formParams["__disable"]
 	params := make(map[string]interface{})
 	for _, p := range filter.Params {
 		switch p.Type {
@@ -100,10 +147,10 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 		case filters.BooleanParam:
 			params[p.Name] = formParams.Get(p.Name) == "on"
 		default:
-			return nil, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
+			return nil, false, false, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
 		}
 	}
-	return params, err
+	return params, save, disable, err
 }
 
 func lowerFirst(s string) string {

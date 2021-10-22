@@ -1,11 +1,21 @@
-<div id="output-card" class="card mt-4 shadow-sm">
-    <div id="output-header" class="card-header d-flex justify-content-between align-items-center">
-        Copy this to your uBlock filters:
-        <button type="button" class="btn btn-sm btn-outline-success" onclick="copyOutput(this);">
-            <i id="output-copy-icon" class="far fa-clipboard me-md-1"></i>
-            <span id="output-copy-text" class="d-none d-md-inline">Copy to clipboard</span>
-        </button>
-    </div>
+<div id="output-card" class="card mt-4 shadow-sm {{#if saved_ok}}border-success{{/if}}">
+    {{#if saved_ok}}
+        <div id="output-header" class="card-header bg-success text-white">
+            Filter parameters saved
+        </div>
+    {{else if verified}}
+        <div id="output-header" class="card-header d-flex justify-content-between align-items-center">
+            Preview
+        </div>
+    {{else}}
+        <div id="output-header" class="card-header d-flex justify-content-between align-items-center">
+            Copy this to your uBlock filters:
+            <button type="button" class="btn btn-sm btn-outline-success" onclick="copyOutput(this);">
+                <i id="output-copy-icon" class="far fa-clipboard me-md-1"></i>
+                <span id="output-copy-text" class="d-none d-md-inline">Copy to clipboard</span>
+            </button>
+        </div>
+    {{/if}}
     <div class="card-body">
         <code id="output-code" class="card-text text-primary" style="white-space:pre-wrap">{{rendered}}</code>
     </div>

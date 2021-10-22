@@ -3,6 +3,9 @@ package server
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -12,17 +15,26 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/models"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
 
 type Options struct {
-	DryRun     bool   `arg:"--dry-run" help:"instantiate all components and exit"`
 	Address    string `default:"127.0.0.1:8765" help:"address to listen to"`
-	Statsd     string `help:"address to send statsd metrics to"`
+	DataFolder string `default:"var" help:"folder holding the persistent data"`
+	Debug      bool   `help:"log with debug level"`
+	DryRun     bool   `arg:"--dry-run" help:"instantiate all components and exit"`
+	Migrations bool   `help:"run gorm schema migrations on startup"`
 	OryProject string `help:"oxy cloud project to check credentials against"`
 	Reload     bool   `help:"reload frontend when the backend restarts"`
-	Debug      bool   `help:"log with debug level"`
+	Statsd     string `help:"address to send statsd metrics to"`
+}
+
+func (o *Options) dataPath(parts ...string) string {
+	return filepath.Join(o.DataFolder, filepath.Join(parts...))
 }
 
 var navigationLinks = []struct {
@@ -37,11 +49,12 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
-	options *Options
-	echo    *echo.Echo
-	pages   *pages
-	filters *filters.Repository
 	assets  *wrappedAssets
+	echo    *echo.Echo
+	filters *filters.Repository
+	gorm    *gorm.DB
+	options *Options
+	pages   *pages
 }
 
 func NewServer(options *Options) *Server {
@@ -56,6 +69,7 @@ func (s *Server) Start() error {
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = loadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
+		func(errs []error) { s.gorm, errs[0] = initOrm(s.options) },
 	})
 
 	if s.options.Statsd != "" {
@@ -114,24 +128,15 @@ func (s *Server) setupRouter() {
 
 	s.echo.GET("/filters", func(c echo.Context) error {
 		hc := s.buildHandlebarsContext(c, "Available uBlock filter templates")
-		hc["filters"] = s.filters.GetFilters()
+		s.addFiltersToContext(c, hc, "")
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
 	s.echo.GET("/filters/tag/:tag", func(c echo.Context) error {
 		tag := c.Param("tag")
-		hc := s.buildHandlebarsContext(c, "Filter templates for "+tag)
-		var matching []*filters.Filter
-		for _, f := range s.filters.GetFilters() {
-			for _, t := range f.Tags {
-				if t == tag {
-					matching = append(matching, f)
-					break
-				}
-			}
-		}
-		hc["filters"] = matching
-		// TODO: link to go back to all tags
+		hc := s.buildHandlebarsContext(c, "Available filter templates for "+tag)
+		hc["tag_search"] = tag
+		s.addFiltersToContext(c, hc, tag)
 		return s.pages.render(c, "list-filters", hc)
 	}).Name = "filters-for-tag"
 
@@ -139,16 +144,28 @@ func (s *Server) setupRouter() {
 	s.echo.POST("/filters/:name", s.viewFilter)
 	s.echo.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 
+	s.echo.GET("/list/:token", s.renderList).Name = "render-filterlist"
+
 	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
 	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"
 	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
-
 }
 
 func (s *Server) addStatic(url, page, title string) {
 	s.echo.GET(url, func(c echo.Context) error {
 		return s.pages.render(c, page, s.buildHandlebarsContext(c, title))
 	}).Name = page
+}
+
+// redirect the user to another page, either via htmx client-side redirect (form submissions)
+// or http 302 redirect (direct access, js disabled)
+func (s *Server) redirect(c echo.Context, name string, params ...interface{}) error {
+	target := s.echo.Reverse(name, params...)
+	if c.Request().Header.Get("HX-Request") == "true" {
+		c.Response().Header().Set("HX-Redirect", target)
+		return nil
+	}
+	return c.Redirect(http.StatusFound, target)
 }
 
 func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
@@ -163,12 +180,49 @@ func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string
 		"navLinks":   navigationLinks,
 		"navCurrent": section,
 		"title":      title,
-		"logged":     c.Get(userContextKey) != nil,
+	}
+	if u := getUser(c); u != nil {
+		context["logged"] = true
+		context["verified"] = u.IsVerified()
 	}
 	if s.options.Reload {
 		context["jsImports"] = []string{"reload.js"}
 	}
 	return context
+}
+
+func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, tagSearch string) {
+	hc["filter_tags"] = s.filters.GetTags()
+	activeNames := s.getActiveFilterNames(getUser(c))
+
+	// Fast exit for landing page
+	if len(activeNames) == 0 && len(tagSearch) == 0 {
+		hc["available_filters"] = s.filters.GetFilters()
+		return
+	}
+
+	var active, available []*filters.Filter
+	for _, f := range s.filters.GetFilters() {
+		if tagSearch != "" {
+			matching := false
+			for _, t := range f.Tags {
+				if t == tagSearch {
+					matching = true
+					break
+				}
+			}
+			if !matching {
+				continue
+			}
+		}
+		if activeNames[f.Name] {
+			active = append(active, f)
+		} else {
+			available = append(available, f)
+		}
+	}
+	hc["active_filters"] = active
+	hc["available_filters"] = available
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {
@@ -213,4 +267,27 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 			return nil
 		}
 	}
+}
+
+func initOrm(options *Options) (*gorm.DB, error) {
+	if err := os.MkdirAll(options.DataFolder, 0700); err != nil {
+		return nil, err
+	}
+
+	db := sqlite.Open(options.dataPath("main.db"))
+	orm, err := gorm.Open(db, &gorm.Config{
+		PrepareStmt:                              true,
+		SkipDefaultTransaction:                   true,
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if options.Migrations {
+		err = orm.AutoMigrate(&models.FilterList{}, &models.FilterInstance{})
+		if err != nil {
+			return nil, err
+		}
+	}
+	return orm, nil
 }

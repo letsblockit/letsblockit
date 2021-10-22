@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/svg+xml" href="/assets/images/logo-small.svg{{assetHash}}">
@@ -43,7 +42,7 @@
     </div>
 </nav>
 
-<main class="container p-5">
+<main id="main" class="container p-5">
     <div class="container">
         {{#if _page.partial}}{{>(_page.partial)}}{{else}}{{{_page.contents}}}{{/if}}
     </div>
