@@ -9,7 +9,8 @@ import (
 
 const listHeaderTemplate = `! Title: letsblock.it - %s
 ! Expires: 1 hour
-
+! Homepage: https://letsblock.it
+! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
 `
 
 const filterHeaderTemplate = `
