@@ -1,0 +1,27 @@
+title: Hide Linkedin posts by link target
+blurb: I don't care that you are hiring.
+params:
+  - name: sites
+    description: Sites to hide
+    type: list
+    default: [ "www.linkedin.com/learning", "my.previous.corp/careers" ]
+tags:
+  - linkedin
+template: |
+  {{#each sites}}
+  www.linkedin.com##div.occludable-update:has(a[href*="{{this}}"])
+  {{/each}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      sites: [ "www.linkedin.com/learning", "my.previous.corp/careers" ]
+    output: |
+      www.linkedin.com##div.occludable-update:has(a[href*="www.linkedin.com/learning"])
+      www.linkedin.com##div.occludable-update:has(a[href*="my.previous.corp/careers"])
+---
+
+You want to keep in touch with your previous colleagues, but they are pushing they job postings way too aggressively?
+Your network is going hot on a topic you don't care about, re-posting the same website every week?
+
+This filter looks at hyperlinks in posts, and hides the ones that match.
