@@ -5,6 +5,7 @@
 # This script runs linting and tests
 
 set -euox pipefail
+export GOGC=400
 
 golangci-lint run --build-tags=libsqlite3 --timeout=5m
 go test -tags libsqlite3 -v -race ./...
