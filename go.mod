@@ -25,5 +25,5 @@ require (
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/sqlite v1.1.6
-	gorm.io/gorm v1.21.16
+	gorm.io/gorm v1.22.0
 )
