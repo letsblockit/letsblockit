@@ -16,7 +16,6 @@ require (
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/labstack/gommon v0.3.0
 	github.com/mattn/go-colorable v0.1.11 // indirect
-	github.com/mattn/go-sqlite3 v1.14.9 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
@@ -24,6 +23,6 @@ require (
 	golang.org/x/sys v0.0.0-20211023085530-d6a326fbbf70 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/sqlite v1.1.6
+	gorm.io/driver/sqlite v1.2.0
 	gorm.io/gorm v1.21.16
 )
