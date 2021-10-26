@@ -8,7 +8,7 @@ pkgs.buildGoModule.override
   version = "1.0";
   buildInputs = [ pkgs.sqlite ];
   buildFlags = "-tags libsqlite3";
-  vendorSha256 = "00qmnvsjn5r5sdja3lm9w3xhyvxnsidfyp5nji8gahlif35g6xx8";
+  vendorSha256 = "1vxb38h7nwjvp0divx45kmmgbf4wljmsim9afvm3jvwg99466aai";
   src = ./.;
   doCheck = false;
 }
