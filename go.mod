@@ -3,7 +3,7 @@ module github.com/xvello/letsblockit
 go 1.16
 
 require (
-	github.com/DataDog/datadog-go v4.8.2+incompatible
+	github.com/DataDog/datadog-go/v5 v5.0.1
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/alexflint/go-arg v1.4.2
