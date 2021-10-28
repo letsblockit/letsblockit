@@ -8,5 +8,5 @@ set -euox pipefail
 export GOGC=400
 
 golangci-lint run --build-tags=libsqlite3 --timeout=5m
-go test -tags libsqlite3 -v -race ./...
-go run -tags libsqlite3 main.go --dry-run
+go test -race -tags libsqlite3 -v -race ./...
+go run -race -tags libsqlite3 main.go --dry-run
