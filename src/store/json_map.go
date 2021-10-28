@@ -1,4 +1,4 @@
-package models
+package store
 
 // Fork of https://github.com/go-gorm/datatypes/blob/master/json_map.go
 // from commit f8869a04a6fe3572e035af3d8dfd2d2624737fcc

@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -15,9 +13,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/xvello/letsblockit/src/filters"
-	"github.com/xvello/letsblockit/src/models"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/xvello/letsblockit/src/store"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -31,10 +27,6 @@ type Options struct {
 	OryProject string `help:"oxy cloud project to check credentials against"`
 	Reload     bool   `help:"reload frontend when the backend restarts"`
 	Statsd     string `help:"address to send statsd metrics to"`
-}
-
-func (o *Options) dataPath(parts ...string) string {
-	return filepath.Join(o.DataFolder, filepath.Join(parts...))
 }
 
 var navigationLinks = []struct {
@@ -52,9 +44,9 @@ type Server struct {
 	assets  *wrappedAssets
 	echo    *echo.Echo
 	filters *filters.Repository
-	gorm    *gorm.DB
 	options *Options
 	pages   *pages
+	store   *store.Store
 }
 
 func NewServer(options *Options) *Server {
@@ -69,7 +61,7 @@ func (s *Server) Start() error {
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = loadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
-		func(errs []error) { s.gorm, errs[0] = initOrm(s.options) },
+		func(errs []error) { s.store, errs[0] = store.NewStore(s.options.DataFolder, s.options.Migrations) },
 	})
 
 	if s.options.Statsd != "" {
@@ -193,7 +185,7 @@ func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string
 
 func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, tagSearch string) {
 	hc["filter_tags"] = s.filters.GetTags()
-	activeNames := s.getActiveFilterNames(getUser(c))
+	activeNames := s.store.GetActiveFilterNames(getUser(c).Id())
 
 	// Fast exit for landing page
 	if len(activeNames) == 0 && len(tagSearch) == 0 {
@@ -267,27 +259,4 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 			return nil
 		}
 	}
-}
-
-func initOrm(options *Options) (*gorm.DB, error) {
-	if err := os.MkdirAll(options.DataFolder, 0700); err != nil {
-		return nil, err
-	}
-
-	db := sqlite.Open(options.dataPath("main.db"))
-	orm, err := gorm.Open(db, &gorm.Config{
-		PrepareStmt:                              true,
-		SkipDefaultTransaction:                   true,
-		DisableForeignKeyConstraintWhenMigrating: true,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if options.Migrations {
-		err = orm.AutoMigrate(&models.FilterList{}, &models.FilterInstance{})
-		if err != nil {
-			return nil, err
-		}
-	}
-	return orm, nil
 }

@@ -9,7 +9,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/filters"
-	"github.com/xvello/letsblockit/src/models"
+	"github.com/xvello/letsblockit/src/store"
 )
 
 func (s *Server) viewFilter(c echo.Context) error {
@@ -29,18 +29,8 @@ func (s *Server) viewFilter(c echo.Context) error {
 
 	// Save filter params if requested
 	if save && u.IsVerified() {
-		f := &models.FilterInstance{
-			UserID:     u.Id(),
-			FilterName: filter.Name,
-		}
-		s.gorm.Where(f).First(f)
-		f.Params = params
-		if f.FilterListID == 0 {
-			list := s.getOrCreateFilterList(u)
-			f.FilterListID = list.ID
-			s.gorm.Create(&f)
-		} else {
-			s.gorm.Save(&f)
+		if err = s.store.UpsertFilterInstance(u.Id(), filter.Name, params); err != nil {
+			return err
 		}
 		hc["saved_ok"] = true
 		hc["has_instance"] = true
@@ -48,24 +38,22 @@ func (s *Server) viewFilter(c echo.Context) error {
 
 	// Handle deletion if requested, remove all instances matching a given name
 	if disable && u.IsVerified() {
-		target := &models.FilterInstance{
-			UserID:     u.Id(),
-			FilterName: filter.Name,
+		if err = s.store.DropFilterInstance(u.Id(), filter.Name); err != nil {
+			return err
 		}
-		s.gorm.Where(target).Delete(target)
 		return s.redirect(c, "list-filters")
 	}
 
 	// If no params are passed, source from the user's filters
 	if !save && params == nil && u.IsVerified() {
-		f := &models.FilterInstance{
-			UserID:     u.Id(),
-			FilterName: filter.Name,
-		}
-		s.gorm.Where(f).First(f)
-		if f.ID > 0 {
+		f, err := s.store.GetFilterInstance(u.Id(), filter.Name)
+		switch err {
+		case nil:
 			params = f.Params
 			hc["has_instance"] = true
+		case store.ErrRecordNotFound: // ok
+		default:
+			return err
 		}
 	}
 

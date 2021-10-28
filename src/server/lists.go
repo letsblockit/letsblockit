@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/models"
+	"github.com/xvello/letsblockit/src/store"
 )
 
 const listHeaderTemplate = `! Title: letsblock.it - %s
@@ -19,15 +19,17 @@ const filterHeaderTemplate = `
 
 func (s *Server) renderList(c echo.Context) error {
 	token := c.Param("token")
-	list := models.FilterList{
-		Token: token,
-	}
-	s.gorm.Where(&list).Preload("FilterInstances").First(&list)
-	if list.ID == 0 {
+	list, err := s.store.GetListForToken(token)
+	switch err {
+	case nil:
+		// ok
+	case store.ErrRecordNotFound:
 		return echo.ErrNotFound
+	default:
+		return err
 	}
 
-	_, err := fmt.Fprintf(c.Response(), listHeaderTemplate, list.Name)
+	_, err = fmt.Fprintf(c.Response(), listHeaderTemplate, list.Name)
 	if err != nil {
 		return err
 	}
