@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/DataDog/mmh3"
 	"github.com/labstack/echo/v4"
@@ -20,6 +21,7 @@ import (
  */
 type wrappedAssets struct {
 	root   fs.FS
+	m      sync.RWMutex
 	isDir  map[string]bool
 	hash   string
 	eTag   string
@@ -52,9 +54,13 @@ func (w *wrappedAssets) serve(c echo.Context) error {
 }
 
 // Open implements http.Filesystem while denying access to directory listings
-func (w wrappedAssets) Open(name string) (http.File, error) {
+func (w *wrappedAssets) Open(name string) (http.File, error) {
 	name = strings.TrimPrefix(name, "/")
+
+	w.m.RLock()
 	isDir, found := w.isDir[name]
+	w.m.RUnlock()
+
 	if isDir {
 		return nil, fs.ErrNotExist
 	}
@@ -67,7 +73,11 @@ func (w wrappedAssets) Open(name string) (http.File, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		w.m.Lock()
 		w.isDir[name] = stat.IsDir()
+		w.m.Unlock()
+
 		if stat.IsDir() {
 			return nil, fs.ErrNotExist
 		}
