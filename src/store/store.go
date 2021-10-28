@@ -1,12 +1,15 @@
 package store
 
 import (
+	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 const (
@@ -33,6 +36,15 @@ func NewStore(target string, migrations bool) (*Store, error) {
 		PrepareStmt:                              true,
 		SkipDefaultTransaction:                   true,
 		DisableForeignKeyConstraintWhenMigrating: true,
+		Logger: logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
+			logger.Config{
+				SlowThreshold:             time.Second,
+				LogLevel:                  logger.Warn,
+				IgnoreRecordNotFoundError: true,
+				Colorful:                  false,
+			},
+		),
 	})
 	if err != nil {
 		return nil, err

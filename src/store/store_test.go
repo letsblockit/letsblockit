@@ -1,9 +1,13 @@
 package store
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -72,4 +76,22 @@ func (s *StoreTestSuite) TestFilterInstances() {
 
 func TestStoreTestSuite(t *testing.T) {
 	suite.Run(t, new(StoreTestSuite))
+}
+
+func TestStoreOnDisk(t *testing.T) {
+	// Create a temporary folder and open a store there
+	dir, err := ioutil.TempDir("", "lbi")
+	require.NoError(t, err)
+	defer os.RemoveAll(dir)
+	store, err := NewStore(dir, true)
+	require.NoError(t, err)
+
+	// Ensure we can write to the store
+	_, err = store.GetOrCreateFilterList(uuid.NewString())
+	require.NoError(t, err)
+
+	// Check the sqlite file is created and not empty
+	info, err := os.Stat(filepath.Join(dir, "main.db"))
+	require.NoError(t, err)
+	require.Greater(t, info.Size(), int64(100))
 }
