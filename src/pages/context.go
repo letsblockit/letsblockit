@@ -1,5 +1,7 @@
 package pages
 
+type ContextData map[string]interface{}
+
 type Context struct {
 	NakedContent bool
 	Scripts      []string
@@ -12,12 +14,12 @@ type Context struct {
 	UserID       string
 	UserVerified bool
 
-	Data map[string]interface{}
+	Data ContextData
 }
 
 func (c *Context) Add(key string, value interface{}) {
 	if c.Data == nil {
-		c.Data = make(map[string]interface{})
+		c.Data = make(ContextData)
 	}
 	c.Data[key] = value
 }

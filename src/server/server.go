@@ -46,9 +46,9 @@ type Server struct {
 	assets  *wrappedAssets
 	echo    *echo.Echo
 	options *Options
-	store   *store.Store
-	filters filterRepository
-	pages   pageRenderer
+	store   DataStore
+	filters FilterRepository
+	pages   PageRenderer
 }
 
 func NewServer(options *Options) *Server {
@@ -189,8 +189,10 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 
 func (s *Server) addFiltersToContext(hc *pages.Context, tagSearch string) {
 	hc.Add("filter_tags", s.filters.GetTags())
-	activeNames := s.store.GetActiveFilterNames(hc.UserID)
-
+	var activeNames map[string]bool
+	if hc.UserVerified {
+		activeNames = s.store.GetActiveFilterNames(hc.UserID)
+	}
 	// Fast exit for landing page
 	if len(activeNames) == 0 && len(tagSearch) == 0 {
 		hc.Add("available_filters", s.filters.GetFilters())

@@ -1,7 +1,6 @@
 package filters
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"io/fs"
@@ -78,7 +77,7 @@ func (r *Repository) GetTags() []string {
 	return r.tagList
 }
 
-func (r *Repository) Render(ctx context.Context, w io.Writer, name string, data map[string]interface{}) error {
+func (r *Repository) Render(w io.Writer, name string, data map[string]interface{}) error {
 	_, found := r.filterMap[name]
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)

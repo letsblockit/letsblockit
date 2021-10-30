@@ -1,7 +1,6 @@
 package filters
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"strings"
@@ -45,7 +44,7 @@ func TestValidateFilters(t *testing.T) {
 				for k, v := range tc.Params {
 					ctx[k] = v
 				}
-				assert.NoError(t, repo.Render(context.Background(), &buf, filter.Name, ctx))
+				assert.NoError(t, repo.Render(&buf, filter.Name, ctx))
 				assert.Equal(t, tc.Output, buf.String())
 			})
 		}

@@ -66,7 +66,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 
 	// Render the filter template
 	var buf strings.Builder
-	if err = s.filters.Render(c.Request().Context(), &buf, filter.Name, params); err != nil {
+	if err = s.filters.Render(&buf, filter.Name, params); err != nil {
 		return err
 	}
 	hc.Add("rendered", buf.String())
@@ -97,7 +97,7 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 
 	// Render the filter template
 	var buf strings.Builder
-	if err = s.filters.Render(c.Request().Context(), &buf, filter.Name, params); err != nil {
+	if err = s.filters.Render(&buf, filter.Name, params); err != nil {
 		return err
 	}
 	hc := s.buildPageContext(c, "")
