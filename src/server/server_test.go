@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"github.com/xvello/letsblockit/src/pages"
 	"github.com/xvello/letsblockit/src/store"
 )
 
@@ -50,9 +51,11 @@ func (s *ServerTestSuite) SetupTest() {
 	s.Require().NoError(err)
 
 	s.server = &Server{
-		assets:  nil,
-		echo:    echo.New(),
-		options: &Options{},
+		assets: nil,
+		echo:   echo.New(),
+		options: &Options{
+			silent: true,
+		},
 		store:   s.store,
 		filters: s.fm,
 		pages:   s.pm,
@@ -60,11 +63,11 @@ func (s *ServerTestSuite) SetupTest() {
 	s.server.setupRouter()
 }
 
-func (s *ServerTestSuite) fExpect() *MockfilterRepositoryMockRecorder {
-	return s.fm.EXPECT()
-}
+//func (s *ServerTestSuite) fExpect() *MockfilterRepositoryMockRecorder {
+//	return s.fm.EXPECT()
+//}
 
-func (s *ServerTestSuite) expectRender(page string, ctx map[string]interface{}) *gomock.Call {
+func (s *ServerTestSuite) expectRender(page string, ctx *pages.Context) *gomock.Call {
 	return s.pm.EXPECT().Render(gomock.Any(), page, gomock.Eq(ctx))
 }
 
@@ -98,10 +101,10 @@ func (s *ServerTestSuite) login(verified bool) {
 func (s *ServerTestSuite) TestAbout_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	rec := httptest.NewRecorder()
-	s.expectRender("about", map[string]interface{}{
-		"navCurrent": "about",
-		"navLinks":   navigationLinks,
-		"title":      "About: Let’s block it!",
+	s.expectRender("about", &pages.Context{
+		CurrentSection:  "about",
+		NavigationLinks: navigationLinks,
+		Title:           "About: Let’s block it!",
 	})
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(http.StatusOK, rec.Code)
@@ -111,12 +114,12 @@ func (s *ServerTestSuite) TestAbout_LoggedVerified() {
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	rec := httptest.NewRecorder()
 	s.login(true)
-	s.expectRender("about", map[string]interface{}{
-		"navCurrent": "about",
-		"navLinks":   navigationLinks,
-		"title":      "About: Let’s block it!",
-		"logged":     true,
-		"verified":   true,
+	s.expectRender("about", &pages.Context{
+		CurrentSection:  "about",
+		NavigationLinks: navigationLinks,
+		Title:           "About: Let’s block it!",
+		UserID:          s.user,
+		UserVerified:    true,
 	})
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(http.StatusOK, rec.Code)

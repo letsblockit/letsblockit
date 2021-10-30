@@ -12,6 +12,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	echo "github.com/labstack/echo/v4"
 	filters "github.com/xvello/letsblockit/src/filters"
+	pages "github.com/xvello/letsblockit/src/pages"
 )
 
 // MockpageRenderer is a mock of pageRenderer interface.
@@ -50,7 +51,7 @@ func (mr *MockpageRendererMockRecorder) RegisterHelpers(helpers interface{}) *go
 }
 
 // Render mocks base method.
-func (m *MockpageRenderer) Render(c echo.Context, name string, data map[string]interface{}) error {
+func (m *MockpageRenderer) Render(c echo.Context, name string, data *pages.Context) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Render", c, name, data)
 	ret0, _ := ret[0].(error)

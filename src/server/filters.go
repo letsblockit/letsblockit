@@ -17,9 +17,8 @@ func (s *Server) viewFilter(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
-	hc := s.buildHandlebarsContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
-	hc["filter"] = filter
-	u := getUser(c)
+	hc := s.buildPageContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
+	hc.Add("filter", filter)
 
 	// Parse filters param and render output if non empty
 	params, save, disable, err := parseFilterParams(c, filter)
@@ -28,29 +27,29 @@ func (s *Server) viewFilter(c echo.Context) error {
 	}
 
 	// Save filter params if requested
-	if save && u.IsVerified() {
-		if err = s.store.UpsertFilterInstance(u.Id(), filter.Name, params); err != nil {
+	if save && hc.UserVerified {
+		if err = s.store.UpsertFilterInstance(hc.UserID, filter.Name, params); err != nil {
 			return err
 		}
-		hc["saved_ok"] = true
-		hc["has_instance"] = true
+		hc.Add("saved_ok", true)
+		hc.Add("has_instance", true)
 	}
 
 	// Handle deletion if requested, remove all instances matching a given name
-	if disable && u.IsVerified() {
-		if err = s.store.DropFilterInstance(u.Id(), filter.Name); err != nil {
+	if disable && hc.UserVerified {
+		if err = s.store.DropFilterInstance(hc.UserID, filter.Name); err != nil {
 			return err
 		}
 		return s.redirect(c, "list-filters")
 	}
 
 	// If no params are passed, source from the user's filters
-	if !save && params == nil && u.IsVerified() {
-		f, err := s.store.GetFilterInstance(u.Id(), filter.Name)
+	if !save && params == nil && hc.UserVerified {
+		f, err := s.store.GetFilterInstance(hc.UserID, filter.Name)
 		switch err {
 		case nil:
 			params = f.Params
-			hc["has_instance"] = true
+			hc.Add("has_instance", true)
 		case store.ErrRecordNotFound: // ok
 		default:
 			return err
@@ -70,8 +69,8 @@ func (s *Server) viewFilter(c echo.Context) error {
 	if err = s.filters.Render(c.Request().Context(), &buf, filter.Name, params); err != nil {
 		return err
 	}
-	hc["rendered"] = buf.String()
-	hc["params"] = params
+	hc.Add("rendered", buf.String())
+	hc.Add("params", params)
 
 	return s.pages.Render(c, "view-filter", hc)
 }
@@ -101,9 +100,9 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	if err = s.filters.Render(c.Request().Context(), &buf, filter.Name, params); err != nil {
 		return err
 	}
-	hc := s.buildHandlebarsContext(c, "")
-	hc["_naked"] = true
-	hc["rendered"] = buf.String()
+	hc := s.buildPageContext(c, "")
+	hc.NakedContent = true
+	hc.Add("rendered", buf.String())
 
 	return s.pages.Render(c, "view-filter-render", hc)
 }

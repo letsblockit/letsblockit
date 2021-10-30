@@ -1,1 +1,1 @@
-{{#if _page.partial}}{{>(_page.partial)}}{{else}}{{{_page.contents}}}{{/if}}
+{{#if Page.partial}}{{#with Data}}{{>(Page.partial)}}{{/with}}{{else}}{{{Page.contents}}}{{/if}}

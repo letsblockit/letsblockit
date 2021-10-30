@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="/assets/css/styles.min.css{{assetHash}}">
     <script defer src="/assets/js/bootstrap.bundle.min.js{{assetHash}}"></script>
     <script defer src="/assets/js/htmx.min.js{{assetHash}}"></script>
-    {{#each jsImports}}
+    {{#each Scripts}}
         <script defer src="/assets/js/{{this}}{{assetHash}}"></script>
     {{/each}}
-    <title>{{ title }}</title>
+    <title>{{ Title }}</title>
 </head>
 <body hx-boost="true">
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
@@ -25,14 +25,14 @@
         </button>
         <div class="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
             <div class="navbar-nav me-md-auto" style="margin-left: 5rem">
-                {{#each navLinks}}
-                    <a class="nav-link ms-2 me-2{{#equal target @root.navCurrent}} active" aria-current="page{{/equal}}"
-                            href="/{{target}}">{{name}}</a>
+                {{#each NavigationLinks}}
+                    <a class="nav-link ms-2 me-2{{#equal target @root.CurrentSection}} active"
+                            aria-current="page{{/equal}}" href="/{{target}}">{{name}}</a>
                 {{/each}}
             </div>
-            {{#if logged}}
-                <a class="nav-link ms-2 me-2{{#equal "user" @root.navCurrent}} active" aria-current="page{{/equal}}"
-                        href="{{href "user-account" ""}}">My account</a>
+            {{#if UserID}}
+                <a class="nav-link ms-2 me-2{{#equal "user" @root.CurrentSection}} active"
+                        aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>
             {{/if}}
             <div class="navbar-nav">
                 <a class="ms-2 me-2 nav-link" href="https://github.com/xvello/letsblockit" title="Github">
@@ -44,7 +44,7 @@
 
 <main id="main" class="container p-5">
     <div class="container">
-        {{#if _page.partial}}{{>(_page.partial)}}{{else}}{{{_page.contents}}}{{/if}}
+        {{#if Page.partial}}{{#with Data}}{{>(Page.partial)}}{{/with}}{{else}}{{{Page.contents}}}{{/if}}
     </div>
 </main>
 </body>

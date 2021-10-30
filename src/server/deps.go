@@ -6,11 +6,12 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/pages"
 )
 
 type pageRenderer interface {
 	RegisterHelpers(helpers map[string]interface{})
-	Render(c echo.Context, name string, data map[string]interface{}) error
+	Render(c echo.Context, name string, data *pages.Context) error
 }
 
 type filterRepository interface {

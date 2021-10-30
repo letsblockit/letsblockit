@@ -10,7 +10,7 @@ func (s *Server) userLogin(c echo.Context) error {
 	if getUser(c) != nil {
 		return s.redirect(c, "user-account")
 	}
-	hc := s.buildHandlebarsContext(c, "Login")
+	hc := s.buildPageContext(c, "Login")
 	return s.pages.Render(c, "user-login", hc)
 }
 
@@ -32,17 +32,19 @@ func (s *Server) userAccount(c echo.Context) error {
 		return s.redirect(c, "user-login")
 	}
 
-	var err error
-	hc := s.buildHandlebarsContext(c, "My account")
+	hc := s.buildPageContext(c, "My account")
 	if user.IsVerified() {
-		hc["filter_count"], err = s.store.CountFilters(user.Id())
+		filterCount, err := s.store.CountFilters(user.Id())
 		if err != nil {
 			return err
 		}
-		hc["filter_list"], err = s.store.GetOrCreateFilterList(user.Id())
+		filterList, err := s.store.GetOrCreateFilterList(user.Id())
 		if err != nil {
 			return err
 		}
+		hc.Add("filter_count", filterCount)
+		hc.Add("filter_list", filterList)
+
 	}
 	return s.pages.Render(c, "user-account", hc)
 }

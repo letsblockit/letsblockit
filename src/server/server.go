@@ -28,6 +28,7 @@ type Options struct {
 	OryProject string `help:"oxy cloud project to check credentials against"`
 	Reload     bool   `help:"reload frontend when the backend restarts"`
 	Statsd     string `help:"address to send statsd metrics to"`
+	silent     bool
 }
 
 var navigationLinks = []struct {
@@ -90,7 +91,9 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) setupRouter() {
-	s.echo.Use(middleware.Logger())
+	if !s.options.silent {
+		s.echo.Use(middleware.Logger())
+	}
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
 		"/favicon.ico": "/assets/images/favicon.ico",
@@ -120,16 +123,16 @@ func (s *Server) setupRouter() {
 	s.addStatic("/about", "about", "About: Let’s block it!")
 
 	s.echo.GET("/filters", func(c echo.Context) error {
-		hc := s.buildHandlebarsContext(c, "Available uBlock filter templates")
-		s.addFiltersToContext(c, hc, "")
+		hc := s.buildPageContext(c, "Available uBlock filter templates")
+		s.addFiltersToContext(hc, "")
 		return s.pages.Render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
 	s.echo.GET("/filters/tag/:tag", func(c echo.Context) error {
 		tag := c.Param("tag")
-		hc := s.buildHandlebarsContext(c, "Available filter templates for "+tag)
-		hc["tag_search"] = tag
-		s.addFiltersToContext(c, hc, tag)
+		hc := s.buildPageContext(c, "Available filter templates for "+tag)
+		hc.Add("tag_search", tag)
+		s.addFiltersToContext(hc, tag)
 		return s.pages.Render(c, "list-filters", hc)
 	}).Name = "filters-for-tag"
 
@@ -146,7 +149,7 @@ func (s *Server) setupRouter() {
 
 func (s *Server) addStatic(url, page, title string) {
 	s.echo.GET(url, func(c echo.Context) error {
-		return s.pages.Render(c, page, s.buildHandlebarsContext(c, title))
+		return s.pages.Render(c, page, s.buildPageContext(c, title))
 	}).Name = page
 }
 
@@ -161,7 +164,7 @@ func (s *Server) redirect(c echo.Context, name string, params ...interface{}) er
 	return c.Redirect(http.StatusFound, target)
 }
 
-func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string]interface{} {
+func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	var section string
 	for _, s := range strings.Split(c.Path(), "/") {
 		if s != "" {
@@ -169,28 +172,28 @@ func (s *Server) buildHandlebarsContext(c echo.Context, title string) map[string
 			break
 		}
 	}
-	context := map[string]interface{}{
-		"navLinks":   navigationLinks,
-		"navCurrent": section,
-		"title":      title,
+	context := &pages.Context{
+		CurrentSection:  section,
+		NavigationLinks: navigationLinks,
+		Title:           title,
 	}
 	if u := getUser(c); u != nil {
-		context["logged"] = true
-		context["verified"] = u.IsVerified()
+		context.UserID = u.Id()
+		context.UserVerified = u.IsVerified()
 	}
 	if s.options.Reload {
-		context["jsImports"] = []string{"reload.js"}
+		context.Scripts = []string{"reload.js"}
 	}
 	return context
 }
 
-func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, tagSearch string) {
-	hc["filter_tags"] = s.filters.GetTags()
-	activeNames := s.store.GetActiveFilterNames(getUser(c).Id())
+func (s *Server) addFiltersToContext(hc *pages.Context, tagSearch string) {
+	hc.Add("filter_tags", s.filters.GetTags())
+	activeNames := s.store.GetActiveFilterNames(hc.UserID)
 
 	// Fast exit for landing page
 	if len(activeNames) == 0 && len(tagSearch) == 0 {
-		hc["available_filters"] = s.filters.GetFilters()
+		hc.Add("available_filters", s.filters.GetFilters())
 		return
 	}
 
@@ -214,8 +217,8 @@ func (s *Server) addFiltersToContext(c echo.Context, hc map[string]interface{}, 
 			available = append(available, f)
 		}
 	}
-	hc["active_filters"] = active
-	hc["available_filters"] = available
+	hc.Add("active_filters", active)
+	hc.Add("available_filters", available)
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {

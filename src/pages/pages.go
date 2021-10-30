@@ -95,14 +95,14 @@ func (t *Pages) RegisterHelpers(helpers map[string]interface{}) {
 	}
 }
 
-func (t *Pages) Render(c echo.Context, name string, data map[string]interface{}) error {
+func (t *Pages) Render(c echo.Context, name string, data *Context) error {
 	var found bool
-	data["_page"], found = t.pages[name]
+	data.Page, found = t.pages[name]
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template not found: "+name)
 	}
 	tpl := t.main
-	if _, found := data["_naked"]; found {
+	if data.NakedContent {
 		tpl = t.naked
 	}
 	buf := new(bytes.Buffer)

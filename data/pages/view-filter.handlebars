@@ -29,7 +29,7 @@
                         {{#equal type "checkbox"}}
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="{{name}}" name="{{name}}"
-                                       {{#equal true (lookup @root.params name)}}checked{{/equal}}>
+                                       {{#equal true (lookup @root.data.params name)}}checked{{/equal}}>
                                 <label class="form-check-label" for="{{name}}">{{description}}</label>
                             </div>
                         {{/equal}}
@@ -37,14 +37,14 @@
                             <div class="mb-3">
                                 <label class="form-label" for="{{name}}">{{description}}:</label>
                                 <input class="form-control" id="{{name}}" name="{{name}}"
-                                       value="{{lookup @root.params name}}">
+                                       value="{{lookup @root.data.params name}}">
                             </div>
                         {{/equal}}
                         {{#equal type "list"}}
                             <fieldset class="row mb-3">
                                 <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
                                 <div class="col-lg-9">
-                                    {{#each (lookup_list @root.params name)}}
+                                    {{#each (lookup_list @root.data.params name)}}
                                         <div class="input-group mb-1">
                                             <input type="text" class="form-control" name="{{name}}" value="{{this}}">
                                             <button class="btn btn-outline-success" type="button"
@@ -76,7 +76,7 @@
                         {{/equal}}
                     {{/each}}
                     <div class="d-flex align-items-center">
-                        {{#if verified}}
+                        {{#if @root.UserVerified}}
                             <button type="submit" name="__render" class="btn btn-secondary me-2">Preview</button>
                             <button type="submit" name="__save" class="btn btn-primary"
                                     hx-vals='{"__save": ""}'
@@ -117,7 +117,7 @@
                                 hx-select="#main" hx-target="#main" hx-swap="outerHTML">
                             Disable filter
                         </button>
-                    {{else if verified}}
+                    {{else if @root.UserVerified}}
                         <button type="submit" name="__save" class="btn btn-primary">
                             {{#if has_instance}}Update filter{{else}}Save filter{{/if}}
                         </button>
