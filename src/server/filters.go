@@ -73,7 +73,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	hc["rendered"] = buf.String()
 	hc["params"] = params
 
-	return s.pages.render(c, "view-filter", hc)
+	return s.pages.Render(c, "view-filter", hc)
 }
 
 func (s *Server) viewFilterRender(c echo.Context) error {
@@ -105,7 +105,7 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	hc["_naked"] = true
 	hc["rendered"] = buf.String()
 
-	return s.pages.render(c, "view-filter-render", hc)
+	return s.pages.Render(c, "view-filter-render", hc)
 }
 
 func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, bool, bool, error) {

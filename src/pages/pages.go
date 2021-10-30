@@ -1,4 +1,4 @@
-package server
+package pages
 
 import (
 	"bytes"
@@ -18,16 +18,16 @@ type page struct {
 	Contents string
 }
 
-// pages holds parsed pages ready for rendering
-type pages struct {
+// Pages holds parsed pages ready for rendering
+type Pages struct {
 	main  *mario.Template
 	naked *mario.Template
 	pages map[string]*page
 }
 
-// loadPages parses all web pages found in the pages folder
-func loadPages() (*pages, error) {
-	pp := pages{
+// LoadPages parses all web pages found in the pages folder
+func LoadPages() (*Pages, error) {
+	pp := Pages{
 		pages: make(map[string]*page),
 	}
 	// Parse toplevel layout template
@@ -89,13 +89,13 @@ func loadPages() (*pages, error) {
 	return &pp, err
 }
 
-func (t *pages) registerHelpers(helpers map[string]interface{}) {
+func (t *Pages) RegisterHelpers(helpers map[string]interface{}) {
 	for n, h := range helpers {
 		_ = t.main.WithHelperFunc(n, h)
 	}
 }
 
-func (t *pages) render(c echo.Context, name string, data map[string]interface{}) error {
+func (t *Pages) Render(c echo.Context, name string, data map[string]interface{}) error {
 	var found bool
 	data["_page"], found = t.pages[name]
 	if !found {

@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/pages"
 	"github.com/xvello/letsblockit/src/store"
 )
 
@@ -43,10 +44,10 @@ var navigationLinks = []struct {
 type Server struct {
 	assets  *wrappedAssets
 	echo    *echo.Echo
-	filters *filters.Repository
 	options *Options
-	pages   *pages
 	store   *store.Store
+	filters filterRepository
+	pages   pageRenderer
 }
 
 func NewServer(options *Options) *Server {
@@ -59,7 +60,7 @@ func NewServer(options *Options) *Server {
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
 		func(_ []error) { s.assets = loadAssets() },
-		func(errs []error) { s.pages, errs[0] = loadPages() },
+		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(errs []error) { s.store, errs[0] = store.NewStore(s.options.DataFolder, s.options.Migrations) },
 	})
@@ -80,7 +81,7 @@ func (s *Server) Start() error {
 		s.echo.Logger.SetLevel(log.DEBUG)
 	}
 
-	s.pages.registerHelpers(buildHelpers(s.echo, s.assets.hash))
+	s.pages.RegisterHelpers(buildHelpers(s.echo, s.assets.hash))
 	s.setupRouter()
 	if s.options.DryRun {
 		return ErrDryRunFinished
@@ -121,7 +122,7 @@ func (s *Server) setupRouter() {
 	s.echo.GET("/filters", func(c echo.Context) error {
 		hc := s.buildHandlebarsContext(c, "Available uBlock filter templates")
 		s.addFiltersToContext(c, hc, "")
-		return s.pages.render(c, "list-filters", hc)
+		return s.pages.Render(c, "list-filters", hc)
 	}).Name = "list-filters"
 
 	s.echo.GET("/filters/tag/:tag", func(c echo.Context) error {
@@ -129,7 +130,7 @@ func (s *Server) setupRouter() {
 		hc := s.buildHandlebarsContext(c, "Available filter templates for "+tag)
 		hc["tag_search"] = tag
 		s.addFiltersToContext(c, hc, tag)
-		return s.pages.render(c, "list-filters", hc)
+		return s.pages.Render(c, "list-filters", hc)
 	}).Name = "filters-for-tag"
 
 	s.echo.GET("/filters/:name", s.viewFilter).Name = "view-filter"
@@ -145,7 +146,7 @@ func (s *Server) setupRouter() {
 
 func (s *Server) addStatic(url, page, title string) {
 	s.echo.GET(url, func(c echo.Context) error {
-		return s.pages.render(c, page, s.buildHandlebarsContext(c, title))
+		return s.pages.Render(c, page, s.buildHandlebarsContext(c, title))
 	}).Name = page
 }
 

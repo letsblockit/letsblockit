@@ -11,7 +11,7 @@ func (s *Server) userLogin(c echo.Context) error {
 		return s.redirect(c, "user-account")
 	}
 	hc := s.buildHandlebarsContext(c, "Login")
-	return s.pages.render(c, "user-login", hc)
+	return s.pages.Render(c, "user-login", hc)
 }
 
 func (s *Server) userLogout(c echo.Context) error {
@@ -44,5 +44,5 @@ func (s *Server) userAccount(c echo.Context) error {
 			return err
 		}
 	}
-	return s.pages.render(c, "user-account", hc)
+	return s.pages.Render(c, "user-account", hc)
 }
