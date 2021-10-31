@@ -32,7 +32,7 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 			Params:     map[string]interface{}{"a": 1, "b": 2},
 		}},
 	}, nil)
-	
+
 	rec := httptest.NewRecorder()
 	s.expectF.Render(gomock.Any(), "one", nil).
 		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
