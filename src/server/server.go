@@ -122,19 +122,8 @@ func (s *Server) setupRouter() {
 
 	s.addStatic("/about", "about", "About: Let’s block it!")
 
-	s.echo.GET("/filters", func(c echo.Context) error {
-		hc := s.buildPageContext(c, "Available uBlock filter templates")
-		s.addFiltersToContext(hc, "")
-		return s.pages.Render(c, "list-filters", hc)
-	}).Name = "list-filters"
-
-	s.echo.GET("/filters/tag/:tag", func(c echo.Context) error {
-		tag := c.Param("tag")
-		hc := s.buildPageContext(c, "Available filter templates for "+tag)
-		hc.Add("tag_search", tag)
-		s.addFiltersToContext(hc, tag)
-		return s.pages.Render(c, "list-filters", hc)
-	}).Name = "filters-for-tag"
+	s.echo.GET("/filters", s.listFilters).Name = "list-filters"
+	s.echo.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
 
 	s.echo.GET("/filters/:name", s.viewFilter).Name = "view-filter"
 	s.echo.POST("/filters/:name", s.viewFilter)
@@ -185,42 +174,6 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		context.Scripts = []string{"reload.js"}
 	}
 	return context
-}
-
-func (s *Server) addFiltersToContext(hc *pages.Context, tagSearch string) {
-	hc.Add("filter_tags", s.filters.GetTags())
-	var activeNames map[string]bool
-	if hc.UserVerified {
-		activeNames = s.store.GetActiveFilterNames(hc.UserID)
-	}
-	// Fast exit for landing page
-	if len(activeNames) == 0 && len(tagSearch) == 0 {
-		hc.Add("available_filters", s.filters.GetFilters())
-		return
-	}
-
-	var active, available []*filters.Filter
-	for _, f := range s.filters.GetFilters() {
-		if tagSearch != "" {
-			matching := false
-			for _, t := range f.Tags {
-				if t == tagSearch {
-					matching = true
-					break
-				}
-			}
-			if !matching {
-				continue
-			}
-		}
-		if activeNames[f.Name] {
-			active = append(active, f)
-		} else {
-			available = append(available, f)
-		}
-	}
-	hc.Add("active_filters", active)
-	hc.Add("available_filters", available)
 }
 
 func concurrentRunOrPanic(tasks []func([]error)) {

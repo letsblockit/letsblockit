@@ -9,8 +9,8 @@ import (
 )
 
 var filter1 = &filters.Filter{
-	Name:   "filter1",
-	Tags:   []string{"tag1", "tag2"},
+	Name: "filter1",
+	Tags: []string{"tag1", "tag2"},
 }
 
 var filter2 = &filters.Filter{

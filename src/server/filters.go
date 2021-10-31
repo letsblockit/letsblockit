@@ -12,6 +12,50 @@ import (
 	"github.com/xvello/letsblockit/src/store"
 )
 
+func (s *Server) listFilters(c echo.Context) error {
+	tag := c.Param("tag")
+	hc := s.buildPageContext(c, "Available uBlock filter templates")
+	if tag != "" {
+		hc.Title = "Available filter templates for " + tag
+		hc.Add("tag_search", tag)
+	}
+
+	hc.Add("filter_tags", s.filters.GetTags())
+	var activeNames map[string]bool
+	if hc.UserVerified {
+		activeNames = s.store.GetActiveFilterNames(hc.UserID)
+	}
+
+	// Filter and group filters, or quick return on homepage
+	if len(activeNames) == 0 && len(tag) == 0 {
+		hc.Add("available_filters", s.filters.GetFilters())
+	} else {
+		var active, available []*filters.Filter
+		for _, f := range s.filters.GetFilters() {
+			if tag != "" {
+				matching := false
+				for _, t := range f.Tags {
+					if t == tag {
+						matching = true
+						break
+					}
+				}
+				if !matching {
+					continue
+				}
+			}
+			if activeNames[f.Name] {
+				active = append(active, f)
+			} else {
+				available = append(available, f)
+			}
+		}
+		hc.Add("active_filters", active)
+		hc.Add("available_filters", available)
+	}
+	return s.pages.Render(c, "list-filters", hc)
+}
+
 func (s *Server) viewFilter(c echo.Context) error {
 	filter, err := s.filters.GetFilter(c.Param("name"))
 	if err != nil {
