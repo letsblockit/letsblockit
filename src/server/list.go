@@ -2,8 +2,11 @@ package server
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/store"
 )
 
@@ -34,6 +37,7 @@ func (s *Server) renderList(c echo.Context) error {
 		return err
 	}
 
+	sortFilters(list.FilterInstances)
 	for _, f := range list.FilterInstances {
 		_, err := fmt.Fprintf(c.Response(), filterHeaderTemplate, f.FilterName)
 		if err != nil {
@@ -45,4 +49,17 @@ func (s *Server) renderList(c echo.Context) error {
 		}
 	}
 	return nil
+}
+
+// sortFilters sorts filters instances per filter name, moving custom-rules at the end
+func sortFilters(instances []*store.FilterInstance) {
+	sort.Slice(instances, func(i, j int) bool {
+		if instances[i].FilterName == filters.CustomRulesFilterName {
+			return false
+		}
+		if instances[j].FilterName == filters.CustomRulesFilterName {
+			return true
+		}
+		return strings.Compare(instances[i].FilterName, instances[j].FilterName) < 0
+	})
 }

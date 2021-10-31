@@ -1,0 +1,32 @@
+title: Add custom blocking rules
+blurb: You are the boss today.
+params:
+  - name: rules
+    description: Custom rules
+    type: multiline
+    default: |
+      !! cosmetic filters work, prefixed by the target website
+      reddit.com###redesign-beta-optin-btn
+      !! network filters work too
+      .facebook.com
+      .instagram.com
+tags:
+  - custom
+template: "{{{rules}}}"
+tests:
+  - params: {}
+    output: ""
+  - params:
+      rules: |
+        multiline
+        test
+        < with & special ~ chars
+    output: |
+      multiline
+      test
+      < with & special ~ chars
+---
+
+This template allows you to keep custom rules in your list, to sync between browsers. Just write them as you would in the `My filters` page of uBlock settings.
+
+Of couse, if you think a filter would be useful to others, don't hesitate to [suggest it as a new filter](https://github.com/xvello/letsblockit/issues)!

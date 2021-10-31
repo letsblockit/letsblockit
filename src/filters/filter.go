@@ -26,7 +26,7 @@ type filterAndTests struct {
 type FilterParam struct {
 	Name        string      `validate:"required"`
 	Description string      `validate:"required"`
-	Type        ParamType   `validate:"required,oneof=checkbox string list"`
+	Type        ParamType   `validate:"required,oneof=checkbox string list multiline"`
 	Default     interface{} `validate:"valid_default"`
 }
 
@@ -36,6 +36,7 @@ const (
 	BooleanParam    ParamType = "checkbox"
 	StringParam     ParamType = "string"
 	StringListParam ParamType = "list"
+	MultiLineParam  ParamType = "multiline"
 )
 
 type testCase struct {

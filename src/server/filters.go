@@ -175,6 +175,8 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 			params[p.Name] = values
 		case filters.StringParam:
 			params[p.Name] = formParams.Get(p.Name)
+		case filters.MultiLineParam:
+			params[p.Name] = formParams.Get(p.Name)
 		case filters.BooleanParam:
 			params[p.Name] = formParams.Get(p.Name) == "on"
 		default:

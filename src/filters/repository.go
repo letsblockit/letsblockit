@@ -13,6 +13,8 @@ import (
 	"github.com/xvello/letsblockit/data"
 )
 
+const CustomRulesFilterName = "custom-rules"
+
 // Repository holds parsed Filters ready for use
 type Repository struct {
 	main       *mario.Template
@@ -51,13 +53,15 @@ func load(input fs.FS) (*Repository, error) {
 		}
 		_ = main.WithPartial(name, partial)
 		repo.filterMap[name] = f
-		repo.filterList = append(repo.filterList, f) // list is naturally sorted because Walkdir iterates on lexical order
+		repo.filterList = append(repo.filterList, f)
 		for _, tag := range f.Tags {
 			allTags[tag] = struct{}{}
 		}
 		return nil
 	})
+	sortFilters(repo.filterList)
 	repo.tagList = flattenTagMap(allTags)
+
 	return repo, err
 }
 
@@ -96,4 +100,17 @@ func flattenTagMap(tags map[string]struct{}) []string {
 	}
 	sort.Strings(out)
 	return out
+}
+
+// sortFilters moves custom-rules at the end of the list, keeping the other filters in alphabetical order
+func sortFilters(filters []*Filter) {
+	sort.Slice(filters, func(i, j int) bool {
+		if filters[i].Name == CustomRulesFilterName {
+			return false
+		}
+		if filters[j].Name == CustomRulesFilterName {
+			return true
+		}
+		return strings.Compare(filters[i].Name, filters[j].Name) < 0
+	})
 }

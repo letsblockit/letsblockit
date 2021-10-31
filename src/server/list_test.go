@@ -25,11 +25,12 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 		Name:  "List name",
 		Token: "mytoken",
 		FilterInstances: []*store.FilterInstance{{
-			FilterName: "one",
-			Params:     nil,
-		}, {
 			FilterName: "two",
 			Params:     map[string]interface{}{"a": 1, "b": 2},
+		}, {
+			FilterName: "custom-rules",
+		}, {
+			FilterName: "one",
 		}},
 	}, nil)
 
@@ -44,7 +45,11 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 			_, err := w.Write([]byte("content2\nmultiline"))
 			return err
 		})
-
+	s.expectF.Render(gomock.Any(), "custom-rules", nil).
+		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
+			_, err := w.Write([]byte("custom"))
+			return err
+		})
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
 	s.Equal(rec.Body.String(), `! Title: letsblock.it - List name
@@ -56,5 +61,7 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 content1
 ! two
 content2
-multiline`)
+multiline
+! custom-rules
+custom`)
 }

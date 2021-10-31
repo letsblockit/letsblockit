@@ -52,7 +52,7 @@ func buildValidator(t *testing.T) *validator.Validate {
 		case bool:
 			return paramType == BooleanParam
 		case string:
-			return paramType == StringParam
+			return paramType == StringParam || paramType == MultiLineParam
 		case []string, []interface{}:
 			return paramType == StringListParam
 		default:
