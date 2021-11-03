@@ -72,7 +72,7 @@ func (s *ServerTestSuite) expectRenderWithContext(page string, ctx *pages.Contex
 }
 
 func assertOk(t *testing.T, rec *httptest.ResponseRecorder) {
-	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Equal(t, http.StatusOK, rec.Code, rec.Body)
 }
 
 func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, *httptest.ResponseRecorder)) {
