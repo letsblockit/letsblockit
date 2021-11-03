@@ -44,7 +44,11 @@
 
 <main id="main" class="container p-5">
     <div class="container">
-        {{#if Page.partial}}{{#with Data}}{{>(Page.partial)}}{{/with}}{{else}}{{{Page.contents}}}{{/if}}
+        {{#if Page.partial}}
+            {{#with Data}}{{>(Page.partial)}}{{else}}{{>(Page.partial)}}{{/with}}
+        {{else}}
+            {{{Page.contents}}}
+        {{/if}}
     </div>
 </main>
 </body>
