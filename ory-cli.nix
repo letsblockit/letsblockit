@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> { } }:
 pkgs.buildGoModule.override
 {
-  go = pkgs.go_1_16;
+  go = pkgs.go_1_17;
 }
 {
   pname = "ory-cli";

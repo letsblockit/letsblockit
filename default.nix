@@ -1,12 +1,12 @@
 { pkgs ? import <nixpkgs> { } }:
 pkgs.buildGoModule.override
 {
-  go = pkgs.go_1_16;
+  go = pkgs.go_1_17;
 }
 {
   pname = "letsblockit";
   version = "1.0";
-  vendorSha256 = "1dbjnas15q2vcg5w7lrlz69ka1k1dygaf4glbww4zmf1y3ji68qm";
+  vendorSha256 = "0z73jjl0i5w28xx7vp3x9wjzyjm2wdnyk39xcd2970prlf3y8p2h";
   src = ./.;
   doCheck = false;
 }
