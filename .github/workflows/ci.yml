@@ -6,7 +6,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
       - uses: cachix/install-nix-action@v14
         with:
           install_url: https://releases.nixos.org/nix/nix-2.3.16/install
@@ -15,7 +15,7 @@ jobs:
   vendorSha256:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
       - uses: cachix/install-nix-action@v14
         with:
           install_url: https://releases.nixos.org/nix/nix-2.3.16/install
