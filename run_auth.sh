@@ -2,4 +2,4 @@
 #! nix-shell -i bash -p "(callPackage ./ory-cli.nix {})"
 #! nix-shell --pure --quiet
 
-ory proxy local --port 4000 http://localhost:8765/ --dont-install-cert --no-open --project playground
+ory proxy --port 4000 http://localhost:8765/ --sdk-url https://playground.projects.oryapis.com --no-jwt
