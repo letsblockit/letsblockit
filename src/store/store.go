@@ -15,7 +15,7 @@ import (
 type Option string
 
 const (
-	DropOwned Option = "drop_owned"
+	dropOwned Option = "drop_owned"
 	Migrate   Option = "migrate_schema"
 )
 
@@ -49,7 +49,7 @@ func NewStore(host, database string, options ...Option) (*Store, error) {
 	}
 	for _, o := range options {
 		switch o {
-		case DropOwned:
+		case dropOwned:
 			if err := orm.Exec("drop owned by current_user").Error; err != nil {
 				return nil, err
 			}

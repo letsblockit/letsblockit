@@ -24,7 +24,7 @@ func (s *StoreTestSuite) SetupTest() {
 		pgHost = "localhost"
 	}
 
-	s.store, err = NewStore(pgHost, "lbi_tests", DropOwned, Migrate)
+	s.store, err = NewStore(pgHost, "lbi_tests", dropOwned, Migrate)
 	s.Require().NoError(err)
 }
 
