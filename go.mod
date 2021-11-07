@@ -12,7 +12,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/imantung/mario v0.9.0
 	github.com/labstack/echo/v4 v4.6.1
-	github.com/labstack/gommon v0.3.0
+	github.com/labstack/gommon v0.3.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -45,8 +45,8 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/net v0.0.0-20211104170005-ce137452f963 // indirect
-	golang.org/x/sys v0.0.0-20211103235746-7861aae1554b // indirect
+	golang.org/x/net v0.0.0-20211105192438-b53810dc28af // indirect
+	golang.org/x/sys v0.0.0-20211107104306-e0b2ad06fe42 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
