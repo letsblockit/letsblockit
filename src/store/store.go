@@ -1,37 +1,35 @@
 package store
 
 import (
+	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-const (
-	InMemoryTarget = ":memory:"
-	mainDBFile     = "main.db"
-)
+type Option string
 
-var ErrRecordNotFound = gorm.ErrRecordNotFound
+const (
+	DropOwned Option = "drop_owned"
+	Migrate   Option = "migrate_schema"
+)
 
 type Store struct {
 	orm *gorm.DB
 }
 
-func NewStore(target string, migrations bool) (*Store, error) {
-	if target != InMemoryTarget {
-		if err := os.MkdirAll(target, 0700); err != nil {
-			return nil, err
-		}
-		target = filepath.Join(target, mainDBFile)
-	}
+var ErrRecordNotFound = gorm.ErrRecordNotFound
 
-	db := sqlite.Open(target)
+func NewStore(host, database string, options ...Option) (*Store, error) {
+	db := postgres.New(postgres.Config{
+		DSN:                  fmt.Sprintf("postgresql:///%s?host=%s", database, host),
+		PreferSimpleProtocol: true,
+	})
 	orm, err := gorm.Open(db, &gorm.Config{
 		PrepareStmt:                              true,
 		SkipDefaultTransaction:                   true,
@@ -49,17 +47,20 @@ func NewStore(target string, migrations bool) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	if migrations {
-		err = orm.AutoMigrate(&FilterList{}, &FilterInstance{})
-		if err != nil {
-			return nil, err
+	for _, o := range options {
+		switch o {
+		case DropOwned:
+			if err := orm.Exec("drop owned by current_user").Error; err != nil {
+				return nil, err
+			}
+		case Migrate:
+			if err := orm.AutoMigrate(&FilterList{}, &FilterInstance{}); err != nil {
+				return nil, err
+			}
 		}
 	}
-	return &Store{orm: orm}, nil
-}
 
-func NewMemStore() (*Store, error) {
-	return NewStore(InMemoryTarget, true)
+	return &Store{orm: orm}, nil
 }
 
 func (s *Store) CountFilters(user string) (int64, error) {

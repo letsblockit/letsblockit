@@ -1,13 +1,9 @@
 package server
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"testing"
 
-	"github.com/stretchr/testify/require"
 	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/pages"
 )
@@ -48,18 +44,4 @@ func (s *ServerTestSuite) TestAbout_LoggedVerified() {
 		UserVerified:    true,
 	})
 	s.runRequest(req, assertOk)
-}
-
-// Checks that the server can instantiate all its components.
-// This includes parsing all pages and filters and creating a sqlite file.
-func TestServerDryRun(t *testing.T) {
-	dir, err := ioutil.TempDir("", "lbi")
-	require.NoError(t, err)
-	defer os.RemoveAll(dir)
-	server := NewServer(&Options{
-		DryRun:     true,
-		Migrations: true,
-		DataFolder: dir,
-	})
-	require.Equal(t, ErrDryRunFinished, server.Start())
 }

@@ -6,6 +6,12 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Start PostgreSQL
+        run: sudo service postgresql start
+      - name: Create PostgreSQL user and table
+        run: |
+          sudo -u postgres psql -c "CREATE USER ${USER}"
+          sudo -u postgres psql -c "CREATE DATABASE lbi_tests OWNER ${USER}"
       - uses: actions/checkout@v2.4.0
       - uses: cachix/install-nix-action@v14
         with:

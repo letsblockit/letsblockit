@@ -20,15 +20,16 @@ import (
 var ErrDryRunFinished = errors.New("dry run finished")
 
 type Options struct {
-	Address    string `default:"127.0.0.1:8765" help:"address to listen to"`
-	DataFolder string `default:"var" help:"folder holding the persistent data"`
-	Debug      bool   `help:"log with debug level"`
-	DryRun     bool   `arg:"--dry-run" help:"instantiate all components and exit"`
-	Migrations bool   `help:"run gorm schema migrations on startup"`
-	OryProject string `help:"oxy cloud project to check credentials against"`
-	Reload     bool   `help:"reload frontend when the backend restarts"`
-	Statsd     string `help:"address to send statsd metrics to"`
-	silent     bool
+	Address      string `default:"127.0.0.1:8765" help:"address to listen to"`
+	Debug        bool   `help:"log with debug level"`
+	DryRun       bool   `arg:"--dry-run" help:"instantiate all components and exit"`
+	Migrations   bool   `help:"run gorm schema migrations on startup"`
+	OryProject   string `help:"oxy cloud project to check credentials against"`
+	Reload       bool   `help:"reload frontend when the backend restarts"`
+	Statsd       string `help:"address to send statsd metrics to"`
+	DatabaseName string `default:"letsblockit" help:"psql database name to use"`
+	DatabaseHost string `default:"/var/run/postgresql" help:"psql host to connect to"`
+	silent       bool
 }
 
 var navigationLinks = []struct {
@@ -63,7 +64,13 @@ func (s *Server) Start() error {
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
-		func(errs []error) { s.store, errs[0] = store.NewStore(s.options.DataFolder, s.options.Migrations) },
+		func(errs []error) {
+			var storeOpts []store.Option
+			if s.options.Migrations {
+				storeOpts = append(storeOpts, store.Migrate)
+			}
+			s.store, errs[0] = store.NewStore(s.options.DatabaseHost, s.options.DatabaseName, storeOpts...)
+		},
 	})
 
 	if s.options.Statsd != "" {
