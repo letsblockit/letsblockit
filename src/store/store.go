@@ -85,9 +85,17 @@ func (s *Store) GetActiveFilterNames(user string) map[string]bool {
 	return out
 }
 
-func (s *Store) GetOrCreateFilterList(user string) (*FilterList, error) {
+func (s *Store) GetOrCreateFilterList(user string) (list *FilterList, err error) {
+	err = s.orm.Transaction(func(tx *gorm.DB) error {
+		list, err = getOrCreateFilterList(tx, user)
+		return err
+	})
+	return
+}
+
+func getOrCreateFilterList(tx *gorm.DB, user string) (*FilterList, error) {
 	var list FilterList
-	err := s.orm.Where("user_id = ?", user).First(&list).Error
+	err := tx.Where("user_id = ?", user).First(&list).Error
 
 	switch err {
 	case nil:
@@ -98,7 +106,7 @@ func (s *Store) GetOrCreateFilterList(user string) (*FilterList, error) {
 			Name:   "My filters",
 			Token:  uuid.NewString(),
 		}
-		return &list, s.orm.Create(&list).Error
+		return &list, tx.Create(&list).Error
 	default:
 		return nil, err
 	}
@@ -113,26 +121,28 @@ func (s *Store) GetListForToken(token string) (*FilterList, error) {
 }
 
 func (s *Store) UpsertFilterInstance(user, filterName string, params JSONMap) error {
-	f := &FilterInstance{
-		UserID:     user,
-		FilterName: filterName,
-	}
-	err := s.orm.Where(f).First(f).Error
-	f.Params = params
-
-	switch err {
-	case nil:
-		return s.orm.Save(&f).Error
-	case gorm.ErrRecordNotFound:
-		list, err := s.GetOrCreateFilterList(user)
-		if err != nil {
-			return nil
+	return s.orm.Transaction(func(tx *gorm.DB) error {
+		f := &FilterInstance{
+			UserID:     user,
+			FilterName: filterName,
 		}
-		f.FilterListID = list.ID
-		return s.orm.Create(&f).Error
-	default:
-		return err
-	}
+		err := tx.Where(f).First(f).Error
+		f.Params = params
+
+		switch err {
+		case nil:
+			return tx.Save(&f).Error
+		case gorm.ErrRecordNotFound:
+			list, err := getOrCreateFilterList(tx, user)
+			if err != nil {
+				return nil
+			}
+			f.FilterListID = list.ID
+			return tx.Create(&f).Error
+		default:
+			return err
+		}
+	})
 }
 
 func (s *Store) DropFilterInstance(user string, filterName string) error {
