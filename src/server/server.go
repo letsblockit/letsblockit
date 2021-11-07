@@ -65,11 +65,11 @@ func (s *Server) Start() error {
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(errs []error) {
-			var storeOpts []store.Option
-			if s.options.Migrations {
-				storeOpts = append(storeOpts, store.Migrate)
-			}
-			s.store, errs[0] = store.NewStore(s.options.DatabaseHost, s.options.DatabaseName, storeOpts...)
+			s.store, errs[0] = store.NewStore(store.Options{
+				Host:       s.options.DatabaseHost,
+				Database:   s.options.DatabaseName,
+				Migrations: s.options.Migrations,
+			})
 		},
 	})
 

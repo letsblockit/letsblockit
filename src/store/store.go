@@ -12,12 +12,12 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type Option string
-
-const (
-	dropOwned Option = "drop_owned"
-	Migrate   Option = "migrate_schema"
-)
+type Options struct {
+	Host       string
+	Database   string
+	Migrations bool
+	dropOwned  bool // Drop all data from database, unexported and used in tests
+}
 
 type Store struct {
 	orm *gorm.DB
@@ -25,9 +25,9 @@ type Store struct {
 
 var ErrRecordNotFound = gorm.ErrRecordNotFound
 
-func NewStore(host, database string, options ...Option) (*Store, error) {
+func NewStore(options Options) (*Store, error) {
 	db := postgres.New(postgres.Config{
-		DSN:                  fmt.Sprintf("postgresql:///%s?host=%s", database, host),
+		DSN:                  fmt.Sprintf("postgresql:///%s?host=%s", options.Database, options.Host),
 		PreferSimpleProtocol: true,
 	})
 	orm, err := gorm.Open(db, &gorm.Config{
@@ -47,16 +47,14 @@ func NewStore(host, database string, options ...Option) (*Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, o := range options {
-		switch o {
-		case dropOwned:
-			if err := orm.Exec("drop owned by current_user").Error; err != nil {
-				return nil, err
-			}
-		case Migrate:
-			if err := orm.AutoMigrate(&FilterList{}, &FilterInstance{}); err != nil {
-				return nil, err
-			}
+	if options.dropOwned {
+		if err := orm.Exec("drop owned by current_user").Error; err != nil {
+			return nil, err
+		}
+	}
+	if options.Migrations {
+		if err := orm.AutoMigrate(&FilterList{}, &FilterInstance{}); err != nil {
+			return nil, err
 		}
 	}
 
