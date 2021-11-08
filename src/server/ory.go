@@ -136,7 +136,6 @@ func getLogoutUrl(project string, c echo.Context) (string, error) {
 	if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
 		return "", fmt.Errorf("failed to decode response: %w", err)
 	}
-	fmt.Println(info)
 	logout, err := url.Parse(info.LogoutUrl)
 	if err != nil {
 		return "", err
