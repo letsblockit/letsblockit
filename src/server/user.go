@@ -18,7 +18,7 @@ func (s *Server) userLogout(c echo.Context) error {
 	if getUser(c) == nil {
 		return s.redirect(c, "user-login")
 	}
-	logout, err := getLogoutUrl(s.options.OryProject, c)
+	logout, err := s.getLogoutUrl(c)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,6 @@ func (s *Server) userAccount(c echo.Context) error {
 		}
 		hc.Add("filter_count", filterCount)
 		hc.Add("filter_list", filterList)
-
 	}
 	return s.pages.Render(c, "user-account", hc)
 }

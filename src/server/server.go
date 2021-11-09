@@ -24,7 +24,7 @@ type Options struct {
 	Debug        bool   `help:"log with debug level"`
 	DryRun       bool   `arg:"--dry-run" help:"instantiate all components and exit"`
 	Migrations   bool   `help:"run gorm schema migrations on startup"`
-	OryProject   string `help:"oxy cloud project to check credentials against"`
+	OryUrl       string `default:"https://playground.projects.oryapis.com" help:"oxy cloud project to check credentials against"`
 	Reload       bool   `help:"reload frontend when the backend restarts"`
 	Statsd       string `help:"address to send statsd metrics to"`
 	DatabaseName string `default:"letsblockit" help:"psql database name to use"`
@@ -80,11 +80,6 @@ func (s *Server) Start() error {
 		}
 		s.echo.Use(buildDogstatsMiddleware(dsd))
 	}
-
-	if s.options.OryProject != "" {
-		s.echo.Use(buildOryMiddleware(s.options.OryProject, s.echo.Logger))
-	}
-
 	if s.options.Debug {
 		s.echo.Logger.SetLevel(log.DEBUG)
 	}
@@ -100,6 +95,9 @@ func (s *Server) Start() error {
 func (s *Server) setupRouter() {
 	if !s.options.silent {
 		s.echo.Use(middleware.Logger())
+	}
+	if s.options.OryUrl != "" {
+		s.echo.Use(s.buildOryMiddleware())
 	}
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{

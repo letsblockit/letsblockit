@@ -18,7 +18,7 @@ func (s *ServerTestSuite) TestLogin_OK() {
 
 func (s *ServerTestSuite) TestLogin_RedirectRaw() {
 	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 302, rec.Code)
 		assert.Equal(t, "/user/account", rec.Header().Get("Location"))
@@ -28,7 +28,7 @@ func (s *ServerTestSuite) TestLogin_RedirectRaw() {
 func (s *ServerTestSuite) TestLogin_RedirectHTMX() {
 	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
 	req.Header.Set("HX-Request", "true")
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 200, rec.Code)
 		assert.Equal(t, "/user/account", rec.Header().Get("HX-Redirect"))
@@ -41,7 +41,7 @@ func (s *ServerTestSuite) TestUserAccount_Verified() {
 		Name:   "test",
 	}
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectS.CountFilters(s.user).Return(int64(5), nil)
 	s.expectS.GetOrCreateFilterList(s.user).Return(list, nil)
 	s.expectRender("user-account", pages.ContextData{
@@ -53,13 +53,30 @@ func (s *ServerTestSuite) TestUserAccount_Verified() {
 
 func (s *ServerTestSuite) TestUserAccount_NotVerified() {
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	s.login(false)
+	req.AddCookie(unverifiedCookie)
 	s.expectRender("user-account", nil)
 	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestUserAccount_Redirect() {
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
+	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, 302, rec.Code)
+		assert.Equal(t, "/user/login", rec.Header().Get("Location"))
+	})
+}
+
+func (s *ServerTestSuite) TestUserLogout_OK() {
+	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
+	req.AddCookie(verifiedCookie)
+	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, 302, rec.Code)
+		assert.Equal(t, "/.ory/api/kratos/public/self-service/logout?token=token", rec.Header().Get("Location"))
+	})
+}
+
+func (s *ServerTestSuite) TestUserLogout_Redirect() {
+	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 302, rec.Code)
 		assert.Equal(t, "/user/login", rec.Header().Get("Location"))

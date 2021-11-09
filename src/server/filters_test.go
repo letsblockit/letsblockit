@@ -53,7 +53,7 @@ var filter3 = &filters.Filter{
 
 func (s *ServerTestSuite) TestListFilters_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/filters", nil)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 
 	tList := []string{"tag1", "tag2", "tag3"}
 	s.expectF.GetTags().Return(tList)
@@ -70,7 +70,7 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 
 func (s *ServerTestSuite) TestListFilters_ByTag() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/tag/tag2", nil)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 
 	tList := []string{"tag1", "tag2", "tag3"}
 	s.expectF.GetTags().Return(tList)
@@ -100,7 +100,7 @@ func (s *ServerTestSuite) TestViewFilter_Anonymous() {
 
 func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 	s.expectS.GetFilterInstance(s.user, "filter2").Return(nil, store.ErrRecordNotFound)
 	s.expectRenderFilter("filter2", filter2Defaults, "output")
@@ -114,7 +114,7 @@ func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 
 func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
 	instance := &store.FilterInstance{
@@ -135,7 +135,7 @@ func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 func (s *ServerTestSuite) TestViewFilter_Preview() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(buildFilter2FormBody().Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
 	params := map[string]interface{}{
@@ -158,7 +158,7 @@ func (s *ServerTestSuite) TestViewFilter_Save() {
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
 	params := map[string]interface{}{
@@ -183,7 +183,7 @@ func (s *ServerTestSuite) TestViewFilter_Disable() {
 	f.Add("__disable", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 	s.expectS.DropFilterInstance(s.user, "filter2").Return(nil)
 
@@ -196,7 +196,7 @@ func (s *ServerTestSuite) TestViewFilter_Disable() {
 func (s *ServerTestSuite) TestViewFilterRender_Defaults() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
 	s.expectRenderFilter("filter2", filter2Defaults, "output")
@@ -209,7 +209,7 @@ func (s *ServerTestSuite) TestViewFilterRender_Defaults() {
 func (s *ServerTestSuite) TestViewFilterRender_Params() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(buildFilter2FormBody().Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
 	params := map[string]interface{}{

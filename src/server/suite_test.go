@@ -14,6 +14,29 @@ import (
 	"github.com/xvello/letsblockit/src/pages"
 )
 
+var (
+	verifiedCookie = &http.Cookie{
+		Name:  "ory_session_verified",
+		Value: "true",
+	}
+	unverifiedCookie = &http.Cookie{
+		Name:  "ory_session_verified",
+		Value: "false",
+	}
+	whoAmiPattern = `{
+	  "id": "af9b460f-4ca0-453d-8bc7-cf68f30d4174",
+	  "active": true,
+	  "identity": {
+		"id": "%s",
+		"verifiable_addresses": [
+		  {
+			"verified": %s
+		  }
+		]
+	  }
+	}`
+)
+
 type pageDataMatcher struct {
 	t    *testing.T
 	data pages.ContextData
@@ -30,11 +53,12 @@ func (m *pageDataMatcher) String() string {
 
 type ServerTestSuite struct {
 	suite.Suite
-	server  *Server
-	expectF *MockFilterRepositoryMockRecorder
-	expectP *MockPageRendererMockRecorder
-	expectS *MockDataStoreMockRecorder
-	user    string
+	server    *Server
+	expectF   *MockFilterRepositoryMockRecorder
+	expectP   *MockPageRendererMockRecorder
+	expectS   *MockDataStoreMockRecorder
+	oryServer *httptest.Server
+	user      string
 }
 
 func (s *ServerTestSuite) SetupTest() {
@@ -46,11 +70,25 @@ func (s *ServerTestSuite) SetupTest() {
 	s.expectP = pm.EXPECT()
 	s.expectS = sm.EXPECT()
 
+	oryClientRetries = 0
+	s.oryServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case oryLogoutInfoPath:
+			fmt.Fprint(w, `{"logout_token":"token"}`)
+		case oryWhoamiPath:
+			cookie, _ := r.Cookie("ory_session_verified")
+			fmt.Fprintf(w, whoAmiPattern, s.user, cookie.Value)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+
 	s.user = uuid.NewString()
 	s.server = &Server{
 		assets: nil,
 		echo:   echo.New(),
 		options: &Options{
+			OryUrl: s.oryServer.URL,
 			silent: true,
 		},
 		store:   sm,
@@ -79,33 +117,6 @@ func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, 
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
 	checks(s.T(), rec)
-}
-
-func (s *ServerTestSuite) login(verified bool) {
-	s.server.echo.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Set(
-				userContextKey,
-				&oryUser{
-					Active: true,
-					Identity: struct {
-						Id        string
-						Addresses []struct {
-							Verified bool
-						} `json:"verifiable_addresses"`
-					}{
-						Id: s.user,
-						Addresses: []struct {
-							Verified bool
-						}{{
-							Verified: verified,
-						}},
-					},
-				},
-			)
-			return next(c)
-		}
-	})
 }
 
 func TestServerTestSuite(t *testing.T) {

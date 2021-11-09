@@ -35,13 +35,25 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 
 func (s *ServerTestSuite) TestAbout_LoggedVerified() {
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	s.login(true)
+	req.AddCookie(verifiedCookie)
 	s.expectRenderWithContext("about", &pages.Context{
 		CurrentSection:  "about",
 		NavigationLinks: navigationLinks,
 		Title:           "About: Let’s block it!",
 		UserID:          s.user,
 		UserVerified:    true,
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestAbout_KratosDown() {
+	s.oryServer.Close() // Kratos is unresponsive, continue anonymous
+	req := httptest.NewRequest(http.MethodGet, "/about", nil)
+	req.AddCookie(verifiedCookie)
+	s.expectRenderWithContext("about", &pages.Context{
+		CurrentSection:  "about",
+		NavigationLinks: navigationLinks,
+		Title:           "About: Let’s block it!",
 	})
 	s.runRequest(req, assertOk)
 }
