@@ -3,7 +3,10 @@ package server
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/pages"
 )
@@ -56,4 +59,36 @@ func (s *ServerTestSuite) TestAbout_KratosDown() {
 		Title:           "About: Let’s block it!",
 	})
 	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestAbout_InvalidKratosResponse() {
+	req := httptest.NewRequest(http.MethodGet, "/about", nil)
+	req.AddCookie(&http.Cookie{
+		Name:  "ory_session_verified",
+		Value: "invalid ]]]]", // JSON parsing error -> continue anonymous
+	})
+	s.expectRenderWithContext("about", &pages.Context{
+		CurrentSection:  "about",
+		NavigationLinks: navigationLinks,
+		Title:           "About: Let’s block it!",
+	})
+	s.runRequest(req, assertOk)
+}
+
+func TestServerDryRun(t *testing.T) {
+	// Try to use the unix socket, fallback to TCP on localhost
+	pgHost := "/var/run/postgresql"
+	if _, err := os.Stat(pgHost); err != nil {
+		pgHost = "localhost"
+	}
+
+	server := NewServer(&Options{
+		DryRun:       true,
+		Migrations:   true,
+		Reload:       true,
+		Statsd:       "localhost:8125",
+		DatabaseName: "lbi_tests",
+		DatabaseHost: pgHost,
+	})
+	assert.Equal(t, ErrDryRunFinished, server.Start())
 }
