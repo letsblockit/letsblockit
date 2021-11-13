@@ -183,6 +183,23 @@ func (q *Queries) GetListForUser(ctx context.Context, userID uuid.UUID) (GetList
 	return i, err
 }
 
+const getStats = `-- name: GetStats :one
+SELECT (SELECT COUNT(*) FROM filter_lists) as list_count,
+       (SELECT COUNT(*) FROM filter_instances) as instance_count
+`
+
+type GetStatsRow struct {
+	ListCount     int64
+	InstanceCount int64
+}
+
+func (q *Queries) GetStats(ctx context.Context) (GetStatsRow, error) {
+	row := q.db.QueryRow(ctx, getStats)
+	var i GetStatsRow
+	err := row.Scan(&i.ListCount, &i.InstanceCount)
+	return i, err
+}
+
 const updateInstanceForUserAndFilter = `-- name: UpdateInstanceForUserAndFilter :exec
 UPDATE filter_instances
 SET params     = $3,

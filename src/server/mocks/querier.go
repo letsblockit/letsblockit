@@ -170,6 +170,21 @@ func (mr *MockQuerierMockRecorder) GetListForUser(ctx, userID interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListForUser", reflect.TypeOf((*MockQuerier)(nil).GetListForUser), ctx, userID)
 }
 
+// GetStats mocks base method.
+func (m *MockQuerier) GetStats(ctx context.Context) (db.GetStatsRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStats", ctx)
+	ret0, _ := ret[0].(db.GetStatsRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStats indicates an expected call of GetStats.
+func (mr *MockQuerierMockRecorder) GetStats(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockQuerier)(nil).GetStats), ctx)
+}
+
 // UpdateInstanceForUserAndFilter mocks base method.
 func (m *MockQuerier) UpdateInstanceForUserAndFilter(ctx context.Context, arg db.UpdateInstanceForUserAndFilterParams) error {
 	m.ctrl.T.Helper()

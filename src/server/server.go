@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -73,6 +74,7 @@ func (s *Server) Start() error {
 			return err
 		}
 		s.echo.Use(buildDogstatsMiddleware(dsd))
+		go collectStats(s.echo.Logger, s.store, dsd)
 	}
 	if s.options.Debug {
 		s.echo.Logger.SetLevel(log.DEBUG)
@@ -219,5 +221,23 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 			_ = dsd.Incr("letsblockit.request_count", []string{loggedTag, fmt.Sprintf("status:%d", c.Response().Status)}, 1)
 			return nil
 		}
+	}
+}
+
+func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
+	collect := func() {
+		stats, err := store.GetStats(context.Background())
+		if err != nil {
+			log.Error("cannot collect db stats: " + err.Error())
+			return
+		}
+		_ = dsd.Gauge("letsblockit.list_count", float64(stats.ListCount), nil, 1)
+		_ = dsd.Gauge("letsblockit.instance_count", float64(stats.InstanceCount), nil, 1)
+	}
+
+	_ = dsd.Incr("letsblockit.startup", nil, 1)
+	collect()
+	for range time.Tick(5 * time.Minute) {
+		collect()
 	}
 }

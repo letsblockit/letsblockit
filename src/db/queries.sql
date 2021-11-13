@@ -51,3 +51,7 @@ SELECT filter_name, params
 FROM filter_instances
 WHERE filter_list_id = $1
 ORDER BY filter_name ASC;
+
+-- name: GetStats :one
+SELECT (SELECT COUNT(*) FROM filter_lists) as list_count,
+       (SELECT COUNT(*) FROM filter_instances) as instance_count;

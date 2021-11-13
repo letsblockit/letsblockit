@@ -19,6 +19,7 @@ type Querier interface {
 	GetInstancesForList(ctx context.Context, filterListID int32) ([]GetInstancesForListRow, error)
 	GetListForToken(ctx context.Context, token uuid.UUID) (int32, error)
 	GetListForUser(ctx context.Context, userID uuid.UUID) (GetListForUserRow, error)
+	GetStats(ctx context.Context) (GetStatsRow, error)
 	UpdateInstanceForUserAndFilter(ctx context.Context, arg UpdateInstanceForUserAndFilterParams) error
 }
 
