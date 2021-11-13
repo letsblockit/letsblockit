@@ -5,8 +5,7 @@ CREATE TABLE filter_lists
     id         SERIAL PRIMARY KEY,
     user_id    uuid      NOT NULL,
     token      uuid      NOT NULL DEFAULT gen_random_uuid(),
-    created_at timestamp NOT NULL DEFAULT NOW(),
-    updated_at timestamp
+    created_at timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE UNIQUE INDEX idx_lists_by_token ON filter_lists USING btree (token);

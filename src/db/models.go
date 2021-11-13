@@ -25,5 +25,4 @@ type FilterList struct {
 	UserID    uuid.UUID
 	Token     uuid.UUID
 	CreatedAt time.Time
-	UpdatedAt sql.NullTime
 }

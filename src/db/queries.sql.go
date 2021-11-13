@@ -29,8 +29,8 @@ func (q *Queries) CountInstanceForUserAndFilter(ctx context.Context, arg CountIn
 }
 
 const createInstanceForUserAndFilter = `-- name: CreateInstanceForUserAndFilter :exec
-INSERT INTO filter_instances (filter_list_id, user_id, filter_name, params, updated_at)
-VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3, NOW())
+INSERT INTO filter_instances (filter_list_id, user_id, filter_name, params)
+VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3)
 `
 
 type CreateInstanceForUserAndFilterParams struct {
@@ -164,11 +164,10 @@ func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (int32, 
 }
 
 const getListForUser = `-- name: GetListForUser :one
-SELECT fl.token, COUNT(*) AS instance_count
-FROM filter_lists AS fl
-         JOIN filter_instances AS fi ON fl.id = fi.filter_list_id
-WHERE fl.user_id = $1
-group by token
+SELECT token,
+       (SELECT COUNT(*) FROM filter_instances WHERE filter_lists.user_id = $1) AS instance_count
+FROM filter_lists
+WHERE user_id = $1
 LIMIT 1
 `
 
