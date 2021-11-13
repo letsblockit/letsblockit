@@ -100,7 +100,6 @@ func TestServerDryRun(t *testing.T) {
 
 	server := NewServer(&Options{
 		DryRun:       true,
-		Migrations:   true,
 		Reload:       true,
 		Statsd:       "localhost:8125",
 		DatabaseName: "lbi_tests",

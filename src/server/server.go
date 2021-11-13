@@ -24,7 +24,6 @@ type Options struct {
 	Address      string `default:"127.0.0.1:8765" help:"address to listen to"`
 	Debug        bool   `help:"log with debug level"`
 	DryRun       bool   `arg:"--dry-run" help:"instantiate all components and exit"`
-	Migrations   bool   `help:"run gorm schema migrations on startup"`
 	OryUrl       string `default:"https://playground.projects.oryapis.com" help:"oxy cloud project to check credentials against"`
 	Reload       bool   `help:"reload frontend when the backend restarts"`
 	Statsd       string `help:"address to send statsd metrics to"`
