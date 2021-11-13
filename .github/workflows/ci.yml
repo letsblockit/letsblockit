@@ -14,7 +14,7 @@ jobs:
           sudo -u postgres psql -c "CREATE DATABASE letsblockit OWNER ${USER}"
           sudo -u postgres psql -c "CREATE DATABASE lbi_tests OWNER ${USER}"
       - uses: actions/checkout@v2.4.0
-      - uses: cachix/install-nix-action@v14
+      - uses: cachix/install-nix-action@v15
         with:
           install_url: https://releases.nixos.org/nix/nix-2.3.16/install
           nix_path: nixpkgs=channel:nixos-21.05
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.4.0
-      - uses: cachix/install-nix-action@v14
+      - uses: cachix/install-nix-action@v15
         with:
           install_url: https://releases.nixos.org/nix/nix-2.3.16/install
           nix_path: nixpkgs=channel:nixos-21.05
