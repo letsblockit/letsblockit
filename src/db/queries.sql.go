@@ -165,9 +165,9 @@ func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (int32, 
 
 const getListForUser = `-- name: GetListForUser :one
 SELECT token,
-       (SELECT COUNT(*) FROM filter_instances WHERE filter_lists.user_id = $1) AS instance_count
+       (SELECT COUNT(*) FROM filter_instances WHERE filter_instances.user_id = $1) AS instance_count
 FROM filter_lists
-WHERE user_id = $1
+WHERE filter_lists.user_id = $1
 LIMIT 1
 `
 
