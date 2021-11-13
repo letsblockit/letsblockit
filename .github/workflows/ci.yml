@@ -11,6 +11,7 @@ jobs:
       - name: Create PostgreSQL user and table
         run: |
           sudo -u postgres psql -c "CREATE USER ${USER}"
+          sudo -u postgres psql -c "CREATE DATABASE letsblockit OWNER ${USER}"
           sudo -u postgres psql -c "CREATE DATABASE lbi_tests OWNER ${USER}"
       - uses: actions/checkout@v2.4.0
       - uses: cachix/install-nix-action@v14

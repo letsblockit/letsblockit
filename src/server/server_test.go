@@ -32,6 +32,7 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 		CurrentSection:  "about",
 		NavigationLinks: navigationLinks,
 		Title:           "About: Let’s block it!",
+		UserLoggedIn:    false,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -44,7 +45,22 @@ func (s *ServerTestSuite) TestAbout_LoggedVerified() {
 		NavigationLinks: navigationLinks,
 		Title:           "About: Let’s block it!",
 		UserID:          s.user,
+		UserLoggedIn:    true,
 		UserVerified:    true,
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestAbout_LoggedNoVerified() {
+	req := httptest.NewRequest(http.MethodGet, "/about", nil)
+	req.AddCookie(unverifiedCookie)
+	s.expectRenderWithContext("about", &pages.Context{
+		CurrentSection:  "about",
+		NavigationLinks: navigationLinks,
+		Title:           "About: Let’s block it!",
+		UserID:          s.user,
+		UserLoggedIn:    true,
+		UserVerified:    false,
 	})
 	s.runRequest(req, assertOk)
 }
