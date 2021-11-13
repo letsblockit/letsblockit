@@ -12,9 +12,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/pages"
-	"github.com/xvello/letsblockit/src/store"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -47,9 +47,9 @@ type Server struct {
 	assets  *wrappedAssets
 	echo    *echo.Echo
 	options *Options
-	store   DataStore
 	filters FilterRepository
 	pages   PageRenderer
+	store   db.Store
 }
 
 func NewServer(options *Options) *Server {
@@ -64,13 +64,7 @@ func (s *Server) Start() error {
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
-		func(errs []error) {
-			s.store, errs[0] = store.NewStore(store.Options{
-				Host:       s.options.DatabaseHost,
-				Database:   s.options.DatabaseName,
-				Migrations: s.options.Migrations,
-			})
-		},
+		func(errs []error) { s.store, errs[0] = db.Connect(s.options.DatabaseHost, s.options.DatabaseName) },
 	})
 
 	if s.options.Statsd != "" {
@@ -93,12 +87,14 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) setupRouter() {
+	s.echo.Use(middleware.Recover())
 	if !s.options.silent {
 		s.echo.Use(middleware.Logger())
 	}
 	if s.options.OryUrl != "" {
 		s.echo.Use(s.buildOryMiddleware())
 	}
+
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
 		"/favicon.ico": "/assets/images/favicon.ico",
@@ -173,6 +169,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	}
 	if u := getUser(c); u != nil {
 		context.UserID = u.Id()
+		context.UserLoggedIn = true
 		context.UserVerified = u.IsVerified()
 	}
 	if s.options.Reload {

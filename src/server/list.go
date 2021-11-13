@@ -2,15 +2,14 @@ package server
 
 import (
 	"fmt"
-	"sort"
-	"strings"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
-	"github.com/xvello/letsblockit/src/store"
 )
 
-const listHeaderTemplate = `! Title: letsblock.it - %s
+const listHeaderTemplate = `! Title: letsblock.it - My filters
 ! Expires: 1 hour
 ! Homepage: https://letsblock.it
 ! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
@@ -21,45 +20,53 @@ const filterHeaderTemplate = `
 `
 
 func (s *Server) renderList(c echo.Context) error {
-	token := c.Param("token")
-	list, err := s.store.GetListForToken(token)
-	switch err {
-	case nil:
-		// ok
-	case store.ErrRecordNotFound:
-		return echo.ErrNotFound
-	default:
-		return err
-	}
-
-	_, err = fmt.Fprintf(c.Response(), listHeaderTemplate, list.Name)
+	token, err := uuid.Parse(c.Param("token"))
 	if err != nil {
 		return err
 	}
 
-	sortFilters(list.FilterInstances)
-	for _, f := range list.FilterInstances {
-		_, err := fmt.Fprintf(c.Response(), filterHeaderTemplate, f.FilterName)
-		if err != nil {
-			return err
+	list, err := s.store.GetListForToken(c.Request().Context(), token)
+	if err == db.NotFound {
+		return echo.ErrNotFound
+	} else if err != nil {
+		return err
+	}
+
+	instances, err := s.store.GetInstancesForList(c.Request().Context(), list)
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprint(c.Response(), listHeaderTemplate)
+	if err != nil {
+		return err
+	}
+
+	var custom []db.GetInstancesForListRow
+	printFilter := func(f *db.GetInstancesForListRow) error {
+		_, e := fmt.Fprintf(c.Response(), filterHeaderTemplate, f.FilterName)
+		if e != nil {
+			return e
 		}
-		err = s.filters.Render(c.Response(), f.FilterName, f.Params)
-		if err != nil {
+		params := make(map[string]interface{})
+		if e = f.Params.AssignTo(&params); e != nil {
+			return e
+		}
+		return s.filters.Render(c.Response(), f.FilterName, params)
+	}
+	for _, f := range instances {
+		if f.FilterName == filters.CustomRulesFilterName {
+			custom = append(custom, f)
+			continue
+		}
+		if err := printFilter(&f); err != nil {
+			c.Logger().Warnf("skipping filter %s in list %s: %s", f.FilterName, token, err.Error())
+		}
+	}
+	for _, f := range custom {
+		if err := printFilter(&f); err != nil {
 			c.Logger().Warnf("skipping filter %s in list %s: %s", f.FilterName, token, err.Error())
 		}
 	}
 	return nil
-}
-
-// sortFilters sorts filters instances per filter name, moving custom-rules at the end
-func sortFilters(instances []*store.FilterInstance) {
-	sort.Slice(instances, func(i, j int) bool {
-		if instances[i].FilterName == filters.CustomRulesFilterName {
-			return false
-		}
-		if instances[j].FilterName == filters.CustomRulesFilterName {
-			return true
-		}
-		return strings.Compare(instances[i].FilterName, instances[j].FilterName) < 0
-	})
 }

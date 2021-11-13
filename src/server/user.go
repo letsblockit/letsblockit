@@ -1,9 +1,11 @@
 package server
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/xvello/letsblockit/src/db"
 )
 
 func (s *Server) userLogin(c echo.Context) error {
@@ -34,16 +36,24 @@ func (s *Server) userAccount(c echo.Context) error {
 
 	hc := s.buildPageContext(c, "My account")
 	if user.IsVerified() {
-		filterCount, err := s.store.CountFilters(user.Id())
-		if err != nil {
+		if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
+			info, err := q.GetListForUser(ctx, user.Id())
+			switch err {
+			case nil:
+				hc.Add("filter_count", info.InstanceCount)
+				hc.Add("list_token", info.Token.String())
+				return nil
+			case db.NotFound:
+				token, err := q.CreateListForUser(ctx, user.Id())
+				hc.Add("filter_count", 0)
+				hc.Add("list_token", token.String())
+				return err
+			default:
+				return err
+			}
+		}); err != nil {
 			return err
 		}
-		filterList, err := s.store.GetOrCreateFilterList(user.Id())
-		if err != nil {
-			return err
-		}
-		hc.Add("filter_count", filterCount)
-		hc.Add("filter_list", filterList)
 	}
 	return s.pages.Render(c, "user-account", hc)
 }

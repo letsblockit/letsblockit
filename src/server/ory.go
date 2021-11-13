@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/labstack/echo/v4"
 )
@@ -24,7 +25,7 @@ var oryClientRetries = 3
 type oryUser struct {
 	Active   bool
 	Identity struct {
-		Id        string
+		Id        uuid.UUID
 		Addresses []struct {
 			Verified bool
 		} `json:"verifiable_addresses"`
@@ -35,9 +36,9 @@ type oryLogoutInfo struct {
 	Token string `json:"logout_token"`
 }
 
-func (u *oryUser) Id() string {
+func (u *oryUser) Id() uuid.UUID {
 	if u == nil {
-		return ""
+		return uuid.Nil
 	}
 	return u.Identity.Id
 }
@@ -46,7 +47,7 @@ func (u *oryUser) IsActive() bool {
 	if u == nil {
 		return false
 	}
-	return u.Active && u.Identity.Id != ""
+	return u.Active && u.Identity.Id != uuid.Nil
 }
 
 func (u *oryUser) IsVerified() bool {

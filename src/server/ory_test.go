@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestNilOryUser(t *testing.T) {
 	var user *oryUser
 	assert.False(t, user.IsActive())
 	assert.False(t, user.IsVerified())
-	assert.Empty(t, user.Id())
+	assert.EqualValues(t, uuid.Nil, user.Id())
 }
 
 func TestVerifiedOryUser(t *testing.T) {
@@ -33,7 +34,7 @@ func TestVerifiedOryUser(t *testing.T) {
 	assert.NoError(t, json.Unmarshal([]byte(payload), user))
 	assert.True(t, user.IsActive())
 	assert.True(t, user.IsVerified())
-	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id())
+	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id().String())
 }
 
 func TestUnverifiedOryUser(t *testing.T) {
@@ -48,7 +49,7 @@ func TestUnverifiedOryUser(t *testing.T) {
 	assert.NoError(t, json.Unmarshal([]byte(payload), user))
 	assert.True(t, user.IsActive())
 	assert.False(t, user.IsVerified())
-	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id())
+	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id().String())
 }
 
 func TestInactiveOrySession(t *testing.T) {

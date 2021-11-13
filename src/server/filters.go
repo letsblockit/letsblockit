@@ -1,15 +1,18 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/google/uuid"
+	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
+	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
-	"github.com/xvello/letsblockit/src/store"
 )
 
 func (s *Server) listFilters(c echo.Context) error {
@@ -21,9 +24,13 @@ func (s *Server) listFilters(c echo.Context) error {
 	}
 
 	hc.Add("filter_tags", s.filters.GetTags())
-	var activeNames map[string]bool
+	var activeNames map[string]struct{}
 	if hc.UserVerified {
-		activeNames = s.store.GetActiveFilterNames(hc.UserID)
+		activeNames = make(map[string]struct{})
+		names, _ := s.store.GetActiveFiltersForUser(c.Request().Context(), hc.UserID)
+		for _, n := range names {
+			activeNames[n] = struct{}{}
+		}
 	}
 
 	// Filter and group filters, or quick return on homepage
@@ -44,7 +51,7 @@ func (s *Server) listFilters(c echo.Context) error {
 					continue
 				}
 			}
-			if activeNames[f.Name] {
+			if _, ok := activeNames[f.Name]; ok {
 				active = append(active, f)
 			} else {
 				available = append(available, f)
@@ -64,7 +71,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	hc := s.buildPageContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
 	hc.Add("filter", filter)
 
-	// Parse filters param and render output if non empty
+	// Parse filters param and render output if non-empty
 	params, save, disable, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
@@ -72,7 +79,11 @@ func (s *Server) viewFilter(c echo.Context) error {
 
 	// Save filter params if requested
 	if save && hc.UserVerified {
-		if err = s.store.UpsertFilterInstance(hc.UserID, filter.Name, params); err != nil {
+		var out pgtype.JSONB
+		if err = out.Set(params); err != nil {
+			return err
+		}
+		if err = s.upsertFilterParams(c, hc.UserID, filter.Name, params); err != nil {
 			return err
 		}
 		hc.Add("saved_ok", true)
@@ -81,7 +92,10 @@ func (s *Server) viewFilter(c echo.Context) error {
 
 	// Handle deletion if requested, remove all instances matching a given name
 	if disable && hc.UserVerified {
-		if err = s.store.DropFilterInstance(hc.UserID, filter.Name); err != nil {
+		if err = s.store.DeleteInstanceForUserAndFilter(c.Request().Context(), db.DeleteInstanceForUserAndFilterParams{
+			UserID:     hc.UserID,
+			FilterName: filter.Name,
+		}); err != nil {
 			return err
 		}
 		return s.redirect(c, "list-filters")
@@ -89,12 +103,17 @@ func (s *Server) viewFilter(c echo.Context) error {
 
 	// If no params are passed, source from the user's filters
 	if !save && params == nil && hc.UserVerified {
-		f, err := s.store.GetFilterInstance(hc.UserID, filter.Name)
+		f, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{
+			UserID:     hc.UserID,
+			FilterName: filter.Name,
+		})
 		switch err {
 		case nil:
-			params = f.Params
+			if err = f.AssignTo(&params); err != nil {
+				return err
+			}
 			hc.Add("has_instance", true)
-		case store.ErrRecordNotFound: // ok
+		case db.NotFound: // ok
 		default:
 			return err
 		}
@@ -149,6 +168,35 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	hc.Add("rendered", buf.String())
 
 	return s.pages.Render(c, "view-filter-render", hc)
+}
+
+func (s *Server) upsertFilterParams(c echo.Context, user uuid.UUID, filter string, params map[string]interface{}) error {
+	var out pgtype.JSONB
+	if err := out.Set(&params); err != nil {
+		return err
+	}
+	return s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
+		count, err := q.CountInstanceForUserAndFilter(ctx, db.CountInstanceForUserAndFilterParams{
+			UserID:     user,
+			FilterName: filter,
+		})
+		if err != nil {
+			return err
+		}
+		if count == 0 {
+			return q.CreateInstanceForUserAndFilter(ctx, db.CreateInstanceForUserAndFilterParams{
+				UserID:     user,
+				FilterName: filter,
+				Params:     out,
+			})
+		} else {
+			return q.UpdateInstanceForUserAndFilter(ctx, db.UpdateInstanceForUserAndFilterParams{
+				UserID:     user,
+				FilterName: filter,
+				Params:     out,
+			})
+		}
+	})
 }
 
 func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, bool, bool, error) {

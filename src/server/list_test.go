@@ -7,40 +7,44 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
+	"github.com/jackc/pgtype"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/store"
+	"github.com/xvello/letsblockit/src/db"
 )
 
 func (s *ServerTestSuite) TestRenderList_NotFound() {
-	req := httptest.NewRequest(http.MethodGet, "/list/invalid", nil)
-	s.expectS.GetListForToken("invalid").Return(nil, store.ErrRecordNotFound)
+	token := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(int32(0), db.NotFound)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 404, rec.Code)
 	})
 }
 
 func (s *ServerTestSuite) TestRenderList_OK() {
-	req := httptest.NewRequest(http.MethodGet, "/list/mytoken", nil)
-	s.expectS.GetListForToken("mytoken").Return(&store.FilterList{
-		Name:  "List name",
-		Token: "mytoken",
-		FilterInstances: []*store.FilterInstance{{
-			FilterName: "two",
-			Params:     map[string]interface{}{"a": 1, "b": 2},
-		}, {
-			FilterName: "custom-rules",
-		}, {
-			FilterName: "one",
-		}},
-	}, nil)
+	token := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(int32(10), nil)
 
+	params := map[string]interface{}{"a": "1", "b": "2"}
+	paramsB := pgtype.JSONB{}
+	s.NoError(paramsB.Set(&params))
+	s.expectQ.GetInstancesForList(gomock.Any(), int32(10)).Return([]db.GetInstancesForListRow{{
+		FilterName: "one",
+	}, {
+		FilterName: "custom-rules",
+	}, {
+		FilterName: "two",
+		Params:     paramsB,
+	}}, nil)
 	rec := httptest.NewRecorder()
 	s.expectF.Render(gomock.Any(), "one", nil).
 		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
 			_, err := w.Write([]byte("content1"))
 			return err
 		})
-	s.expectF.Render(gomock.Any(), "two", map[string]interface{}{"a": 1, "b": 2}).
+	s.expectF.Render(gomock.Any(), "two", gomock.Eq(params)).
 		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
 			_, err := w.Write([]byte("content2\nmultiline"))
 			return err
@@ -52,7 +56,7 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 		})
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
-	s.Equal(rec.Body.String(), `! Title: letsblock.it - List name
+	s.Equal(rec.Body.String(), `! Title: letsblock.it - My filters
 ! Expires: 1 hour
 ! Homepage: https://letsblock.it
 ! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt

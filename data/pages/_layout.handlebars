@@ -30,7 +30,7 @@
                             aria-current="page{{/equal}}" href="/{{target}}">{{name}}</a>
                 {{/each}}
             </div>
-            {{#if UserID}}
+            {{#if UserLoggedIn}}
                 <a class="nav-link ms-2 me-2{{#equal "user" @root.CurrentSection}} active"
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>
             {{/if}}

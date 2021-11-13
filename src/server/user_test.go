@@ -5,9 +5,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/pages"
-	"github.com/xvello/letsblockit/src/store"
 )
 
 func (s *ServerTestSuite) TestLogin_OK() {
@@ -36,17 +38,29 @@ func (s *ServerTestSuite) TestLogin_RedirectHTMX() {
 }
 
 func (s *ServerTestSuite) TestUserAccount_Verified() {
-	list := &store.FilterList{
-		UserID: s.user,
-		Name:   "test",
-	}
+	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 	req.AddCookie(verifiedCookie)
-	s.expectS.CountFilters(s.user).Return(int64(5), nil)
-	s.expectS.GetOrCreateFilterList(s.user).Return(list, nil)
+	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{
+		Token:         token,
+		InstanceCount: 5,
+	}, nil)
 	s.expectRender("user-account", pages.ContextData{
 		"filter_count": int64(5),
-		"filter_list":  list,
+		"list_token":   token.String(),
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestUserAccount_CreateList() {
+	token := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
+	req.AddCookie(verifiedCookie)
+	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{}, db.NotFound)
+	s.expectQ.CreateListForUser(gomock.Any(), s.user).Return(token, nil)
+	s.expectRender("user-account", pages.ContextData{
+		"filter_count": 0,
+		"list_token":   token.String(),
 	})
 	s.runRequest(req, assertOk)
 }

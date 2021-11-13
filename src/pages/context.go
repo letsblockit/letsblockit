@@ -1,5 +1,9 @@
 package pages
 
+import (
+	"github.com/google/uuid"
+)
+
 type ContextData map[string]interface{}
 
 type Context struct {
@@ -11,7 +15,8 @@ type Context struct {
 	NavigationLinks interface{}
 	Title           string
 
-	UserID       string
+	UserID       uuid.UUID
+	UserLoggedIn bool
 	UserVerified bool
 
 	Data ContextData

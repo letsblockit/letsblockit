@@ -1,0 +1,54 @@
+-- name: CreateListForUser :one
+INSERT INTO filter_lists (user_id)
+VALUES ($1)
+RETURNING token;
+
+-- name: GetListForUser :one
+SELECT fl.token, COUNT(*) AS instance_count
+FROM filter_lists AS fl
+         JOIN filter_instances AS fi ON fl.id = fi.filter_list_id
+WHERE fl.user_id = $1
+group by token
+LIMIT 1;
+
+-- name: GetListForToken :one
+SELECT id
+FROM filter_lists
+WHERE token = $1
+LIMIT 1;
+
+-- name: GetActiveFiltersForUser :many
+SELECT DISTINCT filter_name
+FROM filter_instances
+WHERE user_id = $1;
+
+-- name: CreateInstanceForUserAndFilter :exec
+INSERT INTO filter_instances (filter_list_id, user_id, filter_name, params, updated_at)
+VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3, NOW());
+
+-- name: UpdateInstanceForUserAndFilter :exec
+UPDATE filter_instances
+SET params     = $3,
+    updated_at = NOW()
+WHERE (user_id = $1 AND filter_name = $2);
+
+-- name: GetInstanceForUserAndFilter :one
+SELECT params
+FROM filter_instances
+WHERE (user_id = $1 AND filter_name = $2);
+
+-- name: CountInstanceForUserAndFilter :one
+SELECT COUNT(*)
+FROM filter_instances
+WHERE (user_id = $1 AND filter_name = $2);
+
+-- name: DeleteInstanceForUserAndFilter :exec
+DELETE
+FROM filter_instances
+WHERE (user_id = $1 AND filter_name = $2);
+
+-- name: GetInstancesForList :many
+SELECT filter_name, params
+FROM filter_instances
+WHERE filter_list_id = $1
+ORDER BY filter_name ASC;

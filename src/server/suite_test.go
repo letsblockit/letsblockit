@@ -11,7 +11,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/pages"
+	"github.com/xvello/letsblockit/src/server/mocks"
 )
 
 var (
@@ -37,6 +39,14 @@ var (
 	}`
 )
 
+type mockStore struct {
+	*mocks.MockQuerier
+}
+
+func (m mockStore) RunTx(e echo.Context, f db.TxFunc) error {
+	return f(e.Request().Context(), m)
+}
+
 type pageDataMatcher struct {
 	t    *testing.T
 	data pages.ContextData
@@ -54,21 +64,21 @@ func (m *pageDataMatcher) String() string {
 type ServerTestSuite struct {
 	suite.Suite
 	server    *Server
-	expectF   *MockFilterRepositoryMockRecorder
-	expectP   *MockPageRendererMockRecorder
-	expectS   *MockDataStoreMockRecorder
+	expectF   *mocks.MockFilterRepositoryMockRecorder
+	expectP   *mocks.MockPageRendererMockRecorder
+	expectQ   *mocks.MockQuerierMockRecorder
 	oryServer *httptest.Server
-	user      string
+	user      uuid.UUID
 }
 
 func (s *ServerTestSuite) SetupTest() {
 	c := gomock.NewController(s.T())
-	fm := NewMockFilterRepository(c)
-	pm := NewMockPageRenderer(c)
-	sm := NewMockDataStore(c)
+	fm := mocks.NewMockFilterRepository(c)
+	pm := mocks.NewMockPageRenderer(c)
+	qm := mocks.NewMockQuerier(c)
 	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
-	s.expectS = sm.EXPECT()
+	s.expectQ = qm.EXPECT()
 
 	oryClientRetries = 0
 	s.oryServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +93,7 @@ func (s *ServerTestSuite) SetupTest() {
 		}
 	}))
 
-	s.user = uuid.NewString()
+	s.user = uuid.New()
 	s.server = &Server{
 		assets: nil,
 		echo:   echo.New(),
@@ -91,9 +101,9 @@ func (s *ServerTestSuite) SetupTest() {
 			OryUrl: s.oryServer.URL,
 			silent: true,
 		},
-		store:   sm,
 		filters: fm,
 		pages:   pm,
+		store:   &mockStore{qm},
 	}
 	s.server.setupRouter()
 }
