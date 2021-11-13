@@ -194,6 +194,36 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 	s.runRequest(req, assertOk)
 }
 
+func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
+	f := buildFilter2FormBody() // Add params that will be ignored: filter1 does not have any
+	f.Add("__save", "")
+	req := httptest.NewRequest(http.MethodPost, "/filters/filter1", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	req.AddCookie(verifiedCookie)
+	s.expectF.GetFilter("filter1").Return(filter1, nil)
+
+	paramsB := pgtype.JSONB{}
+	s.NoError(paramsB.Set(nil))
+	s.expectQ.CountInstanceForUserAndFilter(gomock.Any(), db.CountInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: "filter1",
+	}).Return(int64(0), nil)
+	s.expectQ.CreateInstanceForUserAndFilter(gomock.Any(), db.CreateInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: "filter1",
+		Params:     paramsB,
+	}).Return(nil)
+	s.expectRenderFilter("filter1", map[string]interface{}{}, "output")
+	s.expectRender("view-filter", pages.ContextData{
+		"filter":       filter1,
+		"params":       map[string]interface{}{},
+		"rendered":     "output",
+		"has_instance": true,
+		"saved_ok":     true,
+	})
+	s.runRequest(req, assertOk)
+}
+
 func (s *ServerTestSuite) TestViewFilter_Update() {
 	f := buildFilter2FormBody()
 	f.Add("__save", "")

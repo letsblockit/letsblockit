@@ -171,9 +171,14 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 }
 
 func (s *Server) upsertFilterParams(c echo.Context, user uuid.UUID, filter string, params map[string]interface{}) error {
-	var out pgtype.JSONB
-	if err := out.Set(&params); err != nil {
-		return err
+	out := pgtype.JSONB{
+		Bytes:  nil,
+		Status: pgtype.Null,
+	}
+	if len(params) > 0 {
+		if err := out.Set(&params); err != nil {
+			return err
+		}
 	}
 	return s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		count, err := q.CountInstanceForUserAndFilter(ctx, db.CountInstanceForUserAndFilterParams{
