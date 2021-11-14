@@ -16,10 +16,30 @@
     </div>
 {{/each}}
 
-<div class="card shadow-sm">
-    <div class="card-header">{{settings.title}}</div>
-    {{#with settings.Intro}}<div class="card-body">{{{.}}}</div>{{/with}}
-    <form class="card-body" method="{{ui.method}}" action="{{ui.action}}" hx-boost="false">
+<div class="card shadow-sm" hx-boost="false">
+    {{#if settings.Tabs}}
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                {{#each settings.Tabs}}
+                    {{#if (eq @root.Data.type Type)}}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="true" href="#">{{Title}}</a>
+                        </li>
+                    {{else}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/.ory/ui/{{Type}}">{{Title}}</a>
+                        </li>
+                    {{/if}}
+                {{/each}}
+            </ul>
+        </div>
+    {{else}}
+        <div class="card-header">{{settings.title}}</div>
+    {{/if}}
+    {{#with settings.Intro}}
+        <div class="card-body">{{{.}}}</div>
+    {{/with}}
+    <form class="card-body" method="{{ui.method}}" action="{{ui.action}}">
         {{#each ui.nodes}}
             <div class="form-group mb-3 row type-{{attributes.type}}">
                 {{#if meta.label.text}}

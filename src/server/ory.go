@@ -25,30 +25,55 @@ var proxyClient = http.Client{
 	Timeout: 30 * time.Second,
 }
 
-var supportedForms = map[string]struct {
-	Title string
-	Intro string
-}{
-	"error": {
-		Title: "Account management error",
-		Intro: `There was an error. If it persists, please <a href="https://github.com/xvello/letsblockit/issues">open an issue</a>.`,
-	},
-	"login": {
-		Title: "Log into your account",
-		Intro: `Enter your e-mail and password to login, or <a href="/.ory/ui/registration">click here to create a new account</a>.`,
-	},
-	"registration": {
-		Title: "Create a new account",
-		Intro: `Already have an account? <a href="/.ory/ui/login">Sign in instead</a>.`,
-	},
-	"settings": {
-		Title: "Account settings",
-		Intro: `You can change your e-mail or password here. If you change your e-mail, you will receive a new validation email.`,
-	},
-	"verification": {
-		Title: "Verify your account",
-	},
+type formTab struct {
+	Title  string
+	Type   string
+	Target string
 }
+
+var (
+	loginTabs = []formTab{{
+		Title: "Create account",
+		Type:  "registration",
+	}, {
+		Title: "Login",
+		Type:  "login",
+	}, {
+		Title: "Recover password",
+		Type:  "recovery",
+	}}
+
+	supportedForms = map[string]struct {
+		Title string
+		Tabs  []formTab
+		Intro string
+	}{
+		"error": {
+			Title: "Account management error",
+			Intro: `There was an error. If it persists, please <a href="https://github.com/xvello/letsblockit/issues">open an issue</a>.`,
+		},
+		"login": {
+			Title: "Log into your account",
+			Tabs:  loginTabs,
+		},
+		"recovery": {
+			Title: "Recover your account",
+			Tabs:  loginTabs,
+			Intro: `Enter your e-mail to receive a recovery link by e-mail.`,
+		},
+		"registration": {
+			Title: "Create a new account",
+			Tabs:  loginTabs,
+		},
+		"settings": {
+			Title: "Account settings",
+			Intro: `You can change your e-mail or password here. If you change your e-mail, you will receive a new validation e-mail.`,
+		},
+		"verification": {
+			Title: "Verify your account",
+		},
+	}
+)
 
 // oryUser holds the parts of the kratos user we care about.
 type oryUser struct {
@@ -153,7 +178,6 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 		hc.Add("type", formType)
 		hc.Add("ui", ui)
 		hc.Add("settings", formSettings)
-		c.Logger().Warn(ui)
 		return hc, nil
 	}()
 	if err != nil {
