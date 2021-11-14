@@ -9,28 +9,26 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/pages"
 )
 
 const (
-	oryCookieNamePrefix = "ory_session_"
-	oryWhoamiPath       = "/api/kratos/public/sessions/whoami"
-	oryLogoutInfoPath   = "/api/kratos/public/self-service/logout/browser"
-	oryLogoutDestPath   = "/.ory/api/kratos/public/self-service/logout?token="
 	userContextKey      = "_user"
-	oryGetFlowPattern   = "http://localhost:4000/.ory/api/kratos/public/self-service/%s/flows?id=%s"
+	oryCookieNamePrefix = "ory_session_"
+	oryGetFlowPattern   = "/api/kratos/public/self-service/%s/flows?id=%s"
+	oryLogoutInfoPath   = "/api/kratos/public/self-service/logout/browser"
+	oryWhoamiPath       = "/api/kratos/public/sessions/whoami"
 )
 
-var oryClientRetries = 3
-
-type formSettings struct {
-	Title string
-	Intro string
+var proxyClient = http.Client{
+	Timeout: 30 * time.Second,
 }
 
-var supportedForms = map[string]formSettings{
+var supportedForms = map[string]struct {
+	Title string
+	Intro string
+}{
 	"error": {
 		Title: "Account management error",
 		Intro: `There was an error. If it persists, please <a href="https://github.com/xvello/letsblockit/issues">open an issue</a>.`,
@@ -64,7 +62,7 @@ type oryUser struct {
 }
 
 type oryLogoutInfo struct {
-	Token string `json:"logout_token"`
+	URL string `json:"logout_url"`
 }
 
 func (u *oryUser) Id() uuid.UUID {
@@ -93,29 +91,10 @@ func (u *oryUser) IsVerified() bool {
 	return false
 }
 
-// leveledLogger implements retryablehttp.LeveledLogger around an echo.Logger
-type leveledLogger struct {
-	log echo.Logger
-}
-
-func (l *leveledLogger) Error(msg string, keysAndValues ...interface{}) {
-	l.log.Errorf(msg, keysAndValues)
-}
-func (l *leveledLogger) Info(msg string, keysAndValues ...interface{}) {
-	l.log.Infof(msg, keysAndValues)
-}
-func (l *leveledLogger) Debug(msg string, keysAndValues ...interface{}) {
-	l.log.Debugf(msg, keysAndValues)
-}
-func (l *leveledLogger) Warn(msg string, keysAndValues ...interface{}) {
-	l.log.Warnf(msg, keysAndValues)
-}
-
 // buildOryMiddleware tries to resolve an Ory Cloud session from the cookies.
 // If it succeeds, a "user" value is added to the context for use by handlers.
 func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
-	client := buildRetryableClient(s.echo.Logger)
-	endpoint := s.options.OryUrl + oryWhoamiPath
+	endpoint := s.options.KratosURL + oryWhoamiPath
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -123,47 +102,31 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 			if !strings.Contains(cookies, oryCookieNamePrefix) {
 				return next(c)
 			}
-
-			req, err := retryablehttp.NewRequest("GET", endpoint, nil)
-			if err != nil {
-				return fmt.Errorf("failed to instantiate request: %w", err)
-			}
-			req.Header.Set(echo.HeaderCookie, cookies)
-			req.Header.Set("Accept", "application/json")
-			res, err := client.Do(req)
-			if err != nil {
-				s.echo.Logger.Error("failed to query kratos: %w", err)
-				return next(c)
-			}
-			defer res.Body.Close()
-
 			var user oryUser
-			if err = json.NewDecoder(res.Body).Decode(&user); err != nil {
-				s.echo.Logger.Error("failed to decode session object: %w", err)
-				return next(c)
-			}
-			if user.IsActive() {
+			if err := s.queryKratos(c, endpoint, &user); err != nil {
+				s.echo.Logger.Error("auth error: %w", err)
+			} else if user.IsActive() {
 				c.Set(userContextKey, &user)
 			}
-
 			return next(c)
 		}
 	}
 }
 
-// getLogoutUrl retrieves the logout token for the current session
-// and and builds the redirect URL.
+// getLogoutUrl retrieves the logout url for the current session by calling the proxy
 func (s *Server) getLogoutUrl(c echo.Context) (string, error) {
 	var info oryLogoutInfo
-	if err := s.queryKratos(c, s.options.OryUrl+oryLogoutInfoPath, &info); err != nil {
+	if err := s.queryKratos(c, s.options.KratosURL+oryLogoutInfoPath, &info); err != nil {
 		return "", err
 	}
-	if info.Token == "" {
-		return "", fmt.Errorf("empty logout token")
+	if info.URL == "" {
+		return "", fmt.Errorf("empty logout url")
 	}
-	return oryLogoutDestPath + info.Token, nil
+	return info.URL, nil
 }
 
+// renderKratosForm retrieves the flow definition from the proxy and renders the form.
+// If any error occurs, the user is redirected to the Cloud Managed UI as a fallback.
 func (s *Server) renderKratosForm(c echo.Context) error {
 	formType := c.Param("type")
 	flowID := c.QueryParams().Get("flow")
@@ -177,7 +140,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 		}
 
 		body := make(map[string]interface{})
-		endpoint := fmt.Sprintf(oryGetFlowPattern, formType, flowID)
+		endpoint := s.options.KratosURL + fmt.Sprintf(oryGetFlowPattern, formType, flowID)
 		if err := s.queryKratos(c, endpoint, &body); err != nil {
 			return nil, err
 		}
@@ -201,15 +164,13 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 }
 
 func (s *Server) queryKratos(c echo.Context, endpoint string, body interface{}) error {
-	client := buildRetryableClient(s.echo.Logger)
-
-	req, err := retryablehttp.NewRequest("GET", endpoint, nil)
+	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return fmt.Errorf("failed to instantiate request: %w", err)
 	}
 	req.Header.Set(echo.HeaderCookie, c.Request().Header.Get(echo.HeaderCookie))
 	req.Header.Set("Accept", "application/json")
-	res, err := client.Do(req)
+	res, err := proxyClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to query kratos: %w", err)
 	}
@@ -219,14 +180,6 @@ func (s *Server) queryKratos(c echo.Context, endpoint string, body interface{}) 
 		return fmt.Errorf("failed to decode response: %w", err)
 	}
 	return nil
-}
-
-func buildRetryableClient(logger echo.Logger) *retryablehttp.Client {
-	client := retryablehttp.NewClient()
-	client.RetryMax = oryClientRetries
-	client.HTTPClient.Timeout = 2 * time.Second
-	client.Logger = &leveledLogger{logger}
-	return client
 }
 
 func getUser(c echo.Context) *oryUser {

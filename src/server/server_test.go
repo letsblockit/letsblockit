@@ -66,7 +66,7 @@ func (s *ServerTestSuite) TestAbout_LoggedNoVerified() {
 }
 
 func (s *ServerTestSuite) TestAbout_KratosDown() {
-	s.oryServer.Close() // Kratos is unresponsive, continue anonymous
+	s.kratosServer.Close() // Kratos is unresponsive, continue anonymous
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	req.AddCookie(verifiedCookie)
 	s.expectRenderWithContext("about", &pages.Context{

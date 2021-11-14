@@ -75,7 +75,7 @@ func (s *ServerTestSuite) TestUserAccount_NotVerified() {
 func (s *ServerTestSuite) TestUserAccount_Redirect() {
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code)
+		assert.Equal(t, 302, rec.Code, rec.Body)
 		assert.Equal(t, "/user/login", rec.Header().Get("Location"))
 	})
 }
@@ -84,15 +84,15 @@ func (s *ServerTestSuite) TestUserLogout_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
 	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code)
-		assert.Equal(t, "/.ory/api/kratos/public/self-service/logout?token=token", rec.Header().Get("Location"))
+		assert.Equal(t, 302, rec.Code, rec.Body)
+		assert.Equal(t, "targetURL", rec.Header().Get("Location"))
 	})
 }
 
 func (s *ServerTestSuite) TestUserLogout_Redirect() {
 	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code)
+		assert.Equal(t, 302, rec.Code, rec.Body)
 		assert.Equal(t, "/user/login", rec.Header().Get("Location"))
 	})
 }

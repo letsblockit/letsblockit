@@ -24,7 +24,7 @@ type Options struct {
 	Address      string `default:"127.0.0.1:8765" help:"address to listen to"`
 	Debug        bool   `help:"log with debug level"`
 	DryRun       bool   `arg:"--dry-run" help:"instantiate all components and exit"`
-	OryUrl       string `help:"oxy cloud project to check credentials against"`
+	KratosURL    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local proxy"`
 	Reload       bool   `help:"reload frontend when the backend restarts"`
 	Statsd       string `help:"address to send statsd metrics to"`
 	DatabaseName string `default:"letsblockit" help:"psql database name to use"`
@@ -94,7 +94,7 @@ func (s *Server) setupRouter() {
 	if !s.options.silent {
 		s.echo.Use(middleware.Logger())
 	}
-	if s.options.OryUrl != "" {
+	if s.options.KratosURL != "" {
 		s.echo.Use(s.buildOryMiddleware())
 	}
 

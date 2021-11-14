@@ -63,12 +63,12 @@ func (m *pageDataMatcher) String() string {
 
 type ServerTestSuite struct {
 	suite.Suite
-	server    *Server
-	expectF   *mocks.MockFilterRepositoryMockRecorder
-	expectP   *mocks.MockPageRendererMockRecorder
-	expectQ   *mocks.MockQuerierMockRecorder
-	oryServer *httptest.Server
-	user      uuid.UUID
+	server       *Server
+	expectF      *mocks.MockFilterRepositoryMockRecorder
+	expectP      *mocks.MockPageRendererMockRecorder
+	expectQ      *mocks.MockQuerierMockRecorder
+	kratosServer *httptest.Server
+	user         uuid.UUID
 }
 
 func (s *ServerTestSuite) SetupTest() {
@@ -80,11 +80,10 @@ func (s *ServerTestSuite) SetupTest() {
 	s.expectP = pm.EXPECT()
 	s.expectQ = qm.EXPECT()
 
-	oryClientRetries = 0
-	s.oryServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	s.kratosServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case oryLogoutInfoPath:
-			fmt.Fprint(w, `{"logout_token":"token"}`)
+			fmt.Fprint(w, `{"logout_url":"targetURL"}`)
 		case oryWhoamiPath:
 			cookie, _ := r.Cookie("ory_session_verified")
 			fmt.Fprintf(w, whoAmiPattern, s.user, cookie.Value)
@@ -98,8 +97,8 @@ func (s *ServerTestSuite) SetupTest() {
 		assets: nil,
 		echo:   echo.New(),
 		options: &Options{
-			OryUrl: s.oryServer.URL,
-			silent: true,
+			KratosURL: s.kratosServer.URL,
+			silent:    true,
 		},
 		filters: fm,
 		pages:   pm,
