@@ -2,13 +2,16 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/labstack/echo/v4"
+	"github.com/xvello/letsblockit/src/pages"
 )
 
 const (
@@ -17,9 +20,37 @@ const (
 	oryLogoutInfoPath   = "/api/kratos/public/self-service/logout/browser"
 	oryLogoutDestPath   = "/.ory/api/kratos/public/self-service/logout?token="
 	userContextKey      = "_user"
+	oryGetFlowPattern   = "http://localhost:4000/.ory/api/kratos/public/self-service/%s/flows?id=%s"
 )
 
 var oryClientRetries = 3
+
+type formSettings struct {
+	Title string
+	Intro string
+}
+
+var supportedForms = map[string]formSettings{
+	"error": {
+		Title: "Account management error",
+		Intro: `There was an error. If it persists, please <a href="https://github.com/xvello/letsblockit/issues">open an issue</a>.`,
+	},
+	"login": {
+		Title: "Log into your account",
+		Intro: `Enter your e-mail and password to login, or <a href="/.ory/ui/registration">click here to create a new account</a>.`,
+	},
+	"registration": {
+		Title: "Create a new account",
+		Intro: `Already have an account? <a href="/.ory/ui/login">Sign in instead</a>.`,
+	},
+	"settings": {
+		Title: "Account settings",
+		Intro: `You can change your e-mail or password here. If you change your e-mail, you will receive a new validation email.`,
+	},
+	"verification": {
+		Title: "Verify your account",
+	},
+}
 
 // oryUser holds the parts of the kratos user we care about.
 type oryUser struct {
@@ -123,29 +154,71 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 // getLogoutUrl retrieves the logout token for the current session
 // and and builds the redirect URL.
 func (s *Server) getLogoutUrl(c echo.Context) (string, error) {
-	client := buildRetryableClient(s.echo.Logger)
-	endpoint := s.options.OryUrl + oryLogoutInfoPath
-
-	req, err := retryablehttp.NewRequest("GET", endpoint, nil)
-	if err != nil {
-		return "", fmt.Errorf("failed to instantiate request: %w", err)
-	}
-	req.Header.Set(echo.HeaderCookie, c.Request().Header.Get(echo.HeaderCookie))
-	req.Header.Set("Accept", "application/json")
-	res, err := client.Do(req)
-	if err != nil {
-		return "", fmt.Errorf("failed to query kratos: %w", err)
-	}
-	defer res.Body.Close()
-
 	var info oryLogoutInfo
-	if err := json.NewDecoder(res.Body).Decode(&info); err != nil {
-		return "", fmt.Errorf("failed to decode response: %w", err)
+	if err := s.queryKratos(c, s.options.OryUrl+oryLogoutInfoPath, &info); err != nil {
+		return "", err
 	}
 	if info.Token == "" {
 		return "", fmt.Errorf("empty logout token")
 	}
 	return oryLogoutDestPath + info.Token, nil
+}
+
+func (s *Server) renderKratosForm(c echo.Context) error {
+	formType := c.Param("type")
+	flowID := c.QueryParams().Get("flow")
+	if formType == "" || flowID == "" {
+		return fmt.Errorf("missing args, got type '%s', flow '%s'", formType, flowID)
+	}
+	hc, err := func() (*pages.Context, error) {
+		formSettings, ok := supportedForms[formType]
+		if !ok {
+			return nil, fmt.Errorf("unsupported form type %s", formType)
+		}
+
+		body := make(map[string]interface{})
+		endpoint := fmt.Sprintf(oryGetFlowPattern, formType, flowID)
+		if err := s.queryKratos(c, endpoint, &body); err != nil {
+			return nil, err
+		}
+		ui, ok := body["ui"]
+		if !ok {
+			return nil, errors.New("no UI field in payload")
+		}
+
+		hc := s.buildPageContext(c, formSettings.Title)
+		hc.Add("type", formType)
+		hc.Add("ui", ui)
+		hc.Add("settings", formSettings)
+		c.Logger().Warn(ui)
+		return hc, nil
+	}()
+	if err != nil {
+		c.Logger().Warnf("Kratos form failure, falling-back to managed UI: %s", err.Error())
+		return c.Redirect(http.StatusFound, fmt.Sprintf("/.ory/ui/%s?flow=%s", formType, flowID))
+	}
+	return s.pages.Render(c, "kratos-form", hc)
+}
+
+func (s *Server) queryKratos(c echo.Context, endpoint string, body interface{}) error {
+	client := buildRetryableClient(s.echo.Logger)
+
+	req, err := retryablehttp.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return fmt.Errorf("failed to instantiate request: %w", err)
+	}
+	req.Header.Set(echo.HeaderCookie, c.Request().Header.Get(echo.HeaderCookie))
+	req.Header.Set("Accept", "application/json")
+	res, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to query kratos: %w", err)
+	}
+	defer res.Body.Close()
+
+	if err := json.NewDecoder(res.Body).Decode(body); err != nil {
+		return fmt.Errorf("failed to decode response: %w", err)
+	}
+	return nil
 }
 
 func buildRetryableClient(logger echo.Logger) *retryablehttp.Client {

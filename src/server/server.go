@@ -24,7 +24,7 @@ type Options struct {
 	Address      string `default:"127.0.0.1:8765" help:"address to listen to"`
 	Debug        bool   `help:"log with debug level"`
 	DryRun       bool   `arg:"--dry-run" help:"instantiate all components and exit"`
-	OryUrl       string `default:"https://playground.projects.oryapis.com" help:"oxy cloud project to check credentials against"`
+	OryUrl       string `help:"oxy cloud project to check credentials against"`
 	Reload       bool   `help:"reload frontend when the backend restarts"`
 	Statsd       string `help:"address to send statsd metrics to"`
 	DatabaseName string `default:"letsblockit" help:"psql database name to use"`
@@ -77,6 +77,8 @@ func (s *Server) Start() error {
 	}
 	if s.options.Debug {
 		s.echo.Logger.SetLevel(log.DEBUG)
+	} else {
+		s.echo.Logger.SetLevel(log.INFO)
 	}
 
 	s.pages.RegisterHelpers(buildHelpers(s.echo, s.assets.hash))
@@ -132,6 +134,8 @@ func (s *Server) setupRouter() {
 	s.echo.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 
 	s.echo.GET("/list/:token", s.renderList).Name = "render-filterlist"
+
+	s.echo.GET("/user/forms/:type", s.renderKratosForm)
 
 	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
 	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"

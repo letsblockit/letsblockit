@@ -13,6 +13,9 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 	assetHashQuery := "?h=" + assetHash
 
 	return map[string]interface{}{
+		"eq": func(a string, b string) bool {
+			return strings.Compare(a, b) == 0
+		},
 		"assetHash": func() string {
 			return assetHashQuery
 		},

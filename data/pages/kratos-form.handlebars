@@ -1,0 +1,61 @@
+<style>
+    div.type-hidden, div.type-submit {
+        margin-bottom: 0 !important;
+    }
+
+    div.type-submit + div.row {
+        margin-top: 2rem !important;
+        padding-top: 2rem !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.125);
+    }
+</style>
+
+{{#each ui.messages}}
+    <div role="alert" class="alert {{#if (eq type "error")}}alert-warning{{else}}alert-info{{/if}}">
+        {{text}}
+    </div>
+{{/each}}
+
+<div class="card shadow-sm">
+    <div class="card-header">{{settings.title}}</div>
+    {{#with settings.Intro}}<div class="card-body">{{{.}}}</div>{{/with}}
+    <form class="card-body" method="{{ui.method}}" action="{{ui.action}}" hx-boost="false">
+        {{#each ui.nodes}}
+            <div class="form-group mb-3 row type-{{attributes.type}}">
+                {{#if meta.label.text}}
+                    <label class="col-lg-3 col-form-label" for="input-{{attributes.name}}">
+                        {{#unless (eq attributes.type "submit")}}
+                            {{#if (eq meta.label.id 1070004)}}E-Mail{{else}}{{meta.label.text}}{{/if}}
+                        {{/unless}}
+                    </label>
+                {{/if}}
+                <div class="col-lg-9">
+                    {{#if (eq attributes.type "submit")}}
+                        <button type="submit" class="btn btn-primary"
+                                id="input-{{attributes.name}}"
+                                name="{{attributes.name}}"
+                                value="{{attributes.value}}">
+                            {{meta.label.text}}
+                        </button>
+                    {{else}}
+                        <input
+                            {{#if attributes.disabled}}disabled{{/if}}
+                            {{#if attributes.required}}required{{/if}}
+                                id="input-{{attributes.name}}"
+                                name="{{attributes.name}}"
+                                type="{{#if (eq meta.label.id 1070004)}}email{{else}}{{attributes.type}}{{/if}}"
+                                value="{{attributes.value}}"
+                                class="form-control {{#each messages}}
+                                    {{#if (eq type "error")}}is-invalid{{else}}is-valid{{/if}}
+                                {{/each}}"/>
+                    {{/if}}
+                    {{#each messages}}
+                        <div class="{{#if (eq type "error")}}invalid-feedback{{else}}valid-feedback{{/if}}">
+                            {{text}}
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        {{/each}}
+    </form>
+</div>
