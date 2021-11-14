@@ -3,17 +3,25 @@ package server
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/db"
+)
+
+var (
+	hasAccountCookieName  = "has_account"
+	hasAccountCookieValue = "true"
 )
 
 func (s *Server) userLogin(c echo.Context) error {
 	if getUser(c) != nil {
 		return s.redirect(c, "user-account")
 	}
-	hc := s.buildPageContext(c, "Login")
-	return s.pages.Render(c, "user-login", hc)
+	if _, err := c.Cookie(hasAccountCookieName); err == nil {
+		return c.Redirect(http.StatusFound, "/.ory/ui/login")
+	}
+	return c.Redirect(http.StatusFound, "/.ory/ui/registration")
 }
 
 func (s *Server) userLogout(c echo.Context) error {
@@ -55,5 +63,14 @@ func (s *Server) userAccount(c echo.Context) error {
 			return err
 		}
 	}
+
+	c.SetCookie(&http.Cookie{
+		Name:     hasAccountCookieName,
+		Value:    hasAccountCookieValue,
+		Path:     "/",
+		Expires:  time.Now().AddDate(1, 0, 0),
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	})
 	return s.pages.Render(c, "user-account", hc)
 }

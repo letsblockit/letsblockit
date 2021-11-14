@@ -12,19 +12,27 @@ import (
 	"github.com/xvello/letsblockit/src/pages"
 )
 
-func (s *ServerTestSuite) TestLogin_OK() {
+func (s *ServerTestSuite) TestLogin_RedirectRegistration() {
 	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
-	s.expectRender("user-login", nil)
-	s.runRequest(req, assertOk)
+	s.runRequest(req, assertRedirect("/.ory/ui/registration"))
 }
 
-func (s *ServerTestSuite) TestLogin_RedirectRaw() {
+func (s *ServerTestSuite) TestLogin_RedirectLogin() {
+	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
+	req.AddCookie(&http.Cookie{
+		Name:  "has_account",
+		Value: "true",
+	})
+	s.runRequest(req, assertRedirect("/.ory/ui/login"))
+}
+
+func (s *ServerTestSuite) TestLogin_RedirectLoggedRaw() {
 	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
 	req.AddCookie(verifiedCookie)
 	s.runRequest(req, assertRedirect("/user/account"))
 }
 
-func (s *ServerTestSuite) TestLogin_RedirectHTMX() {
+func (s *ServerTestSuite) TestLogin_RedirectLoggedHTMX() {
 	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
 	req.Header.Set("HX-Request", "true")
 	req.AddCookie(verifiedCookie)

@@ -15,9 +15,10 @@ type Context struct {
 	NavigationLinks interface{}
 	Title           string
 
-	UserID       uuid.UUID
-	UserLoggedIn bool
-	UserVerified bool
+	UserID         uuid.UUID
+	UserLoggedIn   bool
+	UserVerified   bool
+	UserHasAccount bool
 
 	Data ContextData
 }

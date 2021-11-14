@@ -172,6 +172,9 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		NavigationLinks: navigationLinks,
 		Title:           title,
 	}
+	if _, err := c.Cookie(hasAccountCookieName); err == nil {
+		context.UserHasAccount = true
+	}
 	if u := getUser(c); u != nil {
 		context.UserID = u.Id()
 		context.UserLoggedIn = true
