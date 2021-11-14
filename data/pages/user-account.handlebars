@@ -11,11 +11,11 @@
                 from the <a href="{{href "list-filters" ""}}">filter list page</a>.
             </p>
             <p>To use your filters in uBlock, add the following list:
-                <a href="{{list_href list_token}}" hx-boost="false">{{list_href list_token}}</a></p>
+                <a href="{{list_href list_token}}">{{list_href list_token}}</a></p>
         </div>
     </div>
 {{else}}
-    <div class="card mb-3 shadow-sm" hx-boost="false">
+    <div class="card mb-3 shadow-sm">
         <div class="card-header">Unverified account</div>
         <div class="card-body">
             <p>You need to verify your e-mail address before you can add filters. Check your inbox and spam folder
@@ -24,7 +24,7 @@
     </div>
 {{/if}}
 
-<div class="card mb-3 shadow-sm" hx-boost="false">
+<div class="card mb-3 shadow-sm">
     <div class="card-header">Manage my account</div>
     <div class="card-body">
         <p>Account management is provided by <a target="_blank" href="https://www.ory.sh/">the fine folks at Ory</a>.</p>

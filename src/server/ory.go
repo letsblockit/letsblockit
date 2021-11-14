@@ -175,6 +175,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 		}
 
 		hc := s.buildPageContext(c, formSettings.Title)
+		hc.NoBoost = true
 		hc.Add("type", formType)
 		hc.Add("ui", ui)
 		hc.Add("settings", formSettings)

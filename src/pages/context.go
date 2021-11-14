@@ -10,6 +10,7 @@ type Context struct {
 	NakedContent bool
 	Scripts      []string
 	Page         *page
+	NoBoost      bool
 
 	CurrentSection  string
 	NavigationLinks interface{}

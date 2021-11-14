@@ -44,7 +44,7 @@
     </div>
 </nav>
 
-<main id="main" class="container p-5">
+<main id="main" class="container p-5" {{#if NoBoost}}hx-boost="false"{{/if}}>
     <div class="container">
         {{#if Page.partial}}
             {{#with Data}}{{>(Page.partial)}}{{else}}{{>(Page.partial)}}{{/with}}
