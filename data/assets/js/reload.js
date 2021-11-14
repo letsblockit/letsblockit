@@ -9,7 +9,7 @@ let isConnected = false
 let watchEventSource = null;
 
 function watchForRestart() {
-    watchEventSource = new EventSource('localhost:8765/should-reload');
+    watchEventSource = new EventSource('http://localhost:8765/should-reload');
     watchEventSource.onopen = function () {
         if (isConnected) {
             console.log("Restart detected, reloading page");
