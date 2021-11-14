@@ -1,0 +1,48 @@
+{{#if @root.UserVerified}}
+    {{#unless has_filters}}
+        <h3>Add some filters to your list</h3>
+        <p>You have not enabled any filter yet, go to the
+            <a href="{{href "list-filters" ""}}">filter list page</a>
+            to select some and enable them.</p>
+    {{/unless}}
+{{else if @root.UserLoggedIn}}
+    <h3>Verify your account</h3>
+    <p>You have cannot create a list unless your e-mail is verified. Head out to
+        <a href="{{href "user-account" ""}}">My account</a> first.</p>
+{{else}}
+    <h3>Create an account</h3>
+    <p>You have cannot create a list without an account.
+        <a href="{{href "user-login" ""}}">Register an account</a> first.</p>
+{{/if}}
+
+<h3 id="add-list">Add the list to uBlock settings</h3>
+
+<ul>
+    <li>Click on the <code>uBlock Origin</code> extension icon in your browser toolbar, then open the dashboard by
+        clicking on the cog icons. If the cogs don't show up, click on <code>More</code>.
+    </li>
+</ul>
+<img src="/assets/images/pages/help-usage1.webp"/>
+
+<ul>
+    <li>Click on the <code>Filters lists</code> tab, scroll to the bottom</li>
+    <li>Click on the <code>Import...</code> checkbox</li>
+    <li>Copy the following URL: <code>{{list_href list_token}}</code></li>
+    <li>Click on <code>Apply changes</code></li>
+</ul>
+
+<img src="/assets/images/pages/help-usage2.webp"/>
+
+<h3 class="mt-5" id="refresh">Manually refresh the filters</h3>
+
+<em>uBlock Origin</em> will refresh your filters every day, but you can trigger a manual refresh
+to use your new / updated filters:
+
+<ul>
+    <li>Open the <code>uBlock Origin</code> dashboard (see above)</li>
+    <li>Click on the <code>Filters lists</code> tab, scroll to the bottom</li>
+    <li>Locate the "letsblock.it - My filters" list at the bottom</li>
+    <li>Click on the clock icon next to it, then on <code>Update now</code></li>
+</ul>
+
+<img src="/assets/images/pages/help-usage3.webp"/>

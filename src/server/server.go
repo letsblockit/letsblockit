@@ -39,6 +39,9 @@ var navigationLinks = []struct {
 	Name:   "Filter list",
 	Target: "filters",
 }, {
+	Name:   "Help",
+	Target: "help",
+}, {
 	Name:   "About",
 	Target: "about",
 }}
@@ -126,6 +129,9 @@ func (s *Server) setupRouter() {
 
 	s.addStatic("/about", "about", "About: Let’s block it!")
 
+	s.echo.GET("/help", s.helpUsage)
+	s.echo.GET("/help/usage", s.helpUsage).Name = "help-usage"
+
 	s.echo.GET("/filters", s.listFilters).Name = "list-filters"
 	s.echo.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
 
@@ -140,6 +146,18 @@ func (s *Server) setupRouter() {
 	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
 	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"
 	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
+}
+
+func (s *Server) helpUsage(c echo.Context) error {
+	hc := s.buildPageContext(c, "How to use my filter list")
+	if hc.UserVerified {
+		info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID)
+		if err == nil {
+			hc.Add("has_filters", info.InstanceCount > 0)
+			hc.Add("list_token", info.Token.String())
+		}
+	}
+	return s.pages.Render(c, "help-usage", hc)
 }
 
 func (s *Server) addStatic(url, page, title string) {
