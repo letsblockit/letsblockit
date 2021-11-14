@@ -54,7 +54,14 @@ func (s *ServerTestSuite) TestUserAccount_Verified() {
 		"filter_count": int64(5),
 		"list_token":   token.String(),
 	})
-	s.runRequest(req, assertOk)
+	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, 200, rec.Code, rec.Body)
+		assert.Len(t, rec.Result().Cookies(), 1)
+		cookie := rec.Result().Cookies()[0]
+		assert.Equal(t, "has_account", cookie.Name)
+		assert.Equal(t, "true", cookie.Value)
+		assert.Equal(t, "/", cookie.Path)
+	})
 }
 
 func (s *ServerTestSuite) TestUserAccount_CreateList() {
