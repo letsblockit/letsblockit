@@ -31,7 +31,7 @@ func LoadPages() (*Pages, error) {
 		pages: make(map[string]*page),
 	}
 	// Parse toplevel layout template
-	contents, err := data.Pages.ReadFile("pages/_layout.handlebars")
+	contents, err := data.Pages.ReadFile("pages/_layout.hbs")
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func LoadPages() (*Pages, error) {
 	}
 
 	// Parse toplevel naked template
-	contents, err = data.Pages.ReadFile("pages/_naked.handlebars")
+	contents, err = data.Pages.ReadFile("pages/_naked.hbs")
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func LoadPages() (*Pages, error) {
 	}
 
 	// Parse handlebars pages
-	err = data.Walk(data.Pages, ".handlebars", func(name string, file io.Reader) error {
+	err = data.Walk(data.Pages, ".hbs", func(name string, file io.Reader) error {
 		if strings.HasPrefix(name, "_") {
 			return nil
 		}
