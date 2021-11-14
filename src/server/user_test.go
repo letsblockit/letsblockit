@@ -21,10 +21,7 @@ func (s *ServerTestSuite) TestLogin_OK() {
 func (s *ServerTestSuite) TestLogin_RedirectRaw() {
 	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
 	req.AddCookie(verifiedCookie)
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code)
-		assert.Equal(t, "/user/account", rec.Header().Get("Location"))
-	})
+	s.runRequest(req, assertRedirect("/user/account"))
 }
 
 func (s *ServerTestSuite) TestLogin_RedirectHTMX() {
@@ -32,7 +29,7 @@ func (s *ServerTestSuite) TestLogin_RedirectHTMX() {
 	req.Header.Set("HX-Request", "true")
 	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 200, rec.Code)
+		assert.Equal(t, 200, rec.Code, rec.Body)
 		assert.Equal(t, "/user/account", rec.Header().Get("HX-Redirect"))
 	})
 }
@@ -74,25 +71,16 @@ func (s *ServerTestSuite) TestUserAccount_NotVerified() {
 
 func (s *ServerTestSuite) TestUserAccount_Redirect() {
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code, rec.Body)
-		assert.Equal(t, "/user/login", rec.Header().Get("Location"))
-	})
+	s.runRequest(req, assertRedirect("/user/login"))
 }
 
 func (s *ServerTestSuite) TestUserLogout_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
 	req.AddCookie(verifiedCookie)
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code, rec.Body)
-		assert.Equal(t, "targetURL", rec.Header().Get("Location"))
-	})
+	s.runRequest(req, assertRedirect("targetURL"))
 }
 
 func (s *ServerTestSuite) TestUserLogout_Redirect() {
 	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code, rec.Body)
-		assert.Equal(t, "/user/login", rec.Header().Get("Location"))
-	})
+	s.runRequest(req, assertRedirect("/user/login"))
 }

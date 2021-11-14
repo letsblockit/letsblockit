@@ -75,11 +75,6 @@ func (s *Server) Start() error {
 		s.echo.Use(buildDogstatsMiddleware(dsd))
 		go collectStats(s.echo.Logger, s.store, dsd)
 	}
-	if s.options.Debug {
-		s.echo.Logger.SetLevel(log.DEBUG)
-	} else {
-		s.echo.Logger.SetLevel(log.INFO)
-	}
 
 	s.pages.RegisterHelpers(buildHelpers(s.echo, s.assets.hash))
 	s.setupRouter()
@@ -92,6 +87,11 @@ func (s *Server) Start() error {
 func (s *Server) setupRouter() {
 	s.echo.Use(middleware.Recover())
 	if !s.options.silent {
+		if s.options.Debug {
+			s.echo.Logger.SetLevel(log.DEBUG)
+		} else {
+			s.echo.Logger.SetLevel(log.INFO)
+		}
 		s.echo.Use(middleware.Logger())
 	}
 	if s.options.KratosURL != "" {

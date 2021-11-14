@@ -81,15 +81,25 @@ func (s *ServerTestSuite) SetupTest() {
 	s.expectQ = qm.EXPECT()
 
 	s.kratosServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		fmt.Println(r.URL.Path)
 		switch r.URL.Path {
 		case oryLogoutInfoPath:
-			fmt.Fprint(w, `{"logout_url":"targetURL"}`)
+			_, err = fmt.Fprint(w, `{"logout_url":"targetURL"}`)
 		case oryWhoamiPath:
 			cookie, _ := r.Cookie("ory_session_verified")
-			fmt.Fprintf(w, whoAmiPattern, s.user, cookie.Value)
+			_, err = fmt.Fprintf(w, whoAmiPattern, s.user, cookie.Value)
+		case "/api/kratos/public/self-service/login/flows":
+			switch r.URL.RawQuery {
+			case "id=123456":
+				_, err = fmt.Fprint(w, `{"ui":{"a": "1", "b": "2"}}`)
+			case "id=666":
+				_, err = fmt.Fprint(w, `{"invalid": true}`)
+			}
 		default:
 			http.NotFound(w, r)
 		}
+		s.NoError(err)
 	}))
 
 	s.user = uuid.New()
@@ -122,6 +132,12 @@ func assertOk(t *testing.T, rec *httptest.ResponseRecorder) {
 	assert.Equal(t, http.StatusOK, rec.Code, rec.Body)
 }
 
+func assertRedirect(target string) func(t *testing.T, rec *httptest.ResponseRecorder) {
+	return func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, 302, rec.Code, rec.Body)
+		assert.Equal(t, target, rec.Header().Get("Location"))
+	}
+}
 func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, *httptest.ResponseRecorder)) {
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)

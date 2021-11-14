@@ -157,7 +157,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 		return hc, nil
 	}()
 	if err != nil {
-		c.Logger().Warnf("Kratos form failure, falling-back to managed UI: %s", err.Error())
+		c.Logger().Warnf("falling-back to managed UI: %s", err.Error())
 		return c.Redirect(http.StatusFound, fmt.Sprintf("/.ory/ui/%s?flow=%s", formType, flowID))
 	}
 	return s.pages.Render(c, "kratos-form", hc)

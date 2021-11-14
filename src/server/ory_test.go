@@ -2,10 +2,13 @@ package server
 
 import (
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/xvello/letsblockit/src/pages"
 )
 
 func TestNilOryUser(t *testing.T) {
@@ -69,4 +72,33 @@ func TestInactiveOrySession(t *testing.T) {
 	user := new(oryUser)
 	assert.NoError(t, json.Unmarshal([]byte(payload), user))
 	assert.False(t, user.IsActive())
+}
+
+func (s *ServerTestSuite) TestRenderKratosForm_OK() {
+	req := httptest.NewRequest(http.MethodGet, "/user/forms/login?flow=123456", nil)
+	s.expectRender("kratos-form", pages.ContextData{
+		"type": "login",
+		"ui": map[string]interface{}{
+			"a": "1",
+			"b": "2",
+		},
+		"settings": supportedForms["login"],
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestRenderKratosForm_KratosDown() {
+	s.kratosServer.Close() // Kratos is unresponsive, continue anonymous
+	req := httptest.NewRequest(http.MethodGet, "/user/forms/login?flow=123456", nil)
+	s.runRequest(req, assertRedirect("/.ory/ui/login?flow=123456"))
+}
+
+func (s *ServerTestSuite) TestRenderKratosForm_ErrFormType() {
+	req := httptest.NewRequest(http.MethodGet, "/user/forms/unknown?flow=123456", nil)
+	s.runRequest(req, assertRedirect("/.ory/ui/unknown?flow=123456"))
+}
+
+func (s *ServerTestSuite) TestRenderKratosForm_ErrBadFlow() {
+	req := httptest.NewRequest(http.MethodGet, "/user/forms/login?flow=666", nil)
+	s.runRequest(req, assertRedirect("/.ory/ui/login?flow=666"))
 }
