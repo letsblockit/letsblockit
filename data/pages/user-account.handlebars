@@ -1,5 +1,5 @@
 {{#if @root.UserVerified}}
-    <div class="card mb-3">
+    <div class="card mb-3 shadow-sm">
         <div class="card-header">My filters</div>
         <div class="card-body">
             <p>
@@ -15,7 +15,7 @@
         </div>
     </div>
 {{else}}
-    <div class="card mb-3" hx-boost="false">
+    <div class="card mb-3 shadow-sm" hx-boost="false">
         <div class="card-header">Unverified account</div>
         <div class="card-body">
             <p>You need to verify your e-mail address before you can add filters. Check your inbox and spam folder
@@ -24,11 +24,11 @@
     </div>
 {{/if}}
 
-<div class="card mb-3" hx-boost="false">
-    <div class="card-header">My account</div>
+<div class="card mb-3 shadow-sm" hx-boost="false">
+    <div class="card-header">Manage my account</div>
     <div class="card-body">
-        <p>Account management is provided by <a href="https://www.ory.sh/">the fine folks at Ory</a>.</p>
+        <p>Account management is provided by <a target="_blank" href="https://www.ory.sh/">the fine folks at Ory</a>.</p>
         <a href="/.ory/ui/settings" class="btn btn-primary">Change email or password</a>
-        <a href="{{href "user-logout" ""}}" class="btn btn-primary">Logout</a>
+        <a href="{{href "user-logout" ""}}" class="btn btn-info ms-2">Log out</a>
     </div>
 </div>
