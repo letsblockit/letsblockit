@@ -104,6 +104,7 @@ func (s *Server) setupRouter() {
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
 		"/favicon.ico": "/assets/images/favicon.ico",
+		"/robots.txt":  "/assets/robots.txt",
 		"/":            "/filters",
 	}))
 
