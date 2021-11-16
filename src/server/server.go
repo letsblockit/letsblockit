@@ -143,9 +143,7 @@ func (s *Server) setupRouter() {
 	s.echo.GET("/list/:token", s.renderList).Name = "render-filterlist"
 
 	s.echo.GET("/user/forms/:type", s.renderKratosForm)
-
-	s.echo.GET("/user/login", s.userLogin).Name = "user-login"
-	s.echo.GET("/user/logout", s.userLogout).Name = "user-logout"
+	s.echo.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
 	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
 }
 

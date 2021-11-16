@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gofrs/uuid"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/xvello/letsblockit/src/pages"
 )
@@ -101,4 +101,29 @@ func (s *ServerTestSuite) TestRenderKratosForm_ErrFormType() {
 func (s *ServerTestSuite) TestRenderKratosForm_ErrBadFlow() {
 	req := httptest.NewRequest(http.MethodGet, "/user/forms/login?flow=666", nil)
 	s.runRequest(req, assertRedirect("/.ory/ui/login?flow=666"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_Settings() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/settings", nil)
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/settings/browser"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_LoginToRegistration() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/login", nil)
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/registration/browser"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_Login() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/login", nil)
+	req.AddCookie(&http.Cookie{
+		Name:  "has_account",
+		Value: "true",
+	})
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_Logout() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/logout", nil)
+	req.AddCookie(verifiedCookie)
+	s.runRequest(req, assertSeeOther("targetURL"))
 }

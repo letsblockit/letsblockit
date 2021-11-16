@@ -6,7 +6,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/pages"
 )
@@ -87,6 +90,21 @@ func (s *ServerTestSuite) TestAbout_InvalidKratosResponse() {
 		CurrentSection:  "about",
 		NavigationLinks: navigationLinks,
 		Title:           "About: Let’s block it!",
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestHelpUsage_OK() {
+	token := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/help/usage", nil)
+	req.AddCookie(verifiedCookie)
+	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{
+		Token:         token,
+		InstanceCount: 5,
+	}, nil)
+	s.expectRender("help-usage", pages.ContextData{
+		"has_filters": true,
+		"list_token":  token.String(),
 	})
 	s.runRequest(req, assertOk)
 }

@@ -27,7 +27,9 @@
                         </li>
                     {{else}}
                         <li class="nav-item">
-                            <a class="nav-link" href="/.ory/ui/{{Type}}">{{Title}}</a>
+                            <form method="POST" action="{{href "start-flow" Type}}">
+                                <button type="submit" class="nav-link">{{Title}}</button>
+                            </form>
                         </li>
                     {{/if}}
                 {{/each}}

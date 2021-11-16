@@ -11,8 +11,11 @@
         <a href="{{href "user-account" ""}}">My account</a> first.</p>
 {{else}}
     <h3>Create an account</h3>
-    <p>You have cannot create a list without an account.
-        <a href="{{href "user-login" ""}}">Register an account</a> first.</p>
+    <form class="row row-cols-lg-auto g-3 align-items-center mb-5"
+          method="POST" action="{{href "start-flow" "login"}}">
+        <label class="mr-sm-2">You need to create an account or login first:</label>
+        <button type="submit" class="btn btn-primary">Register or Login</button>
+    </form>
 {{/if}}
 
 <h3 id="add-list">Add the list to uBlock settings</h3>

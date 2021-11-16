@@ -17,6 +17,7 @@ const (
 	userContextKey      = "_user"
 	oryCookieNamePrefix = "ory_session_"
 	oryGetFlowPattern   = "/api/kratos/public/self-service/%s/flows?id=%s"
+	oryStartFlowPattern = "/api/kratos/public/self-service/%s/browser"
 	oryLogoutInfoPath   = "/api/kratos/public/self-service/logout/browser"
 	oryWhoamiPath       = "/api/kratos/public/sessions/whoami"
 )
@@ -26,9 +27,8 @@ var proxyClient = http.Client{
 }
 
 type formTab struct {
-	Title  string
-	Type   string
-	Target string
+	Title string
+	Type  string
 }
 
 var (
@@ -188,6 +188,25 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 	return s.pages.Render(c, "kratos-form", hc)
 }
 
+// startKratosFlow redirects the requested user to the Kratos flow. It is used via POST instead
+// of direct GET links to avoid search engines and preloading logics starting Kratos flows.
+func (s *Server) startKratosFlow(c echo.Context) error {
+	target := c.Param("type")
+
+	switch target {
+	case "logout":
+		target, err := s.getLogoutUrl(c)
+		if err != nil {
+			return nil
+		}
+		return c.Redirect(http.StatusSeeOther, target)
+	case "login":
+		if _, err := c.Cookie(hasAccountCookieName); err != nil {
+			target = "registration"
+		}
+	}
+	return c.Redirect(http.StatusSeeOther, s.options.KratosURL+fmt.Sprintf(oryStartFlowPattern, target))
+}
 func (s *Server) queryKratos(c echo.Context, endpoint string, body interface{}) error {
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {

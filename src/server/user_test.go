@@ -12,36 +12,6 @@ import (
 	"github.com/xvello/letsblockit/src/pages"
 )
 
-func (s *ServerTestSuite) TestLogin_RedirectRegistration() {
-	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
-	s.runRequest(req, assertRedirect("/.ory/ui/registration"))
-}
-
-func (s *ServerTestSuite) TestLogin_RedirectLogin() {
-	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
-	req.AddCookie(&http.Cookie{
-		Name:  "has_account",
-		Value: "true",
-	})
-	s.runRequest(req, assertRedirect("/.ory/ui/login"))
-}
-
-func (s *ServerTestSuite) TestLogin_RedirectLoggedRaw() {
-	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
-	req.AddCookie(verifiedCookie)
-	s.runRequest(req, assertRedirect("/user/account"))
-}
-
-func (s *ServerTestSuite) TestLogin_RedirectLoggedHTMX() {
-	req := httptest.NewRequest(http.MethodGet, "/user/login", nil)
-	req.Header.Set("HX-Request", "true")
-	req.AddCookie(verifiedCookie)
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 200, rec.Code, rec.Body)
-		assert.Equal(t, "/user/account", rec.Header().Get("HX-Redirect"))
-	})
-}
-
 func (s *ServerTestSuite) TestUserAccount_Verified() {
 	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
@@ -82,20 +52,4 @@ func (s *ServerTestSuite) TestUserAccount_NotVerified() {
 	req.AddCookie(unverifiedCookie)
 	s.expectRender("user-account", nil)
 	s.runRequest(req, assertOk)
-}
-
-func (s *ServerTestSuite) TestUserAccount_Redirect() {
-	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	s.runRequest(req, assertRedirect("/user/login"))
-}
-
-func (s *ServerTestSuite) TestUserLogout_OK() {
-	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
-	req.AddCookie(verifiedCookie)
-	s.runRequest(req, assertRedirect("targetURL"))
-}
-
-func (s *ServerTestSuite) TestUserLogout_Redirect() {
-	req := httptest.NewRequest(http.MethodGet, "/user/logout", nil)
-	s.runRequest(req, assertRedirect("/user/login"))
 }

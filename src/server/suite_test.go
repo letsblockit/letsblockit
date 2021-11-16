@@ -138,6 +138,14 @@ func assertRedirect(target string) func(t *testing.T, rec *httptest.ResponseReco
 		assert.Equal(t, target, rec.Header().Get("Location"))
 	}
 }
+
+func assertSeeOther(target string) func(t *testing.T, rec *httptest.ResponseRecorder) {
+	return func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, 303, rec.Code, rec.Body)
+		assert.Equal(t, target, rec.Header().Get("Location"))
+	}
+}
+
 func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, *httptest.ResponseRecorder)) {
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
