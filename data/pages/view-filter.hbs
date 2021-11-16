@@ -84,12 +84,21 @@
                     {{/each}}
                     <div class="d-flex align-items-center">
                         {{#if @root.UserVerified}}
-                            <button type="submit" name="__render" class="btn btn-secondary me-2">Preview</button>
+                            <button type="submit" name="__render" class="btn btn-secondary me-2">
+                                <i class="fas fa-eye me-1"></i>
+                                Preview
+                            </button>
                             <button type="submit" name="__save" class="btn btn-primary"
                                     hx-vals='{"__save": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
-                                {{#if has_instance}}Update filter{{else}}Save filter{{/if}}
+                                {{#if has_instance}}
+                                    <i class="fas fa-edit text-white me-1"></i>
+                                    Update filter
+                                {{else}}
+                                    <i class="fas fa-plus-circle text-white me-1"></i>
+                                    Add filter
+                                {{/if}}
                             </button>
                         {{else}}
                             <button type="submit" name="__render" class="btn btn-primary">Render</button>
@@ -99,11 +108,12 @@
                         </div>
                         {{#if has_instance}}
                             <button type="submit" name="__disable" class="btn btn-info ms-auto"
-                                    hx-confirm="Disable filter and delete its configuration?"
+                                    hx-confirm="Remove filter and delete its configuration?"
                                     hx-vals='{"__disable": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
-                                Disable filter
+                                <i class="far fa-trash-alt text-white me-1"></i>
+                                Remove filter
                             </button>
                         {{/if}}
                     </div>
@@ -118,15 +128,17 @@
                     {{#if has_instance}}
                         <button class="btn btn-primary" disabled>Filter already in your list.</button>
                         <button type="submit" name="__disable" class="btn btn-info ms-auto"
-                                hx-confirm="Disable filter?"
+                                hx-confirm="Remove filter and delete its configuration?"
                                 hx-vals='{"__disable": ""}'
                                 hx-post="{{href "view-filter" filter.name}}"
                                 hx-select="#main" hx-target="#main" hx-swap="outerHTML">
-                            Disable filter
+                            <i class="far fa-trash-alt text-white me-1"></i>
+                            Remove filter
                         </button>
                     {{else if @root.UserVerified}}
                         <button type="submit" name="__save" class="btn btn-primary">
-                            {{#if has_instance}}Update filter{{else}}Save filter{{/if}}
+                            <i class="fas fa-plus-circle text-white me-1"></i>
+                            Add filter
                         </button>
                     {{else}}
                         This filter does not have any parameters.
