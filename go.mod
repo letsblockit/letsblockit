@@ -7,7 +7,6 @@ require (
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
 	github.com/alexflint/go-arg v1.4.2
 	github.com/go-playground/validator/v10 v10.9.0
-	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/imantung/mario v0.9.0
