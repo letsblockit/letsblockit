@@ -22,6 +22,7 @@
             <div class="card shadow-sm">
                 <div class="card-header">Tune the following options and click Render:</div>
                 <form id="filter_input" class="card-body" method="POST" action="#output-card"
+                      hx-trigger="input delay:250ms"
                       hx-post="{{href "view-filter-render" filter.name}}"
                       hx-target="#output-card"
                       hx-swap="outerHTML show:top">
@@ -171,6 +172,7 @@
             resetRow(thisRow) // Don't allow removing the last row
         } else {
             thisRow.remove()
+            htmx.trigger(htmx.find("#filter_input"), "input", {});
         }
     }
 
