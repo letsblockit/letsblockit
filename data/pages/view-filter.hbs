@@ -25,7 +25,7 @@
                       hx-trigger="input delay:250ms"
                       hx-post="{{href "view-filter-render" filter.name}}"
                       hx-target="#output-card"
-                      hx-swap="outerHTML show:top">
+                      hx-swap="outerHTML">
                     {{#each filter.params}}
                         {{#equal type "checkbox"}}
                             <div class="mb-3 form-check">
