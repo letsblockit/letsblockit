@@ -1,10 +1,12 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
@@ -107,6 +109,27 @@ func (s *ServerTestSuite) TestHelpUsage_OK() {
 		"list_token":  token.String(),
 	})
 	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestShouldReload_OK() {
+	req := httptest.NewRequest(http.MethodGet, "http://localhost:4000/should-reload", nil)
+	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+
+	s.True(rec.Flushed)
+	s.Equal("retry:1000\n", rec.Body.String())
+}
+
+func (s *ServerTestSuite) TestShouldReload_BadHost() {
+	req := httptest.NewRequest(http.MethodGet, "http://unexpected/should-reload", nil)
+	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	req = req.WithContext(ctx)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+
+	s.Equal(404, rec.Code, rec.Body)
 }
 
 func TestServerDryRun(t *testing.T) {

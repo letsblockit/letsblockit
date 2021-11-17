@@ -109,24 +109,7 @@ func (s *Server) setupRouter() {
 	anon.GET("/assets/*", s.assets.serve)
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
-
-	if s.options.Reload {
-		anon.GET("/should-reload", func(c echo.Context) error {
-			// Set the headers related to event streaming.
-			c.Response().Header().Set("Content-Type", "text/event-stream")
-			c.Response().Header().Set("Cache-Control", "no-cache")
-			c.Response().Header().Set("Connection", "keep-alive")
-			c.Response().Header().Set("Transfer-Encoding", "chunked")
-			if _, err := fmt.Fprintln(c.Response(), "retry:1000"); err != nil {
-				return nil
-			}
-			c.Response().Flush()
-
-			// Block indefinitely to keep the SSE open
-			<-c.Request().Context().Done()
-			return nil
-		})
-	}
+	anon.GET("/should-reload", shouldReload)
 
 	withAuth := s.echo.Group("")
 	if s.options.KratosURL != "" {
@@ -147,6 +130,25 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/user/forms/:type", s.renderKratosForm)
 	withAuth.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
+}
+
+func shouldReload(c echo.Context) error {
+	if !strings.HasPrefix(c.Request().Host, "localhost") {
+		return echo.NewHTTPError(http.StatusNotFound)
+	}
+	// Set the headers related to event streaming.
+	c.Response().Header().Set("Content-Type", "text/event-stream")
+	c.Response().Header().Set("Cache-Control", "no-cache")
+	c.Response().Header().Set("Connection", "keep-alive")
+	c.Response().Header().Set("Transfer-Encoding", "chunked")
+	if _, err := fmt.Fprintln(c.Response(), "retry:1000"); err != nil {
+		return nil
+	}
+	c.Response().Flush()
+
+	// Block indefinitely to keep the SSE open
+	<-c.Request().Context().Done()
+	return nil
 }
 
 func (s *Server) helpUsage(c echo.Context) error {
