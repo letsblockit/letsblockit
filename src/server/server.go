@@ -97,9 +97,6 @@ func (s *Server) setupRouter() {
 		}
 		s.echo.Use(middleware.Logger())
 	}
-	if s.options.KratosURL != "" {
-		s.echo.Use(s.buildOryMiddleware())
-	}
 
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
@@ -108,8 +105,13 @@ func (s *Server) setupRouter() {
 		"/":            "/filters",
 	}))
 
+	anon := s.echo.Group("")
+	anon.GET("/assets/*", s.assets.serve)
+	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
+	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
+
 	if s.options.Reload {
-		s.echo.GET("/should-reload", func(c echo.Context) error {
+		anon.GET("/should-reload", func(c echo.Context) error {
 			// Set the headers related to event streaming.
 			c.Response().Header().Set("Content-Type", "text/event-stream")
 			c.Response().Header().Set("Cache-Control", "no-cache")
@@ -126,25 +128,25 @@ func (s *Server) setupRouter() {
 		})
 	}
 
-	s.echo.GET("/assets/*", s.assets.serve)
+	withAuth := s.echo.Group("")
+	if s.options.KratosURL != "" {
+		withAuth.Use(s.buildOryMiddleware())
+	}
 
-	s.addStatic("/about", "about", "About: Let’s block it!")
+	s.addStatic(withAuth, "/about", "about", "About: Let’s block it!")
 
-	s.echo.GET("/help", s.helpUsage)
-	s.echo.GET("/help/usage", s.helpUsage).Name = "help-usage"
+	withAuth.GET("/help", s.helpUsage)
+	withAuth.GET("/help/usage", s.helpUsage).Name = "help-usage"
 
-	s.echo.GET("/filters", s.listFilters).Name = "list-filters"
-	s.echo.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
+	withAuth.GET("/filters", s.listFilters).Name = "list-filters"
+	withAuth.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
 
-	s.echo.GET("/filters/:name", s.viewFilter).Name = "view-filter"
-	s.echo.POST("/filters/:name", s.viewFilter)
-	s.echo.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
+	withAuth.GET("/filters/:name", s.viewFilter).Name = "view-filter"
+	withAuth.POST("/filters/:name", s.viewFilter)
 
-	s.echo.GET("/list/:token", s.renderList).Name = "render-filterlist"
-
-	s.echo.GET("/user/forms/:type", s.renderKratosForm)
-	s.echo.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
-	s.echo.GET("/user/account", s.userAccount).Name = "user-account"
+	withAuth.GET("/user/forms/:type", s.renderKratosForm)
+	withAuth.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
+	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
 }
 
 func (s *Server) helpUsage(c echo.Context) error {
@@ -159,8 +161,8 @@ func (s *Server) helpUsage(c echo.Context) error {
 	return s.pages.Render(c, "help-usage", hc)
 }
 
-func (s *Server) addStatic(url, page, title string) {
-	s.echo.GET(url, func(c echo.Context) error {
+func (s *Server) addStatic(group *echo.Group, url, page, title string) {
+	group.GET(url, func(c echo.Context) error {
 		return s.pages.Render(c, page, s.buildPageContext(c, title))
 	}).Name = page
 }
