@@ -150,17 +150,22 @@ func (q *Queries) GetInstancesForList(ctx context.Context, filterListID int32) (
 }
 
 const getListForToken = `-- name: GetListForToken :one
-SELECT id
+SELECT id, downloaded
 FROM filter_lists
 WHERE token = $1
 LIMIT 1
 `
 
-func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (int32, error) {
+type GetListForTokenRow struct {
+	ID         int32
+	Downloaded bool
+}
+
+func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error) {
 	row := q.db.QueryRow(ctx, getListForToken, token)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+	var i GetListForTokenRow
+	err := row.Scan(&i.ID, &i.Downloaded)
+	return i, err
 }
 
 const getListForUser = `-- name: GetListForUser :one
@@ -184,20 +189,33 @@ func (q *Queries) GetListForUser(ctx context.Context, userID uuid.UUID) (GetList
 }
 
 const getStats = `-- name: GetStats :one
-SELECT (SELECT COUNT(*) FROM filter_lists) as list_count,
-       (SELECT COUNT(*) FROM filter_instances) as instance_count
+SELECT (SELECT COUNT(*) FROM filter_lists)                          as list_count,
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count,
+       (SELECT COUNT(*) FROM filter_instances)                      as instance_count
 `
 
 type GetStatsRow struct {
-	ListCount     int64
-	InstanceCount int64
+	ListCount       int64
+	ActiveListCount int64
+	InstanceCount   int64
 }
 
 func (q *Queries) GetStats(ctx context.Context) (GetStatsRow, error) {
 	row := q.db.QueryRow(ctx, getStats)
 	var i GetStatsRow
-	err := row.Scan(&i.ListCount, &i.InstanceCount)
+	err := row.Scan(&i.ListCount, &i.ActiveListCount, &i.InstanceCount)
 	return i, err
+}
+
+const markListDownloaded = `-- name: MarkListDownloaded :exec
+UPDATE filter_lists
+SET downloaded = true
+WHERE id = $1
+`
+
+func (q *Queries) MarkListDownloaded(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, markListDownloaded, id)
+	return err
 }
 
 const updateInstanceForUserAndFilter = `-- name: UpdateInstanceForUserAndFilter :exec

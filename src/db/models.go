@@ -21,8 +21,9 @@ type FilterInstance struct {
 }
 
 type FilterList struct {
-	ID        int32
-	UserID    uuid.UUID
-	Token     uuid.UUID
-	CreatedAt time.Time
+	ID         int32
+	UserID     uuid.UUID
+	Token      uuid.UUID
+	CreatedAt  time.Time
+	Downloaded bool
 }

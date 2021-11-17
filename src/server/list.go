@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -25,15 +26,25 @@ func (s *Server) renderList(c echo.Context) error {
 		return err
 	}
 
-	list, err := s.store.GetListForToken(c.Request().Context(), token)
-	if err == db.NotFound {
-		return echo.ErrNotFound
-	} else if err != nil {
-		return err
-	}
+	var instances []db.GetInstancesForListRow
+	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
+		list, err := q.GetListForToken(ctx, token)
+		if err == db.NotFound {
+			return echo.ErrNotFound
+		} else if err != nil {
+			return err
+		}
 
-	instances, err := s.store.GetInstancesForList(c.Request().Context(), list)
-	if err != nil {
+		if !list.Downloaded && c.Request().Header.Get("Referer") == "" {
+			err = q.MarkListDownloaded(ctx, list.ID)
+			if err != nil {
+				return err
+			}
+		}
+
+		instances, err = q.GetInstancesForList(ctx, list.ID)
+		return err
+	}); err != nil {
 		return err
 	}
 

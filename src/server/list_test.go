@@ -16,7 +16,7 @@ import (
 func (s *ServerTestSuite) TestRenderList_NotFound() {
 	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(int32(0), db.NotFound)
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{}, db.NotFound)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 404, rec.Code)
 	})
@@ -25,7 +25,10 @@ func (s *ServerTestSuite) TestRenderList_NotFound() {
 func (s *ServerTestSuite) TestRenderList_OK() {
 	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(int32(10), nil)
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
+		ID:         int32(10),
+		Downloaded: true,
+	}, nil)
 
 	params := map[string]interface{}{"a": "1", "b": "2"}
 	paramsB := pgtype.JSONB{}
@@ -68,4 +71,33 @@ content2
 multiline
 ! custom-rules
 custom`)
+}
+
+func (s *ServerTestSuite) TestRenderList_MarkDownloaded() {
+	token := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
+		ID:         int32(10),
+		Downloaded: false,
+	}, nil)
+	s.expectQ.MarkListDownloaded(gomock.Any(), int32(10)).Return(nil)
+
+	s.expectQ.GetInstancesForList(gomock.Any(), int32(10)).Return([]db.GetInstancesForListRow{}, nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+}
+
+func (s *ServerTestSuite) TestRenderList_WithReferer() {
+	token := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
+	req.Header.Set("Referer", "https://letsblock.it/user/account")
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
+		ID:         int32(10),
+		Downloaded: false,
+	}, nil)
+	s.expectQ.GetInstancesForList(gomock.Any(), int32(10)).Return([]db.GetInstancesForListRow{}, nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
 }

@@ -141,10 +141,10 @@ func (mr *MockQuerierMockRecorder) GetInstancesForList(ctx, filterListID interfa
 }
 
 // GetListForToken mocks base method.
-func (m *MockQuerier) GetListForToken(ctx context.Context, token uuid.UUID) (int32, error) {
+func (m *MockQuerier) GetListForToken(ctx context.Context, token uuid.UUID) (db.GetListForTokenRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListForToken", ctx, token)
-	ret0, _ := ret[0].(int32)
+	ret0, _ := ret[0].(db.GetListForTokenRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -183,6 +183,20 @@ func (m *MockQuerier) GetStats(ctx context.Context) (db.GetStatsRow, error) {
 func (mr *MockQuerierMockRecorder) GetStats(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockQuerier)(nil).GetStats), ctx)
+}
+
+// MarkListDownloaded mocks base method.
+func (m *MockQuerier) MarkListDownloaded(ctx context.Context, id int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MarkListDownloaded", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MarkListDownloaded indicates an expected call of MarkListDownloaded.
+func (mr *MockQuerierMockRecorder) MarkListDownloaded(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkListDownloaded", reflect.TypeOf((*MockQuerier)(nil).MarkListDownloaded), ctx, id)
 }
 
 // UpdateInstanceForUserAndFilter mocks base method.

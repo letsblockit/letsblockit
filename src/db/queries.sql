@@ -11,10 +11,15 @@ WHERE filter_lists.user_id = $1
 LIMIT 1;
 
 -- name: GetListForToken :one
-SELECT id
+SELECT id, downloaded
 FROM filter_lists
 WHERE token = $1
 LIMIT 1;
+
+-- name: MarkListDownloaded :exec
+UPDATE filter_lists
+SET downloaded = true
+WHERE id = $1;
 
 -- name: GetActiveFiltersForUser :many
 SELECT DISTINCT filter_name
@@ -53,5 +58,6 @@ WHERE filter_list_id = $1
 ORDER BY filter_name ASC;
 
 -- name: GetStats :one
-SELECT (SELECT COUNT(*) FROM filter_lists) as list_count,
-       (SELECT COUNT(*) FROM filter_instances) as instance_count;
+SELECT (SELECT COUNT(*) FROM filter_lists)                          as list_count,
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count,
+       (SELECT COUNT(*) FROM filter_instances)                      as instance_count;
