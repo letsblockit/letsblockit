@@ -153,7 +153,7 @@ func shouldReload(c echo.Context) error {
 
 func (s *Server) helpUsage(c echo.Context) error {
 	hc := s.buildPageContext(c, "How to use my filter list")
-	if hc.UserVerified {
+	if hc.UserLoggedIn {
 		info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID)
 		if err == nil {
 			hc.Add("has_filters", info.InstanceCount > 0)
@@ -199,7 +199,6 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	if u := getUser(c); u != nil {
 		context.UserID = u.Id()
 		context.UserLoggedIn = true
-		context.UserVerified = u.IsVerified()
 	}
 	if s.options.Reload {
 		context.Scripts = []string{"reload.js"}

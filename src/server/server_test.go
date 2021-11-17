@@ -42,7 +42,7 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 	s.runRequest(req, assertOk)
 }
 
-func (s *ServerTestSuite) TestAbout_LoggedVerified() {
+func (s *ServerTestSuite) TestAbout_Logged() {
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	req.AddCookie(verifiedCookie)
 	s.expectRenderWithContext("about", &pages.Context{
@@ -51,21 +51,6 @@ func (s *ServerTestSuite) TestAbout_LoggedVerified() {
 		Title:           "About: Let’s block it!",
 		UserID:          s.user,
 		UserLoggedIn:    true,
-		UserVerified:    true,
-	})
-	s.runRequest(req, assertOk)
-}
-
-func (s *ServerTestSuite) TestAbout_LoggedNoVerified() {
-	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	req.AddCookie(unverifiedCookie)
-	s.expectRenderWithContext("about", &pages.Context{
-		CurrentSection:  "about",
-		NavigationLinks: navigationLinks,
-		Title:           "About: Let’s block it!",
-		UserID:          s.user,
-		UserLoggedIn:    true,
-		UserVerified:    false,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -113,7 +98,8 @@ func (s *ServerTestSuite) TestHelpUsage_OK() {
 
 func (s *ServerTestSuite) TestShouldReload_OK() {
 	req := httptest.NewRequest(http.MethodGet, "http://localhost:4000/should-reload", nil)
-	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
 	req = req.WithContext(ctx)
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
@@ -124,7 +110,8 @@ func (s *ServerTestSuite) TestShouldReload_OK() {
 
 func (s *ServerTestSuite) TestShouldReload_BadHost() {
 	req := httptest.NewRequest(http.MethodGet, "http://unexpected/should-reload", nil)
-	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
 	req = req.WithContext(ctx)
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)

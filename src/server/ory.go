@@ -79,10 +79,7 @@ var (
 type oryUser struct {
 	Active   bool
 	Identity struct {
-		Id        uuid.UUID
-		Addresses []struct {
-			Verified bool
-		} `json:"verifiable_addresses"`
+		Id uuid.UUID
 	}
 }
 
@@ -102,18 +99,6 @@ func (u *oryUser) IsActive() bool {
 		return false
 	}
 	return u.Active && u.Identity.Id != uuid.Nil
-}
-
-func (u *oryUser) IsVerified() bool {
-	if u == nil {
-		return false
-	}
-	for _, addr := range u.Identity.Addresses {
-		if addr.Verified {
-			return true
-		}
-	}
-	return false
 }
 
 // buildOryMiddleware tries to resolve an Ory Cloud session from the cookies.

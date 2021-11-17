@@ -47,9 +47,8 @@ func (s *ServerTestSuite) TestUserAccount_CreateList() {
 	s.runRequest(req, assertOk)
 }
 
-func (s *ServerTestSuite) TestUserAccount_NotVerified() {
+func (s *ServerTestSuite) TestUserAccount_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	req.AddCookie(unverifiedCookie)
 	s.expectRender("user-account", nil)
 	s.runRequest(req, assertOk)
 }

@@ -18,7 +18,6 @@ type Context struct {
 
 	UserID         uuid.UUID
 	UserLoggedIn   bool
-	UserVerified   bool
 	UserHasAccount bool
 
 	Data ContextData

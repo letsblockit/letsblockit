@@ -21,10 +21,6 @@ var (
 		Name:  "ory_session_verified",
 		Value: "true",
 	}
-	unverifiedCookie = &http.Cookie{
-		Name:  "ory_session_verified",
-		Value: "false",
-	}
 	whoAmiPattern = `{
 	  "id": "af9b460f-4ca0-453d-8bc7-cf68f30d4174",
 	  "active": true,

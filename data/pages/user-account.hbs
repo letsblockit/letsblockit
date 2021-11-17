@@ -1,42 +1,19 @@
 {{#if @root.UserLoggedIn}}
-    {{#if @root.UserVerified}}
-        <div class="card mb-3 shadow-sm">
-            <div class="card-header">My filters</div>
-            <div class="card-body">
-                <p>
-                    {{#if filter_count}}
-                        Your list has <b>{{filter_count}} active filters</b>, view them and add more
-                    {{else}}
-                        Start adding filters to your list
-                    {{/if}}
-                    from the <a href="{{href "list-filters" ""}}">filter list page</a>.
-                </p>
-                <p>To use your filters in uBlock, add the following list:
-                    <a href="{{list_href list_token}}">{{list_href list_token}}</a></p>
-            </div>
-        </div>
-    {{else}}
-        <div class="card mb-3 shadow-sm">
-            <div class="card-header">Unverified account</div>
-            <div class="card-body">
-                <p>You need to verify your e-mail address before you can add filters. Check your inbox and spam
-                    folder for an e-mail from <em>no-reply@ory.sh</em>, or click the button below:</p>
-                <form method="POST" action="{{href "start-flow" "verification"}}">
-                    <button type="submit" class="btn btn-primary">Get a new verification e-mail</button>
-                </form>
-            </div>
-        </div>
-        <div class="card mb-3 shadow-sm">
-            <div class="card-header">Unverified account</div>
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header">My filters</div>
         <div class="card-body">
-        <form class="row row-cols-lg-auto g-3 align-items-center mb-5"
-              method="POST" action="{{href "start-flow" "login"}}">
-            <label class="mr-sm-2">You need to create an account or login first:</label>
-            <button type="submit" class="btn btn-primary">Register or Login</button>
-        </form>
+            <p>
+                {{#if filter_count}}
+                    Your list has <b>{{filter_count}} active filters</b>, view them and add more
+                {{else}}
+                    Start adding filters to your list
+                {{/if}}
+                from the <a href="{{href "list-filters" ""}}">filter list page</a>.
+            </p>
+            <p>To use your filters in uBlock, add the following list:
+                <a href="{{list_href list_token}}">{{list_href list_token}}</a></p>
         </div>
-        </div>
-    {{/if}}
+    </div>
 
     <div class="card mb-3 shadow-sm">
         <div class="card-header">Manage my account</div>

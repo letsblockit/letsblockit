@@ -1,14 +1,10 @@
-{{#if @root.UserVerified}}
+{{#if @root.UserLoggedIn}}
     {{#unless has_filters}}
         <h3>Add some filters to your list</h3>
         <p>You have not enabled any filter yet, go to the
             <a href="{{href "list-filters" ""}}">filter list page</a>
             to select some and enable them.</p>
     {{/unless}}
-{{else if @root.UserLoggedIn}}
-    <h3>Verify your account</h3>
-    <p>You have cannot create a list unless your e-mail is verified. Head out to
-        <a href="{{href "user-account" ""}}">My account</a> first.</p>
 {{else}}
     <h3>Create an account</h3>
     <form class="row row-cols-lg-auto g-3 align-items-center mb-5"

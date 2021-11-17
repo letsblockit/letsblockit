@@ -33,7 +33,7 @@ func (s *Server) listFilters(c echo.Context) error {
 
 	hc.Add("filter_tags", s.filters.GetTags())
 	var activeNames map[string]struct{}
-	if hc.UserVerified {
+	if hc.UserLoggedIn {
 		activeNames = make(map[string]struct{})
 		names, _ := s.store.GetActiveFiltersForUser(c.Request().Context(), hc.UserID)
 		for _, n := range names {
@@ -86,7 +86,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	}
 
 	switch {
-	case hc.UserVerified && action == actionSave:
+	case hc.UserLoggedIn && action == actionSave:
 		// Save filter params if requested
 		var out pgtype.JSONB
 		if err = out.Set(params); err != nil {
@@ -97,7 +97,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 		}
 		hc.Add("saved_ok", true)
 		hc.Add("has_instance", true)
-	case hc.UserVerified && action == actionDelete:
+	case hc.UserLoggedIn && action == actionDelete:
 		// Handle deletion if requested, remove all instances matching a given name
 		if err = s.store.DeleteInstanceForUserAndFilter(c.Request().Context(), db.DeleteInstanceForUserAndFilterParams{
 			UserID:     hc.UserID,
@@ -106,7 +106,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 			return err
 		}
 		return s.redirect(c, "list-filters")
-	case hc.UserVerified && params == nil:
+	case hc.UserLoggedIn && params == nil:
 		// If no params are passed, source from the user's filters
 		f, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{
 			UserID:     hc.UserID,

@@ -14,7 +14,6 @@ import (
 func TestNilOryUser(t *testing.T) {
 	var user *oryUser
 	assert.False(t, user.IsActive())
-	assert.False(t, user.IsVerified())
 	assert.EqualValues(t, uuid.Nil, user.Id())
 }
 
@@ -36,22 +35,6 @@ func TestVerifiedOryUser(t *testing.T) {
 	user := new(oryUser)
 	assert.NoError(t, json.Unmarshal([]byte(payload), user))
 	assert.True(t, user.IsActive())
-	assert.True(t, user.IsVerified())
-	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id().String())
-}
-
-func TestUnverifiedOryUser(t *testing.T) {
-	payload := `{
-	  "id": "d631b403-eb29-4a5b-8829-125da6ebdf75",
-	  "active": true,
-	  "identity": {
-		"id": "9a3f8aeb-729a-44cf-bede-f885175344ef"
-	  }
-	}`
-	user := new(oryUser)
-	assert.NoError(t, json.Unmarshal([]byte(payload), user))
-	assert.True(t, user.IsActive())
-	assert.False(t, user.IsVerified())
 	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id().String())
 }
 

@@ -17,7 +17,7 @@ var (
 func (s *Server) userAccount(c echo.Context) error {
 	hc := s.buildPageContext(c, "My account")
 	hc.NoBoost = true
-	if hc.UserVerified {
+	if hc.UserLoggedIn {
 		if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 			info, err := q.GetListForUser(ctx, hc.UserID)
 			switch err {
