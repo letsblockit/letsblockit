@@ -139,7 +139,6 @@ func (s *Server) viewFilter(c echo.Context) error {
 	}
 	hc.Add("rendered", buf.String())
 	hc.Add("params", params)
-
 	return s.pages.Render(c, "view-filter", hc)
 }
 

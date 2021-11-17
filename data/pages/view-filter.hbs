@@ -26,63 +26,9 @@
                       hx-post="{{href "view-filter-render" filter.name}}"
                       hx-target="#output-card"
                       hx-swap="outerHTML">
+
                     {{#each filter.params}}
-                        {{#equal type "checkbox"}}
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="{{name}}" name="{{name}}"
-                                       {{#equal true (lookup @root.data.params name)}}checked{{/equal}}>
-                                <label class="form-check-label" for="{{name}}">{{description}}</label>
-                            </div>
-                        {{/equal}}
-                        {{#equal type "string"}}
-                            <div class="mb-3">
-                                <label class="form-label" for="{{name}}">{{description}}:</label>
-                                <input class="form-control" id="{{name}}" name="{{name}}"
-                                       value="{{lookup @root.data.params name}}">
-                            </div>
-                        {{/equal}}
-                        {{#equal type "multiline"}}
-                            <div class="mb-3">
-                                <label class="form-label" for="{{name}}">{{description}}:</label>
-                                <textarea class="form-control" id="{{name}}" name="{{name}}"
-                                          rows="10">{{lookup @root.data.params name}}</textarea>
-                            </div>
-                        {{/equal}}
-                        {{#equal type "list"}}
-                            <fieldset class="row mb-3">
-                                <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
-                                <div class="col-lg-9">
-                                    {{#each (lookup_list @root.data.params name)}}
-                                        <div class="input-group mb-1">
-                                            <input type="text" class="form-control" name="{{name}}" value="{{this}}">
-                                            <button class="btn btn-outline-success" type="button"
-                                                    aria-label="Add a row below"
-                                                    title="Add a row below" onclick="addRow(this);">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                            <button class="btn btn-outline-primary" type="button"
-                                                    aria-label="Delete this row"
-                                                    title="Delete this row" onclick="deleteRow(this);">
-                                                <i class="far fa-trash-alt"></i>
-                                            </button>
-                                        </div>
-                                    {{/each}}
-                                    <div class="input-group mb-1">
-                                        <input type="text" class="form-control" name="{{name}}">
-                                        <button class="btn btn-outline-success" type="button"
-                                                aria-label="Add a row below"
-                                                title="Add a row below" onclick="addRow(this);">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <button class="btn btn-outline-primary" type="button"
-                                                aria-label="Delete this row"
-                                                title="Delete this row" onclick="deleteRow(this);">
-                                            <i class="far fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        {{/equal}}
+                        {{>view-filter-params}}
                     {{/each}}
                     <div class="d-flex align-items-center">
                         {{#if @root.UserLoggedIn}}
@@ -151,36 +97,4 @@
         {{>view-filter-render}}
     </div>
 </div>
-
-<script>
-    function copyOutput(clicked) {
-        navigator.clipboard.writeText(document.getElementById("output-code").innerText);
-        document.getElementById("output-card").classList.add("border-success")
-        document.getElementById("output-copy-text").innerText = "Copied to clipboard"
-        const icon = document.getElementById("output-copy-icon")
-        icon.classList.replace("far", "fas")
-        icon.classList.replace("fa-clipboard", "fa-clipboard-check")
-        clicked.classList.add("btn-success")
-    }
-
-    function resetRow(row) {
-        row.getElementsByTagName('input')[0].value = ""
-    }
-
-    function deleteRow(clicked) {
-        const thisRow = clicked.closest(".input-group")
-        if (thisRow.parentNode.childElementCount === 1) {
-            resetRow(thisRow) // Don't allow removing the last row
-        } else {
-            thisRow.remove()
-            htmx.trigger(htmx.find("#filter_input"), "input", {});
-        }
-    }
-
-    function addRow(clicked) {
-        const thisRow = clicked.closest(".input-group")
-        const clonedRow = thisRow.cloneNode(true)
-        resetRow(clonedRow)
-        thisRow.parentNode.insertBefore(clonedRow, thisRow.nextSibling);
-    }
-</script>
+<script defer src="/assets/js/view-filter.js{{assetHash}}"></script>
