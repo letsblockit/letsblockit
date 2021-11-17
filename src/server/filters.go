@@ -15,6 +15,14 @@ import (
 	"github.com/xvello/letsblockit/src/filters"
 )
 
+type filterAction uint8
+
+const (
+	actionRender = filterAction(iota)
+	actionSave
+	actionDelete
+)
+
 func (s *Server) listFilters(c echo.Context) error {
 	tag := c.Param("tag")
 	hc := s.buildPageContext(c, "Available uBlock filter templates")
@@ -72,13 +80,14 @@ func (s *Server) viewFilter(c echo.Context) error {
 	hc.Add("filter", filter)
 
 	// Parse filters param and render output if non-empty
-	params, save, disable, err := parseFilterParams(c, filter)
+	params, action, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
 
-	// Save filter params if requested
-	if save && hc.UserVerified {
+	switch {
+	case hc.UserVerified && action == actionSave:
+		// Save filter params if requested
 		var out pgtype.JSONB
 		if err = out.Set(params); err != nil {
 			return err
@@ -88,10 +97,8 @@ func (s *Server) viewFilter(c echo.Context) error {
 		}
 		hc.Add("saved_ok", true)
 		hc.Add("has_instance", true)
-	}
-
-	// Handle deletion if requested, remove all instances matching a given name
-	if disable && hc.UserVerified {
+	case hc.UserVerified && action == actionDelete:
+		// Handle deletion if requested, remove all instances matching a given name
 		if err = s.store.DeleteInstanceForUserAndFilter(c.Request().Context(), db.DeleteInstanceForUserAndFilterParams{
 			UserID:     hc.UserID,
 			FilterName: filter.Name,
@@ -99,10 +106,8 @@ func (s *Server) viewFilter(c echo.Context) error {
 			return err
 		}
 		return s.redirect(c, "list-filters")
-	}
-
-	// If no params are passed, source from the user's filters
-	if !save && params == nil && hc.UserVerified {
+	case hc.UserVerified && params == nil:
+		// If no params are passed, source from the user's filters
 		f, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{
 			UserID:     hc.UserID,
 			FilterName: filter.Name,
@@ -120,7 +125,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	}
 
 	// If no config found, inject the default ones
-	if params == nil {
+	if params == nil && len(filter.Params) > 0 {
 		params = make(map[string]interface{})
 		for _, p := range filter.Params {
 			params[p.Name] = p.Default
@@ -145,7 +150,7 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	}
 
 	// Parse filters param and render output if non empty
-	params, _, _, err := parseFilterParams(c, filter)
+	params, _, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
@@ -204,17 +209,22 @@ func (s *Server) upsertFilterParams(c echo.Context, user uuid.UUID, filter strin
 	})
 }
 
-func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, bool, bool, error) {
+func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, filterAction, error) {
 	formParams, err := c.FormParams()
 	if err != nil {
-		return nil, false, false, err
+		return nil, actionRender, err
 	}
 	if len(formParams) == 0 {
-		return nil, false, false, nil
+		return nil, actionRender, nil
 	}
 
-	_, save := formParams["__save"]
-	_, disable := formParams["__disable"]
+	action := actionRender
+	if _, ok := formParams["__save"]; ok {
+		action = actionSave
+	} else if _, ok := formParams["__disable"]; ok {
+		action = actionDelete
+	}
+
 	params := make(map[string]interface{})
 	for _, p := range filter.Params {
 		switch p.Type {
@@ -233,10 +243,10 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 		case filters.BooleanParam:
 			params[p.Name] = formParams.Get(p.Name) == "on"
 		default:
-			return nil, false, false, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
+			return nil, action, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
 		}
 	}
-	return params, save, disable, err
+	return params, action, err
 }
 
 func lowerFirst(s string) string {
