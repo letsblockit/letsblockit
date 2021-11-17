@@ -169,15 +169,18 @@ func (s *Server) addStatic(group *echo.Group, url, page, title string) {
 	}).Name = page
 }
 
-// redirect the user to another page, either via htmx client-side redirect (form submissions)
-// or http 302 redirect (direct access, js disabled)
-func (s *Server) redirect(c echo.Context, name string, params ...interface{}) error {
-	target := s.echo.Reverse(name, params...)
+// redirectToPage the user to another page, either via htmx client-side redirectToPage (form submissions)
+// or http 302 redirectToPage (direct access, js disabled)
+func (s *Server) redirectToPage(c echo.Context, name string, params ...interface{}) error {
+	return s.redirect(c, http.StatusFound, s.echo.Reverse(name, params...))
+}
+
+func (s *Server) redirect(c echo.Context, code int, target string) error {
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Redirect", target)
 		return nil
 	}
-	return c.Redirect(http.StatusFound, target)
+	return c.Redirect(code, target)
 }
 
 func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {

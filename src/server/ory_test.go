@@ -91,17 +91,22 @@ func (s *ServerTestSuite) TestStartKratosFlow_Settings() {
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/settings/browser"))
 }
 
-func (s *ServerTestSuite) TestStartKratosFlow_LoginToRegistration() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/login", nil)
+func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Register() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", nil)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/registration/browser"))
 }
 
-func (s *ServerTestSuite) TestStartKratosFlow_Login() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/login", nil)
+func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Login() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", nil)
 	req.AddCookie(&http.Cookie{
 		Name:  "has_account",
 		Value: "true",
 	})
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_Login() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/login", nil)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
 }
 

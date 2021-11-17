@@ -34,7 +34,7 @@
                 <a class="nav-link ms-2 me-2{{#equal "user" @root.CurrentSection}} active"
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>
             {{else}}
-                <form method="POST" action="{{href "start-flow" "login"}}">
+                <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
                     <button type="submit" class="btn btn-outline-light {{#equal "user" @root.CurrentSection}} active{{/equal}}">Login</button>
                 </form>
             {{/if}}

@@ -184,13 +184,15 @@ func (s *Server) startKratosFlow(c echo.Context) error {
 		if err != nil {
 			return nil
 		}
-		return c.Redirect(http.StatusSeeOther, target)
-	case "login":
-		if _, err := c.Cookie(hasAccountCookieName); err != nil {
+		return s.redirect(c, http.StatusSeeOther, target)
+	case "loginOrRegistration":
+		if _, err := c.Cookie(hasAccountCookieName); err == nil {
+			target = "login"
+		} else {
 			target = "registration"
 		}
 	}
-	return c.Redirect(http.StatusSeeOther, s.options.KratosURL+fmt.Sprintf(oryStartFlowPattern, target))
+	return s.redirect(c, http.StatusSeeOther, s.options.KratosURL+fmt.Sprintf(oryStartFlowPattern, target))
 }
 func (s *Server) queryKratos(c echo.Context, endpoint string, body interface{}) error {
 	req, err := http.NewRequest("GET", endpoint, nil)
