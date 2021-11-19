@@ -118,8 +118,8 @@ func (s *Server) setupRouter() {
 
 	s.addStatic(withAuth, "/about", "about", "About: Let’s block it!")
 
-	withAuth.GET("/help", s.helpUsage)
-	withAuth.GET("/help/usage", s.helpUsage).Name = "help-usage"
+	withAuth.GET("/help", s.helpPages).Name = "help-main"
+	withAuth.GET("/help/:page", s.helpPages).Name = "help"
 
 	withAuth.GET("/filters", s.listFilters).Name = "list-filters"
 	withAuth.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
@@ -149,18 +149,6 @@ func shouldReload(c echo.Context) error {
 	// Block indefinitely to keep the SSE open
 	<-c.Request().Context().Done()
 	return nil
-}
-
-func (s *Server) helpUsage(c echo.Context) error {
-	hc := s.buildPageContext(c, "How to use my filter list")
-	if hc.UserLoggedIn {
-		info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID)
-		if err == nil {
-			hc.Add("has_filters", info.InstanceCount > 0)
-			hc.Add("list_token", info.Token.String())
-		}
-	}
-	return s.pages.Render(c, "help-usage", hc)
 }
 
 func (s *Server) addStatic(group *echo.Group, url, page, title string) {

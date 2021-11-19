@@ -1,0 +1,13 @@
+<nav class="navbar navbar-light flex-column align-items-stretch position-fixed">
+    <a class="nav-link mb-2" href="{{href "help-main" ""}}">← Back to help center</a>
+
+    {{#each menu_sections}}
+        <a class="navbar-brand">{{this.Title}}</a>
+        <nav class="nav nav-pills flex-column">
+            {{#each this.Pages}}
+                <a class="nav-link {{#equal this.Code @root.Data.page.Code}}active{{/equal}}" href="{{href "help" this.Code}}">{{this.Title}}</a>
+            {{/each}}
+        </nav>
+    {{/each}}
+
+</nav>

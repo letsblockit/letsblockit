@@ -35,7 +35,9 @@
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>
             {{else}}
                 <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
-                    <button type="submit" class="btn btn-outline-light {{#equal "user" @root.CurrentSection}} active{{/equal}}">Login</button>
+                    <button type="submit"
+                            class="btn btn-outline-light {{#equal "user" @root.CurrentSection}} active{{/equal}}">Login
+                    </button>
                 </form>
             {{/if}}
             <div class="navbar-nav">
@@ -48,10 +50,24 @@
 
 <main id="main" class="container p-5" {{#if NoBoost}}hx-boost="false"{{/if}}>
     <div class="container">
+        {{#if Sidebar}}
+        <div class="row">
+            <div class="col-12 col-lg-2 order-last">
+                {{#if Sidebar.partial}}
+                    {{#with Data}}{{>(Sidebar.partial)}}{{else}}{{>(Sidebar.partial)}}{{/with}}
+                {{else}}
+                    {{{Sidebar.contents}}}
+                {{/if}}
+            </div>
+        <div class="col col-lg-10">
+        {{/if}}
         {{#if Page.partial}}
             {{#with Data}}{{>(Page.partial)}}{{else}}{{>(Page.partial)}}{{/with}}
         {{else}}
             {{{Page.contents}}}
+        {{/if}}
+        {{#if Sidebar}}
+        </div></div>
         {{/if}}
     </div>
 </main>

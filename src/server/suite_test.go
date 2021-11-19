@@ -120,6 +120,13 @@ func (s *ServerTestSuite) expectRender(page string, data pages.ContextData) *gom
 	})
 }
 
+func (s *ServerTestSuite) expectRenderWithSidebar(page, sidebar string, data pages.ContextData) *gomock.Call {
+	return s.expectP.RenderWithSidebar(gomock.Any(), page, sidebar, &pageDataMatcher{
+		t:    s.T(),
+		data: data,
+	})
+}
+
 func (s *ServerTestSuite) expectRenderWithContext(page string, ctx *pages.Context) *gomock.Call {
 	return s.expectP.Render(gomock.Any(), page, gomock.Eq(ctx))
 }

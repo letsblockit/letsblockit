@@ -85,6 +85,22 @@ func LoadPages() (*Pages, error) {
 		pp.pages[name] = &page{Contents: string(blackfriday.Run(rawContents))}
 		return e
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Load raw html pages
+	err = data.Walk(data.Pages, ".html", func(name string, file io.Reader) error {
+		if strings.HasPrefix(name, "_") {
+			return nil
+		}
+		rawContents, e := io.ReadAll(file)
+		if e != nil {
+			return e
+		}
+		pp.pages[name] = &page{Contents: string(rawContents)}
+		return e
+	})
 
 	return &pp, err
 }
@@ -110,4 +126,13 @@ func (t *Pages) Render(c echo.Context, name string, data *Context) error {
 		return err
 	}
 	return c.HTMLBlob(http.StatusOK, buf.Bytes())
+}
+
+func (t *Pages) RenderWithSidebar(c echo.Context, name, sidebar string, data *Context) error {
+	var found bool
+	data.Sidebar, found = t.pages[sidebar]
+	if !found {
+		return echo.NewHTTPError(http.StatusNotFound, "sidebar template not found: "+name)
+	}
+	return t.Render(c, name, data)
 }

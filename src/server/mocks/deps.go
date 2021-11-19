@@ -63,6 +63,20 @@ func (mr *MockPageRendererMockRecorder) Render(c, name, data interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Render", reflect.TypeOf((*MockPageRenderer)(nil).Render), c, name, data)
 }
 
+// RenderWithSidebar mocks base method.
+func (m *MockPageRenderer) RenderWithSidebar(c echo.Context, name, sidebar string, data *pages.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RenderWithSidebar", c, name, sidebar, data)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RenderWithSidebar indicates an expected call of RenderWithSidebar.
+func (mr *MockPageRendererMockRecorder) RenderWithSidebar(c, name, sidebar, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenderWithSidebar", reflect.TypeOf((*MockPageRenderer)(nil).RenderWithSidebar), c, name, sidebar, data)
+}
+
 // MockFilterRepository is a mock of FilterRepository interface.
 type MockFilterRepository struct {
 	ctrl     *gomock.Controller

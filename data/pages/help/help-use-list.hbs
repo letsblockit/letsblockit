@@ -1,12 +1,11 @@
-<h2 class="mt-3 mb-3" id="add-list">Add the list to uBlock settings</h2>
-
+<h2>Use your filter list with uBlock</h2>
 <div class="card shadow-sm me-lg-5 ms-lg-5">
-    <video controls muted class="card-img-top">
-        <source src="/assets/images/pages/help-add-list.webm" type="video/webm">
-    </video>
     {{#if @root.UserLoggedIn}}
-        {{#unless has_filters}}
+        <video controls muted class="card-img-top">
+            <source src="/assets/images/pages/help-add-list.webm" type="video/webm">
+        </video>
 
+        {{#unless has_filters}}
             <div class="card-header text-center p-4">
                 Your list does not have any active filter yet!<br/>
                 Go to the <a href="{{href "list-filters" ""}}">filter list page</a> first to select some.
@@ -42,47 +41,12 @@
     {{/if}}
 </div>
 
-
-<h2 class="mt-4 mb-3" id="refresh-list">Manually refresh the filters</h2>
-
-<div class="card shadow-sm me-lg-5 ms-lg-5">
-    <video controls muted class="card-img-top">
-        <source src="/assets/images/pages/help-refresh-list.webm" type="video/webm">
-    </video>
-    <div class="card-body">
-        <p><em>uBlock Origin</em> will refresh your filters every day, but you can trigger a manual refresh
-            to use your new / updated filters :</p>
-        <ul>
-            <li>Open the <code>uBlock Origin</code> dashboard (see above)</li>
-            <li>Click on the <code>Filters lists</code> tab, scroll to the bottom</li>
-            <li>Locate the "letsblock.it - My filters" list at the bottom</li>
-            <li>Click on the clock icon next to it, then on <code>Update now</code></li>
-        </ul>
-    </div>
-</div>
-
-<h2 class="mt-4 mb-3" id="remove-list">Remove the list from uBlock</h2>
-
-<div class="card shadow-sm me-lg-5 ms-lg-5">
-    <video controls muted class="card-img-top">
-        <source src="/assets/images/pages/help-remove-list.webm" type="video/webm">
-    </video>
-    <div class="card-body">
-        <ul>
-            <li>Open the <code>uBlock Origin</code> dashboard (see above)</li>
-            <li>Click on the <code>Filters lists</code> tab, scroll to the bottom</li>
-            <li>Locate the "letsblock.it - My filters" list at the bottom</li>
-            <li>Click on the red trash can icon next to it, then on <code>Apply changes</code></li>
-        </ul>
-    </div>
-</div>
-
 <script>
     function copyListAddress() {
         let addr = document.getElementById("list-address");
         navigator.clipboard.writeText(addr.innerText);
         addr.classList.add("text-success");
-        
+
         let btn = document.getElementById("list-button");
         btn.classList.replace("bg-secondary", "bg-success");
         btn.innerText = "copied";
