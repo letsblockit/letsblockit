@@ -52,14 +52,14 @@
     <div class="container">
         {{#if Sidebar}}
         <div class="row">
-            <div class="col-12 col-lg-2 order-last">
+            <div class="col-12 col-lg-3 order-last">
                 {{#if Sidebar.partial}}
                     {{#with Data}}{{>(Sidebar.partial)}}{{else}}{{>(Sidebar.partial)}}{{/with}}
                 {{else}}
                     {{{Sidebar.contents}}}
                 {{/if}}
             </div>
-        <div class="col col-lg-10">
+        <div class="col col-lg-9">
         {{/if}}
         {{#if Page.partial}}
             {{#with Data}}{{>(Page.partial)}}{{else}}{{>(Page.partial)}}{{/with}}
