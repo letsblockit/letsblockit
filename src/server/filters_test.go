@@ -147,7 +147,10 @@ func (s *ServerTestSuite) TestViewFilter_Preview() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
-
+	s.expectQ.GetInstanceForUserAndFilter(gomock.Any(), db.GetInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: "filter2",
+	}).Return(pgtype.JSONB{}, db.NotFound)
 	params := map[string]interface{}{
 		"one":   "1",
 		"two":   false,

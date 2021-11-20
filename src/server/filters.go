@@ -110,7 +110,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 			return err
 		}
 		return s.redirectToPage(c, "list-filters")
-	case hc.UserLoggedIn && params == nil:
+	case hc.UserLoggedIn:
 		// If no params are passed, source from the user's filters
 		f, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{
 			UserID:     hc.UserID,
@@ -118,10 +118,12 @@ func (s *Server) viewFilter(c echo.Context) error {
 		})
 		switch err {
 		case nil:
-			if err = f.AssignTo(&params); err != nil {
-				return err
-			}
 			hc.Add("has_instance", true)
+			if params == nil {
+				if err = f.AssignTo(&params); err != nil {
+					return err
+				}
+			}
 		case db.NotFound: // ok
 		default:
 			return err
