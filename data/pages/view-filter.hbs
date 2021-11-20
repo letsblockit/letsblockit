@@ -29,7 +29,59 @@
                       hx-swap="outerHTML">
 
                     {{#each filter.params}}
-                        {{>view-filter-params}}
+                        {{#if (eq type "checkbox")}}
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="{{name}}" name="{{name}}"
+                                       {{#equal true (lookup @root.data.params name)}}checked{{/equal}}>
+                                <label class="form-check-label" for="{{name}}">{{description}}</label>
+                            </div>
+                        {{else if (eq type "string")}}
+                            <div class="mb-3">
+                                <label class="form-label" for="{{name}}">{{description}}:</label>
+                                <input class="form-control" id="{{name}}" name="{{name}}"
+                                       value="{{lookup @root.data.params name}}">
+                            </div>
+                        {{else if (eq type "multiline")}}
+                            <div class="mb-3">
+                                <label class="form-label" for="{{name}}">{{description}}:</label>
+                                <textarea class="form-control" id="{{name}}" name="{{name}}"
+                                          rows="10">{{lookup @root.data.params name}}</textarea>
+                            </div>
+                        {{else if (eq type "list")}}
+                            <fieldset class="row mb-3">
+                                <legend class="col-form-label col-sm-auto pt-0">{{description}}:</legend>
+                                <div class="col-lg-9">
+                                    {{#each (lookup_list @root.data.params name)}}
+                                        <div class="input-group mb-1">
+                                            <input type="text" class="form-control" name="{{name}}" value="{{this}}">
+                                            <button class="btn btn-outline-success" type="button"
+                                                    aria-label="Add a row below"
+                                                    title="Add a row below" onclick="addFilterParamRow(this);">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                            <button class="btn btn-outline-primary" type="button"
+                                                    aria-label="Delete this row"
+                                                    title="Delete this row" onclick="deleteFilterParamRow(this);">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    {{/each}}
+                                    <div class="input-group mb-1">
+                                        <input type="text" class="form-control" name="{{name}}">
+                                        <button class="btn btn-outline-success" type="button"
+                                                aria-label="Add a row below"
+                                                title="Add a row below" onclick="addFilterParamRow(this);">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <button class="btn btn-outline-primary" type="button"
+                                                aria-label="Delete this row"
+                                                title="Delete this row" onclick="deleteFilterParamRow(this);">
+                                            <i class="far fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        {{/if}}
                     {{/each}}
                     <div class="d-flex align-items-center">
                         {{#if @root.UserLoggedIn}}
