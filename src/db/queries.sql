@@ -5,7 +5,14 @@ RETURNING token;
 
 -- name: GetListForUser :one
 SELECT token,
+       downloaded,
        (SELECT COUNT(*) FROM filter_instances WHERE filter_instances.user_id = $1) AS instance_count
+FROM filter_lists
+WHERE filter_lists.user_id = $1
+LIMIT 1;
+
+-- name: HasUserDownloadedList :one
+SELECT downloaded
 FROM filter_lists
 WHERE filter_lists.user_id = $1
 LIMIT 1;

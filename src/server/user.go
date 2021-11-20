@@ -16,18 +16,19 @@ var (
 
 func (s *Server) userAccount(c echo.Context) error {
 	hc := s.buildPageContext(c, "My account")
-	hc.NoBoost = true
 	if hc.UserLoggedIn {
 		if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 			info, err := q.GetListForUser(ctx, hc.UserID)
 			switch err {
 			case nil:
 				hc.Add("filter_count", info.InstanceCount)
+				hc.Add("list_downloaded", info.Downloaded)
 				hc.Add("list_token", info.Token.String())
 				return nil
 			case db.NotFound:
 				token, err := q.CreateListForUser(ctx, hc.UserID)
 				hc.Add("filter_count", 0)
+				hc.Add("list_downloaded", false)
 				hc.Add("list_token", token.String())
 				return err
 			default:

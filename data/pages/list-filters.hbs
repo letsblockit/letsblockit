@@ -19,12 +19,32 @@
     </div>
     <div class="col col-lg-10">
         {{#if active_filters }}
+            {{#unless list_downloaded }}
+                <div role="alert" class="alert alert-secondary has-background-secondary-light">
+                    Now that you have setup filters, <a href="{{href "help" "use-list"}}">add your list to uBlock</a>
+                    to use them.
+                </div>
+            {{/unless}}
             <h2>Active filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
-
             <div class="p-2 mb-3 row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
                 {{#each active_filters}}
                     {{>list-filter-card}}
                 {{/each}}
+            </div>
+        {{else if @root.UserLoggedIn}}
+            <div role="alert" class="alert alert-secondary has-background-secondary-light">
+                Let's start adding filters to your list! What about <a href="{{href "view-filter" "search-results"}}">
+                hiding pinterest in your search results?</a>
+            </div>
+        {{else if @root.UserHasAccount}}
+        {{else}}
+            <div role="alert" class="alert alert-secondary has-background-secondary-light">
+                <form method="POST" class="form-inline" action="{{href "start-flow" "loginOrRegistration"}}">
+                    <span class="align-middle">This website is an open repository of uBlock filters you can customize and
+                        sync across your browsers.</span>
+                    <button type="submit" class="btn btn-link p-0">Create an account</button>
+                    <span class="align-middle">to start building your filter list.</span>
+                </form>
             </div>
         {{/if}}
 

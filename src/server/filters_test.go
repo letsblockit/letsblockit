@@ -60,11 +60,13 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 	s.expectF.GetTags().Return(tList)
 	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
 	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]string{"filter2"}, nil)
+	s.expectQ.HasUserDownloadedList(gomock.Any(), s.user).Return(true, nil)
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       tList,
 		"active_filters":    []*filters.Filter{filter2},
 		"available_filters": []*filters.Filter{filter1, filter3},
+		"list_downloaded":   true,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -77,12 +79,14 @@ func (s *ServerTestSuite) TestListFilters_ByTag() {
 	s.expectF.GetTags().Return(tList)
 	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
 	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]string{"filter2"}, nil)
+	s.expectQ.HasUserDownloadedList(gomock.Any(), s.user).Return(false, nil)
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       tList,
 		"tag_search":        "tag2",
 		"active_filters":    []*filters.Filter{filter2},
 		"available_filters": []*filters.Filter{filter1},
+		"list_downloaded":   false,
 	})
 	s.runRequest(req, assertOk)
 }

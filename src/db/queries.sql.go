@@ -170,6 +170,7 @@ func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetList
 
 const getListForUser = `-- name: GetListForUser :one
 SELECT token,
+       downloaded,
        (SELECT COUNT(*) FROM filter_instances WHERE filter_instances.user_id = $1) AS instance_count
 FROM filter_lists
 WHERE filter_lists.user_id = $1
@@ -178,13 +179,14 @@ LIMIT 1
 
 type GetListForUserRow struct {
 	Token         uuid.UUID
+	Downloaded    bool
 	InstanceCount int64
 }
 
 func (q *Queries) GetListForUser(ctx context.Context, userID uuid.UUID) (GetListForUserRow, error) {
 	row := q.db.QueryRow(ctx, getListForUser, userID)
 	var i GetListForUserRow
-	err := row.Scan(&i.Token, &i.InstanceCount)
+	err := row.Scan(&i.Token, &i.Downloaded, &i.InstanceCount)
 	return i, err
 }
 
@@ -205,6 +207,20 @@ func (q *Queries) GetStats(ctx context.Context) (GetStatsRow, error) {
 	var i GetStatsRow
 	err := row.Scan(&i.ListCount, &i.ActiveListCount, &i.InstanceCount)
 	return i, err
+}
+
+const hasUserDownloadedList = `-- name: HasUserDownloadedList :one
+SELECT downloaded
+FROM filter_lists
+WHERE filter_lists.user_id = $1
+LIMIT 1
+`
+
+func (q *Queries) HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, hasUserDownloadedList, userID)
+	var downloaded bool
+	err := row.Scan(&downloaded)
+	return downloaded, err
 }
 
 const markListDownloaded = `-- name: MarkListDownloaded :exec

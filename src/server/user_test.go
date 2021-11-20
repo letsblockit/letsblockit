@@ -18,11 +18,13 @@ func (s *ServerTestSuite) TestUserAccount_Verified() {
 	req.AddCookie(verifiedCookie)
 	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{
 		Token:         token,
+		Downloaded:    true,
 		InstanceCount: 5,
 	}, nil)
 	s.expectRender("user-account", pages.ContextData{
-		"filter_count": int64(5),
-		"list_token":   token.String(),
+		"filter_count":    int64(5),
+		"list_token":      token.String(),
+		"list_downloaded": true,
 	})
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 200, rec.Code, rec.Body)
@@ -41,8 +43,9 @@ func (s *ServerTestSuite) TestUserAccount_CreateList() {
 	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{}, db.NotFound)
 	s.expectQ.CreateListForUser(gomock.Any(), s.user).Return(token, nil)
 	s.expectRender("user-account", pages.ContextData{
-		"filter_count": 0,
-		"list_token":   token.String(),
+		"filter_count":    0,
+		"list_token":      token.String(),
+		"list_downloaded": false,
 	})
 	s.runRequest(req, assertOk)
 }

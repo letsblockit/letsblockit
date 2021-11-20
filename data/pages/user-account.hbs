@@ -10,8 +10,7 @@
                 {{/if}}
                 from the <a href="{{href "list-filters" ""}}">filter list page</a>.
             </p>
-            <p>To use your filters in uBlock, add the following list:
-                <a href="{{list_href list_token}}">{{list_href list_token}}</a></p>
+            <p>To use your filters in you browser, <a href="{{href "help" "use-list"}}">see the help page.</a>
         </div>
     </div>
 
@@ -24,7 +23,7 @@
                 <button type="submit" class="btn btn-primary me-2"
                         formaction="{{href "start-flow" "settings"}}">Change email or password
                 </button>
-                <button type="submit" class="btn btn-info"
+                <button type="submit" class="btn btn-dark"
                         formaction="{{href "start-flow" "logout"}}">Log out
                 </button>
             </form>

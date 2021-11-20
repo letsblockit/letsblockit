@@ -39,6 +39,10 @@ func (s *Server) listFilters(c echo.Context) error {
 		for _, n := range names {
 			activeNames[n] = struct{}{}
 		}
+		if len(names) > 0 {
+			downloaded, _ := s.store.HasUserDownloadedList(c.Request().Context(), hc.UserID)
+			hc.Add("list_downloaded", downloaded)
+		}
 	}
 
 	// Filter and group filters, or quick return on homepage

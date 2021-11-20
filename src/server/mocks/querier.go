@@ -185,6 +185,21 @@ func (mr *MockQuerierMockRecorder) GetStats(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockQuerier)(nil).GetStats), ctx)
 }
 
+// HasUserDownloadedList mocks base method.
+func (m *MockQuerier) HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasUserDownloadedList", ctx, userID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HasUserDownloadedList indicates an expected call of HasUserDownloadedList.
+func (mr *MockQuerierMockRecorder) HasUserDownloadedList(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasUserDownloadedList", reflect.TypeOf((*MockQuerier)(nil).HasUserDownloadedList), ctx, userID)
+}
+
 // MarkListDownloaded mocks base method.
 func (m *MockQuerier) MarkListDownloaded(ctx context.Context, id int32) error {
 	m.ctrl.T.Helper()
