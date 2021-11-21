@@ -26,11 +26,12 @@
                 </div>
             {{/unless}}
             <h2>Active filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
-            <div class="p-2 mb-3 row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
-                {{#each active_filters}}
-                    {{>list-filter-card}}
-                {{/each}}
-            </div>
+            <div>
+                These filters are active in <a href="{{href "help" "use-list"}}">your personal list</a>.
+                You can change their parameters or remove them below:</div>
+            {{#with active_filters}}
+                {{>list-filters-table}}
+            {{/with}}
         {{else if @root.UserLoggedIn}}
             <div role="alert" class="alert alert-secondary has-background-secondary-light">
                 Let's start adding filters to your list! What about <a href="{{href "view-filter" "search-results"}}">
@@ -48,13 +49,11 @@
             </div>
         {{/if}}
 
-        {{#if available_filters }}
-            <h2>Available filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
-            <div class="p-2 row row-cols-1 row-cols-lg-2 row-cols-xl-3 g-4">
-                {{#each available_filters}}
-                    {{>list-filter-card}}
-                {{/each}}
-            </div>
-        {{/if}}
+        {{#with available_filters}}
+            <h2>Available filter templates{{#if @root.Data.tag_search}} with tag
+                <em>{{@root.Data.tag_search}}</em>{{/if}}</h2>
+            <div>Check these new filters and customize them for your use:</div>
+            {{>list-filters-table}}
+        {{/with}}
     </div>
 </div>
