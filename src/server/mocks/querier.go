@@ -214,6 +214,20 @@ func (mr *MockQuerierMockRecorder) MarkListDownloaded(ctx, id interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkListDownloaded", reflect.TypeOf((*MockQuerier)(nil).MarkListDownloaded), ctx, id)
 }
 
+// RotateListToken mocks base method.
+func (m *MockQuerier) RotateListToken(ctx context.Context, arg db.RotateListTokenParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RotateListToken", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RotateListToken indicates an expected call of RotateListToken.
+func (mr *MockQuerierMockRecorder) RotateListToken(ctx, arg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RotateListToken", reflect.TypeOf((*MockQuerier)(nil).RotateListToken), ctx, arg)
+}
+
 // UpdateInstanceForUserAndFilter mocks base method.
 func (m *MockQuerier) UpdateInstanceForUserAndFilter(ctx context.Context, arg db.UpdateInstanceForUserAndFilterParams) error {
 	m.ctrl.T.Helper()

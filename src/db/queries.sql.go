@@ -234,6 +234,24 @@ func (q *Queries) MarkListDownloaded(ctx context.Context, id int32) error {
 	return err
 }
 
+const rotateListToken = `-- name: RotateListToken :exec
+UPDATE filter_lists
+SET token      = gen_random_uuid(),
+    downloaded = false
+WHERE user_id = $1
+  AND token = $2
+`
+
+type RotateListTokenParams struct {
+	UserID uuid.UUID
+	Token  uuid.UUID
+}
+
+func (q *Queries) RotateListToken(ctx context.Context, arg RotateListTokenParams) error {
+	_, err := q.db.Exec(ctx, rotateListToken, arg.UserID, arg.Token)
+	return err
+}
+
 const updateInstanceForUserAndFilter = `-- name: UpdateInstanceForUserAndFilter :exec
 UPDATE filter_instances
 SET params     = $3,

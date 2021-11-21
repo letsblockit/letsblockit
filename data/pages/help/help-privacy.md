@@ -40,8 +40,8 @@ list. Here is how your list is secured:
 - Your list is assigned [a random unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier),
 separate from your user account. This ID acts as a private download token: your list will be accessible on
 `https://get.letsblock.it/list/$token`
-- This ID is decoupled for your account, and a new one can be assigned if you think the URL has been leaked,
-to block any download on the old URL (not implemented in the app yet, contact me to do it manually)
+- A new one can be generated if you think the URL has been leaked, to block any download via the old URL.
+You can do so from the [My account](/user/account) page.
 - The random ID reduces the risk of enumeration attacks. Other protections may be present, but I'll keep
 some obscurity here to keep them effective :)
 - In the future, I plan on allowing users to maintain several lists, to share one while keeping some filters private.

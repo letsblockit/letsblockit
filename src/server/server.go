@@ -130,6 +130,7 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/user/forms/:type", s.renderKratosForm)
 	withAuth.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
+	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 }
 
 func shouldReload(c echo.Context) error {

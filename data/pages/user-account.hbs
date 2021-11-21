@@ -16,18 +16,41 @@
 
     <div class="card mb-3 shadow-sm">
         <div class="card-header">Manage my account</div>
-        <div class="card-body">
-            <p>Account management is provided by <a target="_blank" href="https://www.ory.sh/docs">the fine folks at Ory</a>.
+        <form class="card-body" method="POST">
+            <p>
+                Account management is provided by
+                <a target="_blank" href="https://www.ory.sh/docs">the fine folks at Ory</a>.
+                Read more about it in <a href="{{href "help" "privacy"}}">our privacy page</a>.
             </p>
-            <form method="POST">
-                <button type="submit" class="btn btn-primary me-2"
-                        formaction="{{href "start-flow" "settings"}}">Change email or password
-                </button>
-                <button type="submit" class="btn btn-dark"
-                        formaction="{{href "start-flow" "logout"}}">Log out
-                </button>
-            </form>
-        </div>
+            <button type="submit" class="btn btn-primary me-2"
+                    formaction="{{href "start-flow" "settings"}}">Change email or password
+            </button>
+            <button type="submit" class="btn btn-dark"
+                    formaction="{{href "start-flow" "logout"}}">Log out
+            </button>
+        </form>
+    </div>
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header">Rotate my list download token</div>
+        <form class="card-body" method="POST" action="{{href "rotate-list-token" ""}}">
+            <p class="mb-2">
+                You can generate a new download token down below, to stop downloads at the old URL.
+                <strong>Please note that you need to update all your browsers with the new link</strong>,
+                <a href="{{href "help" "use-list"}}">see the help page</a>.
+            </p>
+            <div class="mb-2">
+                <label>Current token: <code class="text-dark">{{list_token}}</code></label>
+                <input type="hidden" name="token" value="{{list_token}}">
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" required name="confirm" id="confirmCheck">
+                <label class="form-check-label" for="confirmCheck">
+                    I really want to generate a new token and will update all my browsers' configuration.
+                </label>
+            </div>
+            <button type="submit" class="btn btn-dark">Do it!</button>
+        </form>
     </div>
 {{else}}
     <div class="card mb-3 shadow-sm">

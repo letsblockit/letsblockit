@@ -22,6 +22,7 @@ type Querier interface {
 	GetStats(ctx context.Context) (GetStatsRow, error)
 	HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error)
 	MarkListDownloaded(ctx context.Context, id int32) error
+	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstanceForUserAndFilter(ctx context.Context, arg UpdateInstanceForUserAndFilterParams) error
 }
 

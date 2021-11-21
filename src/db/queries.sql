@@ -11,6 +11,13 @@ FROM filter_lists
 WHERE filter_lists.user_id = $1
 LIMIT 1;
 
+-- name: RotateListToken :exec
+UPDATE filter_lists
+SET token      = gen_random_uuid(),
+    downloaded = false
+WHERE user_id = $1
+  AND token = $2;
+
 -- name: HasUserDownloadedList :one
 SELECT downloaded
 FROM filter_lists

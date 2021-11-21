@@ -2,9 +2,11 @@ package server
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/db"
 )
@@ -16,6 +18,7 @@ var (
 
 func (s *Server) userAccount(c echo.Context) error {
 	hc := s.buildPageContext(c, "My account")
+	hc.NoBoost = true
 	if hc.UserLoggedIn {
 		if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 			info, err := q.GetListForUser(ctx, hc.UserID)
@@ -48,4 +51,31 @@ func (s *Server) userAccount(c echo.Context) error {
 		SameSite: http.SameSiteStrictMode,
 	})
 	return s.pages.Render(c, "user-account", hc)
+}
+
+func (s *Server) rotateListToken(c echo.Context) error {
+	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
+		if c.Request().Method != http.MethodPost {
+			return nil
+		}
+		formParams, err := c.FormParams()
+		if err != nil {
+			return err
+		}
+		confirmation := formParams.Get("confirm")
+		tokenString := formParams.Get("token")
+		token, err := uuid.Parse(tokenString)
+		u := getUser(c)
+		if !u.IsActive() || err != nil || confirmation != "on" {
+			return errors.New("invalid arguments")
+		}
+		return q.RotateListToken(ctx, db.RotateListTokenParams{
+			UserID: u.Id(),
+			Token:  token,
+		})
+	}); err != nil {
+		return err
+	}
+
+	return s.redirect(c, http.StatusSeeOther, s.echo.Reverse("user-account"))
 }
