@@ -14,62 +14,57 @@
 </head>
 <body hx-boost="true">
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
-    <div class="container-fluid">
+    <div class="container">
         <a class="navbar-brand" href="/">
-            <img src="/assets/images/logo.svg{{assetHash}}"
-                 style="position:absolute; top: 0.5rem; left: 0.75rem; width: 5rem; height: 5rem">
+            <img src="/assets/images/logo.svg{{assetHash}}">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse navbar-nav" id="navbarSupportedContent">
-            <div class="navbar-nav me-md-auto" style="margin-left: 5rem">
+        <div class="collapse navbar-collapse navbar-nav align-items-stretch mt-3 mt-md-0" id="navbarSupportedContent">
+            <div class="navbar-nav me-md-auto">
                 {{#each NavigationLinks}}
-                    <a class="nav-link ms-2 me-2{{#equal target @root.CurrentSection}} active"
+                    <a class="nav-link{{#equal target @root.CurrentSection}} active"
                             aria-current="page{{/equal}}" href="/{{target}}">{{name}}</a>
                 {{/each}}
             </div>
             {{#if UserLoggedIn}}
-                <a class="nav-link ms-2 me-2{{#equal "user" @root.CurrentSection}} active"
+                <a class="nav-link{{#equal "user" @root.CurrentSection}} active"
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>
             {{else}}
-                <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
-                    <button type="submit"
-                            class="btn btn-outline-light {{#equal "user" @root.CurrentSection}} active{{/equal}}">Login
+                <form method="POST" class="me-2" action="{{href "start-flow" "loginOrRegistration"}}">
+                    <button class="btn btn-outline-light {{#equal "user" @root.CurrentSection}} active{{/equal}}"
+                            type="submit">Login
                     </button>
                 </form>
             {{/if}}
-            <div class="navbar-nav">
-                <a class="ms-2 me-2 nav-link" href="https://github.com/xvello/letsblockit" title="Github">
-                    <i class="fab fa-lg fa-github"></i></a>
-            </div>
+            <a class="nav-link" href="https://github.com/xvello/letsblockit" title="Visit the project on Github">
+                <i class="fab fa-lg fa-github fs-3"></i></a>
         </div>
     </div>
 </nav>
 
-<main id="main" class="container p-5" {{#if NoBoost}}hx-boost="false"{{/if}}>
-    <div class="container">
-        {{#if Sidebar}}
-        <div class="row">
-            <div class="col-12 col-lg-3 order-last">
-                {{#if Sidebar.partial}}
-                    {{#with Data}}{{>(Sidebar.partial)}}{{else}}{{>(Sidebar.partial)}}{{/with}}
-                {{else}}
-                    {{{Sidebar.contents}}}
-                {{/if}}
-            </div>
-        <div class="col col-lg-9">
-        {{/if}}
-        {{#if Page.partial}}
-            {{#with Data}}{{>(Page.partial)}}{{else}}{{>(Page.partial)}}{{/with}}
-        {{else}}
-            {{{Page.contents}}}
-        {{/if}}
-        {{#if Sidebar}}
-        </div></div>
-        {{/if}}
-    </div>
+<main id="main" class="container pb-4 pt-4 pt-md-5" {{#if NoBoost}}hx-boost="false"{{/if}}>
+    {{#if Sidebar}}
+    <div class="row">
+        <div class="col-12 col-lg-3 order-last pt-5 pt-lg-0">
+            {{#if Sidebar.partial}}
+                {{#with Data}}{{>(Sidebar.partial)}}{{else}}{{>(Sidebar.partial)}}{{/with}}
+            {{else}}
+                {{{Sidebar.contents}}}
+            {{/if}}
+        </div>
+    <div class="col col-lg-9">
+    {{/if}}
+    {{#if Page.partial}}
+        {{#with Data}}{{>(Page.partial)}}{{else}}{{>(Page.partial)}}{{/with}}
+    {{else}}
+        {{{Page.contents}}}
+    {{/if}}
+    {{#if Sidebar}}
+    </div></div>
+    {{/if}}
 </main>
 </body>
 </html>

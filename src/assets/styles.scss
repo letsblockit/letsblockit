@@ -15,12 +15,26 @@ $danger: #f44336;
 $light: #F4F4F0;
 $dark: #262432;
 
+$navbar-nav-link-padding-x: 1rem;
 $headings-margin-bottom: 1rem;
 
 @import "node_modules/bootstrap/scss/bootstrap";
 
 .btn-success, .btw-success:hover, .btn-outline-success:hover {
   color: $white !important;
+}
+
+.navbar-brand img {
+  width: 3rem;
+  height: 3rem;
+}
+
+@include media-breakpoint-up(md) {
+  .navbar-brand img {
+    width: 5rem;
+    height: 5rem;
+    margin: -0.5rem 0 -2.5rem 0rem;
+  }
 }
 
 // Injected by htmx.js, but adding for noscript users
