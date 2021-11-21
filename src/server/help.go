@@ -33,6 +33,12 @@ var helpMenu = []helpSection{{
 		Code:  "remove-list",
 		Title: "Remove letsblock.it filters from uBlock",
 	}},
+}, {
+	Title: "About",
+	Pages: []*helpPageDescription{{
+		Code:  "privacy",
+		Title: "Privacy: where is my data?",
+	}},
 }}
 
 // Index built on the first page load, protected by a sync.Once

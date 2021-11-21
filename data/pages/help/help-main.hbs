@@ -1,11 +1,16 @@
-<h2>Help center: how to use letsblock.it</h2>
+<div role="alert" class="alert alert-secondary has-background-secondary-light">
+    Let's Block It is still in an early stage. Don't hesitate to
+    <a href="https://github.com/xvello/letsblockit/issues">open an issue on Github</a> for any question or bug, or
+    send us an email at <code>hello@&lt;this-domain&gt;.it</code>.
+</div>
 
 <nav class="navbar navbar-light flex-column align-items-stretch">
     {{#each menu_sections}}
         <a class="navbar-brand">{{this.Title}}</a>
         <nav class="nav nav-pills flex-column">
             {{#each this.Pages}}
-                <a class="nav-link {{#equal this.Code @root.Data.page.Code}}active{{/equal}}" href="{{href "help" this.Code}}">{{this.Title}}</a>
+                <a class="nav-link {{#equal this.Code @root.Data.page.Code}}active{{/equal}}"
+                   href="{{href "help" this.Code}}">{{this.Title}}</a>
             {{/each}}
         </nav>
     {{/each}}
