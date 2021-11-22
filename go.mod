@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/imantung/mario v0.9.0
 	github.com/jackc/pgconn v1.10.0
-	github.com/jackc/pgtype v1.8.1
+	github.com/jackc/pgtype v1.9.0
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/labstack/echo/v4 v4.6.1
 	github.com/labstack/gommon v0.3.1
