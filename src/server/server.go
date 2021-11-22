@@ -53,6 +53,7 @@ type Server struct {
 	filters FilterRepository
 	pages   PageRenderer
 	store   db.Store
+	statsd  statsd.ClientInterface
 }
 
 func NewServer(options *Options) *Server {
@@ -75,8 +76,11 @@ func (s *Server) Start() error {
 		if err != nil {
 			return err
 		}
+		s.statsd = dsd
 		s.echo.Use(buildDogstatsMiddleware(dsd))
 		go collectStats(s.echo.Logger, s.store, dsd)
+	} else {
+		s.statsd = &statsd.NoOpClient{}
 	}
 
 	s.pages.RegisterHelpers(buildHelpers(s.echo, s.assets.hash))

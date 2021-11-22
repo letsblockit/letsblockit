@@ -113,7 +113,7 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 				return next(c)
 			}
 			var user oryUser
-			if err := s.queryKratos(c, endpoint, &user); err != nil {
+			if err := s.queryKratos(c, "whoami", endpoint, &user); err != nil {
 				s.echo.Logger.Error("auth error: %w", err)
 			} else if user.IsActive() {
 				c.Set(userContextKey, &user)
@@ -126,7 +126,7 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 // getLogoutUrl retrieves the logout url for the current session by calling the proxy
 func (s *Server) getLogoutUrl(c echo.Context) (string, error) {
 	var info oryLogoutInfo
-	if err := s.queryKratos(c, s.options.KratosURL+oryLogoutInfoPath, &info); err != nil {
+	if err := s.queryKratos(c, "logout", s.options.KratosURL+oryLogoutInfoPath, &info); err != nil {
 		return "", err
 	}
 	if info.URL == "" {
@@ -151,7 +151,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 
 		body := make(map[string]interface{})
 		endpoint := s.options.KratosURL + fmt.Sprintf(oryGetFlowPattern, formType, flowID)
-		if err := s.queryKratos(c, endpoint, &body); err != nil {
+		if err := s.queryKratos(c, "flow", endpoint, &body); err != nil {
 			return nil, err
 		}
 		ui, ok := body["ui"]
@@ -194,7 +194,10 @@ func (s *Server) startKratosFlow(c echo.Context) error {
 	}
 	return s.redirect(c, http.StatusSeeOther, s.options.KratosURL+fmt.Sprintf(oryStartFlowPattern, target))
 }
-func (s *Server) queryKratos(c echo.Context, endpoint string, body interface{}) error {
+
+func (s *Server) queryKratos(c echo.Context, typeTag, endpoint string, body interface{}) error {
+	start := time.Now()
+
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return fmt.Errorf("failed to instantiate request: %w", err)
@@ -202,6 +205,9 @@ func (s *Server) queryKratos(c echo.Context, endpoint string, body interface{}) 
 	req.Header.Set(echo.HeaderCookie, c.Request().Header.Get(echo.HeaderCookie))
 	req.Header.Set("Accept", "application/json")
 	res, err := proxyClient.Do(req)
+	_ = s.statsd.Distribution("letsblockit.ory_request_duration", float64(time.Since(start).Nanoseconds()),
+		[]string{"type:" + typeTag, fmt.Sprintf("ok:%t", err == nil && res.StatusCode == http.StatusOK)}, 1)
+
 	if err != nil {
 		return fmt.Errorf("failed to query kratos: %w", err)
 	}

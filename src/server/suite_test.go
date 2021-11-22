@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -109,6 +110,7 @@ func (s *ServerTestSuite) SetupTest() {
 		filters: fm,
 		pages:   pm,
 		store:   &mockStore{qm},
+		statsd:  &statsd.NoOpClient{},
 	}
 	s.server.setupRouter()
 }
