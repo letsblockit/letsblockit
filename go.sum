@@ -41,8 +41,8 @@ github.com/golang/mock v1.6.0/go.mod h1:p6yTPP+5HYm5mzsMV8JkE6ZKdX+/wYM6Hr+Licev
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/imantung/mario v0.9.0 h1:jyLgF7QImLWPMyMxN46+dVTeJd4W9ZwvxvNZPKkRcac=
-github.com/imantung/mario v0.9.0/go.mod h1:NI8+GAeFFCNT5WpO5PIOsP9RNgVmdtOkyfx9eLGCEWA=
+github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9 h1:5NYkqc2z+jd4/bhy5PlWVNfaksDCpGinHQjdHNU7wj4=
+github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9/go.mod h1:NI8+GAeFFCNT5WpO5PIOsP9RNgVmdtOkyfx9eLGCEWA=
 github.com/jackc/chunkreader v1.0.0 h1:4s39bBR8ByfqH+DKm8rQA3E1LHZWB9XWcrz8fqaZbe0=
 github.com/jackc/chunkreader v1.0.0/go.mod h1:RT6O25fNZIuasFJRyZ4R/Y2BbhasbmZXF9QQ7T3kePo=
 github.com/jackc/chunkreader/v2 v2.0.0/go.mod h1:odVSm741yZoC3dpHEUXIqA9tQRhFrgOHwnPIn9lDKlk=
