@@ -20,6 +20,12 @@ import (
 
 var ErrDryRunFinished = errors.New("dry run finished")
 
+const loggerFormat = `{"http":{"host":"${host}","remote_ip":"${remote_ip}",` +
+	`"method":"${method}","uri":"${uri}","path":"${path}",` +
+	`"user_agent":"${user_agent}","referer":"${referer}","is_htmx":"${header:HX-Request}",` +
+	`"status":${status},"error":"${error}","latency":${latency},` +
+	`"bytes_in":${bytes_in},"bytes_out":${bytes_out}}}` + "\n"
+
 type Options struct {
 	Address      string `default:"127.0.0.1:8765" help:"address to listen to"`
 	Debug        bool   `help:"log with debug level"`
@@ -99,8 +105,13 @@ func (s *Server) setupRouter() {
 		} else {
 			s.echo.Logger.SetLevel(log.INFO)
 		}
-		s.echo.Use(middleware.Logger())
+		s.echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+			Format: loggerFormat,
+		}))
 	}
+
+	s.echo.HideBanner = true
+	s.echo.IPExtractor = echo.ExtractIPFromRealIPHeader() // upstream proxy sets the X-Real-IP header
 
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
