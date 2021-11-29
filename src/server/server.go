@@ -23,7 +23,7 @@ var ErrDryRunFinished = errors.New("dry run finished")
 const loggerFormat = `{"http":{"host":"${host}","remote_ip":"${remote_ip}",` +
 	`"method":"${method}","uri":"${uri}","path":"${path}",` +
 	`"user_agent":"${user_agent}","referer":"${referer}","is_htmx":"${header:HX-Request}",` +
-	`"status":${status},"error":"${error}","latency":${latency},` +
+	`"status":"${status}","error":"${error}","latency":${latency},` +
 	`"bytes_in":${bytes_in},"bytes_out":${bytes_out}}}` + "\n"
 
 type Options struct {
