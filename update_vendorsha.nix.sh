@@ -21,3 +21,4 @@ else
 fi
 
 sed -i "s|$oldSha|$newSha|" default.nix
+sed -i "s|$oldSha|$newSha|" flake.nix
