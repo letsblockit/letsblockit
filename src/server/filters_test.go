@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -181,6 +182,7 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 	}
 	paramsB := pgtype.JSONB{}
 	s.NoError(paramsB.Set(&params))
+	s.expectQ.CountListsForUser(gomock.Any(), s.user).Return(int64(1), nil)
 	s.expectQ.CountInstanceForUserAndFilter(gomock.Any(), db.CountInstanceForUserAndFilterParams{
 		UserID:     s.user,
 		FilterName: "filter2",
@@ -220,10 +222,48 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 		FilterName: "filter1",
 		Params:     paramsB,
 	}).Return(nil)
+	s.expectQ.CountListsForUser(gomock.Any(), s.user).Return(int64(1), nil)
 	s.expectRenderFilter("filter1", map[string]interface{}{}, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter1,
 		"params":       map[string]interface{}{},
+		"rendered":     "output",
+		"has_instance": true,
+		"saved_ok":     true,
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestViewFilter_CreateListToo() {
+	f := buildFilter2FormBody()
+	f.Add("__save", "")
+	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	req.AddCookie(verifiedCookie)
+	s.expectF.GetFilter("filter2").Return(filter2, nil)
+
+	params := map[string]interface{}{
+		"one":   "1",
+		"two":   false,
+		"three": []string{"option1", "option2"},
+	}
+	paramsB := pgtype.JSONB{}
+	s.NoError(paramsB.Set(&params))
+	s.expectQ.CountListsForUser(gomock.Any(), s.user).Return(int64(0), nil)
+	s.expectQ.CreateListForUser(gomock.Any(), s.user).Return(uuid.New(), nil)
+	s.expectQ.CountInstanceForUserAndFilter(gomock.Any(), db.CountInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: "filter2",
+	}).Return(int64(0), nil)
+	s.expectQ.CreateInstanceForUserAndFilter(gomock.Any(), db.CreateInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: "filter2",
+		Params:     paramsB,
+	}).Return(nil)
+	s.expectRenderFilter("filter2", params, "output")
+	s.expectRender("view-filter", pages.ContextData{
+		"filter":       filter2,
+		"params":       params,
 		"rendered":     "output",
 		"has_instance": true,
 		"saved_ok":     true,

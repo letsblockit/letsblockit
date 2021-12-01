@@ -199,6 +199,11 @@ func (s *Server) upsertFilterParams(c echo.Context, user uuid.UUID, filter strin
 			return err
 		}
 		if count == 0 {
+			if listCount, _ := q.CountListsForUser(ctx, user); listCount == 0 {
+				if _, err := q.CreateListForUser(ctx, user); err != nil {
+					return err
+				}
+			}
 			return q.CreateInstanceForUserAndFilter(ctx, db.CreateInstanceForUserAndFilterParams{
 				UserID:     user,
 				FilterName: filter,

@@ -28,6 +28,19 @@ func (q *Queries) CountInstanceForUserAndFilter(ctx context.Context, arg CountIn
 	return count, err
 }
 
+const countListsForUser = `-- name: CountListsForUser :one
+SELECT COUNT(*)
+FROM filter_lists
+WHERE user_id = $1
+`
+
+func (q *Queries) CountListsForUser(ctx context.Context, userID uuid.UUID) (int64, error) {
+	row := q.db.QueryRow(ctx, countListsForUser, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createInstanceForUserAndFilter = `-- name: CreateInstanceForUserAndFilter :exec
 INSERT INTO filter_instances (filter_list_id, user_id, filter_name, params)
 VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3)

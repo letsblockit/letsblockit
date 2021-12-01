@@ -11,6 +11,11 @@ FROM filter_lists
 WHERE filter_lists.user_id = $1
 LIMIT 1;
 
+-- name: CountListsForUser :one
+SELECT COUNT(*)
+FROM filter_lists
+WHERE user_id = $1;
+
 -- name: RotateListToken :exec
 UPDATE filter_lists
 SET token      = gen_random_uuid(),

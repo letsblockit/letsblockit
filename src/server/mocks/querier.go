@@ -52,6 +52,21 @@ func (mr *MockQuerierMockRecorder) CountInstanceForUserAndFilter(ctx, arg interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountInstanceForUserAndFilter", reflect.TypeOf((*MockQuerier)(nil).CountInstanceForUserAndFilter), ctx, arg)
 }
 
+// CountListsForUser mocks base method.
+func (m *MockQuerier) CountListsForUser(ctx context.Context, userID uuid.UUID) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountListsForUser", ctx, userID)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountListsForUser indicates an expected call of CountListsForUser.
+func (mr *MockQuerierMockRecorder) CountListsForUser(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountListsForUser", reflect.TypeOf((*MockQuerier)(nil).CountListsForUser), ctx, userID)
+}
+
 // CreateInstanceForUserAndFilter mocks base method.
 func (m *MockQuerier) CreateInstanceForUserAndFilter(ctx context.Context, arg db.CreateInstanceForUserAndFilterParams) error {
 	m.ctrl.T.Helper()
