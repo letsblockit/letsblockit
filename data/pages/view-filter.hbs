@@ -86,10 +86,10 @@
                         {{#if @root.UserLoggedIn}}
                             <input type="hidden" name="__logged_in" value="true">
                             <button type="submit" name="__render" class="btn btn-secondary me-2">
-                                <i class="fas fa-eye me-1"></i>
+                                <i class="fas fa-eye me-2"></i>
                                 Preview
                             </button>
-                            <button type="submit" name="__save" class="ms-2 btn btn-primary"
+                            <button type="submit" name="__save" class="ms-2 me-2 btn btn-primary"
                                     hx-vals='{"__save": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
@@ -103,7 +103,7 @@
                             </button>
                         {{else}}
                             <button type="submit" name="__render" class="btn btn-primary">Render</button>
-                            <button type="submit" class="ms-2 btn btn-link"
+                            <button type="submit" class="ms-2 me-2 btn btn-link"
                                     formaction="{{href "start-flow" "loginOrRegistration"}}"
                                     hx-post="{{href "start-flow" "loginOrRegistration"}}">
                                 {{#if @root.UserHasAccount}}
