@@ -44,11 +44,7 @@ tests:
 
 Some websites are famous for being better at [Search Engine Optimization](https://news.ycombinator.com/item?id=25538586) than providing useful content. While there is not much we can do ourselves to avoid SEO abuse, we can cleanup the search results that are returned to us by search engines.
 
-![example of pinterest search results](/assets/images/filters/search-results-pinterest.webp)
-
-This template allows you to remove search results based on their URL for **both text and image searches**. It supports Google and DuckDuckGo, but contributions are welcome to support more search engines.
-
-Results will be hidden if their link destination contains one of the values you pass. For example:
+This template allows you to remove search results based on their URL for **both text and image searches**. It supports Google and DuckDuckGo, but contributions are welcome to support more search engines. Results will be hidden if their link destination contains one of the values you pass. For example:
 
 - pinterest publishes content on an army of subdomains and country-specific domains ; using `.pinterest.` allows to block them all
 - snapcraft.io's SEO efforts focus on `snapcraft.io/install/X/Y` pages ; using `snapscraft.io/install` limits the blocking to these pages
