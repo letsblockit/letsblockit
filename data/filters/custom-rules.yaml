@@ -29,4 +29,10 @@ tests:
 
 This template allows you to keep custom rules in your list, to sync between browsers. Just write them as you would in the `My filters` page of uBlock settings.
 
+Have a look at the following pages to learn about the syntax:
+
+  - The uBlock Origin wiki pages: [Static filter syntax](https://github.com/gorhill/uBlock/wiki/Static-filter-syntax) and
+      [Procedural cosmetic filters](https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters).
+  - [This cheatsheet](https://github.com/DandelionSprout/adfilt/blob/master/Wiki/SyntaxMeaningsThatAreActuallyHumanReadable.md) by DandelionSprout.
+
 Of couse, if you think a filter would be useful to others, don't hesitate to [suggest it as a new filter](https://github.com/xvello/letsblockit/issues)!
