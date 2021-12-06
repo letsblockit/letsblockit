@@ -177,6 +177,13 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	hc.NakedContent = true
 	hc.Add("rendered", buf.String())
 
+	// Detect user session from form params (this endpoint is unauthenticated)
+	if formParams, err := c.FormParams(); err == nil {
+		if _, ok := formParams["__logged_in"]; ok {
+			hc.UserLoggedIn = true
+		}
+	}
+
 	return s.pages.Render(c, "view-filter-render", hc)
 }
 

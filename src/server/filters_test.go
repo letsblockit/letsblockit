@@ -356,6 +356,33 @@ func (s *ServerTestSuite) TestViewFilterRender_Params() {
 	s.runRequest(req, assertOk)
 }
 
+func (s *ServerTestSuite) TestViewFilterRender_LoggedIn() {
+	f := buildFilter2FormBody()
+	f.Add("__logged_in", "true")
+	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	req.AddCookie(verifiedCookie)
+	s.expectF.GetFilter("filter2").Return(filter2, nil)
+
+	params := map[string]interface{}{
+		"one":   "1",
+		"two":   false,
+		"three": []string{"option1", "option2"},
+	}
+
+	s.expectRenderFilter("filter2", params, "output")
+	s.expectRenderWithContext("view-filter-render", &pages.Context{
+		NakedContent:    true,
+		CurrentSection:  "filters",
+		NavigationLinks: navigationLinks,
+		UserLoggedIn:    true,
+		Data: pages.ContextData{
+			"rendered": "output",
+		},
+	})
+	s.runRequest(req, assertOk)
+}
+
 func buildFilter2FormBody() url.Values {
 	f := make(url.Values)
 	f.Add("one", "1")

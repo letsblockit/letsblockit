@@ -85,11 +85,12 @@
                     {{/each}}
                     <div class="d-flex align-items-center">
                         {{#if @root.UserLoggedIn}}
+                            <input type="hidden" name="__logged_in" value="true">
                             <button type="submit" name="__render" class="btn btn-secondary me-2">
                                 <i class="fas fa-eye me-1"></i>
                                 Preview
                             </button>
-                            <button type="submit" name="__save" class="btn btn-primary"
+                            <button type="submit" name="__save" class="ms-2 btn btn-primary"
                                     hx-vals='{"__save": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
@@ -103,8 +104,17 @@
                             </button>
                         {{else}}
                             <button type="submit" name="__render" class="btn btn-primary">Render</button>
+                            <button type="submit" class="ms-2 btn btn-link"
+                                    formaction="{{href "start-flow" "loginOrRegistration"}}"
+                                    hx-post="{{href "start-flow" "loginOrRegistration"}}">
+                                {{#if @root.UserHasAccount}}
+                                    Login to save this filter to your list
+                                {{else}}
+                                    Create an account and start building your list
+                                {{/if}}
+                            </button>
                         {{/if}}
-                        <div class="ms-3 htmx-indicator spinner-border text-secondary" role="status">
+                        <div class="ms-2 htmx-indicator spinner-border text-secondary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         {{#if has_instance}}
@@ -123,7 +133,7 @@
         {{else}}
             <h2>Filter contents</h2>
             <div class="d-flex align-items-center">
-                <form id="filter_input" method="POST" action="#output-card"
+                <form id="filter_input" class="form-inline" method="POST" action="#output-card"
                       hx-post="{{href "view-filter" filter.name}}"
                       hx-select="#main" hx-target="#main" hx-swap="outerHTML">
                     {{#if has_instance}}
@@ -142,7 +152,16 @@
                             Add filter
                         </button>
                     {{else}}
-                        This filter does not have any parameters.
+                        <span class="align-middle">This filter does not have any parameters.</span>
+                        <button type="submit" class="btn btn-link p-0"
+                                formaction="{{href "start-flow" "loginOrRegistration"}}"
+                                hx-post="{{href "start-flow" "loginOrRegistration"}}">
+                            {{#if @root.UserHasAccount}}
+                                Login to save this filter to your list.
+                            {{else}}
+                                Create an account and start building your list.
+                            {{/if}}
+                        </button>
                     {{/if}}
                 </form>
             </div>
