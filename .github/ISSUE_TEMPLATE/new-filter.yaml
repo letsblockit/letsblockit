@@ -1,0 +1,42 @@
+name: New filter suggestion
+description: Suggest a new filter
+labels: filter-data
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a new filter!
+        Please take a look at our [contribution guidelines](https://letsblock.it/help/contributing) first.
+        
+        To update an existing filter, [use this form](https://github.com/xvello/letsblockit/issues/new?template=update-filter.yaml) instead.
+  - type: input
+    attributes:
+      label: What website(s) would this filter apply to?
+      description: Copy links to the relevant pages
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What content should be blocked?
+      description: A clear and concise description of what should be blocked. Screenshots welcome!
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What options should be offered?
+      description: One size cannot fit everyone, what configuration options would be relevant to offer?
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Did you write a custom uBlock filter already?
+      description: If you already wrote a filter, copy it here as a starting point
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Additional notes
+      description: Any additional context for this, or alternatives to discuss?
+    validations:
+      required: false
