@@ -4,7 +4,7 @@ params:
   - name: sites
     description: Sites to hide
     type: list
-    default: [ "www.linkedin.com/learning", "my.previous.corp/careers" ]
+    default: [ "www.linkedin.com/learning", "my.previous.corp/careers", "pushy-vendor.com" ]
 tags:
   - linkedin
 template: |
