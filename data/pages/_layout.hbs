@@ -10,11 +10,11 @@
     {{#each Scripts}}
         <script defer src="/assets/js/{{this}}{{assetHash}}"></script>
     {{/each}}
-    <title>{{ Title }}</title>
+    <title>{{ Title }} :: letsblock.it</title>
 </head>
 <body hx-boost="true">
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
-    <div class="container">
+    <div class="container-lg">
         <a class="navbar-brand" href="/">
             <img src="/assets/images/logo.svg{{assetHash}}">
         </a>
@@ -39,7 +39,7 @@
                     </button>
                 </form>
             {{/if}}
-            <a class="nav-link" href="https://github.com/xvello/letsblockit" title="Visit the project on Github">
+            <a class="nav-link" href="https://github.com/xvello/letsblockit" title="Visit the project on GitHub">
                 <i class="fab fa-lg fa-github fs-3"></i></a>
         </div>
     </div>
@@ -49,6 +49,7 @@
     {{#if Sidebar}}
     <div class="row">
         <div class="col-12 col-lg-3 order-last pt-5 pt-lg-0">
+            <hr class="d-lg-none"/>
             {{#if Sidebar.partial}}
                 {{#with Data}}{{>(Sidebar.partial)}}{{else}}{{>(Sidebar.partial)}}{{/with}}
             {{else}}

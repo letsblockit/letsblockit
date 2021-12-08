@@ -49,7 +49,10 @@ var navigationLinks = []struct {
 	Target: "help",
 }, {
 	Name:   "About",
-	Target: "about",
+	Target: "help/about",
+}, {
+	Name:   "Contributing",
+	Target: "help/contributing",
 }}
 
 type Server struct {
@@ -118,6 +121,7 @@ func (s *Server) setupRouter() {
 		"/favicon.ico": "/assets/images/favicon.ico",
 		"/robots.txt":  "/assets/robots.txt",
 		"/":            "/filters",
+		"/about":       "/help/about",
 	}))
 
 	anon := s.echo.Group("")
@@ -131,8 +135,6 @@ func (s *Server) setupRouter() {
 		withAuth.Use(s.buildOryMiddleware())
 	}
 
-	s.addStatic(withAuth, "/about", "about", "About: Let’s block it!")
-
 	withAuth.GET("/help", s.helpPages).Name = "help-main"
 	withAuth.GET("/help/:page", s.helpPages).Name = "help"
 
@@ -142,9 +144,9 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/filters/:name", s.viewFilter).Name = "view-filter"
 	withAuth.POST("/filters/:name", s.viewFilter)
 
+	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
 	withAuth.GET("/user/forms/:type", s.renderKratosForm)
 	withAuth.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
-	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
 	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 }
 
@@ -167,12 +169,6 @@ func shouldReload(c echo.Context) error {
 	return nil
 }
 
-func (s *Server) addStatic(group *echo.Group, url, page, title string) {
-	group.GET(url, func(c echo.Context) error {
-		return s.pages.Render(c, page, s.buildPageContext(c, title))
-	}).Name = page
-}
-
 // redirectToPage the user to another page, either via htmx client-side redirectToPage (form submissions)
 // or http 302 redirectToPage (direct access, js disabled)
 func (s *Server) redirectToPage(c echo.Context, name string, params ...interface{}) error {
@@ -189,12 +185,20 @@ func (s *Server) redirect(c echo.Context, code int, target string) error {
 
 func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	var section string
-	for _, s := range strings.Split(c.Path(), "/") {
-		if s != "" {
-			section = s
-			break
+	switch c.Request().URL.Path {
+	case "/help/about":
+		section = "help/about"
+	case "/help/contributing":
+		section = "help/contributing"
+	default:
+		for _, s := range strings.Split(c.Path(), "/") {
+			if s != "" {
+				section = s
+				break
+			}
 		}
 	}
+
 	context := &pages.Context{
 		CurrentSection:  section,
 		NavigationLinks: navigationLinks,
