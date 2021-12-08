@@ -36,6 +36,12 @@ var helpMenu = []helpSection{{
 }, {
 	Title: "About",
 	Pages: []*helpPageDescription{{
+		Code:  "about",
+		Title: "About this project",
+	}, {
+		Code:  "contributing",
+		Title: "Contributing to the project",
+	}, {
 		Code:  "privacy",
 		Title: "Privacy: where is my data?",
 	}},

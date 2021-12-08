@@ -30,11 +30,15 @@ func (s *ServerTestSuite) TestHomepage_Anonymous() {
 
 func (s *ServerTestSuite) TestAbout_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	s.expectRenderWithContext("about", &pages.Context{
-		CurrentSection:  "about",
+	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
+		CurrentSection:  "help/about",
 		NavigationLinks: navigationLinks,
-		Title:           "About: Let’s block it!",
-		UserLoggedIn:    false,
+		Title:           "About this project",
+		Data: pages.ContextData{
+			"page":          helpMenu[1].Pages[0],
+			"menu_sections": helpMenu,
+		},
+		UserLoggedIn: false,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -42,12 +46,16 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 func (s *ServerTestSuite) TestAbout_Logged() {
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	req.AddCookie(verifiedCookie)
-	s.expectRenderWithContext("about", &pages.Context{
-		CurrentSection:  "about",
+	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
+		CurrentSection:  "help/about",
 		NavigationLinks: navigationLinks,
-		Title:           "About: Let’s block it!",
-		UserID:          s.user,
-		UserLoggedIn:    true,
+		Title:           "About this project",
+		Data: pages.ContextData{
+			"page":          helpMenu[1].Pages[0],
+			"menu_sections": helpMenu,
+		},
+		UserID:       s.user,
+		UserLoggedIn: true,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -56,10 +64,14 @@ func (s *ServerTestSuite) TestAbout_KratosDown() {
 	s.kratosServer.Close() // Kratos is unresponsive, continue anonymous
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	req.AddCookie(verifiedCookie)
-	s.expectRenderWithContext("about", &pages.Context{
-		CurrentSection:  "about",
+	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
+		CurrentSection:  "help/about",
 		NavigationLinks: navigationLinks,
-		Title:           "About: Let’s block it!",
+		Title:           "About this project",
+		Data: pages.ContextData{
+			"page":          helpMenu[1].Pages[0],
+			"menu_sections": helpMenu,
+		},
 	})
 	s.runRequest(req, assertOk)
 }
@@ -70,10 +82,14 @@ func (s *ServerTestSuite) TestAbout_InvalidKratosResponse() {
 		Name:  "ory_session_verified",
 		Value: "invalid ]]]]", // JSON parsing error -> continue anonymous
 	})
-	s.expectRenderWithContext("about", &pages.Context{
-		CurrentSection:  "about",
+	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
+		CurrentSection:  "help/about",
 		NavigationLinks: navigationLinks,
-		Title:           "About: Let’s block it!",
+		Title:           "About this project",
+		Data: pages.ContextData{
+			"page":          helpMenu[1].Pages[0],
+			"menu_sections": helpMenu,
+		},
 	})
 	s.runRequest(req, assertOk)
 }

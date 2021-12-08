@@ -129,6 +129,10 @@ func (s *ServerTestSuite) expectRenderWithSidebar(page, sidebar string, data pag
 	})
 }
 
+func (s *ServerTestSuite) expectRenderWithSidebarAndContext(page, sidebar string, ctx *pages.Context) *gomock.Call {
+	return s.expectP.RenderWithSidebar(gomock.Any(), page, sidebar, gomock.Eq(ctx))
+}
+
 func (s *ServerTestSuite) expectRenderWithContext(page string, ctx *pages.Context) *gomock.Call {
 	return s.expectP.Render(gomock.Any(), page, gomock.Eq(ctx))
 }

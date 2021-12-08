@@ -20,6 +20,10 @@ $headings-margin-bottom: 1rem;
 
 @import "node_modules/bootstrap/scss/bootstrap";
 
+main li:not(.nav-item) {
+   margin-bottom: 0.25rem;
+}
+
 .btn-success, .btw-success:hover, .btn-outline-success:hover {
   color: $white !important;
 }

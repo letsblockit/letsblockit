@@ -1,1 +1,1 @@
-data/pages/about.md
+data/pages/help/help-about.md
