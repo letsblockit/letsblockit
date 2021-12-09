@@ -22,11 +22,11 @@
             <ul class="nav nav-tabs card-header-tabs">
                 {{#each settings.Tabs}}
                     {{#if (eq @root.Data.type Type)}}
-                        <li class="nav-item">
+                        <li class="ms-2 nav-item">
                             <a class="nav-link active" aria-current="true" href="#">{{Title}}</a>
                         </li>
                     {{else}}
-                        <li class="nav-item">
+                        <li class="ms-2 nav-item">
                             <form method="POST" action="{{href "start-flow" Type}}">
                                 <button type="submit" class="nav-link">{{Title}}</button>
                             </form>

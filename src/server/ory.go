@@ -59,7 +59,13 @@ var (
 		"recovery": {
 			Title: "Recover your account",
 			Tabs:  loginTabs,
-			Intro: `Enter your e-mail to receive a recovery link by e-mail.`,
+			Intro: `<div class="alert alert-warning">
+<h5>We are currently investigating a bug leading to the recovery links pointing to the wrong domain</h5>
+In the meantime, please replace
+<code>https://goofy-tereshkova-bmg1nc7mqv.projects.oryapis.com/api/</code> with
+<code>https://letsblock.it/.ory/api/</code> in the link you will receive.
+</div>
+Enter your e-mail below to receive a recovery link by e-mail.`,
 		},
 		"registration": {
 			Title: "Create a new account",
