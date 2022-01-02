@@ -9,22 +9,12 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/pages"
 )
 
 func (s *ServerTestSuite) TestHomepage_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	tList := []string{"one", "two"}
-	fList := []*filters.Filter{{
-		Name: "f1",
-	}}
-	s.expectF.GetTags().Return(tList)
-	s.expectF.GetFilters().Return(fList)
-	s.expectRender("list-filters", pages.ContextData{
-		"filter_tags":       tList,
-		"available_filters": fList,
-	})
+	s.expectRender("landing", nil)
 	s.runRequest(req, assertOk)
 }
 

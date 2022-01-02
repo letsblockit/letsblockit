@@ -1,0 +1,107 @@
+<div class="content ps-lg-5 pe-lg-5 ms-xl-5 me-xl-5">
+    <div class="landing-block row">
+        <div class="col-lg-8 mt-2">
+            <h2>Let's Block It!</h2>
+            <p class="fs-5">
+                Remove low-quality content and useless nags, focus on what matters.
+                Make the web yours again with this collection of community-owned content filters.
+            </p>
+            <p>
+                A companion to the great <a href="https://ublockorigin.com/">uBlock Origin</a>
+                content blocker.
+            </p>
+        </div>
+        <p class="col-lg-4 d-none d-lg-block container landing-icon">
+            <i class="far fa-eye-slash"></i>
+        </p>
+        <hr class="landing-divider">
+    </div>
+    <div class="landing-block row">
+        <p class="col-lg-4 d-none d-lg-block container landing-icon">
+            <i class="fas fa-user-shield"></i>
+        </p>
+        <div class="col-lg-8">
+            <h3>It's all about <strong>you</strong></h3>
+            <p>
+                <strong>Decide what you want to see</strong>: hide
+                that <a href="{{href "view-filter" "search-results"}}">annoying SEO-spam website</a>,
+                that <a href="{{href "view-filter" "nebula-creators"}}">creator on Nebula</a>,
+                that <a href="{{href "view-filter" "youtube-video-title"}}">topic on Youtube</a>,
+                that <a href="{{href "view-filter" "linkedin-posts-by-link"}}">pushy company on Linkedin</a>.
+            </p>
+            <p>
+                <strong>De-clutter your web experience</strong>: hide
+                <a href="{{href "view-filter" "google-search-cleanup"}}">Google contextual results</a> and
+                <a href="{{href "view-filter" "youtube-shorts"}}">Youtube shorts</a>,
+                keep the good stuff only.
+            </p>
+            <p><a class="btn btn-primary" href="{{href "list-filters" ""}}">Browse the filter list</a></p>
+        </div>
+        <hr class="landing-divider">
+    </div>
+    <div class="landing-block row">
+        <div class="col-lg-8">
+            <h3>It's all about <strong>us</strong></h3>
+            <p>
+                Writing content filters is not trivial. Fixing them when websites change is a lot of work.
+            </p>
+            <p>
+                Customizable templates make it easy for everyone to get on board.
+                Broken filter? One contributor can fix it <em>for everyone</em>.
+            </p>
+            <p><a class="btn btn-primary me-2" href="{{href "help" "contributing"}}">Learn how to contribute</a></p>
+        </div>
+        <p class="col-lg-4 d-none d-lg-block container landing-icon">
+            <i class="fas fa-users"></i>
+        </p>
+        <hr class="landing-divider">
+    </div>
+    <div class="landing-block row pb-5">
+        <p class="col-lg-4 d-none d-lg-block container landing-icon">
+            <i class="fas fa-sync-alt"></i>
+        </p>
+        <div class="col-lg-8">
+            <h3>It's on all your devices</h3>
+            <p>
+                Create an account to build your customized filter list, then add it in your browser.
+                Add your <a href="{{href "view-filter" "custom-rules"}}">custom filters</a> for content that is
+                not <a href="{{href "help" "contributing"}}">(yet?)</a> covered by our templates.
+            </p>
+            <p>
+                Your filters will update daily on all your browsers, even on your phone with Firefox Mobile.
+            </p>
+            <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
+                <button class="btn btn-primary" type="submit">Create an account</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    p {
+        text-align: justify;
+    }
+
+    p.landing-icon {
+        font-size: 3rem;
+        padding: 0 2rem;
+        color: #DC926E;
+    }
+
+    div.landing-block:nth-child(even) p.landing-icon {
+        text-align: right;
+    }
+
+    hr.landing-divider {
+        opacity: 1;
+        height: 2rem;
+        margin: 0.5rem -1rem 2.5rem -1rem;
+        background: linear-gradient(#b83e51, white);
+        clip-path: polygon(0 0, 100% 90%, 100% 100%, 0% 10%);
+    }
+
+    div.landing-block:nth-child(odd) hr.landing-divider {
+        background: linear-gradient(white, #b83e51);
+        clip-path: polygon(0 90%, 100% 0, 100% 10%, 0% 100%);
+    }
+</style>

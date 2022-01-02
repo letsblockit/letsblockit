@@ -52,14 +52,7 @@ func (s *Server) listFilters(c echo.Context) error {
 		var active, available []*filters.Filter
 		for _, f := range s.filters.GetFilters() {
 			if tag != "" {
-				matching := false
-				for _, t := range f.Tags {
-					if t == tag {
-						matching = true
-						break
-					}
-				}
-				if !matching {
+				if !f.HasTag(tag) {
 					continue
 				}
 			}

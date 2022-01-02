@@ -51,3 +51,12 @@ func (f *Filter) setDescription(desc string) {
 func (f *filterAndTests) setDescription(desc string) {
 	f.Filter.setDescription(desc)
 }
+
+func (f *Filter) HasTag(tag string) bool {
+	for _, t := range f.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+}

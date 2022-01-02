@@ -120,7 +120,6 @@ func (s *Server) setupRouter() {
 	s.echo.Pre(middleware.Rewrite(map[string]string{
 		"/favicon.ico": "/assets/images/favicon.ico",
 		"/robots.txt":  "/assets/robots.txt",
-		"/":            "/filters",
 		"/about":       "/help/about",
 	}))
 
@@ -135,6 +134,7 @@ func (s *Server) setupRouter() {
 		withAuth.Use(s.buildOryMiddleware())
 	}
 
+	withAuth.GET("/", s.landingPageHandler).Name = "landing"
 	withAuth.GET("/help", s.helpPages).Name = "help-main"
 	withAuth.GET("/help/:page", s.helpPages).Name = "help"
 
@@ -169,8 +169,8 @@ func shouldReload(c echo.Context) error {
 	return nil
 }
 
-// redirectToPage the user to another page, either via htmx client-side redirectToPage (form submissions)
-// or http 302 redirectToPage (direct access, js disabled)
+// redirectToPage the user to another page, either via htmx client-side redirect (form submissions)
+// or http 302 redirect (direct access, js disabled)
 func (s *Server) redirectToPage(c echo.Context, name string, params ...interface{}) error {
 	return s.redirect(c, http.StatusFound, s.echo.Reverse(name, params...))
 }
