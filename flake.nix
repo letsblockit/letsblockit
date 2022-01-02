@@ -20,7 +20,7 @@
         packages.letsblockit = buildGoModule {
           pname = "letsblockit";
           version = "1.0";
-          vendorSha256 = "sha256-60k5NfPfZgEbL2THCXuMCU5EXMIMLHHiLQwp1qBJueA=";
+          vendorSha256 = "sha256-ZR/vfl7uDEnapYI3VBcWHMhZC+8vhh4OYzX+KTM80gI=";
           src = ./.;
           doCheck = false;
         };
