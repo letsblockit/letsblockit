@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -18,6 +19,7 @@ const (
 	oryCookieNamePrefix = "ory_session_"
 	oryGetFlowPattern   = "/api/kratos/public/self-service/%s/flows?id=%s"
 	oryStartFlowPattern = "/api/kratos/public/self-service/%s/browser"
+	oryReturnToPattern  = "?return_to=%s"
 	oryLogoutInfoPath   = "/api/kratos/public/self-service/logout/browser"
 	oryWhoamiPath       = "/api/kratos/public/sessions/whoami"
 )
@@ -183,6 +185,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 // of direct GET links to avoid search engines and preloading logics starting Kratos flows.
 func (s *Server) startKratosFlow(c echo.Context) error {
 	target := c.Param("type")
+	var returnToReferer bool
 
 	switch target {
 	case "logout":
@@ -192,13 +195,21 @@ func (s *Server) startKratosFlow(c echo.Context) error {
 		}
 		return s.redirect(c, http.StatusSeeOther, target)
 	case "loginOrRegistration":
+		returnToReferer = true
 		if _, err := c.Cookie(hasAccountCookieName); err == nil {
 			target = "login"
 		} else {
 			target = "registration"
 		}
+	case "login", "registration":
+		returnToReferer = true
 	}
-	return s.redirect(c, http.StatusSeeOther, s.options.KratosURL+fmt.Sprintf(oryStartFlowPattern, target))
+
+	redirect := s.options.KratosURL + fmt.Sprintf(oryStartFlowPattern, target)
+	if returnToReferer && refererInDomain(c) {
+		redirect += fmt.Sprintf(oryReturnToPattern, c.Request().Referer())
+	}
+	return s.redirect(c, http.StatusSeeOther, redirect)
 }
 
 func (s *Server) queryKratos(c echo.Context, typeTag, endpoint string, body interface{}) error {
@@ -230,4 +241,9 @@ func getUser(c echo.Context) *oryUser {
 		return u
 	}
 	return nil
+}
+
+func refererInDomain(c echo.Context) bool {
+	referer, err := url.Parse(c.Request().Referer())
+	return err == nil && referer.Host == c.Request().Host
 }

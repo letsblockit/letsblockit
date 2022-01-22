@@ -110,6 +110,18 @@ func (s *ServerTestSuite) TestStartKratosFlow_Login() {
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
 }
 
+func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnTo() {
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", nil)
+	req.Header.Set("Referer", "https://myserver/page")
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser?return_to=https://myserver/page"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_Login_BadReturnTo() {
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", nil)
+	req.Header.Set("Referer", "https://anotherserver/page")
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
+}
+
 func (s *ServerTestSuite) TestStartKratosFlow_Logout() {
 	req := httptest.NewRequest(http.MethodPost, "/user/start/logout", nil)
 	req.AddCookie(verifiedCookie)
