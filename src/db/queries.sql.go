@@ -130,6 +130,37 @@ func (q *Queries) GetInstanceForUserAndFilter(ctx context.Context, arg GetInstan
 	return params, err
 }
 
+const getInstanceStats = `-- name: GetInstanceStats :many
+SELECT COUNT(*), filter_name
+FROM filter_instances
+GROUP BY filter_name
+`
+
+type GetInstanceStatsRow struct {
+	Count      int64
+	FilterName string
+}
+
+func (q *Queries) GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, error) {
+	rows, err := q.db.Query(ctx, getInstanceStats)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetInstanceStatsRow
+	for rows.Next() {
+		var i GetInstanceStatsRow
+		if err := rows.Scan(&i.Count, &i.FilterName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getInstancesForList = `-- name: GetInstancesForList :many
 SELECT filter_name, params
 FROM filter_instances
@@ -205,20 +236,18 @@ func (q *Queries) GetListForUser(ctx context.Context, userID uuid.UUID) (GetList
 
 const getStats = `-- name: GetStats :one
 SELECT (SELECT COUNT(*) FROM filter_lists)                          as list_count,
-       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count,
-       (SELECT COUNT(*) FROM filter_instances)                      as instance_count
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count
 `
 
 type GetStatsRow struct {
 	ListCount       int64
 	ActiveListCount int64
-	InstanceCount   int64
 }
 
 func (q *Queries) GetStats(ctx context.Context) (GetStatsRow, error) {
 	row := q.db.QueryRow(ctx, getStats)
 	var i GetStatsRow
-	err := row.Scan(&i.ListCount, &i.ActiveListCount, &i.InstanceCount)
+	err := row.Scan(&i.ListCount, &i.ActiveListCount)
 	return i, err
 }
 

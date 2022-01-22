@@ -78,5 +78,9 @@ ORDER BY filter_name ASC;
 
 -- name: GetStats :one
 SELECT (SELECT COUNT(*) FROM filter_lists)                          as list_count,
-       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count,
-       (SELECT COUNT(*) FROM filter_instances)                      as instance_count;
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count;
+
+-- name: GetInstanceStats :many
+SELECT COUNT(*), filter_name
+FROM filter_instances
+GROUP BY filter_name;

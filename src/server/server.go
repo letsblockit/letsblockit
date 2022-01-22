@@ -270,7 +270,16 @@ func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
 		}
 		_ = dsd.Gauge("letsblockit.total_list_count", float64(stats.ListCount), nil, 1)
 		_ = dsd.Gauge("letsblockit.active_list_count", float64(stats.ActiveListCount), nil, 1)
-		_ = dsd.Gauge("letsblockit.instance_count", float64(stats.InstanceCount), nil, 1)
+
+		instances, err := store.GetInstanceStats(context.Background())
+		if err != nil {
+			log.Error("cannot collect db stats: " + err.Error())
+			return
+		}
+		for _, i := range instances {
+			tags := []string{"filter_name:" + i.FilterName}
+			_ = dsd.Gauge("letsblockit.instance_count", float64(i.Count), tags, 1)
+		}
 	}
 
 	_ = dsd.Incr("letsblockit.startup", nil, 1)
