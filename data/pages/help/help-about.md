@@ -24,6 +24,12 @@ to keep them synced in all your browsers.
 
 ## Where do I start?
 
+You can use [our filters](https://letsblock.it/filters) without an account, just set your options and
+copy the result in your uBlock Origin settings (in the `My rules` tab). But we recommend creating an account to:
+
+- benefit from the community fixes when the target websites are updated
+- sync your filters on several devices
+
 It's as easy as 1-2-3... and 4:
 
 1. Install [uBlock Origin](https://ublockorigin.com/) if you don't already have it,
