@@ -9,13 +9,20 @@
             Preview
         </div>
     {{else}}
-        <div id="output-header" class="card-header d-flex justify-content-between align-items-center">
-            Copy this to your uBlock filters:
-            <button type="button" class="btn btn-sm btn-outline-success" onclick="copyFilterOutput(this);">
-                <i id="output-copy-icon" class="far fa-clipboard me-md-1"></i>
-                <span id="output-copy-text" class="d-none d-md-inline">Copy to clipboard</span>
+        <form method="POST" class="card-header" action="{{href "start-flow" "loginOrRegistration"}}">
+            <button type="button" class="btn btn-sm btn-outline-success me-1" onclick="copyFilterOutput(this);">
+                <i id="output-copy-icon" class="far fa-clipboard me-1"></i>
+                <span id="output-copy-text">Copy this to your uBlock filters</span>
             </button>
-        </div>
+            <span class="align-middle">or</span>
+            <button type="submit" class="btn btn-link p-0">
+                {{#if @root.UserHasAccount}}
+                    login to save this filter to your list
+                {{else}}
+                    create an account and start building your custom filter list
+                {{/if}}
+            </button>
+        </form>
     {{/if}}
     <div class="card-body">
         <code id="output-code" class="card-text text-primary" style="white-space:pre-wrap">{{rendered}}</code>

@@ -107,15 +107,6 @@
                             </button>
                         {{else}}
                             <button type="submit" name="__render" class="btn btn-primary">Render</button>
-                            <button type="submit" class="ms-2 me-2 btn btn-link"
-                                    formaction="{{href "start-flow" "loginOrRegistration"}}"
-                                    hx-post="{{href "start-flow" "loginOrRegistration"}}">
-                                {{#if @root.UserHasAccount}}
-                                    Login to save this filter to your list
-                                {{else}}
-                                    Create an account and start building your list
-                                {{/if}}
-                            </button>
                         {{/if}}
                         <div class="ms-2 htmx-indicator spinner-border text-secondary" role="status">
                             <span class="visually-hidden">Loading...</span>
