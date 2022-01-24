@@ -9,6 +9,10 @@ params:
     description: Generate rules for Duck Duck Go
     type: checkbox
     default: true
+  - name: startpage
+    description: Generate rules for Startpage.com
+    type: checkbox
+    default: false
   - name: sites
     description: Sites to hide
     type: list
@@ -16,6 +20,7 @@ params:
 tags:
   - google
   - duckduckgo
+  - startpage
 template: |
   {{#each sites}}
   {{#if ../google}}
@@ -25,6 +30,9 @@ template: |
   {{#if ../duckduckgo}}
   duckduckgo.com##a.result__a[href*="{{this}}"]:upward(3)
   {{/if}}
+  {{#if ../startpage}}
+  startpage.com##.w-gl__result:has(a[href*="{{this}}"])
+  {{/if}}
   {{/each}}
 tests:
   - params: {}
@@ -32,14 +40,17 @@ tests:
   - params:
       google: true
       duckduckgo: true
+      startpage: true
       sites: [ ".pinterest.", "snapcraft.io/install" ]
     output: |
       google.*##.g:has(a[href*=".pinterest."])
       google.*##a[href*=".pinterest."]:upward(1)
       duckduckgo.com##a.result__a[href*=".pinterest."]:upward(3)
+      startpage.com##.w-gl__result:has(a[href*=".pinterest."])
       google.*##.g:has(a[href*="snapcraft.io/install"])
       google.*##a[href*="snapcraft.io/install"]:upward(1)
       duckduckgo.com##a.result__a[href*="snapcraft.io/install"]:upward(3)
+      startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
 ---
 
 Some websites are famous for being better at [Search Engine Optimization](https://news.ycombinator.com/item?id=25538586) than providing useful content. While there is not much we can do ourselves to avoid SEO abuse, we can cleanup the search results that are returned to us by search engines.
