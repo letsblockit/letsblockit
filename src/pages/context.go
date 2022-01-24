@@ -12,6 +12,7 @@ type Context struct {
 	Page         *page
 	Sidebar      *page
 	NoBoost      bool
+	MainDomain   bool
 
 	CurrentSection  string
 	NavigationLinks interface{}

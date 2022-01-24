@@ -20,11 +20,14 @@ import (
 
 var ErrDryRunFinished = errors.New("dry run finished")
 
-const loggerFormat = `{"http":{"host":"${host}","remote_ip":"${remote_ip}",` +
-	`"method":"${method}","uri":"${uri}","path":"${path}",` +
-	`"user_agent":"${user_agent}","referer":"${referer}","is_htmx":"${header:HX-Request}",` +
-	`"status":"${status}","error":"${error}","latency":${latency},` +
-	`"bytes_in":${bytes_in},"bytes_out":${bytes_out}}}` + "\n"
+const (
+	loggerFormat = `{"http":{"host":"${host}","remote_ip":"${remote_ip}",` +
+		`"method":"${method}","uri":"${uri}","path":"${path}",` +
+		`"user_agent":"${user_agent}","referer":"${referer}","is_htmx":"${header:HX-Request}",` +
+		`"status":"${status}","error":"${error}","latency":${latency},` +
+		`"bytes_in":${bytes_in},"bytes_out":${bytes_out}}}` + "\n"
+	mainDomain = "letsblock.it"
+)
 
 type Options struct {
 	Address      string `default:"127.0.0.1:8765" help:"address to listen to"`
@@ -203,6 +206,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		CurrentSection:  section,
 		NavigationLinks: navigationLinks,
 		Title:           title,
+		MainDomain:      c.Request().Host == mainDomain,
 	}
 	if _, err := c.Cookie(hasAccountCookieName); err == nil {
 		context.UserHasAccount = true
