@@ -89,7 +89,7 @@ func (s *ServerTestSuite) SetupTest() {
 		case "/api/kratos/public/self-service/login/flows":
 			switch r.URL.RawQuery {
 			case "id=123456":
-				_, err = fmt.Fprint(w, `{"ui":{"a": "1", "b": "2"}}`)
+				_, err = fmt.Fprint(w, `{"ui":{"a": "1", "b": "2"},"return_to":"https://target"}`)
 			case "id=666":
 				_, err = fmt.Fprint(w, `{"invalid": true}`)
 			}

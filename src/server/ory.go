@@ -22,6 +22,7 @@ const (
 	oryReturnToPattern  = "?return_to=%s"
 	oryLogoutInfoPath   = "/api/kratos/public/self-service/logout/browser"
 	oryWhoamiPath       = "/api/kratos/public/sessions/whoami"
+	returnToKey         = "return_to"
 )
 
 var proxyClient = http.Client{
@@ -172,6 +173,9 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 		hc.Add("type", formType)
 		hc.Add("ui", ui)
 		hc.Add("settings", formSettings)
+		if rto, ok := body[returnToKey]; ok {
+			hc.Add(returnToKey, rto)
+		}
 		return hc, nil
 	}()
 	if err != nil {
@@ -185,7 +189,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 // of direct GET links to avoid search engines and preloading logics starting Kratos flows.
 func (s *Server) startKratosFlow(c echo.Context) error {
 	target := c.Param("type")
-	var returnToReferer bool
+	var allowReturnTo bool
 
 	switch target {
 	case "logout":
@@ -195,19 +199,21 @@ func (s *Server) startKratosFlow(c echo.Context) error {
 		}
 		return s.redirect(c, http.StatusSeeOther, target)
 	case "loginOrRegistration":
-		returnToReferer = true
+		allowReturnTo = true
 		if _, err := c.Cookie(hasAccountCookieName); err == nil {
 			target = "login"
 		} else {
 			target = "registration"
 		}
 	case "login", "registration":
-		returnToReferer = true
+		allowReturnTo = true
 	}
 
 	redirect := s.options.KratosURL + fmt.Sprintf(oryStartFlowPattern, target)
-	if returnToReferer && refererInDomain(c) {
-		redirect += fmt.Sprintf(oryReturnToPattern, c.Request().Referer())
+	if allowReturnTo {
+		if returnTo, inDomain := computeReturnTo(c); inDomain {
+			redirect += fmt.Sprintf(oryReturnToPattern, returnTo)
+		}
 	}
 	return s.redirect(c, http.StatusSeeOther, redirect)
 }
@@ -243,7 +249,17 @@ func getUser(c echo.Context) *oryUser {
 	return nil
 }
 
-func refererInDomain(c echo.Context) bool {
-	referer, err := url.Parse(c.Request().Referer())
-	return err == nil && referer.Host == c.Request().Host
+// computeReturnTo looks into the form input for a return_to value and falls back to the referer.
+// It also checks that the return to is in the current domain to avoid phishing.
+func computeReturnTo(c echo.Context) (returnTo string, inDomain bool) {
+	if values, err := c.FormParams(); err == nil {
+		returnTo = values.Get(returnToKey)
+	}
+	if returnTo == "" {
+		returnTo = c.Request().Referer()
+	}
+
+	parsed, err := url.Parse(returnTo)
+	inDomain = err == nil && parsed.Host == c.Request().Host
+	return
 }

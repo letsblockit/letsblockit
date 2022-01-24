@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/xvello/letsblockit/src/pages"
 )
@@ -65,7 +68,8 @@ func (s *ServerTestSuite) TestRenderKratosForm_OK() {
 			"a": "1",
 			"b": "2",
 		},
-		"settings": supportedForms["login"],
+		"return_to": "https://target",
+		"settings":  supportedForms["login"],
 	})
 	s.runRequest(req, assertOk)
 }
@@ -110,13 +114,23 @@ func (s *ServerTestSuite) TestStartKratosFlow_Login() {
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
 }
 
-func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnTo() {
+func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromForm() {
+	form := make(url.Values)
+	form.Add("return_to", "https://myserver/page")
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login",
+		strings.NewReader(form.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	req.Header.Set("Referer", "https://myserver/ignore")
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser?return_to=https://myserver/page"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromReferer() {
 	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", nil)
 	req.Header.Set("Referer", "https://myserver/page")
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser?return_to=https://myserver/page"))
 }
 
-func (s *ServerTestSuite) TestStartKratosFlow_Login_BadReturnTo() {
+func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToNotInDomain() {
 	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", nil)
 	req.Header.Set("Referer", "https://anotherserver/page")
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))

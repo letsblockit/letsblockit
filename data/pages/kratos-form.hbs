@@ -28,6 +28,9 @@
                     {{else}}
                         <li class="ms-2 nav-item">
                             <form method="POST" action="{{href "start-flow" Type}}">
+                                {{#with @root.Data.return_to}}
+                                    <input type="hidden" name="return_to" value="{{.}}">
+                                {{/with}}
                                 <button type="submit" class="nav-link">{{Title}}</button>
                             </form>
                         </li>
