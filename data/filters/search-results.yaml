@@ -1,5 +1,4 @@
 title: Hide websites from search results
-blurb: No pinterest, I don't need 900+ ideas.
 params:
   - name: google
     description: Generate rules for Google Search

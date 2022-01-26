@@ -1,5 +1,4 @@
 title: Hide Linkedin posts by link target
-blurb: I don't care that you are hiring.
 params:
   - name: sites
     description: Sites to hide

@@ -1,5 +1,4 @@
 title: Hello filter
-blurb: hi
 template: "Hello"
 tests:
   - output: "Hello"

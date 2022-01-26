@@ -1,5 +1,4 @@
 title: Cleanup Google search result pages
-blurb: Let's get to the point please.
 params:
   - name: related-questions
     description: Hide the "People also ask" contextual content

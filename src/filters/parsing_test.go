@@ -11,7 +11,6 @@ import (
 
 var expectedFilter = Filter{
 	Name:  "simple",
-	Blurb: "Filter blurb",
 	Title: "Filter title",
 	Params: []FilterParam{
 		{
@@ -105,7 +104,6 @@ func TestValidateFilter(t *testing.T) {
 		"simple_ok": {
 			input: &Filter{
 				Name:        "name",
-				Blurb:       "hi",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
@@ -116,7 +114,6 @@ func TestValidateFilter(t *testing.T) {
 			input: &Filter{},
 			err: vErrs{
 				"Filter.Name":        "required",
-				"Filter.Blurb":       "required",
 				"Filter.Title":       "required",
 				"Filter.Template":    "required",
 				"Filter.Description": "required",
@@ -125,7 +122,6 @@ func TestValidateFilter(t *testing.T) {
 		"param_ok": {
 			input: &Filter{
 				Name:        "name",
-				Blurb:       "hi",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
@@ -154,7 +150,6 @@ func TestValidateFilter(t *testing.T) {
 		"param_bad_type": {
 			input: &Filter{
 				Name:        "name",
-				Blurb:       "hi",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
@@ -175,7 +170,6 @@ func TestValidateFilter(t *testing.T) {
 		"param_empty": {
 			input: &Filter{
 				Name:        "name",
-				Blurb:       "hi",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
@@ -193,7 +187,6 @@ func TestValidateFilter(t *testing.T) {
 		"invalid_tags": {
 			input: &Filter{
 				Name:        "name",
-				Blurb:       "hi",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",

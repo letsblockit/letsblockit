@@ -1,5 +1,4 @@
 title: Add custom blocking rules
-blurb: You are the boss today.
 params:
   - name: rules
     description: Custom rules

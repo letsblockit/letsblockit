@@ -14,8 +14,8 @@ Each file is split into two sections, separated by a `---` line:
 
 ## YAML properties
 
-Let's start with the easy properties first: `title`, `blurb` (subtitle) and `tags` (a list) are self-explanatory, they
-are used in the filter list page, and at the top of the filter's page.
+Let's start with the easy properties first: `title` and `tags` (a list) are self-explanatory, they
+are used in the filter list and the filter view pages.
 
 Then comes the `params` list. It describes what parameters the filter accepts. Each entry must have:
 

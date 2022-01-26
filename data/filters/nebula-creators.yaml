@@ -1,5 +1,4 @@
 title: Hide Nebula videos from some creators
-blurb: One apple a day keeps me away
 params:
   - name: creators
     description: Creators to filter out

@@ -1,5 +1,4 @@
 title: Hide Youtube videos by title
-blurb: Remove content you are not interested in.
 params:
   - name: keywords
     description: Words to search for

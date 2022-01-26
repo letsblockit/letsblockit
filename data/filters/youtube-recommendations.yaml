@@ -1,5 +1,4 @@
 title: Hide Youtube recommended videos
-blurb: Just my subscriptions, please.
 params:
   - name: related-videos
     description: Hide the related videos sidebar when watching a video

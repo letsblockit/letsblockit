@@ -10,7 +10,6 @@ type filter interface {
 
 type Filter struct {
 	Name        string        `validate:"required"`
-	Blurb       string        `validate:"required"`
 	Title       string        `validate:"required"`
 	Params      []FilterParam `validate:"dive"`
 	Tags        []string      `validate:"dive,alphaunicode"`
