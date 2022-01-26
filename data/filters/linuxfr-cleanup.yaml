@@ -1,0 +1,38 @@
+title: Cleanup the LinuxFr interface
+params:
+  - name: homepage-pinned
+    description: Hide the pinned article at the top of the homepage
+    type: checkbox
+    default: true
+  - name: homepage-banner
+    description: Hide the advertising banner on the homepage
+    type: checkbox
+    default: false
+tags:
+  - linuxfr
+template: |
+  {{#if homepage-pinned}}
+  linuxfr.org###phare
+  {{/if}}
+  {{#if homepage-banner}}
+  linuxfr.org###phare + aside.banner
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      homepage-pinned: true
+    output: |
+      linuxfr.org###phare
+  - params:
+      homepage-pinned: true
+      homepage-banner: true
+    output: |
+      linuxfr.org###phare
+      linuxfr.org###phare + aside.banner
+---
+
+The LinuxFR.org homepage has a low information density, with the most recent article usually barely above the fold.
+
+This filter allows to hide the two elements at the top of the homepage, to make the most recent article more obvious
+to find.
