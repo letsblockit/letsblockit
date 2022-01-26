@@ -1,0 +1,38 @@
+title: Hide Youtube recommended videos
+blurb: Just my subscriptions, please.
+params:
+  - name: related-videos
+    description: Hide the related videos sidebar when watching a video
+    type: checkbox
+    default: true
+  - name: homepage-recommendations
+    description: Hide video suggestions on the homepage
+    type: checkbox
+    default: true
+tags:
+  - youtube
+attribution:
+  - "@link2xt"
+template: |
+  {{#if related-videos}}
+  www.youtube.com###related
+  {{/if}}
+  {{#if homepage-recommendations}}
+  www.youtube.com##ytd-browse[page-subtype="home"]
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      related-videos: true
+    output: |
+      www.youtube.com###related
+  - params:
+      related-videos: true
+      homepage-recommendations: true
+    output: |
+      www.youtube.com###related
+      www.youtube.com##ytd-browse[page-subtype="home"]
+---
+The Youtube algorithm is not relevant for you? Just stick to your subscriptions,
+and keep clickbait out of your screen.
