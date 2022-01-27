@@ -34,14 +34,24 @@ func (s *Server) listFilters(c echo.Context) error {
 	hc.Add("filter_tags", s.filters.GetTags())
 	var activeNames map[string]struct{}
 	if hc.UserLoggedIn {
+		var updatedFilters map[string]bool
 		activeNames = make(map[string]struct{})
-		names, _ := s.store.GetActiveFiltersForUser(c.Request().Context(), hc.UserID)
-		for _, n := range names {
-			activeNames[n] = struct{}{}
+		instances, _ := s.store.GetActiveFiltersForUser(c.Request().Context(), hc.UserID)
+		for _, instance := range instances {
+			activeNames[instance.FilterName] = struct{}{}
+			if s.hasMissingParams(instance) {
+				if updatedFilters == nil {
+					updatedFilters = make(map[string]bool)
+				}
+				updatedFilters[instance.FilterName] = true
+			}
 		}
-		if len(names) > 0 {
+		if len(instances) > 0 {
 			downloaded, _ := s.store.HasUserDownloadedList(c.Request().Context(), hc.UserID)
 			hc.Add("list_downloaded", downloaded)
+		}
+		if len(updatedFilters) > 0 {
+			hc.Add("updated_filters", updatedFilters)
 		}
 	}
 
@@ -278,4 +288,23 @@ func lowerFirst(s string) string {
 	}
 	r, n := utf8.DecodeRuneInString(s)
 	return string(unicode.ToLower(r)) + s[n:]
+}
+
+func (s *Server) hasMissingParams(instance db.GetActiveFiltersForUserRow) bool {
+	filter, err := s.filters.GetFilter(instance.FilterName)
+	if err != nil || len(filter.Params) == 0 {
+		return false
+	}
+
+	params := make(map[string]interface{})
+	if err := instance.Params.AssignTo(&params); err != nil {
+		return true
+	}
+	for _, p := range filter.Params {
+		if _, found := params[p.Name]; !found {
+			return true
+		}
+	}
+
+	return false
 }

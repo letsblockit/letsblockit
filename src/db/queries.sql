@@ -41,7 +41,7 @@ SET downloaded = true
 WHERE id = $1;
 
 -- name: GetActiveFiltersForUser :many
-SELECT DISTINCT filter_name
+SELECT filter_name, params
 FROM filter_instances
 WHERE user_id = $1;
 

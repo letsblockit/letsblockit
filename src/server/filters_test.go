@@ -59,15 +59,22 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 
 	tList := []string{"tag1", "tag2", "tag3"}
 	s.expectF.GetTags().Return(tList)
+	s.expectF.GetFilter("filter1").Return(filter1, nil)
+	s.expectF.GetFilter("filter2").Return(filter2, nil)
 	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
-	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]string{"filter2"}, nil)
+	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]db.GetActiveFiltersForUserRow{{
+		FilterName: "filter1",
+	}, {
+		FilterName: "filter2",
+	}}, nil)
 	s.expectQ.HasUserDownloadedList(gomock.Any(), s.user).Return(true, nil)
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       tList,
-		"active_filters":    []*filters.Filter{filter2},
-		"available_filters": []*filters.Filter{filter1, filter3},
+		"active_filters":    []*filters.Filter{filter1, filter2},
+		"available_filters": []*filters.Filter{filter3},
 		"list_downloaded":   true,
+		"updated_filters":   map[string]bool{"filter2": true},
 	})
 	s.runRequest(req, assertOk)
 }
@@ -79,14 +86,17 @@ func (s *ServerTestSuite) TestListFilters_ByTag() {
 	tList := []string{"tag1", "tag2", "tag3"}
 	s.expectF.GetTags().Return(tList)
 	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
-	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]string{"filter2"}, nil)
+	s.expectF.GetFilter("filter1").Return(filter1, nil)
+	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]db.GetActiveFiltersForUserRow{{
+		FilterName: "filter1",
+	}}, nil)
 	s.expectQ.HasUserDownloadedList(gomock.Any(), s.user).Return(false, nil)
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       tList,
 		"tag_search":        "tag2",
-		"active_filters":    []*filters.Filter{filter2},
-		"available_filters": []*filters.Filter{filter1},
+		"active_filters":    []*filters.Filter{filter1},
+		"available_filters": []*filters.Filter{filter2},
 		"list_downloaded":   false,
 	})
 	s.runRequest(req, assertOk)

@@ -15,7 +15,7 @@ type Querier interface {
 	CreateInstanceForUserAndFilter(ctx context.Context, arg CreateInstanceForUserAndFilterParams) error
 	CreateListForUser(ctx context.Context, userID uuid.UUID) (uuid.UUID, error)
 	DeleteInstanceForUserAndFilter(ctx context.Context, arg DeleteInstanceForUserAndFilterParams) error
-	GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]string, error)
+	GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]GetActiveFiltersForUserRow, error)
 	GetInstanceForUserAndFilter(ctx context.Context, arg GetInstanceForUserAndFilterParams) (pgtype.JSONB, error)
 	GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, error)
 	GetInstancesForList(ctx context.Context, filterListID int32) ([]GetInstancesForListRow, error)

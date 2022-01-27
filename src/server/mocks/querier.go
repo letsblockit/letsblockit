@@ -111,10 +111,10 @@ func (mr *MockQuerierMockRecorder) DeleteInstanceForUserAndFilter(ctx, arg inter
 }
 
 // GetActiveFiltersForUser mocks base method.
-func (m *MockQuerier) GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]string, error) {
+func (m *MockQuerier) GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]db.GetActiveFiltersForUserRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetActiveFiltersForUser", ctx, userID)
-	ret0, _ := ret[0].([]string)
+	ret0, _ := ret[0].([]db.GetActiveFiltersForUserRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

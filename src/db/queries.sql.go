@@ -87,24 +87,29 @@ func (q *Queries) DeleteInstanceForUserAndFilter(ctx context.Context, arg Delete
 }
 
 const getActiveFiltersForUser = `-- name: GetActiveFiltersForUser :many
-SELECT DISTINCT filter_name
+SELECT filter_name, params
 FROM filter_instances
 WHERE user_id = $1
 `
 
-func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]string, error) {
+type GetActiveFiltersForUserRow struct {
+	FilterName string
+	Params     pgtype.JSONB
+}
+
+func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]GetActiveFiltersForUserRow, error) {
 	rows, err := q.db.Query(ctx, getActiveFiltersForUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []string
+	var items []GetActiveFiltersForUserRow
 	for rows.Next() {
-		var filter_name string
-		if err := rows.Scan(&filter_name); err != nil {
+		var i GetActiveFiltersForUserRow
+		if err := rows.Scan(&i.FilterName, &i.Params); err != nil {
 			return nil, err
 		}
-		items = append(items, filter_name)
+		items = append(items, i)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
