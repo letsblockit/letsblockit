@@ -272,7 +272,8 @@ func (q *Queries) HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (
 
 const markListDownloaded = `-- name: MarkListDownloaded :exec
 UPDATE filter_lists
-SET downloaded = true
+SET downloaded = true,
+    downloaded_at = NOW()
 WHERE id = $1
 `
 

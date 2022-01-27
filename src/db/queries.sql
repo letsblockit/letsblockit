@@ -37,7 +37,8 @@ LIMIT 1;
 
 -- name: MarkListDownloaded :exec
 UPDATE filter_lists
-SET downloaded = true
+SET downloaded = true,
+    downloaded_at = NOW()
 WHERE id = $1;
 
 -- name: GetActiveFiltersForUser :many

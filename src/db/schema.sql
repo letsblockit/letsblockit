@@ -12,6 +12,8 @@ CREATE UNIQUE INDEX idx_lists_by_token ON filter_lists USING btree (token);
 CREATE UNIQUE INDEX idx_lists_by_user ON filter_lists USING btree (user_id);
 ALTER TABLE filter_lists
     ADD COLUMN downloaded bool NOT NULL DEFAULT FALSE;
+ALTER TABLE filter_lists
+    ADD COLUMN downloaded_at timestamp;
 
 CREATE TABLE filter_instances
 (

@@ -35,7 +35,7 @@ func (s *Server) renderList(c echo.Context) error {
 			return err
 		}
 
-		if !list.Downloaded && c.Request().Header.Get("Referer") == "" {
+		if c.Request().Header.Get("Referer") == "" {
 			err = q.MarkListDownloaded(ctx, list.ID)
 			if err != nil {
 				return err
