@@ -139,6 +139,7 @@ func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 		"rendered":     "output",
 		"params":       params,
 		"has_instance": true,
+		"new_params":   map[string]bool{"three": true},
 	})
 	s.runRequest(req, assertOk)
 }

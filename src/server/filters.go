@@ -123,11 +123,24 @@ func (s *Server) viewFilter(c echo.Context) error {
 		}
 	}
 
-	// If no config found, inject the default ones
-	if params == nil && len(filter.Params) > 0 {
-		params = make(map[string]interface{})
-		for _, p := range filter.Params {
-			params[p.Name] = p.Default
+	if params == nil {
+		// If no params found, inject the default values
+		if len(filter.Params) > 0 {
+			params = make(map[string]interface{})
+			for _, p := range filter.Params {
+				params[p.Name] = p.Default
+			}
+		}
+	} else {
+		// Check whether new params have been added
+		newParams := make(map[string]bool)
+		for _, param := range filter.Params {
+			if _, found := params[param.Name]; !found {
+				newParams[param.Name] = true
+			}
+		}
+		if len(newParams) > 0 {
+			hc.Add("new_params", newParams)
 		}
 	}
 
