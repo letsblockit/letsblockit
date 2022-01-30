@@ -127,7 +127,7 @@ func TestServerDryRun(t *testing.T) {
 		DryRun:       true,
 		Reload:       true,
 		Statsd:       "localhost:8125",
-		DatabaseName: "lbi_tests",
+		DatabaseName: "letsblockit",
 		DatabaseHost: pgHost,
 	})
 	assert.Equal(t, ErrDryRunFinished, server.Start())
