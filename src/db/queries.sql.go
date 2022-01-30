@@ -267,19 +267,21 @@ func (q *Queries) GetListForUser(ctx context.Context, userID uuid.UUID) (GetList
 }
 
 const getStats = `-- name: GetStats :one
-SELECT (SELECT COUNT(*) FROM filter_lists)                          as list_count,
-       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count
+SELECT (SELECT COUNT(*) FROM filter_lists)                                                  as lists_total,
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE)                         as lists_active,
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded_at >= NOW() - INTERVAL '7 DAYS') as lists_fresh
 `
 
 type GetStatsRow struct {
-	ListCount       int64
-	ActiveListCount int64
+	ListsTotal  int64
+	ListsActive int64
+	ListsFresh  int64
 }
 
 func (q *Queries) GetStats(ctx context.Context) (GetStatsRow, error) {
 	row := q.db.QueryRow(ctx, getStats)
 	var i GetStatsRow
-	err := row.Scan(&i.ListCount, &i.ActiveListCount)
+	err := row.Scan(&i.ListsTotal, &i.ListsActive, &i.ListsFresh)
 	return i, err
 }
 

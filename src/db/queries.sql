@@ -78,8 +78,9 @@ WHERE filter_list_id = $1
 ORDER BY filter_name ASC;
 
 -- name: GetStats :one
-SELECT (SELECT COUNT(*) FROM filter_lists)                          as list_count,
-       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE) as active_list_count;
+SELECT (SELECT COUNT(*) FROM filter_lists)                                                  as lists_total,
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE)                         as lists_active,
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded_at >= NOW() - INTERVAL '7 DAYS') as lists_fresh;
 
 -- name: GetInstanceStats :many
 SELECT COUNT(*), filter_name

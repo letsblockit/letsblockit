@@ -279,8 +279,9 @@ func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
 			log.Error("cannot collect db stats: " + err.Error())
 			return
 		}
-		_ = dsd.Gauge("letsblockit.total_list_count", float64(stats.ListCount), nil, 1)
-		_ = dsd.Gauge("letsblockit.active_list_count", float64(stats.ActiveListCount), nil, 1)
+		_ = dsd.Gauge("letsblockit.total_list_count", float64(stats.ListsTotal), nil, 1)
+		_ = dsd.Gauge("letsblockit.active_list_count", float64(stats.ListsActive), nil, 1)
+		_ = dsd.Gauge("letsblockit.fresh_list_count", float64(stats.ListsFresh), nil, 1)
 
 		instances, err := store.GetInstanceStats(context.Background())
 		if err != nil {
