@@ -30,14 +30,14 @@ WHERE filter_lists.user_id = $1
 LIMIT 1;
 
 -- name: GetListForToken :one
-SELECT id, downloaded
+SELECT id, user_id, downloaded
 FROM filter_lists
 WHERE token = $1
 LIMIT 1;
 
 -- name: MarkListDownloaded :exec
 UPDATE filter_lists
-SET downloaded = true,
+SET downloaded    = true,
     downloaded_at = NOW()
 WHERE id = $1;
 
@@ -85,3 +85,8 @@ SELECT (SELECT COUNT(*) FROM filter_lists)                          as list_coun
 SELECT COUNT(*), filter_name
 FROM filter_instances
 GROUP BY filter_name;
+
+-- name: GetBannedUsers :many
+SELECT user_id
+from banned_users
+WHERE lifted_at IS NULL;

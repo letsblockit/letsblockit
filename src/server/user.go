@@ -16,6 +16,23 @@ var (
 	hasAccountCookieValue = "true"
 )
 
+func (s *Server) loadBannedUsers() error {
+	users, err := s.store.GetBannedUsers(context.Background())
+	if err != nil {
+		return err
+	}
+	s.banned = make(map[uuid.UUID]struct{}, len(users))
+	for _, u := range users {
+		s.banned[u] = struct{}{}
+	}
+	return nil
+}
+
+func (s *Server) isUserBanned(id uuid.UUID) bool {
+	_, found := s.banned[id]
+	return found
+}
+
 func (s *Server) userAccount(c echo.Context) error {
 	hc := s.buildPageContext(c, "My account")
 	hc.NoBoost = true

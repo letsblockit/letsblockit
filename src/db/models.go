@@ -10,6 +10,15 @@ import (
 	"github.com/jackc/pgtype"
 )
 
+type BannedUser struct {
+	ID         int32
+	UserID     uuid.UUID
+	CreatedAt  time.Time
+	Reason     string
+	LiftedAt   sql.NullTime
+	LiftReason sql.NullString
+}
+
 type FilterInstance struct {
 	ID           int32
 	UserID       uuid.UUID

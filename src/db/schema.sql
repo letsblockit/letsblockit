@@ -28,3 +28,13 @@ CREATE TABLE filter_instances
 
 CREATE INDEX idx_instances_by_list ON filter_instances USING btree (filter_list_id);
 CREATE UNIQUE INDEX idx_instances_by_user_and_filter ON filter_instances USING btree (user_id, filter_name);
+
+CREATE TABLE banned_users
+(
+    id          SERIAL PRIMARY KEY,
+    user_id     uuid      NOT NULL,
+    created_at  timestamp NOT NULL DEFAULT NOW(),
+    reason      text      NOT NULL,
+    lifted_at   timestamp,
+    lift_reason text
+);

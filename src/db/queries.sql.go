@@ -117,6 +117,32 @@ func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID)
 	return items, nil
 }
 
+const getBannedUsers = `-- name: GetBannedUsers :many
+SELECT user_id
+from banned_users
+WHERE lifted_at IS NULL
+`
+
+func (q *Queries) GetBannedUsers(ctx context.Context) ([]uuid.UUID, error) {
+	rows, err := q.db.Query(ctx, getBannedUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []uuid.UUID
+	for rows.Next() {
+		var user_id uuid.UUID
+		if err := rows.Scan(&user_id); err != nil {
+			return nil, err
+		}
+		items = append(items, user_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getInstanceForUserAndFilter = `-- name: GetInstanceForUserAndFilter :one
 SELECT params
 FROM filter_instances
@@ -199,7 +225,7 @@ func (q *Queries) GetInstancesForList(ctx context.Context, filterListID int32) (
 }
 
 const getListForToken = `-- name: GetListForToken :one
-SELECT id, downloaded
+SELECT id, user_id, downloaded
 FROM filter_lists
 WHERE token = $1
 LIMIT 1
@@ -207,13 +233,14 @@ LIMIT 1
 
 type GetListForTokenRow struct {
 	ID         int32
+	UserID     uuid.UUID
 	Downloaded bool
 }
 
 func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error) {
 	row := q.db.QueryRow(ctx, getListForToken, token)
 	var i GetListForTokenRow
-	err := row.Scan(&i.ID, &i.Downloaded)
+	err := row.Scan(&i.ID, &i.UserID, &i.Downloaded)
 	return i, err
 }
 
@@ -272,7 +299,7 @@ func (q *Queries) HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (
 
 const markListDownloaded = `-- name: MarkListDownloaded :exec
 UPDATE filter_lists
-SET downloaded = true,
+SET downloaded    = true,
     downloaded_at = NOW()
 WHERE id = $1
 `

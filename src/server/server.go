@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -66,6 +67,7 @@ type Server struct {
 	pages   PageRenderer
 	store   db.Store
 	statsd  statsd.ClientInterface
+	banned  map[uuid.UUID]struct{}
 }
 
 func NewServer(options *Options) *Server {
@@ -80,7 +82,12 @@ func (s *Server) Start() error {
 		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
-		func(errs []error) { s.store, errs[0] = db.Connect(s.options.DatabaseHost, s.options.DatabaseName) },
+		func(errs []error) {
+			s.store, errs[0] = db.Connect(s.options.DatabaseHost, s.options.DatabaseName)
+			if errs[0] == nil {
+				errs[0] = s.loadBannedUsers()
+			}
+		},
 	})
 
 	if s.options.Statsd != "" {

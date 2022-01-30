@@ -87,3 +87,18 @@ func (s *ServerTestSuite) TestRenderList_WithReferer() {
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
 }
+
+func (s *ServerTestSuite) TestRenderList_BannedUser() {
+	s.setUserBanned()
+	token := uuid.New()
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
+	req.Header.Set("Referer", "https://letsblock.it/user/account")
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
+		ID:         int32(10),
+		UserID:     s.user,
+		Downloaded: false,
+	}, nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(403, rec.Code)
+}

@@ -125,6 +125,21 @@ func (mr *MockQuerierMockRecorder) GetActiveFiltersForUser(ctx, userID interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetActiveFiltersForUser", reflect.TypeOf((*MockQuerier)(nil).GetActiveFiltersForUser), ctx, userID)
 }
 
+// GetBannedUsers mocks base method.
+func (m *MockQuerier) GetBannedUsers(ctx context.Context) ([]uuid.UUID, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBannedUsers", ctx)
+	ret0, _ := ret[0].([]uuid.UUID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBannedUsers indicates an expected call of GetBannedUsers.
+func (mr *MockQuerierMockRecorder) GetBannedUsers(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBannedUsers", reflect.TypeOf((*MockQuerier)(nil).GetBannedUsers), ctx)
+}
+
 // GetInstanceForUserAndFilter mocks base method.
 func (m *MockQuerier) GetInstanceForUserAndFilter(ctx context.Context, arg db.GetInstanceForUserAndFilterParams) (pgtype.JSONB, error) {
 	m.ctrl.T.Helper()

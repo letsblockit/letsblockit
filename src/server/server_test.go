@@ -50,6 +50,15 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 	s.runRequest(req, assertOk)
 }
 
+func (s *ServerTestSuite) TestAbout_BannedUser() {
+	s.setUserBanned()
+	req := httptest.NewRequest(http.MethodGet, "/about", nil)
+	req.AddCookie(verifiedCookie)
+	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		assert.Equal(t, 403, recorder.Result().StatusCode)
+	})
+}
+
 func (s *ServerTestSuite) TestAbout_KratosDown() {
 	s.kratosServer.Close() // Kratos is unresponsive, continue anonymous
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)

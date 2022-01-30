@@ -33,6 +33,8 @@ func (s *Server) renderList(c echo.Context) error {
 			return echo.ErrNotFound
 		} else if err != nil {
 			return err
+		} else if s.isUserBanned(list.UserID) {
+			return echo.ErrForbidden
 		}
 
 		if c.Request().Header.Get("Referer") == "" {

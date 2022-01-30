@@ -115,6 +115,13 @@ func (s *ServerTestSuite) SetupTest() {
 	s.server.setupRouter()
 }
 
+func (s *ServerTestSuite) setUserBanned() {
+	if s.server.banned == nil {
+		s.server.banned = make(map[uuid.UUID]struct{})
+	}
+	s.server.banned[s.user] = struct{}{}
+}
+
 func (s *ServerTestSuite) expectRender(page string, data pages.ContextData) *gomock.Call {
 	return s.expectP.Render(gomock.Any(), page, &pageDataMatcher{
 		t:    s.T(),

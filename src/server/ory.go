@@ -121,7 +121,12 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 			} else if user.IsActive() {
 				c.Set(userContextKey, &user)
 			}
-			return next(c)
+
+			if s.isUserBanned(user.Id()) {
+				return echo.ErrForbidden
+			} else {
+				return next(c)
+			}
 		}
 	}
 }
