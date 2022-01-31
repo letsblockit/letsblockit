@@ -34,7 +34,7 @@ func TestValidateFilters(t *testing.T) {
 		t.Run("Parse/"+name, func(t *testing.T) {
 			filter, e = parseFilterAndTest(name, file)
 			require.NoError(t, e, "Filter did not parse OK")
-			assert.NoError(t, validate.Struct(filter), "Filter did no pass input validation")
+			assert.NoError(t, validate.Struct(&filter.Filter), "Filter did no pass input validation")
 		})
 
 		for i, tc := range filter.Tests {

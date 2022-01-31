@@ -59,6 +59,21 @@ func buildValidator(t *testing.T) *validator.Validate {
 		}
 	})
 	require.NoError(t, err)
+	err = validate.RegisterValidation("valid_only_if", func(fl validator.FieldLevel) bool {
+		target := fl.Field().String()
+		if fl.Parent().FieldByName("Name").String() == target {
+			return false // Referencing itself
+		}
+		if filter, ok := (fl.Top().Interface()).(*Filter); ok {
+			for _, p := range filter.Params {
+				if p.Name == target && p.Type == BooleanParam {
+					return true
+				}
+			}
+		}
+		return false
+	})
+	require.NoError(t, err)
 	return validate
 }
 
@@ -141,6 +156,7 @@ func TestValidateFilter(t *testing.T) {
 					{
 						Name:        "param3",
 						Description: "desc",
+						OnlyIf:      "param1",
 						Type:        StringListParam,
 						Default:     []string{"abc", "123"},
 					},
@@ -182,6 +198,72 @@ func TestValidateFilter(t *testing.T) {
 				"Filter.Params[0].Description": "required",
 				"Filter.Params[0].Type":        "required",
 				"Filter.Params[0].Default":     "valid_default",
+			},
+		},
+		"onlyif_bad_type": {
+			input: &Filter{
+				Name:        "name",
+				Title:       "title",
+				Template:    "template",
+				Description: "desc",
+				Params: []FilterParam{
+					{
+						Name:        "param1",
+						Description: "desc",
+						Type:        StringParam,
+						Default:     "example",
+					},
+					{
+						Name:        "param2",
+						Description: "desc",
+						OnlyIf:      "param1",
+						Type:        StringListParam,
+						Default:     []string{"abc", "123"},
+					},
+				},
+			},
+			err: vErrs{
+				"Filter.Params[1].OnlyIf": "valid_only_if",
+			},
+		},
+		"onlyif_unknown": {
+			input: &Filter{
+				Name:        "name",
+				Title:       "title",
+				Template:    "template",
+				Description: "desc",
+				Params: []FilterParam{
+					{
+						Name:        "param3",
+						Description: "desc",
+						OnlyIf:      "param1",
+						Type:        StringListParam,
+						Default:     []string{"abc", "123"},
+					},
+				},
+			},
+			err: vErrs{
+				"Filter.Params[0].OnlyIf": "valid_only_if",
+			},
+		},
+		"onlyif_self": {
+			input: &Filter{
+				Name:        "name",
+				Title:       "title",
+				Template:    "template",
+				Description: "desc",
+				Params: []FilterParam{
+					{
+						Name:        "param3",
+						Description: "desc",
+						OnlyIf:      "param3",
+						Type:        StringListParam,
+						Default:     []string{"abc", "123"},
+					},
+				},
+			},
+			err: vErrs{
+				"Filter.Params[0].OnlyIf": "valid_only_if",
 			},
 		},
 		"invalid_tags": {
