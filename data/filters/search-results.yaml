@@ -12,6 +12,15 @@ params:
     description: Generate rules for Startpage.com
     type: checkbox
     default: false
+  - name: searx-enable
+    description: Generate rules for SearX
+    type: checkbox
+    default: false
+  - name: searx-instances
+    onlyif: searx-enable
+    description: SearX instances
+    type: list
+    default: [ "searx.thegpm.org" ]
   - name: sites
     description: Sites to hide
     type: list
@@ -19,28 +28,35 @@ params:
 tags:
   - google
   - duckduckgo
+  - searx
   - startpage
 template: |
-  {{#each sites}}
+  {{#each sites as |site siteId|}}
   {{#if ../google}}
-  google.*##.g:has(a[href*="{{this}}"])
-  google.*##a[href*="{{this}}"]:upward(1)
+  google.*##.g:has(a[href*="{{site}}"])
+  google.*##a[href*="{{site}}"]:upward(1)
   {{/if}}
   {{#if ../duckduckgo}}
-  duckduckgo.com##a.result__a[href*="{{this}}"]:upward(3)
+  duckduckgo.com##a.result__a[href*="{{site}}"]:upward(3)
   {{/if}}
   {{#if ../startpage}}
-  startpage.com##.w-gl__result:has(a[href*="{{this}}"])
-  startpage.com##.image-container:has(div.image-quick-details span:has-text({{this}}))
+  startpage.com##.w-gl__result:has(a[href*="{{site}}"])
+  startpage.com##.image-container:has(div.image-quick-details span:has-text({{site}}))
+  {{/if}}
+  {{#if ../searx-enable}}
+  {{#each searx-instances}}
+  {{this}}###main_results div.result:has(a[href*="{{site}}"])
+  {{/each}}
   {{/if}}
   {{/each}}
 tests:
-  - params: {}
+  - params: { }
     output: ""
   - params:
       google: true
       duckduckgo: true
       startpage: true
+      searx-instances: [ "searx.thegpm.org" ] # Not enabled
       sites: [ ".pinterest.", "snapcraft.io/install" ]
     output: |
       google.*##.g:has(a[href*=".pinterest."])
@@ -53,6 +69,15 @@ tests:
       duckduckgo.com##a.result__a[href*="snapcraft.io/install"]:upward(3)
       startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))
+  - params:
+      searx-enable: true
+      searx-instances: [ "searx.thegpm.org", "search.disroot.org" ]
+      sites: [ ".pinterest.", "snapcraft.io/install" ]
+    output: |
+      searx.thegpm.org###main_results div.result:has(a[href*=".pinterest."])
+      search.disroot.org###main_results div.result:has(a[href*=".pinterest."])
+      searx.thegpm.org###main_results div.result:has(a[href*="snapcraft.io/install"])
+      search.disroot.org###main_results div.result:has(a[href*="snapcraft.io/install"])
 ---
 
 Some websites are famous for being better at [Search Engine Optimization](https://news.ycombinator.com/item?id=25538586) than providing useful content. While there is not much we can do ourselves to avoid SEO abuse, we can cleanup the search results that are returned to us by search engines.

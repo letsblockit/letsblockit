@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/assets/css/styles.min.css{{assetHash}}">
     <script defer src="/assets/js/bootstrap.bundle.min.js{{assetHash}}"></script>
     <script defer src="/assets/js/htmx.min.js{{assetHash}}"></script>
-    <script defer src="/assets/js/htmx-errors.js{{assetHash}}"></script>
+    <script defer src="/assets/js/common.js{{assetHash}}"></script>
     {{#each Scripts}}
         <script defer src="/assets/js/{{this}}{{assetHash}}"></script>
     {{/each}}
@@ -48,7 +48,7 @@
 </nav>
 
 <main id="main" class="container pb-4 pt-4 pt-md-5" {{#if NoBoost}}hx-boost="false"{{/if}}>
-    <div id="htmx-alert" class="d-none alert alert-warning"></div>
+    <div id="htmx-alert" hidden class="alert alert-warning"></div>
     {{#if Sidebar}}
     <div class="row">
         <div class="col-12 col-lg-3 order-last pt-5 pt-lg-0">

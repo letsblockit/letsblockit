@@ -27,6 +27,7 @@ type FilterParam struct {
 	Description string      `validate:"required"`
 	Type        ParamType   `validate:"required,oneof=checkbox string list multiline"`
 	Default     interface{} `validate:"valid_default"`
+	OnlyIf      string      `validate:"omitempty,valid_only_if"`
 }
 
 type ParamType string
