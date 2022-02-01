@@ -9,3 +9,4 @@ export GOGC=400
 
 golangci-lint run --timeout 5m
 go test -v -race ./...
+echo "OK"

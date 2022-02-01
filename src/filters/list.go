@@ -49,7 +49,7 @@ func (l *List) Render(out io.Writer, logger logger, repo repository) error {
 
 	for _, i := range l.Instances {
 		if err := i.Render(out, repo); err != nil {
-			logger.Warnf("skipping filter %s: %s", i.Filter, err.Error())
+			logger.Warnf("skipping filter %s: %s", i.Filter, err)
 		}
 	}
 	return nil

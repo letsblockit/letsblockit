@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"net/http"
 	"sort"
 	"strings"
 
 	"github.com/imantung/mario"
-	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/data"
 )
 
@@ -68,7 +66,7 @@ func load(input fs.FS) (*Repository, error) {
 func (r *Repository) GetFilter(name string) (*Filter, error) {
 	filter, found := r.filterMap[name]
 	if !found {
-		return nil, fmt.Errorf("unknown filter %s", name)
+		return nil, fmt.Errorf("unknown filter '%s'", name)
 	}
 	return filter, nil
 }
@@ -84,7 +82,7 @@ func (r *Repository) GetTags() []string {
 func (r *Repository) Render(w io.Writer, name string, data map[string]interface{}) error {
 	_, found := r.filterMap[name]
 	if !found {
-		return echo.NewHTTPError(http.StatusNotFound, "template %s not found", name)
+		return fmt.Errorf("template '%s' not found", name)
 	}
 	if data == nil {
 		data = make(map[string]interface{})

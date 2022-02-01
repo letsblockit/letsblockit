@@ -1,0 +1,10 @@
+! Title: letsblock.it - locally rendered list
+! Expires: 1 hour
+! Homepage: https://letsblock.it
+! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
+
+! custom-rules
+line1##ruleA
+line2###ruleB
+
+! unknown
