@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 
@@ -114,21 +113,4 @@ func (s *ServerTestSuite) TestShouldReload_BadHost() {
 	s.server.echo.ServeHTTP(rec, req)
 
 	s.Equal(404, rec.Code, rec.Body)
-}
-
-func TestServerDryRun(t *testing.T) {
-	// Try to use the unix socket, fallback to TCP on localhost
-	pgHost := "/var/run/postgresql"
-	if _, err := os.Stat(pgHost); err != nil {
-		pgHost = "localhost"
-	}
-
-	server := NewServer(&Options{
-		DryRun:       true,
-		Reload:       true,
-		Statsd:       "localhost:8125",
-		DatabaseName: "letsblockit",
-		DatabaseHost: pgHost,
-	})
-	assert.Equal(t, ErrDryRunFinished, server.Start())
 }

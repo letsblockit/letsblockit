@@ -21,6 +21,7 @@
           pname = "letsblockit";
           version = "1.0";
           vendorSha256 = "sha256-MZKvii96fbqbxX+sPu8LYqt82/kojQJ9C2JNrnxPEq8=";
+          subPackages = "cmd/server";
           src = ./.;
           doCheck = false;
         };
@@ -44,6 +45,7 @@
         defaultApp = self.apps.${system}.letsblockit;
         apps.letsblockit = flake-utils.lib.mkApp {
           drv = self.packages.${system}.letsblockit;
+          exePath = "/bin/server";
         };
         apps.ory-proxy = flake-utils.lib.mkApp {
           drv = self.packages.${system}.ory-cli;
