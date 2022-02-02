@@ -2,7 +2,7 @@
 #! nix-shell -i bash -p mockgen  -p "(callPackage ./sqlc.nix {})"
 #! nix-shell --quiet
 
-# This script updates the sqlc data access layer and mocken mocks
+# This script updates the sqlc data access layer and mockgen mocks
 
 set -euox pipefail
 

@@ -66,6 +66,7 @@ func main() {
 	cmd := &renderCmd{}
 	arg.MustParse(cmd)
 	if err := cmd.Run(); err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
