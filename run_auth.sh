@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p "(callPackage ./ory-cli.nix {})"
+#! nix-shell -i bash -p "(callPackage ./nix/ory.nix {})"
 #! nix-shell --pure --quiet
 
 # Runs the Ory proxy on the letsblockit-dev project

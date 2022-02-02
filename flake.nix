@@ -1,5 +1,5 @@
 {
-  description = "letsblock.it server";
+  description = "letsblock.it server and helpers";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
@@ -10,50 +10,47 @@
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        pinnedGo = pkgs.go_1_17;
-        buildGoModule = pkgs.buildGoModule.override {
-          go = pinnedGo;
-        };
       in
       {
-        defaultPackage = self.packages.${system}.letsblockit;
-        packages.letsblockit = buildGoModule {
-          pname = "letsblockit";
-          version = "1.0";
-          vendorSha256 = "sha256-ZMGTL58tCbyG1QvmTFzTd+mkJ1t2/403e5podNr3aOY=";
-          subPackages = "cmd/server";
-          src = ./.;
-          doCheck = false;
-        };
+        overlay = (final: prev: {
+          letsblockit = self.packages.${system}.server;
+          ory = self.packages.${system}.ory;
+        });
 
-        packages.ory-cli = buildGoModule {
-          pname = "ory-cli";
-          version = "0.1.0";
-          src = pkgs.fetchFromGitHub {
-            owner = "ory";
-            repo = "cli";
-            rev = "v0.1.0";
-            sha256 = "1fg069gzjsvz933pz867ghy0wizvmaf99x17r5vw6hc7a0s2nvqs";
+        defaultPackage = self.packages.${system}.server;
+        packages.render = pkgs.callPackage ./nix/letsblockit.nix { cmd = "render"; };
+        packages.server = pkgs.callPackage ./nix/letsblockit.nix { cmd = "server"; };
+        packages.ory = pkgs.callPackage ./nix/ory.nix { };
+        packages.sqlc = pkgs.callPackage ./nix/sqlc.nix { };
+
+        packages.render-docker = pkgs.dockerTools.streamLayeredImage {
+          name = "letsblockit-render";
+          tag = "latest";
+          created = "now";
+          contents = self.packages.${system}.render;
+          config = {
+            Cmd = [ "render" "--help" ];
           };
-          vendorSha256 = "0dkfis7h1il8xyj1vl55agfrpr94qc9v4ml5w2i8rrpxg7fdxhpk";
-          doCheck = false;
-          installPhase = ''
-            install -D $GOPATH/bin/cli $out/bin/ory-cli
-          '';
         };
 
-        defaultApp = self.apps.${system}.letsblockit;
-        apps.letsblockit = flake-utils.lib.mkApp {
-          drv = self.packages.${system}.letsblockit;
-          exePath = "/bin/server";
+        defaultApp = self.apps.${system}.server;
+        apps.render = flake-utils.lib.mkApp {
+          drv = self.packages.${system}.render;
+          exePath = "/bin/render";
         };
-        apps.ory-proxy = flake-utils.lib.mkApp {
-          drv = self.packages.${system}.ory-cli;
+        apps.server = flake-utils.lib.mkApp {
+          drv = self.packages.${system}.server;
+          exePath = "/bin/server";
         };
 
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            self.packages.${system}.ory-cli
+          buildInputs = with self.packages.${system}; [
+            ory
+            sqlc
+            pkgs.golangci-lint
+            pkgs.mockgen
+            pkgs.nix-prefetch
+            pkgs.reflex
           ];
           inputsFrom = builtins.attrValues self.packages.${system};
         };
