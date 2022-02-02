@@ -17,45 +17,44 @@ var (
 )
 
 type renderCmd struct {
+	Strict bool   `help:"validate the input data before rendering the output"`
 	Input  string `default:"-" help:"input file to use, defaults to stdin" arg:"positional"`
-	Strict bool
 }
 
 type logger struct{}
 
 func (l *logger) Warnf(format string, args ...interface{}) {
-	_, err := fmt.Fprintf(stderr, "WARNING: "+format+"\n", args...)
-	if err != nil {
+	if _, err := fmt.Fprintf(stderr, "WARNING: "+format+"\n", args...); err != nil {
 		panic(err)
 	}
 }
 
 func (c *renderCmd) Run() error {
 	var err error
-	var input io.ReadCloser
+	var input io.Reader
 	if c.Input == "-" {
 		input = os.Stdin
 	} else {
 		input, err = os.Open(c.Input)
 		if err != nil {
-			return err
+			return fmt.Errorf("cannot open input file: %w", err)
 		}
 	}
 
 	repo, err := filters.LoadFilters()
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot load filter templates: %w", err)
 	}
 	var list filters.List
 	err = yaml.NewDecoder(input).Decode(&list)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot decode input file: %w", err)
 	}
 
 	if c.Strict {
 		err = list.Validate()
 		if err != nil {
-			return err
+			return fmt.Errorf("invalid input data: %w", err)
 		}
 	}
 
