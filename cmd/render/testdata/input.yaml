@@ -1,0 +1,9 @@
+title: "locally rendered list"
+instances:
+  - filter: custom-rules
+    params:
+      rules: |
+        line1##ruleA
+        line2###ruleB
+  - filter: unknown
+    params: {}

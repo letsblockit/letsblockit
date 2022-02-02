@@ -8,16 +8,17 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
+	"gopkg.in/yaml.v2"
 )
 
-const listHeaderTemplate = `! Title: letsblock.it - My filters
-! Expires: 1 hour
-! Homepage: https://letsblock.it
-! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
-`
+const listExportTemplate = `# letsblock.it filter list export
+#
+# List token: %s
+# Export date: %s
+#
+# You can edit this file and render it locally, check out instructions at:
+# https://github.com/xvello/letsblockit/tree/main/cmd/render/README.md
 
-const filterHeaderTemplate = `
-! %s
 `
 
 func (s *Server) renderList(c echo.Context) error {
@@ -26,60 +27,98 @@ func (s *Server) renderList(c echo.Context) error {
 		return err
 	}
 
-	var instances []db.GetInstancesForListRow
+	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
-		list, err := q.GetListForToken(ctx, token)
-		if err == db.NotFound {
+		storedList, e := q.GetListForToken(ctx, token)
+		if e == db.NotFound {
 			return echo.ErrNotFound
-		} else if err != nil {
-			return err
-		} else if s.isUserBanned(list.UserID) {
+		} else if e != nil {
+			return e
+		} else if s.isUserBanned(storedList.UserID) {
 			return echo.ErrForbidden
 		}
 
 		if c.Request().Header.Get("Referer") == "" {
-			err = q.MarkListDownloaded(ctx, list.ID)
-			if err != nil {
-				return err
+			e = q.MarkListDownloaded(ctx, storedList.ID)
+			if e != nil {
+				return e
 			}
 		}
 
-		instances, err = q.GetInstancesForList(ctx, list.ID)
-		return err
+		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
+		return e
 	}); err != nil {
 		return err
 	}
 
-	_, err = fmt.Fprint(c.Response(), listHeaderTemplate)
+	list, err := convertFilterList(storedInstances)
+	if err != nil {
+		return err
+	}
+	return list.Render(c.Response(), c.Logger(), s.filters)
+}
+
+func (s *Server) exportList(c echo.Context) error {
+	token, err := uuid.Parse(c.Param("token"))
 	if err != nil {
 		return err
 	}
 
-	var custom []db.GetInstancesForListRow
-	printFilter := func(f *db.GetInstancesForListRow) error {
-		_, e := fmt.Fprintf(c.Response(), filterHeaderTemplate, f.FilterName)
-		if e != nil {
+	var storedInstances []db.GetInstancesForListRow
+	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
+		storedList, e := q.GetListForToken(ctx, token)
+		if e == db.NotFound {
+			return echo.ErrNotFound
+		} else if e != nil {
 			return e
+		} else if getUser(c).Id() != storedList.UserID {
+			return echo.ErrForbidden
 		}
-		params := make(map[string]interface{})
-		if e = f.Params.AssignTo(&params); e != nil {
-			return e
-		}
-		return s.filters.Render(c.Response(), f.FilterName, params)
+		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
+		return e
+	}); err != nil {
+		return err
 	}
-	for _, f := range instances {
-		if f.FilterName == filters.CustomRulesFilterName {
-			custom = append(custom, f)
-			continue
-		}
-		if err := printFilter(&f); err != nil {
-			c.Logger().Warnf("skipping filter %s in list %s: %s", f.FilterName, token, err.Error())
-		}
+
+	list, err := convertFilterList(storedInstances)
+	if err != nil {
+		return err
 	}
-	for _, f := range custom {
-		if err := printFilter(&f); err != nil {
-			c.Logger().Warnf("skipping filter %s in list %s: %s", f.FilterName, token, err.Error())
-		}
+
+	c.Response().Header().Set("Content-Type", "text/yaml")
+	c.Response().Header().Set("Content-Disposition", "attachment; filename=\"exported-filter-list.yaml\"")
+	c.Response().WriteHeader(200)
+	_, err = fmt.Fprintf(c.Response(), listExportTemplate, token, s.now().Format("2006-01-02"))
+	if err != nil {
+		return nil
+	}
+	err = yaml.NewEncoder(c.Response()).Encode(&list)
+	if err != nil {
+		return nil
 	}
 	return nil
+}
+
+func convertFilterList(storedInstances []db.GetInstancesForListRow) (*filters.List, error) {
+	list := &filters.List{Title: "My filters"}
+	var customFilterInstances []*filters.Instance
+	for _, storedInstance := range storedInstances {
+		instance := &filters.Instance{
+			Filter: storedInstance.FilterName,
+			Params: make(map[string]interface{}),
+		}
+		err := storedInstance.Params.AssignTo(&instance.Params)
+		if err != nil {
+			return nil, err
+		}
+		if instance.Filter == filters.CustomRulesFilterName {
+			customFilterInstances = append(customFilterInstances, instance)
+		} else {
+			list.Instances = append(list.Instances, instance)
+		}
+	}
+	if len(customFilterInstances) > 0 {
+		list.Instances = append(list.Instances, customFilterInstances...)
+	}
+	return list, nil
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/golang/mock/gomock"
@@ -18,6 +19,7 @@ import (
 )
 
 var (
+	fixedNow       = time.Date(2020, 06, 02, 17, 44, 22, 0, time.UTC)
 	verifiedCookie = &http.Cookie{
 		Name:  "ory_session_verified",
 		Value: "true",
@@ -111,6 +113,7 @@ func (s *ServerTestSuite) SetupTest() {
 		pages:   pm,
 		store:   &mockStore{qm},
 		statsd:  &statsd.NoOpClient{},
+		now:     func() time.Time { return fixedNow },
 	}
 	s.server.setupRouter()
 }

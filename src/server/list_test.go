@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -97,6 +98,73 @@ func (s *ServerTestSuite) TestRenderList_BannedUser() {
 		ID:         int32(10),
 		UserID:     s.user,
 		Downloaded: false,
+	}, nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(403, rec.Code)
+}
+
+func (s *ServerTestSuite) TestExportList_OK() {
+	token, err := uuid.Parse("59dc36b7-aca5-46a1-a742-cf46dd2cac10")
+	s.NoError(err)
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+"/export", nil)
+	req.AddCookie(verifiedCookie)
+
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
+		ID:         int32(10),
+		UserID:     s.user,
+		Downloaded: true,
+	}, nil)
+
+	params := map[string]interface{}{"a": "1", "b": "2"}
+	paramsB := pgtype.JSONB{}
+	s.NoError(paramsB.Set(&params))
+	s.expectQ.GetInstancesForList(gomock.Any(), int32(10)).Return([]db.GetInstancesForListRow{{
+		FilterName: "one",
+	}, {
+		FilterName: "custom-rules",
+	}, {
+		FilterName: "two",
+		Params:     paramsB,
+	}}, nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	fmt.Println(rec.Body.String())
+	s.Equal(rec.Body.String(), `# letsblock.it filter list export
+#
+# List token: 59dc36b7-aca5-46a1-a742-cf46dd2cac10
+# Export date: 2020-06-02
+#
+# You can edit this file and render it locally, check out instructions at:
+# https://github.com/xvello/letsblockit/tree/main/cmd/render/README.md
+
+title: My filters
+instances:
+- filter: one
+- filter: two
+  params:
+    a: "1"
+    b: "2"
+- filter: custom-rules
+`)
+}
+
+func (s *ServerTestSuite) TestExportList_BadUser() {
+	token, otherUser := uuid.New(), uuid.New()
+	for {
+		if otherUser != s.user {
+			break
+		}
+		otherUser = uuid.New()
+	}
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+"/export", nil)
+	req.AddCookie(verifiedCookie)
+
+	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
+		ID:         int32(10),
+		UserID:     otherUser,
+		Downloaded: true,
 	}, nil)
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)

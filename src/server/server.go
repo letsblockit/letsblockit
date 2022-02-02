@@ -68,12 +68,14 @@ type Server struct {
 	store   db.Store
 	statsd  statsd.ClientInterface
 	banned  map[uuid.UUID]struct{}
+	now     func() time.Time
 }
 
 func NewServer(options *Options) *Server {
 	return &Server{
 		options: options,
 		echo:    echo.New(),
+		now:     time.Now,
 	}
 }
 
@@ -154,6 +156,7 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/filters/:name", s.viewFilter).Name = "view-filter"
 	withAuth.POST("/filters/:name", s.viewFilter)
 
+	withAuth.GET("/list/:token/export", s.exportList).Name = "export-filterlist"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
 	withAuth.GET("/user/forms/:type", s.renderKratosForm)
 	withAuth.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
