@@ -5,7 +5,7 @@ params:
     type: checkbox
     default: true
   - name: duckduckgo
-    description: Generate rules for Duck Duck Go
+    description: Generate rules for DuckDuckGo
     type: checkbox
     default: true
   - name: startpage
