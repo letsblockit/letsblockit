@@ -1,9 +1,9 @@
 version: "1"
 packages:
-  - path: "src/db"
+  - path: "."
     name: "db"
     engine: "postgresql"
     sql_package: "pgx/v4"
-    schema: "src/db/schema.sql"
-    queries: "src/db/queries.sql"
+    schema: "schema.sql"
+    queries: "queries.sql"
     emit_interface: true
