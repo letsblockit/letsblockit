@@ -7,7 +7,7 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    (flake-utils.lib.eachDefaultSystem (system:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         pinnedGo = pkgs.go_1_17;
@@ -63,10 +63,10 @@
           # Runtime inputs from the scripts
           buildInputs = builtins.concatLists (builtins.attrValues scripts);
         };
-      })) // {
-      overlay = final: prev: {
-        letsblockit = self.packages.server;
-        ory = self.packages.ory;
-      };
-    };
+
+        overlay = final: prev: {
+          letsblockit = self.packages.${system}.server;
+          ory = self.packages.${system}.ory;
+        };
+      });
 }
