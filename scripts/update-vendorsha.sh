@@ -1,9 +1,7 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i bash -p nix-prefetch
-#! nix-shell --quiet
-
+#!/usr/bin/env bash
 # This script updates the vendorSha256 property in any buildGoModule
 # derivation to keep it in sync with go.mod changes
+## Run it with `nix run .#update-vendorsha`, or install the dependencies manually.
 
 set -euox pipefail
 

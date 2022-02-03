@@ -1,8 +1,6 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i bash -p mockgen  -p "(callPackage ./nix/sqlc.nix {})"
-#! nix-shell --quiet
-
-# This script updates the sqlc data access layer and mockgen mocks
+#!/usr/bin/env bash
+# This script updates the sqlc data access layer and mockgen mocks.
+## Run it with `nix run .#update-codegen`, or install the dependencies manually.
 
 set -euox pipefail
 

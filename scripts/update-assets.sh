@@ -1,8 +1,6 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i bash -p nodejs -p nodePackages.npm -p git -p reflex
-#! nix-shell --pure --quiet
-
-# This script updates the assets by running npm
+#!/usr/bin/env bash
+# This script updates the assets by running npm.
+## Run it with `nix run .#update-assets`, or install the dependencies manually.
 
 set -euox pipefail
 

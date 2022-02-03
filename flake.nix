@@ -7,52 +7,66 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
+    (flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        pinnedGo = pkgs.go_1_17;
+
+        # Scripts to wrap, with their dependencies, available via `nix run .#script-name`
+        scripts = with pkgs; {
+          run-server = [ pinnedGo reflex self.packages.${system}.ory ];
+          run-tests = [ pinnedGo golangci-lint ];
+          update-assets = [ nodejs nodePackages.npm git reflex ];
+          update-codegen = [ mockgen self.packages.${system}.sqlc ];
+          update-vendorsha = [ pkgs.nix-prefetch ];
+        };
       in
       {
-        overlay = (final: prev: {
-          letsblockit = self.packages.${system}.server;
-          ory = self.packages.${system}.ory;
-        });
+        defaultPackage = self.packages.${system}.run-server;
+        packages = {
+          render = pkgs.callPackage ./nix/letsblockit.nix { cmd = "render"; };
+          server = pkgs.callPackage ./nix/letsblockit.nix { cmd = "server"; };
+          ory = pkgs.callPackage ./nix/ory.nix { };
+          sqlc = pkgs.callPackage ./nix/sqlc.nix { };
 
-        defaultPackage = self.packages.${system}.server;
-        packages.render = pkgs.callPackage ./nix/letsblockit.nix { cmd = "render"; };
-        packages.server = pkgs.callPackage ./nix/letsblockit.nix { cmd = "server"; };
-        packages.ory = pkgs.callPackage ./nix/ory.nix { };
-        packages.sqlc = pkgs.callPackage ./nix/sqlc.nix { };
+          render-docker = pkgs.dockerTools.streamLayeredImage {
+            name = "letsblockit-render";
+            tag = "latest";
+            created = "now";
+            contents = self.packages.${system}.render;
+            config = {
+              Cmd = [ "render" "--help" ];
+            };
+          };
+        } // (builtins.mapAttrs
+          (name: deps: pkgs.writeShellApplication {
+            name = name;
+            runtimeInputs = deps;
+            text = ''./scripts/${name}.sh "$@"'';
+          })
+          scripts);
 
-        packages.render-docker = pkgs.dockerTools.streamLayeredImage {
-          name = "letsblockit-render";
-          tag = "latest";
-          created = "now";
-          contents = self.packages.${system}.render;
-          config = {
-            Cmd = [ "render" "--help" ];
+        apps = {
+          render = flake-utils.lib.mkApp {
+            drv = self.packages.${system}.render;
+            exePath = "/bin/render";
+          };
+          server = flake-utils.lib.mkApp {
+            drv = self.packages.${system}.server;
+            exePath = "/bin/server";
           };
         };
 
-        defaultApp = self.apps.${system}.server;
-        apps.render = flake-utils.lib.mkApp {
-          drv = self.packages.${system}.render;
-          exePath = "/bin/render";
-        };
-        apps.server = flake-utils.lib.mkApp {
-          drv = self.packages.${system}.server;
-          exePath = "/bin/server";
-        };
-
         devShell = pkgs.mkShell {
-          buildInputs = with self.packages.${system}; [
-            ory
-            sqlc
-            pkgs.golangci-lint
-            pkgs.mockgen
-            pkgs.nix-prefetch
-            pkgs.reflex
-          ];
+          # Build inputs from the packages
           inputsFrom = builtins.attrValues self.packages.${system};
+          # Runtime inputs from the scripts
+          buildInputs = builtins.concatLists (builtins.attrValues scripts);
         };
-      });
+      })) // {
+      overlay = final: prev: {
+        letsblockit = self.packages.server;
+        ory = self.packages.ory;
+      };
+    };
 }
