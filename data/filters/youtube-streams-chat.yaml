@@ -8,6 +8,6 @@ tests:
       www.youtube.com###chat:remove()
 ---
 
-This filter hides and disable the chat messages section when watching Youtube streams.
+This filter hides and disables the chat messages section when watching Youtube streams.
 
 Thanks to the `:remove()` operator, the javascript is also disabled, saving resources.
