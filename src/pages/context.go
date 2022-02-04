@@ -8,10 +8,10 @@ type ContextData map[string]interface{}
 
 type Context struct {
 	NakedContent bool
-	Scripts      []string
 	Page         *page
 	Sidebar      *page
 	NoBoost      bool
+	HotReload    bool
 	MainDomain   bool
 
 	CurrentSection  string

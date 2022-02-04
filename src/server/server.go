@@ -191,7 +191,7 @@ func (s *Server) redirectToPage(c echo.Context, name string, params ...interface
 func (s *Server) redirect(c echo.Context, code int, target string) error {
 	if c.Request().Header.Get("HX-Request") == "true" {
 		c.Response().Header().Set("HX-Redirect", target)
-		return nil
+		return c.NoContent(200)
 	}
 	return c.Redirect(code, target)
 }
@@ -217,6 +217,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		NavigationLinks: navigationLinks,
 		Title:           title,
 		MainDomain:      c.Request().Host == mainDomain,
+		HotReload:       s.options.Reload,
 	}
 	if _, err := c.Cookie(hasAccountCookieName); err == nil {
 		context.UserHasAccount = true
@@ -224,9 +225,6 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	if u := getUser(c); u != nil {
 		context.UserID = u.Id()
 		context.UserLoggedIn = true
-	}
-	if s.options.Reload {
-		context.Scripts = []string{"reload.js"}
 	}
 	return context
 }

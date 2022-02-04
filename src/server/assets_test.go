@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-const cssDir = "assets/css"
-const cssFile = cssDir + "/styles.min.css"
+const cssDir = "assets/dist"
+const cssFile = cssDir + "/main.css"
 
 type WrappedAssetsTestSuite struct {
 	suite.Suite

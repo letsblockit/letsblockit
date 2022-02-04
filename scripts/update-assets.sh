@@ -5,13 +5,10 @@
 set -euox pipefail
 
 npm install --prefix ./src/assets/
+npm run clean --prefix ./src/assets/
 
-if [ "$*" == "--watch" ]; then
-  reflex -r "src/assets" -s -- npm run assets --prefix ./src/assets/
+if [ "$*" == "watch" ]; then
+  npm run watch --prefix ./src/assets/
 else
-  npm run assets --prefix ./src/assets/
-  git add ./data/assets/
+  npm run build --prefix ./src/assets/
 fi
-
-npm run assets --prefix ./src/assets/
-git add ./data/assets/

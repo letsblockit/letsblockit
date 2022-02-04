@@ -1,21 +1,28 @@
 {
-  "name": "webpack",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "letsblockit-assets",
+  "targets": {
+    "default": {
+      "source": [
+        "main.js",
+        "main.scss"
+      ],
+      "context": "browser",
+      "distDir": "../../data/assets/dist/"
+    }
+  },
   "scripts": {
-    "css": "node-sass --output-style compressed --omit-source-map-url styles.scss ../../data/assets/css/styles.min.css",
-    "fonts": "install node_modules/@fortawesome/fontawesome-free/webfonts/*.woff2 -t ../../data/assets/fonts/",
-    "js": "install node_modules/htmx.org/dist/htmx.min.js node_modules/handlebars/dist/handlebars.min.js node_modules/bootstrap/dist/js/bootstrap.bundle.min.js -t ../../data/assets/js/",
-    "assets": "npm run css && npm run fonts && npm run js"
+    "clean": "rm -rf ../../data/assets/dist/ .parcel-cache/",
+    "build": "parcel build",
+    "watch": "parcel watch"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "@parcel/transformer-sass": "^2.2.1",
     "bootstrap": "^5.1.3",
-    "handlebars": "^4.7.7",
     "htmx.org": "^1.6.1",
-    "node-sass": "^7.0.1",
-    "tar": ">=6.1.9",
-    "trim-newlines": ">=3.0.1",
-    "json-schema": ">=0.4.0"
+    "lmdb": "2.1.7",
+    "parcel": "^2.2.1",
+    "popper.js": "^1.16.1",
+    "postcss": ">=8.2.13"
   }
 }

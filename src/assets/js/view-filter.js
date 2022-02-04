@@ -1,4 +1,14 @@
-function copyFilterOutput(clicked) {
+"use strict";
+
+/*
+ * Helper functions for the view-filter page form.
+ */
+
+function resetFilterParamRow(row) {
+    row.getElementsByTagName('input')[0].value = ""
+}
+
+window.copyFilterOutput = function (clicked) {
     navigator.clipboard.writeText(document.getElementById("output-code").innerText);
     document.getElementById("output-card").classList.add("border-success")
     document.getElementById("output-copy-text").innerText = "Copied to clipboard"
@@ -8,11 +18,7 @@ function copyFilterOutput(clicked) {
     clicked.classList.add("btn-success")
 }
 
-function resetFilterParamRow(row) {
-    row.getElementsByTagName('input')[0].value = ""
-}
-
-function deleteFilterParamRow(clicked) {
+window.deleteFilterParamRow = function (clicked) {
     const thisRow = clicked.closest(".input-group")
     if (thisRow.parentNode.childElementCount === 1) {
         resetFilterParamRow(thisRow) // Don't allow removing the last row
@@ -22,7 +28,7 @@ function deleteFilterParamRow(clicked) {
     htmx.trigger(htmx.find("#filter_input"), "input", {});
 }
 
-function addFilterParamRow(clicked) {
+window.addFilterParamRow = function (clicked) {
     const thisRow = clicked.closest(".input-group")
     const clonedRow = thisRow.cloneNode(true)
     resetFilterParamRow(clonedRow)

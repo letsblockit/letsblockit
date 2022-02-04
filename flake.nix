@@ -16,7 +16,7 @@
         scripts = with pkgs; {
           run-server = [ pinnedGo reflex self.packages.${system}.ory ];
           run-tests = [ pinnedGo golangci-lint ];
-          update-assets = [ nodejs nodePackages.npm git reflex ];
+          update-assets = [ nodejs-17_x nodePackages.npm ];
           update-codegen = [ mockgen self.packages.${system}.sqlc ];
           update-vendorsha = [ pkgs.nix-prefetch ];
         };

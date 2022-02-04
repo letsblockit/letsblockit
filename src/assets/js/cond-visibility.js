@@ -1,25 +1,9 @@
-//
-// Listens to HTMX request results and shows an alert div when requests fail.
-//
+"use strict";
 
-const errorTarget = document.getElementById("htmx-alert")
-document.body.addEventListener('htmx:afterRequest', function (evt) {
-    if (evt.detail.successful) {
-        errorTarget.setAttribute("hidden", "true")
-        errorTarget.innerText = "";
-    } else {
-        if (evt.detail.xhr.statusText) {
-            errorTarget.innerText = "Unexpected server error: " + evt.detail.xhr.statusText;
-        } else {
-            errorTarget.innerText = "Unexpected network error, check your connection and try again.";
-        }
-        errorTarget.removeAttribute("hidden");
-    }
-});
-
-//
-// Enables triggering item visibility on a checkbox, for optional parameters
-//
+/*
+ * Implements behaviour for the custom data-hide-unless attribute:
+ * add or remove the hidden attribute based on the target checkbox state.
+ */
 
 function toggleConditionalVisibility(checkbox, target) {
     if (checkbox.checked){
