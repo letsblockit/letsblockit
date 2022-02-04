@@ -28,7 +28,7 @@ tests:
       www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="#shorts" i])
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="#shorts" i])
 ---
-Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. This this filter, you can remove videos with a given word in their title.
+Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. With this filter, you can remove videos with a given word in their title.
 
 <div class="alert alert-warning" role="alert">
 In order to reduce false-positives, the filter matches full words (with spaces around them, or at the start/end of the title). It does a case-insentive match though (`lofi` will also match `LoFi`).

@@ -84,5 +84,5 @@ Some websites are famous for being better at [Search Engine Optimization](https:
 
 This template allows you to remove search results based on their URL for **both text and image searches**. It supports Google and DuckDuckGo, but contributions are welcome to support more search engines. Results will be hidden if their link destination contains one of the values you pass. For example:
 
-- pinterest publishes content on an army of subdomains and country-specific domains ; using `.pinterest.` allows to block them all
-- snapcraft.io's SEO efforts focus on `snapcraft.io/install/X/Y` pages ; using `snapscraft.io/install` limits the blocking to these pages
+- Pinterest publishes content on an army of subdomains and country-specific domains; using `.pinterest.` allows you to block them all
+- snapcraft.io's SEO efforts focus on `snapcraft.io/install/X/Y` pages; using `snapcraft.io/install` limits the blocking to these pages
