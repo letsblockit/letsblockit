@@ -22,8 +22,8 @@
             {{description}}:
             {{>view-filter-pill-new name}}
         </label>
-        <textarea class="form-control" id="{{name}}" name="{{name}}"
-                  rows="10">{{lookup @root.data.params name}}</textarea>
+        <textarea class="form-control" id="{{name}}" name="{{name}}" rows="10">
+            {{~lookup @root.data.params name}}</textarea>
     </div>
 {{else if (eq type "list")}}
     <fieldset class="row mb-3{{#with OnlyIf}} ps-lg-4" data-hide-unless="{{this}}{{/with}}">
