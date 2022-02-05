@@ -1,4 +1,5 @@
-letsblockit
-/src/assets/node_modules/
-/var/
+data/assets/dist/fa-*.svg
+data/assets/dist/*.map
+src/assets/node_modules/
+src/assets/.parcel-cache/
 result
