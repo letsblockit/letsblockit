@@ -264,7 +264,7 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 			if err := next(c); err != nil {
 				c.Error(err)
 			}
-			loggedTag := fmt.Sprintf("logged:%t", c.Get(userContextKey) != nil)
+			loggedTag := fmt.Sprintf("logged:%t", c.Get(hasKratosContextKey) != nil)
 			duration := time.Since(start)
 			_ = dsd.Distribution("letsblockit.request_duration", float64(duration.Nanoseconds()), []string{loggedTag}, 1)
 			_ = dsd.Incr("letsblockit.request_count", []string{loggedTag, fmt.Sprintf("status:%d", c.Response().Status)}, 1)

@@ -16,6 +16,7 @@ import (
 
 const (
 	userContextKey      = "_user"
+	hasKratosContextKey = "_has_kratos"
 	oryCookieNamePrefix = "ory_session_"
 	oryGetFlowPattern   = "/api/kratos/public/self-service/%s/flows?id=%s"
 	oryStartFlowPattern = "/api/kratos/public/self-service/%s/browser"
@@ -219,6 +220,7 @@ func (s *Server) startKratosFlow(c echo.Context) error {
 
 func (s *Server) queryKratos(c echo.Context, typeTag, endpoint string, body interface{}) error {
 	start := time.Now()
+	c.Set(hasKratosContextKey, true)
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
