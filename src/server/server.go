@@ -33,10 +33,10 @@ const (
 type Options struct {
 	Address      string `default:"127.0.0.1:8765" help:"address to listen to"`
 	Debug        bool   `help:"log with debug level"`
-	DryRun       bool   `arg:"--dry-run" help:"instantiate all components and exit"`
+	DryRun       bool   `help:"instantiate all components and exit"`
 	KratosURL    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local proxy"`
 	Reload       bool   `help:"reload frontend when the backend restarts"`
-	Statsd       string `help:"address to send statsd metrics to"`
+	Statsd       string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	DatabaseName string `default:"letsblockit" help:"psql database name to use"`
 	DatabaseHost string `default:"/var/run/postgresql" help:"psql host to connect to"`
 	silent       bool

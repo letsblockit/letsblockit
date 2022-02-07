@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/alexflint/go-arg"
+	"github.com/alecthomas/kong"
 	"github.com/xvello/letsblockit/src/filters"
 	"gopkg.in/yaml.v2"
 )
@@ -18,7 +18,7 @@ var (
 
 type renderCmd struct {
 	Strict bool   `help:"validate the input data before rendering the output"`
-	Input  string `default:"-" help:"input file to use, defaults to stdin" arg:"positional"`
+	Input  string `default:"-" help:"input file to use, defaults to stdin" arg:"" type:"existingfile"`
 }
 
 type logger struct{}
@@ -63,9 +63,6 @@ func (c *renderCmd) Run() error {
 
 func main() {
 	cmd := &renderCmd{}
-	arg.MustParse(cmd)
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	k := kong.Parse(cmd)
+	k.FatalIfErrorf(cmd.Run())
 }
