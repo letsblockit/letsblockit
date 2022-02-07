@@ -49,3 +49,11 @@ Have a look at the following pages to learn about the syntax:
   [Procedural cosmetic filters](https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters).
 - [This cheatsheet](https://github.com/DandelionSprout/adfilt/blob/master/Wiki/SyntaxMeaningsThatAreActuallyHumanReadable.md)
   by DandelionSprout.
+
+## Testing your changes
+
+Filter files are checked by automated tests that will run on your PR once approved.
+You can run them locally with one of these commands:
+
+- if you have [the golang compiler](https://go.dev/doc/install) installed: `go test ./src/filters`
+- if you have docker installed: `docker run --rm -w /source -v $PWD:/source golang go test ./src/filters`
