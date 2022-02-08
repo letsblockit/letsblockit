@@ -34,11 +34,25 @@ tests:
     output: |
       www.youtube.com###related
   - params:
+      end-of-video-overlay: true
+    output: |
+      www.youtube.com##.ytp-ce-element
+  - params:
+      homepage-recommendations: true
+    output: |
+      www.youtube.com##ytd-browse[page-subtype="home"]
+  - params:
       related-videos: true
       homepage-recommendations: true
     output: |
       www.youtube.com###related
       www.youtube.com##ytd-browse[page-subtype="home"]
+  - params:
+      related-videos: true
+      end-of-video-overlay: true
+    output: |
+      www.youtube.com###related
+      www.youtube.com##.ytp-ce-element
   - params:
       related-videos: true
       homepage-recommendations: true
