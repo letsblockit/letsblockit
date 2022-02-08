@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/xvello/letsblockit/actions/workflows/ci.yml/badge.svg)](https://github.com/xvello/letsblockit/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/xvello/letsblockit)](https://goreportcard.com/report/github.com/xvello/letsblockit)
+[![Uptime Robot status](https://img.shields.io/uptimerobot/status/m790590578-5dd39cb706475421fade8af1)](https://stats.uptimerobot.com/YxoOltDPJX)
 
 This repository holds the data and server source code for the Let's Block It project. 
 Please check out the project's [about page](https://letsblock.it/help/about)
