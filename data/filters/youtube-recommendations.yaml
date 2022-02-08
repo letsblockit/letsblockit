@@ -8,6 +8,10 @@ params:
     description: Hide video suggestions on the homepage
     type: checkbox
     default: true
+  - name: end-of-video-overlay
+    description: Hide video suggestions that obscure the end of the video
+    type: checkbox
+    default: true
 tags:
   - youtube
 attribution:
@@ -19,6 +23,9 @@ template: |
   {{#if homepage-recommendations}}
   www.youtube.com##ytd-browse[page-subtype="home"]
   {{/if}}
+  {{#if end-of-video-overlay}}
+  www.youtube.com##.ytp-ce-element
+  {{/if}}
 tests:
   - params: {}
     output: ""
@@ -27,11 +34,33 @@ tests:
     output: |
       www.youtube.com###related
   - params:
+      end-of-video-overlay: true
+    output: |
+      www.youtube.com##.ytp-ce-element
+  - params:
+      homepage-recommendations: true
+    output: |
+      www.youtube.com##ytd-browse[page-subtype="home"]
+  - params:
       related-videos: true
       homepage-recommendations: true
     output: |
       www.youtube.com###related
       www.youtube.com##ytd-browse[page-subtype="home"]
+  - params:
+      related-videos: true
+      end-of-video-overlay: true
+    output: |
+      www.youtube.com###related
+      www.youtube.com##.ytp-ce-element
+  - params:
+      related-videos: true
+      homepage-recommendations: true
+      end-of-video-overlay: true
+    output: |
+      www.youtube.com###related
+      www.youtube.com##ytd-browse[page-subtype="home"]
+      www.youtube.com##.ytp-ce-element
 ---
 The Youtube algorithm is not relevant for you? Just stick to your subscriptions,
 and keep clickbait out of your screen.
