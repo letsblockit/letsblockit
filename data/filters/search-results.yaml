@@ -8,6 +8,10 @@ params:
     description: Generate rules for DuckDuckGo
     type: checkbox
     default: true
+  - name: kagi
+    description: Generate rules for Kagi
+    type: checkbox
+    default: false
   - name: startpage
     description: Generate rules for Startpage.com
     type: checkbox
@@ -28,6 +32,7 @@ params:
 tags:
   - google
   - duckduckgo
+  - kagi
   - searx
   - startpage
 template: |
@@ -38,6 +43,10 @@ template: |
   {{/if}}
   {{#if ../duckduckgo}}
   duckduckgo.com##a.result__a[href*="{{site}}"]:upward(3)
+  {{/if}}
+  {{#if ../kagi}}
+  kagi.com##.search-result:has(a.__sri-url[href*="{{site}}"])
+  kagi.com##._0_image_item[data-host_url*="{{site}}"]
   {{/if}}
   {{#if ../startpage}}
   startpage.com##.w-gl__result:has(a[href*="{{site}}"])
@@ -70,12 +79,17 @@ tests:
       startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))
   - params:
+      kagi: true
       searx-enable: true
       searx-instances: [ "searx.thegpm.org", "search.disroot.org" ]
       sites: [ ".pinterest.", "snapcraft.io/install" ]
     output: |
+      kagi.com##.search-result:has(a.__sri-url[href*=".pinterest."])
+      kagi.com##._0_image_item[data-host_url*=".pinterest."]
       searx.thegpm.org###main_results div.result:has(a[href*=".pinterest."])
       search.disroot.org###main_results div.result:has(a[href*=".pinterest."])
+      kagi.com##.search-result:has(a.__sri-url[href*="snapcraft.io/install"])
+      kagi.com##._0_image_item[data-host_url*="snapcraft.io/install"]
       searx.thegpm.org###main_results div.result:has(a[href*="snapcraft.io/install"])
       search.disroot.org###main_results div.result:has(a[href*="snapcraft.io/install"])
 ---
