@@ -42,7 +42,11 @@
           (name: deps: pkgs.writeShellApplication {
             name = name;
             runtimeInputs = deps;
-            text = ''./scripts/${name}.sh "$@"'';
+            text = ''
+              # Make nix-prefetch use nixpkgs from the flake lock
+              export NIX_PATH="nixpkgs=${nixpkgs.sourceInfo.outPath}"
+              ./scripts/${name}.sh "$@"
+            '';
           })
           scripts);
 
