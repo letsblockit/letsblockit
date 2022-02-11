@@ -46,7 +46,7 @@ func (w *wrappedAssets) serve(c echo.Context) error {
 	}
 	c.Response().Before(func() {
 		c.Response().Header().Set("Vary", "Accept-Encoding")
-		c.Response().Header().Set("Cache-Control", "public, max-age=86400, immutable")
+		c.Response().Header().Set("Cache-Control", "public, max-age=2592000, immutable")
 		c.Response().Header().Set("ETag", w.eTag)
 	})
 	w.server.ServeHTTP(c.Response(), c.Request())
