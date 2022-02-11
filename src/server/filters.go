@@ -317,7 +317,11 @@ func (s *Server) hasMissingParams(instance db.GetActiveFiltersForUserRow) bool {
 		if _, found := params[p.Name]; !found {
 			return true
 		}
+		for _, preset := range p.Presets {
+			if _, found := params[p.BuildPresetParamName(preset.Name)]; !found {
+				return true
+			}
+		}
 	}
-
 	return false
 }
