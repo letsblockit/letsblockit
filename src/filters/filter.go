@@ -47,7 +47,7 @@ type FilterParam struct {
 	Type        ParamType   `validate:"required,oneof=checkbox string list multiline"`
 	OnlyIf      string      `validate:"omitempty,valid_only_if" yaml:",omitempty"`
 	Default     interface{} `validate:"valid_default"`
-	Presets     []Preset    `validate:"dive" yaml:",omitempty"`
+	Presets     []Preset    `validate:"omitempty,preset_allowed,dive" yaml:",omitempty"`
 }
 
 type ParamType string
