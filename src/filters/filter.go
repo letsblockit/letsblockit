@@ -14,19 +14,19 @@ type filter interface {
 type Preset struct {
 	Name        string   `validate:"required"`
 	Description string   `validate:"required"`
-	Source      string   `validate:"omitempty,url"`
+	Source      string   `validate:"omitempty,url" yaml:",omitempty"`
 	Values      []string `validate:"required"`
-	Default     bool
+	Default     bool     `yaml:",omitempty"`
 }
 
 type Filter struct {
-	Name        string        `validate:"required"`
+	Name        string        `validate:"required" yaml:"-"`
 	Title       string        `validate:"required"`
-	Params      []FilterParam `validate:"dive"`
-	Tags        []string      `validate:"dive,alphaunicode"`
+	Params      []FilterParam `validate:"dive" yaml:",omitempty"`
+	Tags        []string      `validate:"dive,alphaunicode" yaml:",omitempty"`
 	Template    string        `validate:"required"`
-	Description string        `validate:"required"`
-	presets     []presetEntry // Generated on parse from params and presets
+	Description string        `validate:"required" yaml:"-"`
+	presets     []presetEntry `yaml:"-"` // Generated on parse from params and presets
 }
 
 type presetEntry struct {
@@ -36,7 +36,7 @@ type presetEntry struct {
 	Value     interface{}
 }
 
-type filterAndTests struct {
+type FilterAndTests struct {
 	Filter `yaml:"a,inline"`
 	Tests  []testCase
 }
@@ -45,9 +45,9 @@ type FilterParam struct {
 	Name        string      `validate:"required"`
 	Description string      `validate:"required"`
 	Type        ParamType   `validate:"required,oneof=checkbox string list multiline"`
+	OnlyIf      string      `validate:"omitempty,valid_only_if" yaml:",omitempty"`
 	Default     interface{} `validate:"valid_default"`
-	OnlyIf      string      `validate:"omitempty,valid_only_if"`
-	Presets     []Preset    `validate:"dive"`
+	Presets     []Preset    `validate:"dive" yaml:",omitempty"`
 }
 
 type ParamType string
@@ -60,11 +60,11 @@ const (
 )
 
 type testCase struct {
-	Params map[string]interface{}
-	Output string `validate:"required"`
+	Params map[string]interface{} `yaml:",omitempty"`
+	Output string                 `validate:"required"`
 }
 
-func (f *filterAndTests) finishParsing(desc string) {
+func (f *FilterAndTests) finishParsing(desc string) {
 	f.Filter.finishParsing(desc)
 }
 

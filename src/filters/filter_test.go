@@ -29,7 +29,7 @@ func TestValidateFilters(t *testing.T) {
 			seen[name] = struct{}{}
 		})
 
-		var filter *filterAndTests
+		var filter *FilterAndTests
 		var e error
 		t.Run("Parse/"+name, func(t *testing.T) {
 			filter, e = parseFilterAndTest(name, file)

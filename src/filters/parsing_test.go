@@ -96,7 +96,7 @@ func TestParseFilterAndTest(t *testing.T) {
 	filter, err := parseFilterAndTest("simple", file)
 	require.NoError(t, err)
 
-	assert.EqualValues(t, &filterAndTests{
+	assert.EqualValues(t, &FilterAndTests{
 		Filter: expectedFilter,
 		Tests: []testCase{{
 			Params: map[string]interface{}{

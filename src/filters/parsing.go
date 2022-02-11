@@ -17,8 +17,8 @@ func parseFilter(name string, reader io.Reader) (*Filter, error) {
 	return filter, parse(reader, filter)
 }
 
-func parseFilterAndTest(name string, reader io.Reader) (*filterAndTests, error) {
-	filter := &filterAndTests{
+func parseFilterAndTest(name string, reader io.Reader) (*FilterAndTests, error) {
+	filter := &FilterAndTests{
 		Filter: Filter{
 			Name: name,
 		},
