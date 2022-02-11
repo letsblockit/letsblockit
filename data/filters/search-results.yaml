@@ -31,7 +31,7 @@ params:
     default: [ ".pinterest.", "snapcraft.io/install" ]
     presets:
       - name: github-copycats
-        default: true
+        default: false
         description: Hide Github copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/github_copycats.txt
         values:
@@ -59,7 +59,7 @@ params:
           - reposhub.com/
           - www.higithub.com/
       - name: stackoverflow-copycats
-        default: true
+        default: false
         description: Hide Stackoverflow copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/stackoverflow_copycats.txt
         values:

@@ -3,6 +3,8 @@ package server
 import (
 	"fmt"
 	"strings"
+
+	"github.com/xvello/letsblockit/src/filters"
 )
 
 type echoInterface interface {
@@ -43,6 +45,9 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 			default:
 				return nil
 			}
+		},
+		"preset_name": func(param filters.FilterParam, preset filters.Preset) string {
+			return param.BuildPresetParamName(preset.Name)
 		},
 	}
 }
