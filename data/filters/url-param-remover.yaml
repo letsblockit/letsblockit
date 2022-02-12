@@ -1,4 +1,4 @@
-title: Remove unneeded URL parameters
+title: Remove tracking URL parameters from links
 params:
   - name: url-params
     description: Parameters to remove from links
