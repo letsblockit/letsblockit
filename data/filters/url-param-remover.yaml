@@ -8,7 +8,7 @@ tags:
   - url
   - params
 template: |
-  {{#each params}}
+  {{#each url-params}}
   *$removeparam={{this}}
   {{/each}}
 tests:
