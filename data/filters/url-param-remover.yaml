@@ -1,0 +1,26 @@
+title: Remove unneeded URL parameters
+params:
+  - name: url-params
+    description: Parameters to hide
+    type: list
+    default: [ "utm_source", "utm_medium", "utm_campaign", "utm_content" ]
+tags:
+  - url
+  - params
+template: |
+  {{#each params}}
+  *$removeparam={{this}}
+  {{/each}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      url-params: [ "utm_source", "utm_medium" ]
+    output: |
+      *$removeparam=utm_source
+      *$removeparam=utm_medium
+---
+
+When you click on a link and you look at the URL, do you see all kinds of utm_sources and utm_mediums, which make the URL longer?
+
+If you do, you can remove them with this filter.
