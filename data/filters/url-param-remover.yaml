@@ -1,7 +1,7 @@
 title: Remove unneeded URL parameters
 params:
   - name: url-params
-    description: Parameters to hide
+    description: Parameters to remove from links
     type: list
     default: [ "utm_source", "utm_medium", "utm_campaign", "utm_content" ]
 tags:
