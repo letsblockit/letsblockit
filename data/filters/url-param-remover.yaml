@@ -5,8 +5,7 @@ params:
     type: list
     default: [ "utm_source", "utm_medium", "utm_campaign", "utm_content" ]
 tags:
-  - url
-  - params
+  - privacy
 template: |
   {{#each url-params}}
   *$removeparam={{this}}
