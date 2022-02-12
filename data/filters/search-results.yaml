@@ -21,14 +21,207 @@ params:
     type: checkbox
     default: false
   - name: searx-instances
-    onlyif: searx-enable
     description: SearX instances
     type: list
-    default: [ "searx.thegpm.org" ]
+    onlyif: searx-enable
+    default:
+      - searx.thegpm.org
   - name: sites
     description: Sites to hide
     type: list
-    default: [ ".pinterest.", "snapcraft.io/install" ]
+    default:
+      - .pinterest.
+    presets:
+      - name: github-copycats
+        description: Hide Github copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/github_copycats.txt
+        values:
+          - .gitmemory.com/
+          - .wenyanet.com/
+          - awesomeopensource.com/
+          - bestofcpp.com/
+          - bleepcoder.com/
+          - findbestopensource.com/
+          - gitanswer.com/
+          - giters.com/
+          - github.innominds.com/
+          - githubhelp.com/
+          - githubja.com/
+          - githubmate.com/
+          - githubmemory.com/
+          - githubplus.com/
+          - gitmemory.cn/
+          - golangrepo.com/
+          - issueexplorer.com/
+          - openprojectrepo.com/
+          - opensourcelibs.com/
+          - pythonissues.com/
+          - pythonrepo.com/
+          - reposhub.com/
+          - www.higithub.com/
+      - name: stackoverflow-copycats
+        description: Hide Stackoverflow copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/stackoverflow_copycats.txt
+        values:
+          - .amuddycup.com/
+          - .athabasca-foto.com/
+          - .cfadnc.org/
+          - .codefaq.info/
+          - .codeflow.site/
+          - .coredump.biz/
+          - .culinarydegree.info/
+          - .developreference.com/
+          - .domainelespailles.net/
+          - .ec-europe.org/
+          - .ecnf2016.org/
+          - .elfishgene.com/
+          - .faithcov.org/
+          - .fitforlearning.org/
+          - .fluffyfables.com/
+          - .gupgallery.com/
+          - .mediatagtw.com/
+          - .narkive.jp/
+          - .noblenaz.org/
+          - .ourladylakes.org/
+          - .pakostnici.com/
+          - .panaindustrial.com/
+          - .pcbconline.org/
+          - .projectbackpack.org/
+          - .safehavenpetrescue.org/
+          - .sch22.org/
+          - .sierrasummit2005.org/
+          - .siwib.org/
+          - .softwareuser.asklobster.com/
+          - .sunflowercreations.org/
+          - .theshuggahpies.com/
+          - .try2explore.com/
+          - .uwenku.com/
+          - .voidcc.com/
+          - .waymanamechurch.org/
+          - .zsharp.org/
+          - alltodev.com/
+          - alwaysemmyhope.com/
+          - answer-id.com/
+          - article.docway.net/
+          - askdev.vn/
+          - brocante.dev/
+          - cainiaojiaocheng.com/
+          - christfever.in/
+          - classmethod.dev/
+          - cmsdk.com/
+          - cndgn.com/
+          - code-examples.net/
+          - code.i-harness.com/
+          - codefaq.ru/
+          - codeguides.site/
+          - codehero.jp/
+          - coder-solution-jp.com/
+          - coderedirect.com/
+          - coderoad.ru/
+          - codersatellite.com/
+          - codewdw.com/
+          - dapper-tutorial.net/
+          - devbugfix.com/
+          - easysavecode.com/
+          - edupro.id/
+          - exceptionshub.com/
+          - farath.com/
+          - howtofix.io/
+          - ibootweb.com/
+          - intellipaat.com/
+          - isolution.pro/
+          - issues-world.com/
+          - itectec.com/
+          - jike.in/
+          - jpcodeqa.com/
+          - jpndev.com/
+          - justshowmethecode.com/
+          - knews.vip/
+          - kotaeta.com/
+          - laravelquestions.com/
+          - living-sun.com/
+          - lycaeum.dev/
+          - newbedev.com/
+          - ostack.cn/
+          - overcoder.net/
+          - pretagteam.com/
+          - progi.pro/
+          - python-stack.de/
+          - pythonwd.com/
+          - qa-stack.pl/
+          - qapicks.com/
+          - qastack.cn/
+          - qastack.co.in/
+          - qastack.com.br/
+          - qastack.com.de/
+          - qastack.com.ua/
+          - qastack.fr/
+          - qastack.id/
+          - qastack.in.th/
+          - qastack.info.tr/
+          - qastack.it/
+          - qastack.jp/
+          - qastack.kr/
+          - qastack.mx/
+          - qastack.net.bd/
+          - qastack.ru/
+          - qastack.vn/
+          - quabr.com/
+          - quares.ru/
+          - question-it.com/
+          - routinepanic.com/
+          - sqlite.in/
+          - stackfault.net/
+          - stackfinder.jp.net/
+          - stackguides.com/
+          - stackify.dev/
+          - stackoom.com/
+          - stackovergo.com/
+          - stackqna.com/
+          - stormcrow.dev/
+          - tech.wayne-chu.com/
+          - tipsfordev.com/
+          - tutorialguruji.com/
+          - tutorialmore.com/
+          - ubuntu.buildwebhost.com/
+          - ubuntuaa.com/
+          - webdevdesigner.com/
+          - webknox.com/
+          - webmonkez.com/
+          - www.5axxw.com/
+          - www.answerlib.com/
+          - www.buzzphp.com/
+          - www.codenong.com/
+          - www.coder.work/
+          - www.debugcn.com/
+          - www.desenv-web-rp.com/
+          - www.examplefiles.net/
+          - www.fixes.pub/
+          - www.generacodice.blog/
+          - www.generacodice.com/
+          - www.generacodice.it/
+          - www.ghcc.net/
+          - www.it-mure.jp.net/
+          - www.it-roy-ru.com/
+          - www.it-swarm-fr.com/
+          - www.it-swarm-ja.com/
+          - www.it-swarm-ja.tech/
+          - www.it-swarm.com.ru/
+          - www.it-swarm.jp.net/
+          - www.javaer101.com/
+          - www.jscodetips.com/
+          - www.nuomiphp.com/
+          - www.py4u.net/
+          - www.qi-u.com/
+          - www.semicolonworld.com/
+          - www.stackfinder.ru/
+          - www.titanwolf.org/
+          - www.uebu-kaihatsu.jp.net/
+          - www.web-dev-qa.com/
+          - www.webdevqa.jp.net/
+          - www.xsprogram.com/
+          - xiu2.net/
+          - younggeeks.in/
 tags:
   - google
   - duckduckgo
@@ -59,14 +252,15 @@ template: |
   {{/if}}
   {{/each}}
 tests:
-  - params: { }
-    output: ""
   - params:
-      google: true
       duckduckgo: true
+      google: true
+      searx-instances:
+        - searx.thegpm.org
+      sites:
+        - .pinterest.
+        - snapcraft.io/install
       startpage: true
-      searx-instances: [ "searx.thegpm.org" ] # Not enabled
-      sites: [ ".pinterest.", "snapcraft.io/install" ]
     output: |
       google.*##.g:has(a[href*=".pinterest."])
       google.*##a[href*=".pinterest."]:upward(1)
@@ -81,8 +275,12 @@ tests:
   - params:
       kagi: true
       searx-enable: true
-      searx-instances: [ "searx.thegpm.org", "search.disroot.org" ]
-      sites: [ ".pinterest.", "snapcraft.io/install" ]
+      searx-instances:
+        - searx.thegpm.org
+        - search.disroot.org
+      sites:
+        - .pinterest.
+        - snapcraft.io/install
     output: |
       kagi.com##.search-result:has(a.__sri-url[href*=".pinterest."])
       kagi.com##._0_image_item[data-host_url*=".pinterest."]
@@ -92,11 +290,23 @@ tests:
       kagi.com##._0_image_item[data-host_url*="snapcraft.io/install"]
       searx.thegpm.org###main_results div.result:has(a[href*="snapcraft.io/install"])
       search.disroot.org###main_results div.result:has(a[href*="snapcraft.io/install"])
+  - output: ""
 ---
 
-Some websites are famous for being better at [Search Engine Optimization](https://news.ycombinator.com/item?id=25538586) than providing useful content. While there is not much we can do ourselves to avoid SEO abuse, we can cleanup the search results that are returned to us by search engines.
+Some websites are famous for being better at [Search Engine Optimization](https://news.ycombinator.com/item?id=25538586)
+than providing useful content. While there is not much we can do ourselves to avoid SEO abuse, we can cleanup the search
+results that are returned to us by search engines.
 
-This template allows you to remove search results based on their URL for **both text and image searches**. It supports Google and DuckDuckGo, but contributions are welcome to support more search engines. Results will be hidden if their link destination contains one of the values you pass. For example:
+This template allows you to remove search results based on their URL for **both text and image searches**.
+It supports several search engines (and [contributions]
+(https://github.com/xvello/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=search-results)
+are welcome to add suport for more!).
+Results will be hidden if their link destination contains one of the values you pass. For example:
 
 - Pinterest publishes content on an army of subdomains and country-specific domains; using `.pinterest.` allows you to block them all
 - snapcraft.io's SEO efforts focus on `snapcraft.io/install/X/Y` pages; using `snapcraft.io/install` limits the blocking to these pages
+
+
+The [uBlock-Origin-dev-filter](https://github.com/quenhus/uBlock-Origin-dev-filter) project maintains a list
+if copycat websites for Github and Stackoverflow. You can use their list by ticking the boxes at the bottom
+of the form. Rules to block these websites will be added at the bottom of the filter.

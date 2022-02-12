@@ -79,16 +79,33 @@ func (r *Repository) GetTags() []string {
 	return r.tagList
 }
 
-func (r *Repository) Render(w io.Writer, name string, data map[string]interface{}) error {
-	_, found := r.filterMap[name]
+func (r *Repository) Render(w io.Writer, name string, input map[string]interface{}) error {
+	filter, found := r.filterMap[name]
 	if !found {
 		return fmt.Errorf("template '%s' not found", name)
 	}
-	if data == nil {
-		data = make(map[string]interface{})
+	if input == nil {
+		input = make(map[string]interface{})
 	}
-	data["_filter"] = name
-	return r.main.Execute(w, data)
+	input["_filter"] = name
+	if err := r.main.Execute(w, input); err != nil {
+		return err
+	}
+
+	for _, preset := range filter.presets {
+		if input[preset.EnableKey] == true {
+			if _, err := fmt.Fprintln(w, "!!", name, "with", preset.Name, "preset"); err != nil {
+				return err
+			}
+			input := shallowCopy(input)
+			input[preset.TargetKey] = preset.Value
+			if err := r.main.Execute(w, input); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 func flattenTagMap(tags map[string]struct{}) []string {
@@ -111,4 +128,12 @@ func sortFilters(filters []*Filter) {
 		}
 		return strings.Compare(filters[i].Name, filters[j].Name) < 0
 	})
+}
+
+func shallowCopy(input map[string]interface{}) map[string]interface{} {
+	output := make(map[string]interface{}, len(input))
+	for k, v := range input {
+		output[k] = v
+	}
+	return output
 }

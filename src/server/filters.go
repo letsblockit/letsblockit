@@ -137,8 +137,11 @@ func (s *Server) viewFilter(c echo.Context) error {
 		// If no params found, inject the default values
 		if len(filter.Params) > 0 {
 			params = make(map[string]interface{})
-			for _, p := range filter.Params {
-				params[p.Name] = p.Default
+			for _, param := range filter.Params {
+				params[param.Name] = param.Default
+				for _, preset := range param.Presets {
+					params[param.BuildPresetParamName(preset.Name)] = preset.Default
+				}
 			}
 		}
 	} else {
@@ -147,6 +150,12 @@ func (s *Server) viewFilter(c echo.Context) error {
 		for _, param := range filter.Params {
 			if _, found := params[param.Name]; !found {
 				newParams[param.Name] = true
+			}
+			for _, preset := range param.Presets {
+				name := param.BuildPresetParamName(preset.Name)
+				if _, found := params[name]; !found {
+					newParams[name] = true
+				}
 			}
 		}
 		if len(newParams) > 0 {
@@ -269,6 +278,10 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 				}
 			}
 			params[p.Name] = values
+			for _, preset := range p.Presets {
+				name := p.BuildPresetParamName(preset.Name)
+				params[name] = formParams.Get(name) == "on"
+			}
 		case filters.StringParam:
 			params[p.Name] = formParams.Get(p.Name)
 		case filters.MultiLineParam:
@@ -304,7 +317,11 @@ func (s *Server) hasMissingParams(instance db.GetActiveFiltersForUserRow) bool {
 		if _, found := params[p.Name]; !found {
 			return true
 		}
+		for _, preset := range p.Presets {
+			if _, found := params[p.BuildPresetParamName(preset.Name)]; !found {
+				return true
+			}
+		}
 	}
-
 	return false
 }

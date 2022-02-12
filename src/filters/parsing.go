@@ -17,8 +17,8 @@ func parseFilter(name string, reader io.Reader) (*Filter, error) {
 	return filter, parse(reader, filter)
 }
 
-func parseFilterAndTest(name string, reader io.Reader) (*filterAndTests, error) {
-	filter := &filterAndTests{
+func parseFilterAndTest(name string, reader io.Reader) (*FilterAndTests, error) {
+	filter := &FilterAndTests{
 		Filter: Filter{
 			Name: name,
 		},
@@ -44,6 +44,6 @@ func parse(reader io.Reader, filter filter) error {
 	}
 	pos += len(yamlSeparator)
 	pos += bytes.Index(input[pos:], newLine)
-	filter.setDescription(string(blackfriday.Run(input[pos:])))
+	filter.finishParsing(string(blackfriday.Run(input[pos:])))
 	return nil
 }

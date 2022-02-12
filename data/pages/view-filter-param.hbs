@@ -60,6 +60,20 @@
                     <i class="far fa-trash-alt"></i>
                 </button>
             </div>
+            {{#each presets}}
+                <div class="mb-1 form-check">
+                    <input type="checkbox" class="form-check-input"
+                           id="{{preset_name .. .}}" name="{{preset_name .. .}}"
+                           {{#equal true (lookup @root.data.params (preset_name .. .))}}checked{{/equal}}>
+                    <label class="form-check-label" for="{{preset_name .. .}}">
+                        {{description}}
+                        {{#with source}}
+                            <span class="small ms-1">(<a href="{{source}}">source</a>)</span>
+                        {{/with}}
+                        {{>view-filter-pill-new (preset_name .. .)}}
+                    </label>
+                </div>
+            {{/each}}
         </div>
     </fieldset>
 {{/if}}
