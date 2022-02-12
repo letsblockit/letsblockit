@@ -12,6 +12,10 @@ params:
     description: Hide the "People also search for" popup
     type: checkbox
     default: true
+  - name: page-footer
+    description: Hide the search page footer showing your address
+    type: checkbox
+    default: false
   - name: only-results
     description: Remove everything but simple search results
     type: checkbox
@@ -27,6 +31,9 @@ template: |
   {{/if}}
   {{#if also-search}}
   google.*###rso div.g div[jscontroller]
+  {{/if}}
+  {{#if page-footer}}
+  google.*###footcnt > #fbarcnt
   {{/if}}
   {{#if only-results}}
   google.*###rso > :not(div.g):not(:has(:scope>div.g))
