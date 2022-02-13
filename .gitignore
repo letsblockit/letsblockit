@@ -1,4 +1,3 @@
-data/assets/dist/fa-*.svg
 data/assets/dist/*.map
 src/assets/node_modules/
 src/assets/.parcel-cache/

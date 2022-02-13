@@ -1,6 +1,7 @@
 @charset "utf-8";
 
-@import 'node_modules/@fortawesome/fontawesome-free/css/all.css';
+$ti-font-path: 'node_modules/@tabler/icons/iconfont/fonts/';
+@import 'node_modules/@tabler/icons/iconfont/tabler-icons';
 
 $primary: #b83e51;
 $secondary: #DC926E;

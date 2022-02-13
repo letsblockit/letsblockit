@@ -13,8 +13,7 @@ window.copyFilterOutput = function (clicked) {
     document.getElementById("output-card").classList.add("border-success")
     document.getElementById("output-copy-text").innerText = "Copied to clipboard"
     const icon = document.getElementById("output-copy-icon")
-    icon.classList.replace("far", "fas")
-    icon.classList.replace("fa-clipboard", "fa-clipboard-check")
+    icon.classList.replace("ti-clipboard", "ti-clipboard-check")
     clicked.classList.add("btn-success")
 }
 
