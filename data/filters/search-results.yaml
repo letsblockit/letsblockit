@@ -239,6 +239,7 @@ template: |
   {{/if}}
   {{#if ../kagi}}
   kagi.com##.search-result:has(a.__sri-url[href*="{{site}}"])
+  kagi.com##.sri-group:has(a.__sri-url[href*="{{site}}"])
   kagi.com##._0_image_item[data-host_url*="{{site}}"]
   {{/if}}
   {{#if ../startpage}}
@@ -283,10 +284,12 @@ tests:
         - snapcraft.io/install
     output: |
       kagi.com##.search-result:has(a.__sri-url[href*=".pinterest."])
+      kagi.com##.sri-group:has(a.__sri-url[href*=".pinterest."])
       kagi.com##._0_image_item[data-host_url*=".pinterest."]
       searx.thegpm.org###main_results div.result:has(a[href*=".pinterest."])
       search.disroot.org###main_results div.result:has(a[href*=".pinterest."])
       kagi.com##.search-result:has(a.__sri-url[href*="snapcraft.io/install"])
+      kagi.com##.sri-group:has(a.__sri-url[href*="snapcraft.io/install"])
       kagi.com##._0_image_item[data-host_url*="snapcraft.io/install"]
       searx.thegpm.org###main_results div.result:has(a[href*="snapcraft.io/install"])
       search.disroot.org###main_results div.result:has(a[href*="snapcraft.io/install"])
