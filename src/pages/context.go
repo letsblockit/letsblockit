@@ -21,6 +21,7 @@ type Context struct {
 	UserID         uuid.UUID
 	UserLoggedIn   bool
 	UserHasAccount bool
+	CSRFToken      string
 
 	Data ContextData
 }

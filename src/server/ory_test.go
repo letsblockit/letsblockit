@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -91,17 +92,20 @@ func (s *ServerTestSuite) TestRenderKratosForm_ErrBadFlow() {
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Settings() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/settings", nil)
+	req := httptest.NewRequest(http.MethodPost, "/user/start/settings", s.csrfBody())
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/settings/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Register() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", nil)
+	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", s.csrfBody())
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/registration/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Login() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", nil)
+	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", s.csrfBody())
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(&http.Cookie{
 		Name:  "has_account",
 		Value: "true",
@@ -110,12 +114,14 @@ func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Login() {
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/login", nil)
+	req := httptest.NewRequest(http.MethodPost, "/user/start/login", s.csrfBody())
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromForm() {
 	form := make(url.Values)
+	form.Add(csrfLookup, s.csrf)
 	form.Add("return_to", "https://myserver/page")
 	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login",
 		strings.NewReader(form.Encode()))
@@ -125,19 +131,36 @@ func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromForm() {
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromReferer() {
-	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", nil)
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", s.csrfBody())
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://myserver/page")
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser?return_to=https://myserver/page"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToNotInDomain() {
-	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", nil)
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", s.csrfBody())
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://anotherserver/page")
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Logout() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/logout", nil)
+	req := httptest.NewRequest(http.MethodPost, "/user/start/logout", s.csrfBody())
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
 	s.runRequest(req, assertSeeOther("targetURL"))
+}
+
+func (s *ServerTestSuite) TestStartKratosFlow_MissingCSRF() {
+	req := httptest.NewRequest(http.MethodPost, "/user/start/logout", nil)
+	req.AddCookie(verifiedCookie)
+	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		assert.Equal(t, 400, recorder.Result().StatusCode)
+	})
+}
+
+func (s *ServerTestSuite) csrfBody() io.Reader {
+	f := url.Values{}
+	f.Add(csrfLookup, s.csrf)
+	return strings.NewReader(f.Encode())
 }

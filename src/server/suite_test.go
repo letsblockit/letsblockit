@@ -11,6 +11,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/random"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/xvello/letsblockit/src/db"
@@ -68,6 +69,7 @@ type ServerTestSuite struct {
 	expectQ      *mocks.MockQuerierMockRecorder
 	kratosServer *httptest.Server
 	user         uuid.UUID
+	csrf         string
 }
 
 func (s *ServerTestSuite) SetupTest() {
@@ -102,6 +104,7 @@ func (s *ServerTestSuite) SetupTest() {
 	}))
 
 	s.user = uuid.New()
+	s.csrf = random.String(32)
 	s.server = &Server{
 		assets: nil,
 		echo:   echo.New(),
@@ -167,6 +170,12 @@ func assertSeeOther(target string) func(t *testing.T, rec *httptest.ResponseReco
 
 func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, *httptest.ResponseRecorder)) {
 	rec := httptest.NewRecorder()
+	if len(s.csrf) > 0 {
+		req.AddCookie(&http.Cookie{
+			Name:  csrfLookup,
+			Value: s.csrf,
+		})
+	}
 	s.server.echo.ServeHTTP(rec, req)
 	checks(s.T(), rec)
 }

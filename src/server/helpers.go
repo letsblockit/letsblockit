@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/pages"
 )
 
 type echoInterface interface {
@@ -54,6 +55,11 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 		},
 		"preset_name": func(param filters.FilterParam, preset filters.Preset) string {
 			return param.BuildPresetParamName(preset.Name)
+		},
+		"csrf": func(c *pages.Context) string {
+			return fmt.Sprintf(
+				`<input type="hidden" name="%s" value="%s"/>`,
+				csrfLookup, c.CSRFToken)
 		},
 	}
 }

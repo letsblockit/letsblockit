@@ -31,6 +31,7 @@
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>
             {{else}}
                 <form method="POST" class="me-2" hx-boost="false" action="{{href "start-flow" "loginOrRegistration"}}">
+                    {{{csrf @root}}}
                     <button class="btn btn-outline-light {{#equal "user" @root.CurrentSection}} active{{/equal}}"
                             type="submit">Login
                     </button>

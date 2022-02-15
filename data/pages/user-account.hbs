@@ -12,7 +12,9 @@
             </p>
             <ul>
                 <li>To use your filters in you browser, <a href="{{href "help" "use-list"}}">see the help page</a>.</li>
-                <li>Alternatively, you can <a href="{{href "export-filterlist" list_token}}">export your list</a> for local use.</li>
+                <li>Alternatively, you can <a href="{{href "export-filterlist" list_token}}">export your list</a>
+                    for local use.
+                </li>
             </ul>
         </div>
     </div>
@@ -20,6 +22,7 @@
     <div class="card mb-3 shadow-sm">
         <div class="card-header">Manage my account</div>
         <form class="card-body" method="POST">
+            {{{csrf @root}}}
             <p>
                 Account management is provided by
                 <a target="_blank" href="https://www.ory.sh/docs">the fine folks at Ory</a>.
@@ -37,6 +40,7 @@
     <div class="card mb-3 shadow-sm">
         <div class="card-header">Rotate my list download token</div>
         <form class="card-body" method="POST" action="{{href "rotate-list-token" ""}}">
+            {{{csrf @root}}}
             <p class="mb-2">
                 You can generate a new download token down below, to stop downloads at the old URL.
                 <strong>Please note that you need to update all your browsers with the new link</strong>,
@@ -61,6 +65,7 @@
         <div class="card-body">
             <p>You need to create an account or login</p>
             <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
+                {{{csrf @root}}}
                 <button type="submit" class="btn btn-primary">Create an account or login</button>
             </form>
         </div>

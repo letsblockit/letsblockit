@@ -28,6 +28,7 @@ const (
 		`"status":"${status}","error":"${error}","latency":${latency},` +
 		`"bytes_in":${bytes_in},"bytes_out":${bytes_out}}}` + "\n"
 	mainDomain = "letsblock.it"
+	csrfLookup = "_csrf"
 )
 
 type Options struct {
@@ -145,6 +146,14 @@ func (s *Server) setupRouter() {
 	if s.options.KratosURL != "" {
 		withAuth.Use(s.buildOryMiddleware())
 	}
+	withAuth.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
+		TokenLookup:    "form:" + csrfLookup,
+		ContextKey:     csrfLookup,
+		CookieName:     csrfLookup,
+		CookiePath:     "/",
+		CookieSameSite: http.SameSiteStrictMode,
+		CookieHTTPOnly: true,
+	}))
 
 	withAuth.GET("/", s.landingPageHandler).Name = "landing"
 	withAuth.GET("/help", s.helpPages).Name = "help-main"
@@ -221,6 +230,9 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	}
 	if _, err := c.Cookie(hasAccountCookieName); err == nil {
 		context.UserHasAccount = true
+	}
+	if t, ok := c.Get(csrfLookup).(string); ok {
+		context.CSRFToken = t
 	}
 	if u := getUser(c); u != nil {
 		context.UserID = u.Id()

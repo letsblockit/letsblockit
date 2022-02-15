@@ -155,7 +155,9 @@ func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 }
 
 func (s *ServerTestSuite) TestViewFilter_Preview() {
-	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(buildFilter2FormBody().Encode()))
+	f := buildFilter2FormBody()
+	f.Add(csrfLookup, s.csrf)
+	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
@@ -180,6 +182,7 @@ func (s *ServerTestSuite) TestViewFilter_Preview() {
 
 func (s *ServerTestSuite) TestViewFilter_Create() {
 	f := buildFilter2FormBody()
+	f.Add(csrfLookup, s.csrf)
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
@@ -216,6 +219,7 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 
 func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 	f := buildFilter2FormBody() // Add params that will be ignored: filter1 does not have any
+	f.Add(csrfLookup, s.csrf)
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter1", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
@@ -247,6 +251,7 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 
 func (s *ServerTestSuite) TestViewFilter_CreateListToo() {
 	f := buildFilter2FormBody()
+	f.Add(csrfLookup, s.csrf)
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
@@ -284,6 +289,7 @@ func (s *ServerTestSuite) TestViewFilter_CreateListToo() {
 
 func (s *ServerTestSuite) TestViewFilter_Update() {
 	f := buildFilter2FormBody()
+	f.Add(csrfLookup, s.csrf)
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
@@ -319,6 +325,7 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 
 func (s *ServerTestSuite) TestViewFilter_Disable() {
 	f := make(url.Values)
+	f.Add(csrfLookup, s.csrf)
 	f.Add("__disable", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
@@ -332,6 +339,17 @@ func (s *ServerTestSuite) TestViewFilter_Disable() {
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 302, rec.Code)
 		assert.Equal(t, "/filters", rec.Header().Get("Location"))
+	})
+}
+
+func (s *ServerTestSuite) TestViewFilter_MissingCSRF() {
+	f := buildFilter2FormBody()
+	f.Add("__save", "")
+	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	req.AddCookie(verifiedCookie)
+	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		assert.Equal(t, 400, recorder.Result().StatusCode)
 	})
 }
 

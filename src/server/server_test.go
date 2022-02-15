@@ -27,6 +27,7 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 			"page":          helpMenu[1].Pages[0],
 			"menu_sections": helpMenu,
 		},
+		CSRFToken:    s.csrf,
 		UserLoggedIn: false,
 	})
 	s.runRequest(req, assertOk)
@@ -43,6 +44,7 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 			"page":          helpMenu[1].Pages[0],
 			"menu_sections": helpMenu,
 		},
+		CSRFToken:    s.csrf,
 		UserID:       s.user,
 		UserLoggedIn: true,
 	})
@@ -70,6 +72,7 @@ func (s *ServerTestSuite) TestAbout_KratosDown() {
 			"page":          helpMenu[1].Pages[0],
 			"menu_sections": helpMenu,
 		},
+		CSRFToken: s.csrf,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -88,6 +91,7 @@ func (s *ServerTestSuite) TestAbout_InvalidKratosResponse() {
 			"page":          helpMenu[1].Pages[0],
 			"menu_sections": helpMenu,
 		},
+		CSRFToken: s.csrf,
 	})
 	s.runRequest(req, assertOk)
 }

@@ -31,6 +31,7 @@
                       hx-target="#output-card"
                       hx-swap="outerHTML">
 
+                    {{{csrf @root}}}
                     {{#each filter.params}}
                         {{~>view-filter-param}}
                     {{/each}}
@@ -77,6 +78,7 @@
                 <form id="filter_input" class="container form-inline" method="POST" action="#output-card"
                       hx-post="{{href "view-filter" filter.name}}"
                       hx-select="#main" hx-target="#main" hx-swap="outerHTML">
+                    {{{csrf @root}}}
                     {{#if has_instance}}
                         <button class="btn btn-primary me-2" disabled>Filter already in your list.</button>
                         <button type="submit" name="__disable" class="ms-2 btn btn-dark ms-auto"

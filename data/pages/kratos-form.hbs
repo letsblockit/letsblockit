@@ -28,6 +28,7 @@
                     {{else}}
                         <li class="ms-2 nav-item">
                             <form method="POST" action="{{href "start-flow" Type}}">
+                                {{{csrf @root}}}
                                 {{#with @root.Data.return_to}}
                                     <input type="hidden" name="return_to" value="{{.}}">
                                 {{/with}}

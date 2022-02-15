@@ -87,6 +87,7 @@
     <div class="card shadow-sm me-lg-5 ms-lg-5">
         <form class="card-body text-center p-4"
               method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
+            {{{csrf @root}}}
             <div class="mb-3">You need an account to create and use a filter list.</div>
             <div>
                 <button type="submit" class="btn btn-primary">Register or Login first</button>

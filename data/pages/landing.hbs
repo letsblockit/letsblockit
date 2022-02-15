@@ -71,6 +71,7 @@
                 Your filters will update daily on all your browsers, even on your phone with Firefox Mobile.
             </p>
             <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
+                {{{csrf @root}}}
                 <button class="btn btn-primary" type="submit">Create an account</button>
             </form>
         </div>
