@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/DataDog/datadog-go/v5 v5.0.2
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
-	github.com/alecthomas/kong v0.4.0
+	github.com/alecthomas/kong v0.4.1
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
@@ -18,6 +18,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0
 	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
 require (
@@ -44,5 +45,4 @@ require (
 	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
