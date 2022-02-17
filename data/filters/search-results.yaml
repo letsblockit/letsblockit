@@ -103,7 +103,9 @@ params:
           - alwaysemmyhope.com/
           - answer-id.com/
           - article.docway.net/
+          - ask-ubuntu.ru/
           - askdev.vn/
+          - askubuntu.ru/
           - brocante.dev/
           - cainiaojiaocheng.com/
           - christfever.in/
@@ -137,13 +139,16 @@ params:
           - jpndev.com/
           - justshowmethecode.com/
           - knews.vip/
+          - kompsekret.ru/
           - kotaeta.com/
           - laravelquestions.com/
           - living-sun.com/
           - lycaeum.dev/
           - newbedev.com/
+          - ohandroid.com/
           - ostack.cn/
           - overcoder.net/
+          - poweruser.guru/
           - pretagteam.com/
           - progi.pro/
           - python-stack.de/
@@ -170,6 +175,9 @@ params:
           - quares.ru/
           - question-it.com/
           - routinepanic.com/
+          - ruphp.com/
+          - server-fault.ru/
+          - sprosi.pro/
           - sqlite.in/
           - stackfault.net/
           - stackfinder.jp.net/
@@ -178,16 +186,21 @@ params:
           - stackoom.com/
           - stackovergo.com/
           - stackqna.com/
+          - stackru.com/
           - stormcrow.dev/
+          - switch-case.ru/
           - tech.wayne-chu.com/
           - tipsfordev.com/
           - tutorialguruji.com/
           - tutorialmore.com/
           - ubuntu.buildwebhost.com/
           - ubuntuaa.com/
+          - ubuntugeeks.com/
+          - ubuntuplace.info/
           - webdevdesigner.com/
           - webknox.com/
           - webmonkez.com/
+          - wikiroot.ru/
           - www.5axxw.com/
           - www.answerlib.com/
           - www.buzzphp.com/
