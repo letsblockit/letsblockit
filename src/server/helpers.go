@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/xvello/letsblockit/src/filters"
@@ -30,7 +31,12 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 			return href(e, route, args)
 		},
 		"list_href": func(token string) string {
-			return "https://get.letsblock.it" + href(e, "render-filterlist", token)
+			return listDownloadRef(e, token)
+		},
+		"abp_subscribe_href": func(token string) string {
+			return fmt.Sprintf("abp:subscribe?location=%s&title=%s",
+				url.QueryEscape(listDownloadRef(e, token)),
+				url.QueryEscape("letsblock.it - My filters"))
 		},
 		"lookup_list": func(obj map[string]interface{}, key string) []string {
 			switch values := obj[key].(type) {
@@ -50,6 +56,10 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 			return param.BuildPresetParamName(preset.Name)
 		},
 	}
+}
+
+func listDownloadRef(e echoInterface, token string) string {
+	return "https://get.letsblock.it" + href(e, "render-filterlist", token)
 }
 
 func href(e echoInterface, route string, args string) string {

@@ -1,36 +1,90 @@
 <h2>Use your filter list with uBlock</h2>
-<div class="card shadow-sm me-lg-5 ms-lg-5">
-    {{#if @root.UserLoggedIn}}
-        <video controls muted class="card-img-top">
-            <source src="/assets/images/pages/help-add-list.webm" type="video/webm">
-        </video>
 
-        {{#unless has_filters}}
-            <div class="card-header text-center p-4">
-                Your list does not have any active filter yet!<br/>
-                Go to the <a href="{{href "list-filters" ""}}">filter list page</a> first to select some.
-            </div>
-        {{/unless}}
-
-        <div class="card-body">
-            <ul>
-                <li>Click on the <code>uBlock Origin</code> extension icon in your browser toolbar, then open the
-                    dashboard by clicking on the cog icons. If the cogs don't show up, click on <code>More</code>.
-                </li>
-                <li>Click on the <code>Filters lists</code> tab, scroll to the bottom</li>
-                <li>Click on the <code>Import...</code> checkbox</li>
-                <li>Copy the URL to your list:
-                    <a onclick="copyListAddress()" class="text-decoration-none" style="cursor: pointer">
-                        <span id="list-button" class="badge rounded-pill bg-secondary ms-1">copy it</span>
-                        <br/>
-                        <code id="list-address">{{list_href list_token}}</code>
-                    </a>
-
-                </li>
-                <li>Click on <code>Apply changes</code></li>
-            </ul>
+{{#if @root.UserLoggedIn}}
+    {{#unless has_filters}}
+        <div class="alert alert-secondary">
+            Your list does not have any active filter yet!<br/>
+            Go to the <a href="{{href "list-filters" ""}}">filter list page</a> first to select some.
         </div>
-    {{else}}
+    {{/unless}}
+
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    uBlock Origin: easy install
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <img src="/assets/images/pages/help-use-list-easy.png{{assetHash}}" class="mx-auto d-block mb-3">
+                    <ol>
+                        <li><a href="{{abp_subscribe_href list_token}}">Right-click on this link</a></li>
+                        <li>At the bottom of the contextual menu, select <code>uBlock Origin</code> then
+                            <code>Subscribe to filter list...</code></li>
+                        <li>A new tab will open, click the <code>Subscribe</code> button in the top right corner,
+                            then close that tab.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    uBlock Origin: manual install
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <video controls muted preload="none" class="card-img-top mb-3">
+                        <source src="/assets/images/pages/help-add-list.webm" type="video/webm">
+                    </video>
+                    <ol>
+                        <li>Click on the <code>uBlock Origin</code> extension icon in your browser toolbar, then open
+                            the
+                            dashboard by clicking on the cog icons. If the cogs don't show up, click on
+                            <code>More</code>.
+                        </li>
+                        <li>Click on the <code>Filters lists</code> tab, scroll to the bottom</li>
+                        <li>Click on the <code>Import...</code> checkbox</li>
+                        <li>Copy the URL to your list:
+                            <a onclick="copyListAddress()" class="text-decoration-none" style="cursor: pointer">
+                                <span id="list-button" class="badge rounded-pill bg-secondary ms-1">copy it</span>
+                                <br/>
+                                <code id="list-address">{{list_href list_token}}</code>
+                            </a>
+                        </li>
+                        <li>Click on <code>Apply changes</code></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Other adblockers
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                 data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <p>While uBlock Origin is the main target for this project, most filters should work with AdGuard
+                        or other browser-based adblockers.</p>
+                    <p>To install your filter list, <a href="{{abp_subscribe_href list_token}}">click on this link</a>,
+                        or manually add the following URL to your lists:</p>
+                    <code id="list-address">{{list_href list_token}}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+{{else}}
+    <div class="card shadow-sm me-lg-5 ms-lg-5">
         <form class="card-body text-center p-4"
               method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
             <div class="mb-3">You need an account to create and use a filter list.</div>
@@ -38,8 +92,8 @@
                 <button type="submit" class="btn btn-primary">Register or Login first</button>
             </div>
         </form>
-    {{/if}}
-</div>
+    </div>
+{{/if}}
 
 <script>
     function copyListAddress() {
