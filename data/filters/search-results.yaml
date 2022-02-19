@@ -41,6 +41,7 @@ params:
           - awesomeopensource.com/
           - bestofcpp.com/
           - bleepcoder.com/
+          - fantashit.com/
           - findbestopensource.com/
           - gitanswer.com/
           - giters.com/
@@ -52,15 +53,23 @@ params:
           - githubmemory.com/
           - githubplus.com/
           - gitmemory.cn/
+          - gitmotion.com/
           - golangissues.com/
           - golangrepo.com/
           - issueexplorer.com/
           - openprojectrepo.com/
           - opensourcelibs.com/
+          - pythonawesome.com/
           - pythonissues.com/
           - pythonrepo.com/
           - reposhub.com/
           - www.higithub.com/
+      - name: npm-copycats
+        description: Hide npm copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/npm_copycats.txt
+        values:
+          - cnpmjs.org/
+          - npmmirror.com/
       - name: stackoverflow-copycats
         description: Hide Stackoverflow copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/stackoverflow_copycats.txt
@@ -191,6 +200,7 @@ params:
           - stackru.com/
           - stormcrow.dev/
           - switch-case.ru/
+          - sysadminde.com/
           - tech.wayne-chu.com/
           - tipsfordev.com/
           - tutorialguruji.com/
@@ -237,6 +247,21 @@ params:
           - www.xsprogram.com/
           - xiu2.net/
           - younggeeks.in/
+      - name: wikipedia-copycats
+        description: Hide Wikipedia copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
+        values:
+          - encyclopedia.thefreedictionary.com/
+          - everything.explained.today/
+          - findatwiki.com/
+          - mediawiki.feverous.co.uk/
+          - wikizero.com/
+          - www.algebra.com/
+          - www.scholarship.edu.vn/wiki/
+          - www.secret-bases.co.uk/wiki/
+          - www.wikide.wiki/
+          - www.wikit.wiki/
+          - www.wiwa.wiki/
 tags:
   - google
   - duckduckgo
