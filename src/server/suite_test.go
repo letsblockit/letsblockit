@@ -84,6 +84,7 @@ type ServerTestSuite struct {
 	expectF      *mocks.MockFilterRepositoryMockRecorder
 	expectP      *mocks.MockPageRendererMockRecorder
 	expectQ      *mocks.MockQuerierMockRecorder
+	expectR      *mocks.MockReleaseClientMockRecorder
 	kratosServer *httptest.Server
 	user         uuid.UUID
 	csrf         string
@@ -94,9 +95,11 @@ func (s *ServerTestSuite) SetupTest() {
 	fm := mocks.NewMockFilterRepository(c)
 	pm := mocks.NewMockPageRenderer(c)
 	qm := mocks.NewMockQuerier(c)
+	rm := mocks.NewMockReleaseClient(c)
 	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
 	s.expectQ = qm.EXPECT()
+	s.expectR = rm.EXPECT()
 
 	s.kratosServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -123,17 +126,18 @@ func (s *ServerTestSuite) SetupTest() {
 	s.user = uuid.New()
 	s.csrf = random.String(32)
 	s.server = &Server{
-		assets: nil,
-		echo:   echo.New(),
+		assets:  nil,
+		echo:    echo.New(),
+		filters: fm,
+		now:     func() time.Time { return fixedNow },
 		options: &Options{
 			KratosURL: s.kratosServer.URL,
 			silent:    true,
 		},
-		filters: fm,
-		pages:   pm,
-		store:   &mockStore{qm},
-		statsd:  &statsd.NoOpClient{},
-		now:     func() time.Time { return fixedNow },
+		pages:    pm,
+		releases: rm,
+		statsd:   &statsd.NoOpClient{},
+		store:    &mockStore{qm},
 	}
 	s.server.setupRouter()
 }

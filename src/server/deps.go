@@ -2,9 +2,11 @@ package server
 
 import (
 	"io"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
 )
 
@@ -19,4 +21,9 @@ type FilterRepository interface {
 	GetFilters() []*filters.Filter
 	GetTags() []string
 	Render(w io.Writer, name string, data map[string]interface{}) error
+}
+
+type ReleaseClient interface {
+	GetReleases() ([]news.Release, error)
+	GetLatestAt() (time.Time, error)
 }

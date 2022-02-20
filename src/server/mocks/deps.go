@@ -7,10 +7,12 @@ package mocks
 import (
 	io "io"
 	reflect "reflect"
+	time "time"
 
 	gomock "github.com/golang/mock/gomock"
 	echo "github.com/labstack/echo/v4"
 	filters "github.com/xvello/letsblockit/src/filters"
+	news "github.com/xvello/letsblockit/src/news"
 	pages "github.com/xvello/letsblockit/src/pages"
 )
 
@@ -155,4 +157,57 @@ func (m *MockFilterRepository) Render(w io.Writer, name string, data map[string]
 func (mr *MockFilterRepositoryMockRecorder) Render(w, name, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Render", reflect.TypeOf((*MockFilterRepository)(nil).Render), w, name, data)
+}
+
+// MockReleaseClient is a mock of ReleaseClient interface.
+type MockReleaseClient struct {
+	ctrl     *gomock.Controller
+	recorder *MockReleaseClientMockRecorder
+}
+
+// MockReleaseClientMockRecorder is the mock recorder for MockReleaseClient.
+type MockReleaseClientMockRecorder struct {
+	mock *MockReleaseClient
+}
+
+// NewMockReleaseClient creates a new mock instance.
+func NewMockReleaseClient(ctrl *gomock.Controller) *MockReleaseClient {
+	mock := &MockReleaseClient{ctrl: ctrl}
+	mock.recorder = &MockReleaseClientMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockReleaseClient) EXPECT() *MockReleaseClientMockRecorder {
+	return m.recorder
+}
+
+// GetLatestAt mocks base method.
+func (m *MockReleaseClient) GetLatestAt() (time.Time, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLatestAt")
+	ret0, _ := ret[0].(time.Time)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLatestAt indicates an expected call of GetLatestAt.
+func (mr *MockReleaseClientMockRecorder) GetLatestAt() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLatestAt", reflect.TypeOf((*MockReleaseClient)(nil).GetLatestAt))
+}
+
+// GetReleases mocks base method.
+func (m *MockReleaseClient) GetReleases() ([]news.Release, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetReleases")
+	ret0, _ := ret[0].([]news.Release)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetReleases indicates an expected call of GetReleases.
+func (mr *MockReleaseClientMockRecorder) GetReleases() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReleases", reflect.TypeOf((*MockReleaseClient)(nil).GetReleases))
 }

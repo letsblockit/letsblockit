@@ -17,6 +17,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
 )
 
@@ -63,15 +64,16 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
-	assets  *wrappedAssets
-	echo    *echo.Echo
-	options *Options
-	filters FilterRepository
-	pages   PageRenderer
-	store   db.Store
-	statsd  statsd.ClientInterface
-	banned  map[uuid.UUID]struct{}
-	now     func() time.Time
+	assets   *wrappedAssets
+	banned   map[uuid.UUID]struct{}
+	echo     *echo.Echo
+	filters  FilterRepository
+	now      func() time.Time
+	options  *Options
+	pages    PageRenderer
+	releases ReleaseClient
+	statsd   statsd.ClientInterface
+	store    db.Store
 }
 
 func NewServer(options *Options) *Server {
@@ -98,6 +100,7 @@ func (s *Server) Start() error {
 		},
 	})
 
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint)
 	if s.options.Statsd != "" {
 		dsd, err := statsd.New(s.options.Statsd)
 		if err != nil {
@@ -179,6 +182,7 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/", s.landingPageHandler).Name = "landing"
 	withAuth.GET("/help", s.helpPages).Name = "help-main"
 	withAuth.GET("/help/:page", s.helpPages).Name = "help"
+	withAuth.GET("/news", s.newsHandler).Name = "news"
 
 	withAuth.GET("/filters", s.listFilters).Name = "list-filters"
 	withAuth.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
