@@ -44,10 +44,13 @@ params:
           - fantashit.com/
           - findbestopensource.com/
           - gitanswer.com/
+          - gitcode.net/
           - giters.com/
           - gitfreak.com/
           - github.innominds.com/
+          - github.phala.one/
           - githubhelp.com/
+          - githubhot.com/
           - githubja.com/
           - githubmate.com/
           - githubmemory.com/
@@ -56,12 +59,15 @@ params:
           - gitmotion.com/
           - golangissues.com/
           - golangrepo.com/
+          - google-yandex.info/
           - issueexplorer.com/
+          - news24lite.com/
           - openprojectrepo.com/
           - opensourcelibs.com/
           - pythonawesome.com/
           - pythonissues.com/
           - pythonrepo.com/
+          - readintrend.com/
           - reposhub.com/
           - www.higithub.com/
       - name: npm-copycats
@@ -115,6 +121,7 @@ params:
           - answer-id.com/
           - article.docway.net/
           - ask-ubuntu.ru/
+          - askdev.ru/
           - askdev.vn/
           - askubuntu.ru/
           - brocante.dev/
