@@ -2,11 +2,8 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
-	"unicode"
-	"unicode/utf8"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
@@ -83,7 +80,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
-	hc := s.buildPageContext(c, fmt.Sprintf("How to %s with uBlock or Adblock", lowerFirst(filter.Title)))
+	hc := s.buildPageContext(c, filter.Title)
 	hc.Add("filter", filter)
 
 	// Parse filters param and render output if non-empty
@@ -293,14 +290,6 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 		}
 	}
 	return params, action, err
-}
-
-func lowerFirst(s string) string {
-	if s == "" {
-		return ""
-	}
-	r, n := utf8.DecodeRuneInString(s)
-	return string(unicode.ToLower(r)) + s[n:]
 }
 
 func (s *Server) hasMissingParams(instance db.GetActiveFiltersForUserRow) bool {
