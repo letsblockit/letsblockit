@@ -1,19 +1,19 @@
 title: Hide websites from search results
 params:
-  - name: google
-    description: Generate rules for Google Search
+  - name: bing
+    description: Generate rules for Bing
     type: checkbox
-    default: true
+    default: false
   - name: duckduckgo
     description: Generate rules for DuckDuckGo
     type: checkbox
     default: true
+  - name: google
+    description: Generate rules for Google Search
+    type: checkbox
+    default: true
   - name: kagi
     description: Generate rules for Kagi
-    type: checkbox
-    default: false
-  - name: startpage
-    description: Generate rules for Startpage.com
     type: checkbox
     default: false
   - name: searx-enable
@@ -26,6 +26,10 @@ params:
     onlyif: searx-enable
     default:
       - searx.thegpm.org
+  - name: startpage
+    description: Generate rules for Startpage.com
+    type: checkbox
+    default: false
   - name: sites
     description: Sites to hide
     type: list
@@ -270,13 +274,17 @@ params:
           - www.wikit.wiki/
           - www.wiwa.wiki/
 tags:
-  - google
+  - bing
   - duckduckgo
+  - google
   - kagi
   - searx
   - startpage
 template: |
   {{#each sites as |site siteId|}}
+  {{#if ../bing}}
+  bing.com###b_content a[href*="{{site}}"]:upward(li)
+  {{/if}}
   {{#if ../google}}
   google.*##.g:has(a[href*="{{site}}"])
   google.*##a[href*="{{site}}"]:upward(1)
@@ -301,6 +309,7 @@ template: |
   {{/each}}
 tests:
   - params:
+      bing: true
       duckduckgo: true
       google: true
       searx-instances:
@@ -310,11 +319,13 @@ tests:
         - snapcraft.io/install
       startpage: true
     output: |
+      bing.com###b_content a[href*=".pinterest."]:upward(li)
       google.*##.g:has(a[href*=".pinterest."])
       google.*##a[href*=".pinterest."]:upward(1)
       duckduckgo.com##a.result__a[href*=".pinterest."]:upward(3)
       startpage.com##.w-gl__result:has(a[href*=".pinterest."])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(.pinterest.))
+      bing.com###b_content a[href*="snapcraft.io/install"]:upward(li)
       google.*##.g:has(a[href*="snapcraft.io/install"])
       google.*##a[href*="snapcraft.io/install"]:upward(1)
       duckduckgo.com##a.result__a[href*="snapcraft.io/install"]:upward(3)
