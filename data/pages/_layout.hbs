@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="/assets/dist/main.css{{assetHash}}">
     <script defer src="/assets/dist/main.js{{assetHash}}"></script>
     <title>{{ Title }} :: letsblock.it</title>
+
+    <meta property="og:title" content="{{ Title }}"/>
+    <meta property="og:description"
+          content="Remove low-quality content and useless nags, focus on what matters. A community-maintained uBlock Origin filter set."/>
+    <meta property="og:image" content="{{http_root @root}}/assets/images/logo-288.png{{assetHash}}"/>
+    <meta property="og:image:type" content="image/png"/>
+    <meta property="og:image:width" content="288"/>
+    <meta property="og:image:height" content="288"/>
+    <meta property="og:site_name" content="Let's Block It"/>
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@LetsBlockIt1"/>
 </head>
 <body hx-boost="true"{{#if HotReload}} data-hot-reload{{/if}}>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
@@ -37,7 +48,8 @@
                     </button>
                 </form>
             {{/if}}
-            <a class="nav-link pt-0 pb-0" href="https://github.com/xvello/letsblockit" title="Visit the project on GitHub">
+            <a class="nav-link pt-0 pb-0" href="https://github.com/xvello/letsblockit"
+               title="Visit the project on GitHub">
                 <i class="ti ti-brand-github" style="font-size: 2rem"></i></a>
         </div>
     </div>

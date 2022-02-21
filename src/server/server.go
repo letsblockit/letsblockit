@@ -242,6 +242,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		Title:           title,
 		MainDomain:      c.Request().Host == mainDomain,
 		HotReload:       s.options.Reload,
+		RequestInfo:     c,
 	}
 	if _, err := c.Cookie(hasAccountCookieName); err == nil {
 		context.UserHasAccount = true

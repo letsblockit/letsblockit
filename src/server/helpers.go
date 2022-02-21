@@ -61,6 +61,9 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 				`<input type="hidden" name="%s" value="%s"/>`,
 				csrfLookup, c.CSRFToken)
 		},
+		"http_root": func(c *pages.Context) string {
+			return fmt.Sprintf("%s://%s", c.RequestInfo.Scheme(), c.RequestInfo.Request().Host)
+		},
 	}
 }
 

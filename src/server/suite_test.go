@@ -47,6 +47,23 @@ func (m mockStore) RunTx(e echo.Context, f db.TxFunc) error {
 	return f(e.Request().Context(), m)
 }
 
+type pageContextMatcher struct {
+	t   *testing.T
+	ctx *pages.Context
+}
+
+func (m *pageContextMatcher) Matches(x interface{}) bool {
+	d, ok := x.(*pages.Context)
+	if ok && m.ctx.RequestInfo == nil {
+		m.ctx.RequestInfo = d.RequestInfo
+	}
+	return ok && assert.EqualValues(m.t, m.ctx, d)
+}
+
+func (m *pageContextMatcher) String() string {
+	return fmt.Sprintf("is equal to %v (%T)", m.ctx, m.ctx)
+}
+
 type pageDataMatcher struct {
 	t    *testing.T
 	data pages.ContextData
@@ -143,11 +160,17 @@ func (s *ServerTestSuite) expectRenderWithSidebar(page, sidebar string, data pag
 }
 
 func (s *ServerTestSuite) expectRenderWithSidebarAndContext(page, sidebar string, ctx *pages.Context) *gomock.Call {
-	return s.expectP.RenderWithSidebar(gomock.Any(), page, sidebar, gomock.Eq(ctx))
+	return s.expectP.RenderWithSidebar(gomock.Any(), page, sidebar, &pageContextMatcher{
+		t:   s.T(),
+		ctx: ctx,
+	})
 }
 
 func (s *ServerTestSuite) expectRenderWithContext(page string, ctx *pages.Context) *gomock.Call {
-	return s.expectP.Render(gomock.Any(), page, gomock.Eq(ctx))
+	return s.expectP.Render(gomock.Any(), page, &pageContextMatcher{
+		t:   s.T(),
+		ctx: ctx,
+	})
 }
 
 func assertOk(t *testing.T, rec *httptest.ResponseRecorder) {

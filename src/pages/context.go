@@ -1,8 +1,18 @@
 package pages
 
 import (
+	"net/http"
+
 	"github.com/google/uuid"
 )
+
+// RequestInfo is a subset of echo.Context
+type RequestInfo interface {
+	// Request returns `*http.Request`.
+	Request() *http.Request
+	// Scheme returns the HTTP protocol scheme, `http` or `https`.
+	Scheme() string
+}
 
 type ContextData map[string]interface{}
 
@@ -13,6 +23,7 @@ type Context struct {
 	NoBoost      bool
 	HotReload    bool
 	MainDomain   bool
+	RequestInfo  RequestInfo
 
 	CurrentSection  string
 	NavigationLinks interface{}
