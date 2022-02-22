@@ -20,7 +20,7 @@
     "@parcel/transformer-sass": "^2.3.2",
     "@tabler/icons": "^1.54.0",
     "bootstrap": "^5.1.3",
-    "htmx.org": "^1.6.1",
+    "htmx.org": "^1.7.0",
     "parcel": "^2.3.2",
     "patch-package": "^6.4.7",
     "popper.js": "^1.16.1",
