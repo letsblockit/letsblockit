@@ -290,7 +290,9 @@ template: |
   google.*##a[href*="{{site}}"]:upward(1)
   {{/if}}
   {{#if ../duckduckgo}}
-  duckduckgo.com##a.result__a[href*="{{site}}"]:upward(3)
+  duckduckgo.com##.results a.result__a[href*="{{site}}"]:upward(.result)
+  duckduckgo.com##.results a.result__a[href*="{{site}}"]:upward(.result__sitelinks)
+  duckduckgo.com##.tile-wrap a[href*="{{site}}"]:upward(.tile)
   {{/if}}
   {{#if ../kagi}}
   kagi.com##.search-result:has(a.__sri-url[href*="{{site}}"])
@@ -322,13 +324,17 @@ tests:
       bing.com###b_content a[href*=".pinterest."]:upward(li)
       google.*##.g:has(a[href*=".pinterest."])
       google.*##a[href*=".pinterest."]:upward(1)
-      duckduckgo.com##a.result__a[href*=".pinterest."]:upward(3)
+      duckduckgo.com##.results a.result__a[href*=".pinterest."]:upward(.result)
+      duckduckgo.com##.results a.result__a[href*=".pinterest."]:upward(.result__sitelinks)
+      duckduckgo.com##.tile-wrap a[href*=".pinterest."]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*=".pinterest."])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(.pinterest.))
       bing.com###b_content a[href*="snapcraft.io/install"]:upward(li)
       google.*##.g:has(a[href*="snapcraft.io/install"])
       google.*##a[href*="snapcraft.io/install"]:upward(1)
-      duckduckgo.com##a.result__a[href*="snapcraft.io/install"]:upward(3)
+      duckduckgo.com##.results a.result__a[href*="snapcraft.io/install"]:upward(.result)
+      duckduckgo.com##.results a.result__a[href*="snapcraft.io/install"]:upward(.result__sitelinks)
+      duckduckgo.com##.tile-wrap a[href*="snapcraft.io/install"]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))
   - params:
