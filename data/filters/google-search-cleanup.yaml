@@ -12,12 +12,16 @@ params:
     description: Hide the "People also search for" popup
     type: checkbox
     default: true
+  - name: similar-image-searches
+    description: Hide the "Similar searches" contextual content in image searches
+    type: checkbox
+    default: true
   - name: page-footer
     description: Hide the search page footer showing your address
     type: checkbox
     default: false
   - name: only-results
-    description: Remove everything but simple search results
+    description: Remove everything but simple results in the text search
     type: checkbox
     default: false
 tags:
@@ -31,6 +35,9 @@ template: |
   {{/if}}
   {{#if also-search}}
   google.*###rso div.g div[jscontroller]
+  {{/if}}
+  {{#if similar-image-searches}}
+  google.*##div.isv-r[data-rfg]
   {{/if}}
   {{#if page-footer}}
   google.*###footcnt > #fbarcnt
@@ -59,6 +66,10 @@ tests:
       google.*###rso > div:has(div.related-question-pair)
       google.*###botstuff
       google.*###rso > :not(div.g):not(:has(:scope>div.g))
+  - params:
+      similar-image-searches: true
+    output: |
+      google.*##div.isv-r[data-rfg]
 ---
 
 Google is adding more and more "contextual results" to its result page, with mixed usefulness. This filter will allow
