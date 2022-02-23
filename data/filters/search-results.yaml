@@ -40,11 +40,13 @@ params:
         description: Hide Github copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/github_copycats.txt
         values:
+          - .fastgit.org/
           - .gitmemory.com/
           - .wenyanet.com/
           - awesomeopensource.com/
           - bestofcpp.com/
           - bleepcoder.com/
+          - coder.social/
           - fantashit.com/
           - findbestopensource.com/
           - gitanswer.com/
@@ -60,11 +62,14 @@ params:
           - githubmemory.com/
           - githubplus.com/
           - gitmemory.cn/
+          - gitmetadata.com/
           - gitmotion.com/
           - golangissues.com/
           - golangrepo.com/
           - google-yandex.info/
+          - iboxshare.com/
           - issueexplorer.com/
+          - javarepos.com/
           - news24lite.com/
           - openprojectrepo.com/
           - opensourcelibs.com/
@@ -73,6 +78,7 @@ params:
           - pythonrepo.com/
           - readintrend.com/
           - reposhub.com/
+          - www.fuscin.com/
           - www.higithub.com/
       - name: npm-copycats
         description: Hide npm copycat websites
@@ -119,15 +125,24 @@ params:
           - .uwenku.com/
           - .voidcc.com/
           - .waymanamechurch.org/
+          - .xszz.org/
           - .zsharp.org/
           - alltodev.com/
           - alwaysemmyhope.com/
+          - answacode.com/
           - answer-id.com/
+          - answeright.com/
+          - antwortenhier.me/
           - article.docway.net/
           - ask-ubuntu.ru/
+          - askcodez.com/
           - askdev.ru/
           - askdev.vn/
+          - askentire.net/
+          - askfrance.me/
           - askubuntu.ru/
+          - askvoprosy.com/
+          - bootpanic.com/
           - brocante.dev/
           - cainiaojiaocheng.com/
           - christfever.in/
@@ -137,24 +152,36 @@ params:
           - code-examples.net/
           - code.i-harness.com/
           - codefaq.ru/
+          - codegear.dev/
           - codeguides.site/
           - codehero.jp/
+          - codeindex.ru/
+          - codengineering.ru/
           - coder-solution-jp.com/
           - coderedirect.com/
+          - coderoad.in/
           - coderoad.ru/
+          - coderquestion.ru/
           - codersatellite.com/
           - codewdw.com/
           - dapper-tutorial.net/
+          - de-vraag.com/
+          - de.askdev.info/
+          - debiantutorials.org/
           - devbugfix.com/
+          - dogovori.info/
           - easysavecode.com/
           - edupro.id/
           - exceptionshub.com/
           - farath.com/
+          - fooobar.com/
           - howtofix.io/
+          - husl.ru/
           - ibootweb.com/
           - intellipaat.com/
           - isolution.pro/
           - issues-world.com/
+          - itecnote.com/
           - itectec.com/
           - jike.in/
           - jpcodeqa.com/
@@ -164,19 +191,31 @@ params:
           - kompsekret.ru/
           - kotaeta.com/
           - laravelquestions.com/
+          - legkovopros.ru/
           - living-sun.com/
           - lycaeum.dev/
+          - mlink.in/
+          - mlog.club/
           - newbedev.com/
           - ohandroid.com/
           - ostack.cn/
+          - over.wiki/
           - overcoder.net/
+          - overcoder.ru/
           - poweruser.guru/
           - pretagteam.com/
+          - prog-help.ru/
           - progi.pro/
+          - proubuntu.ru/
           - python-stack.de/
           - pythonwd.com/
+          - qa-help.ru/
           - qa-stack.pl/
+          - qa.1r1g.com/
+          - qacode.ru/
           - qapicks.com/
+          - qarchive.ru/
+          - qarus.ru/
           - qastack.cn/
           - qastack.co.in/
           - qastack.com.br/
@@ -196,23 +235,31 @@ params:
           - quabr.com/
           - quares.ru/
           - question-it.com/
+          - recalll.co/
+          - respuestas.me/
           - routinepanic.com/
           - ruphp.com/
           - server-fault.ru/
+          - sobrelinux.info/
           - sprosi.pro/
           - sqlite.in/
+          - stackanswers.net/
           - stackfault.net/
           - stackfinder.jp.net/
           - stackguides.com/
           - stackify.dev/
           - stackoom.com/
+          - stackoverflood.com/
           - stackovergo.com/
           - stackqna.com/
           - stackru.com/
           - stormcrow.dev/
+          - switch-case.com/
           - switch-case.ru/
           - sysadminde.com/
           - tech.wayne-chu.com/
+          - techarks.ru/
+          - techfeed.net/
           - tipsfordev.com/
           - tutorialguruji.com/
           - tutorialmore.com/
@@ -220,18 +267,24 @@ params:
           - ubuntuaa.com/
           - ubuntugeeks.com/
           - ubuntuplace.info/
+          - utyatnishna.ru/
+          - v-resheno.ru/
+          - web-answers.ru/
           - webdevdesigner.com/
           - webknox.com/
           - webmonkez.com/
           - wikiroot.ru/
           - www.5axxw.com/
           - www.answerlib.com/
+          - www.bilee.com/
           - www.buzzphp.com/
           - www.codenong.com/
           - www.coder.work/
           - www.debugcn.com/
           - www.desenv-web-rp.com/
+          - www.devfaq.fr/
           - www.examplefiles.net/
+          - www.extutorial.com/
           - www.fixes.pub/
           - www.generacodice.blog/
           - www.generacodice.com/
@@ -239,9 +292,11 @@ params:
           - www.ghcc.net/
           - www.it-mure.jp.net/
           - www.it-roy-ru.com/
+          - www.it-swarm-es.com/
           - www.it-swarm-fr.com/
           - www.it-swarm-ja.com/
           - www.it-swarm-ja.tech/
+          - www.it-swarm.com.de/
           - www.it-swarm.com.ru/
           - www.it-swarm.jp.net/
           - www.javaer101.com/
@@ -250,28 +305,59 @@ params:
           - www.py4u.net/
           - www.qi-u.com/
           - www.semicolonworld.com/
+          - www.soinside.com/
           - www.stackfinder.ru/
+          - www.thinbug.com/
           - www.titanwolf.org/
           - www.uebu-kaihatsu.jp.net/
           - www.web-dev-qa.com/
           - www.webdevqa.jp.net/
           - www.xsprogram.com/
+          - www.ylhow.com/
           - xiu2.net/
           - younggeeks.in/
+          - yuanmacha.com/
       - name: wikipedia-copycats
         description: Hide Wikipedia copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
         values:
+          - .datewiki.ru/
+          - .encyclopedia.kz/
+          - .frwiki.wiki/
+          - .zxc.wiki/
+          - 360wiki.ru/
+          - buildwiki.ru/
+          - encyclopaedia.bid/
           - encyclopedia.thefreedictionary.com/
+          - enhancedwiki.territorioscuola.it/
           - everything.explained.today/
           - findatwiki.com/
+          - gaz.wiki/
+          - globalwikionline.com/
+          - hmong.ru/
+          - livepcwiki.ru/
           - mediawiki.feverous.co.uk/
+          - sv.abcdef.wiki/
+          - th.hmong.wiki/
+          - wiki-org.ru/
+          - wiki.cologne/
+          - wiki2.info/
+          - wiki2.net/
+          - wiki2.org/
+          - wiki2wiki.ru/
+          - wikidark.ru/
+          - wikidea.ru/
+          - wikipedia.tel/
+          - wikipedia24.ru/
+          - wikiredia.ru/
           - wikizero.com/
           - www.algebra.com/
           - www.scholarship.edu.vn/wiki/
           - www.secret-bases.co.uk/wiki/
           - www.wikide.wiki/
+          - www.wikipe.wiki/
           - www.wikit.wiki/
+          - www.wikiwand.com/
           - www.wiwa.wiki/
 tags:
   - bing
