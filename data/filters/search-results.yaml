@@ -43,12 +43,19 @@ params:
           - .fastgit.org/
           - .gitmemory.com/
           - .wenyanet.com/
+          - androidrepo.com/
           - awesomeopensource.com/
           - bestofcpp.com/
+          - bestofflutter.com/
+          - bestofjava.com/
+          - bestofphp.com/
+          - bestofreactjs.com/
+          - bestofvue.com/
           - bleepcoder.com/
           - coder.social/
           - fantashit.com/
           - findbestopensource.com/
+          - flutterrepos.com/
           - gitanswer.com/
           - gitcode.net/
           - giters.com/
@@ -70,6 +77,8 @@ params:
           - iboxshare.com/
           - issueexplorer.com/
           - javarepos.com/
+          - jsrepos.com/
+          - macosrepo.com/
           - news24lite.com/
           - openprojectrepo.com/
           - opensourcelibs.com/
@@ -78,8 +87,11 @@ params:
           - pythonrepo.com/
           - readintrend.com/
           - reposhub.com/
+          - rustrepo.com/
+          - swiftobc.com/
           - www.fuscin.com/
           - www.higithub.com/
+          - zzun.app/
       - name: npm-copycats
         description: Hide npm copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/npm_copycats.txt
@@ -95,6 +107,7 @@ params:
           - .cfadnc.org/
           - .codefaq.info/
           - .codeflow.site/
+          - .codegrepper.com/
           - .coredump.biz/
           - .culinarydegree.info/
           - .developreference.com/
@@ -113,6 +126,7 @@ params:
           - .pakostnici.com/
           - .panaindustrial.com/
           - .pcbconline.org/
+          - .programmierfrage.com/
           - .projectbackpack.org/
           - .safehavenpetrescue.org/
           - .sch22.org/
@@ -175,6 +189,7 @@ params:
           - exceptionshub.com/
           - farath.com/
           - fooobar.com/
+          - grokbase.com/
           - howtofix.io/
           - husl.ru/
           - ibootweb.com/
@@ -194,6 +209,7 @@ params:
           - legkovopros.ru/
           - living-sun.com/
           - lycaeum.dev/
+          - microeducate.tech/
           - mlink.in/
           - mlog.club/
           - newbedev.com/
@@ -274,6 +290,7 @@ params:
           - webknox.com/
           - webmonkez.com/
           - wikiroot.ru/
+          - wp-qa.com/
           - www.5axxw.com/
           - www.answerlib.com/
           - www.bilee.com/
