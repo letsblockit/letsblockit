@@ -3,7 +3,7 @@ module github.com/xvello/letsblockit
 go 1.17
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.0.2
+	github.com/DataDog/datadog-go/v5 v5.1.0
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
 	github.com/alecthomas/kong v0.4.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
@@ -14,7 +14,7 @@ require (
 	github.com/jackc/pgconn v1.11.0
 	github.com/jackc/pgtype v1.10.0
 	github.com/jackc/pgx/v4 v4.15.0
-	github.com/labstack/echo/v4 v4.6.3
+	github.com/labstack/echo/v4 v4.7.0
 	github.com/labstack/gommon v0.3.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0
@@ -23,7 +23,7 @@ require (
 )
 
 require (
-	github.com/Microsoft/go-winio v0.5.1 // indirect
+	github.com/Microsoft/go-winio v0.5.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
@@ -41,9 +41,9 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
-	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838 // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
-	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
+	golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
+	golang.org/x/time v0.0.0-20220224211638-0e9765cccd65 // indirect
 )
