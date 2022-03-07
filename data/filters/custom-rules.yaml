@@ -7,8 +7,8 @@ params:
       !! cosmetic filters work, prefixed by the target website
       reddit.com###redesign-beta-optin-btn
       !! network filters work too
-      .facebook.com
-      .instagram.com
+      ||facebook.com^$all
+      ||instagram.com^$all
 tags:
   - custom
 template: "{{{rules}}}"
