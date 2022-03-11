@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/DataDog/datadog-go/v5 v5.1.0
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
-	github.com/alecthomas/kong v0.4.1
+	github.com/alecthomas/kong v0.5.0
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/golang/mock v1.6.0
