@@ -1,5 +1,5 @@
 diff --git a/node_modules/@tabler/icons/iconfont/tabler-icons.scss b/node_modules/@tabler/icons/iconfont/tabler-icons.scss
-index a5e0a8a..f3a30df 100644
+index 2d3da63..b75c841 100644
 --- a/node_modules/@tabler/icons/iconfont/tabler-icons.scss
 +++ b/node_modules/@tabler/icons/iconfont/tabler-icons.scss
 @@ -12,19 +12,7 @@ $ti-prefix: 'ti' !default;
