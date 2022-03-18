@@ -42,4 +42,4 @@ tests:
       twitter.com##a[href="/userB"]:upward(article)
 ---
 
-This filter allows to ignore users, by hiding tweets posted by or mentionning them.
+This filter allows to ignore users, by hiding tweets posted by or mentioning them.
