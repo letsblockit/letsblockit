@@ -75,6 +75,7 @@ params:
           - golangrepo.com/
           - google-yandex.info/
           - iboxshare.com/
+          - issueantenna.com/
           - issueexplorer.com/
           - javarepos.com/
           - jsrepos.com/
@@ -89,7 +90,9 @@ params:
           - readintrend.com/
           - reposhub.com/
           - rustrepo.com/
+          - softbranchdevelopers.com/
           - swiftobc.com/
+          - vuejscode.com/
           - www.fuscin.com/
           - www.higithub.com/
           - zzun.app/
@@ -98,6 +101,7 @@ params:
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/npm_copycats.txt
         values:
           - cnpmjs.org/
+          - npm.io/
           - npmmirror.com/
       - name: stackoverflow-copycats
         description: Hide Stackoverflow copycat websites
@@ -144,6 +148,7 @@ params:
           - .zsharp.org/
           - alltodev.com/
           - alwaysemmyhope.com/
+          - angularquestions.com/
           - answacode.com/
           - answer-id.com/
           - answeright.com/
@@ -179,12 +184,14 @@ params:
           - coderoad.ru/
           - coderquestion.ru/
           - codersatellite.com/
+          - codeutility.org/
           - codewdw.com/
           - dapper-tutorial.net/
           - de-vraag.com/
           - de.askdev.info/
           - debiantutorials.org/
           - devbugfix.com/
+          - dockerquestions.com/
           - dogovori.info/
           - easysavecode.com/
           - edupro.id/
@@ -227,6 +234,7 @@ params:
           - progi.pro/
           - proubuntu.ru/
           - python-stack.de/
+          - pythonshowcase.com/
           - pythonwd.com/
           - qa-help.ru/
           - qa-stack.pl/
@@ -254,12 +262,15 @@ params:
           - quabr.com/
           - quares.ru/
           - question-it.com/
+          - reactquestions.com/
           - recalll.co/
           - respuestas.me/
           - routinepanic.com/
           - ruphp.com/
+          - serveanswer.com/
           - server-fault.ru/
           - sobrelinux.info/
+          - solveforums.msomimaktaba.com/
           - sprosi.pro/
           - sqlite.in/
           - stackanswers.net/
@@ -289,6 +300,7 @@ params:
           - ubuntuplace.info/
           - utyatnishna.ru/
           - v-resheno.ru/
+          - vuejscode.com/
           - web-answers.ru/
           - webdevdesigner.com/
           - webknox.com/
