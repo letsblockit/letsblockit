@@ -142,7 +142,10 @@ func (s *Server) setupRouter() {
 	}
 
 	s.echo.HideBanner = true
-	s.echo.IPExtractor = echo.ExtractIPFromRealIPHeader() // upstream proxy sets the X-Real-IP header
+	s.echo.IPExtractor = echo.ExtractIPFromXFFHeader(
+		echo.TrustLoopback(true),
+		echo.TrustLinkLocal(false),
+		echo.TrustPrivateNet(false)) // upstream proxy sets the X-Forwarded-For header
 
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
