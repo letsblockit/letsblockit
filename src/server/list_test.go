@@ -62,7 +62,7 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
 	s.Equal(rec.Body.String(), `! Title: letsblock.it - My filters
-! Expires: 1 day
+! Expires: 12 hours
 ! Homepage: https://letsblock.it
 ! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
 

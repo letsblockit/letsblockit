@@ -32,7 +32,7 @@ func (s *ListTestSuite) TestRenderEmpty() {
 	list := &List{}
 	s.NoError(list.Render(buf, s.logger, s.repository))
 	s.Equal(`! Title: letsblock.it - 
-! Expires: 1 day
+! Expires: 12 hours
 ! Homepage: https://letsblock.it
 ! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
 `, buf.String())
@@ -58,7 +58,7 @@ func (s *ListTestSuite) TestRenderOK() {
 	s.expectL.Warnf(gomock.Any(), "unknown", gomock.Any())
 	s.NoError(list.Render(buf, s.logger, s.repository))
 	s.Equal(`! Title: letsblock.it - Test list
-! Expires: 1 day
+! Expires: 12 hours
 ! Homepage: https://letsblock.it
 ! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
 
