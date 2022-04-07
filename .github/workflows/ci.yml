@@ -14,11 +14,11 @@ jobs:
           sudo -u postgres psql -c "CREATE USER ${USER}"
           sudo -u postgres psql -c "CREATE DATABASE letsblockit OWNER ${USER}"
           psql letsblockit < src/db/schema.sql
-      - uses: cachix/install-nix-action@v16
+      - uses: cachix/install-nix-action@v17
       - run: nix run .#run-tests
   check-vendorsha:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v16
+      - uses: cachix/install-nix-action@v17
       - run: nix run .#update-vendorsha -- ./nix/letsblockit.nix --check
