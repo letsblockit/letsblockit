@@ -94,13 +94,13 @@ func (s *ServerTestSuite) TestRenderKratosForm_ErrBadFlow() {
 func (s *ServerTestSuite) TestStartKratosFlow_Settings() {
 	req := httptest.NewRequest(http.MethodPost, "/user/start/settings", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/settings/browser"))
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/settings/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Register() {
 	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/registration/browser"))
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/registration/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Login() {
@@ -110,13 +110,13 @@ func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Login() {
 		Name:  "has_account",
 		Value: "true",
 	})
-	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login() {
 	req := httptest.NewRequest(http.MethodPost, "/user/start/login", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromForm() {
@@ -127,21 +127,21 @@ func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromForm() {
 		strings.NewReader(form.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://myserver/ignore")
-	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser?return_to=https://myserver/page"))
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser?return_to=https://myserver/page"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromReferer() {
 	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://myserver/page")
-	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser?return_to=https://myserver/page"))
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser?return_to=https://myserver/page"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToNotInDomain() {
 	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://anotherserver/page")
-	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/api/kratos/public/self-service/login/browser"))
+	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Logout() {

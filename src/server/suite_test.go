@@ -107,7 +107,7 @@ func (s *ServerTestSuite) SetupTest() {
 		case oryWhoamiPath:
 			cookie, _ := r.Cookie("ory_session_verified")
 			_, err = fmt.Fprintf(w, whoAmiPattern, s.user, cookie.Value)
-		case "/api/kratos/public/self-service/login/flows":
+		case "/self-service/login/flows":
 			switch r.URL.RawQuery {
 			case "id=123456":
 				_, err = fmt.Fprint(w, `{"ui":{"a": "1", "b": "2"},"return_to":"https://target"}`)

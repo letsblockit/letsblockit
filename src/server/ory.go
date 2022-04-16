@@ -18,11 +18,11 @@ const (
 	userContextKey      = "_user"
 	hasKratosContextKey = "_has_kratos"
 	oryCookieNamePrefix = "ory_session_"
-	oryGetFlowPattern   = "/api/kratos/public/self-service/%s/flows?id=%s"
-	oryStartFlowPattern = "/api/kratos/public/self-service/%s/browser"
+	oryGetFlowPattern   = "/self-service/%s/flows?id=%s"
+	oryStartFlowPattern = "/self-service/%s/browser"
 	oryReturnToPattern  = "?return_to=%s"
-	oryLogoutInfoPath   = "/api/kratos/public/self-service/logout/browser"
-	oryWhoamiPath       = "/api/kratos/public/sessions/whoami"
+	oryLogoutInfoPath   = "/self-service/logout/browser"
+	oryWhoamiPath       = "/sessions/whoami"
 	returnToKey         = "return_to"
 )
 
