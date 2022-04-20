@@ -1,0 +1,20 @@
+name: Update Presets
+on:
+  schedule:
+    - cron:  '0 7 * * *'
+jobs:
+  update-dep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+      - name: Download updated presets
+        run: go run ./cmd/update-filters/ presets
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "search-results: update presets"
+          title: Update search-results presets
+          branch: update-presets
+          delete-branch: true
+          reviewers: xvello
