@@ -2,6 +2,7 @@ name: Update Presets
 on:
   schedule:
     - cron:  '0 7 * * *'
+  workflow_dispatch:
 jobs:
   update-dep:
     runs-on: ubuntu-latest
