@@ -3,6 +3,7 @@ tags:
   - youtube
 template: |
   www.youtube.com###guide-content #endpoint[title="Shorts"]:upward(ytd-guide-entry-renderer)
+  www.youtube.com###items #endpoint[title="Shorts"]:upward(ytd-mini-guide-entry-renderer)
   www.youtube.com##ytd-browse ytd-grid-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
   www.youtube.com##ytd-browse ytd-rich-item-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
   www.youtube.com##ytd-search ytd-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
@@ -15,6 +16,7 @@ template: |
 tests:
   - output: |
       www.youtube.com###guide-content #endpoint[title="Shorts"]:upward(ytd-guide-entry-renderer)
+      www.youtube.com###items #endpoint[title="Shorts"]:upward(ytd-mini-guide-entry-renderer)
       www.youtube.com##ytd-browse ytd-grid-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
       www.youtube.com##ytd-browse ytd-rich-item-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
       www.youtube.com##ytd-search ytd-video-renderer:has(span.ytd-thumbnail-overlay-time-status-renderer:has-text(/\s(0:\d\d|1:0\d)\s/))
