@@ -90,6 +90,9 @@ func (s *Server) Start() error {
 		func(errs []error) {
 			s.store, errs[0] = db.Connect(s.options.DatabaseHost, s.options.DatabaseName)
 			if errs[0] == nil {
+				errs[0] = db.Migrate(s.options.DatabaseHost, s.options.DatabaseName)
+			}
+			if errs[0] == nil {
 				errs[0] = s.loadBannedUsers()
 			}
 		},
