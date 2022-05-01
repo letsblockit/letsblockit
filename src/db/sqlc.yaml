@@ -4,6 +4,6 @@ packages:
     name: "db"
     engine: "postgresql"
     sql_package: "pgx/v4"
-    schema: "schema.sql"
+    schema: "./migrations/"
     queries: "queries.sql"
     emit_interface: true

@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS hstore;
-
 CREATE TABLE filter_lists
 (
     id         SERIAL PRIMARY KEY,

@@ -14,6 +14,8 @@
 
         # Scripts to wrap, with their dependencies, available via `nix run .#script-name`
         scripts = with pkgs; {
+          add-migration = [ self.packages.${system}.migrate ];
+          run-migrate = [ self.packages.${system}.migrate ];
           run-server = [ pinnedGo reflex self.packages.${system}.ory ];
           run-tests = [ pinnedGo golangci-lint ];
           update-assets = [ nodejs-17_x nodePackages.npm ];
@@ -26,6 +28,7 @@
         packages = {
           render = pkgs.callPackage ./nix/letsblockit.nix { cmd = "render"; };
           server = pkgs.callPackage ./nix/letsblockit.nix { cmd = "server"; };
+          migrate = pkgs.callPackage ./nix/migrate.nix { };
           ory = pkgs.callPackage ./nix/ory.nix { };
           sqlc = pkgs.callPackage ./nix/sqlc.nix { };
 
@@ -70,6 +73,7 @@
 
         overlay = final: prev: {
           letsblockit = self.packages.${system}.server;
+          migrate = self.packages.${system}.migrate;
           ory = self.packages.${system}.ory;
         };
       });
