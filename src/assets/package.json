@@ -24,6 +24,6 @@
     "parcel": "^2.4.1",
     "patch-package": "^6.4.7",
     "popper.js": "^1.16.1",
-    "postcss": ">=8.4.12"
+    "postcss": ">=8.4.13"
   }
 }
