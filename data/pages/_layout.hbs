@@ -37,6 +37,12 @@
                             aria-current="page{{/equal}}" href="/{{target}}">{{name}}</a>
                 {{/each}}
             </div>
+            <a class="nav-link{{#if @root.HasNews}} active{{/if}}{{#equal "news" @root.CurrentSection}} active"
+                    aria-current="page{{/equal}}" href="{{href "news" ""}}">
+                {{#if @root.HasNews}}<i class="ti ti-bell-ringing"></i>{{/if}}
+                News
+                {{#if @root.HasNews}}<i class="ti ti-bell-ringing"></i>{{/if}}
+            </a>
             {{#if UserLoggedIn}}
                 <a class="nav-link{{#equal "user" @root.CurrentSection}} active"
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>

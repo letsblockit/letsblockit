@@ -4,7 +4,9 @@ import (
 	"io"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
@@ -24,6 +26,10 @@ type FilterRepository interface {
 }
 
 type ReleaseClient interface {
-	GetReleases() ([]news.Release, error)
+	GetReleases() ([]*news.Release, error)
 	GetLatestAt() (time.Time, error)
+}
+type UserPreferenceManager interface {
+	Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error)
+	BumpLatestNews(c echo.Context, user uuid.UUID) error
 }

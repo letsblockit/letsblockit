@@ -12,6 +12,7 @@ import (
 )
 
 type Querier interface {
+	BumpLatestNews(ctx context.Context, userID uuid.UUID) error
 	CountInstanceForUserAndFilter(ctx context.Context, arg CountInstanceForUserAndFilterParams) (int64, error)
 	CountListsForUser(ctx context.Context, userID uuid.UUID) (int64, error)
 	CreateInstanceForUserAndFilter(ctx context.Context, arg CreateInstanceForUserAndFilterParams) error
@@ -25,7 +26,9 @@ type Querier interface {
 	GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error)
 	GetListForUser(ctx context.Context, userID uuid.UUID) (GetListForUserRow, error)
 	GetStats(ctx context.Context) (GetStatsRow, error)
+	GetUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error)
 	HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error)
+	InitUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error)
 	MarkListDownloaded(ctx context.Context, id int32) error
 	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstanceForUserAndFilter(ctx context.Context, arg UpdateInstanceForUserAndFilterParams) error

@@ -37,6 +37,20 @@ func (m *MockQuerier) EXPECT() *MockQuerierMockRecorder {
 	return m.recorder
 }
 
+// BumpLatestNews mocks base method.
+func (m *MockQuerier) BumpLatestNews(ctx context.Context, userID uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BumpLatestNews", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// BumpLatestNews indicates an expected call of BumpLatestNews.
+func (mr *MockQuerierMockRecorder) BumpLatestNews(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BumpLatestNews", reflect.TypeOf((*MockQuerier)(nil).BumpLatestNews), ctx, userID)
+}
+
 // CountInstanceForUserAndFilter mocks base method.
 func (m *MockQuerier) CountInstanceForUserAndFilter(ctx context.Context, arg db.CountInstanceForUserAndFilterParams) (int64, error) {
 	m.ctrl.T.Helper()
@@ -230,6 +244,21 @@ func (mr *MockQuerierMockRecorder) GetStats(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockQuerier)(nil).GetStats), ctx)
 }
 
+// GetUserPreferences mocks base method.
+func (m *MockQuerier) GetUserPreferences(ctx context.Context, userID uuid.UUID) (db.UserPreference, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserPreferences", ctx, userID)
+	ret0, _ := ret[0].(db.UserPreference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserPreferences indicates an expected call of GetUserPreferences.
+func (mr *MockQuerierMockRecorder) GetUserPreferences(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserPreferences", reflect.TypeOf((*MockQuerier)(nil).GetUserPreferences), ctx, userID)
+}
+
 // HasUserDownloadedList mocks base method.
 func (m *MockQuerier) HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error) {
 	m.ctrl.T.Helper()
@@ -243,6 +272,21 @@ func (m *MockQuerier) HasUserDownloadedList(ctx context.Context, userID uuid.UUI
 func (mr *MockQuerierMockRecorder) HasUserDownloadedList(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasUserDownloadedList", reflect.TypeOf((*MockQuerier)(nil).HasUserDownloadedList), ctx, userID)
+}
+
+// InitUserPreferences mocks base method.
+func (m *MockQuerier) InitUserPreferences(ctx context.Context, userID uuid.UUID) (db.UserPreference, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InitUserPreferences", ctx, userID)
+	ret0, _ := ret[0].(db.UserPreference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InitUserPreferences indicates an expected call of InitUserPreferences.
+func (mr *MockQuerierMockRecorder) InitUserPreferences(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitUserPreferences", reflect.TypeOf((*MockQuerier)(nil).InitUserPreferences), ctx, userID)
 }
 
 // MarkListDownloaded mocks base method.

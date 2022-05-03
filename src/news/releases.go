@@ -42,14 +42,14 @@ type ReleaseClient struct {
 	sync.Mutex
 	url      string
 	latestAt time.Time
-	releases []Release
+	releases []*Release
 }
 
 func NewReleaseClient(url string) *ReleaseClient {
 	return &ReleaseClient{url: url}
 }
 
-func (c *ReleaseClient) GetReleases() ([]Release, error) {
+func (c *ReleaseClient) GetReleases() ([]*Release, error) {
 	c.Lock()
 	defer c.Unlock()
 	if c.releases != nil {
@@ -88,7 +88,7 @@ func (c *ReleaseClient) populate() error {
 	}
 
 	renderer := initRenderer()
-	c.releases = make([]Release, 0, len(githubReleases))
+	c.releases = make([]*Release, 0, len(githubReleases))
 	for _, r := range githubReleases {
 		if r.Prerelease || r.Draft {
 			continue
@@ -96,7 +96,7 @@ func (c *ReleaseClient) populate() error {
 		// Cleanup \r that mess up with blackfriday parsing
 		body := strings.ReplaceAll(r.Body, "\r\n", "\n")
 		desc := blackfriday.Run([]byte(body), renderer)
-		c.releases = append(c.releases, Release{
+		c.releases = append(c.releases, &Release{
 			Id:          r.Id,
 			Link:        r.HtmlUrl,
 			Description: string(desc),

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/xvello/letsblockit/src/db"
 )
 
 // RequestInfo is a subset of echo.Context
@@ -32,6 +33,8 @@ type Context struct {
 	UserID         uuid.UUID
 	UserLoggedIn   bool
 	UserHasAccount bool
+	HasNews        bool
+	Preferences    *db.UserPreference
 	CSRFToken      string
 
 	Data ContextData

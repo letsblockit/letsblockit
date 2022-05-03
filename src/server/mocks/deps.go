@@ -10,7 +10,9 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
+	db "github.com/xvello/letsblockit/src/db"
 	filters "github.com/xvello/letsblockit/src/filters"
 	news "github.com/xvello/letsblockit/src/news"
 	pages "github.com/xvello/letsblockit/src/pages"
@@ -198,10 +200,10 @@ func (mr *MockReleaseClientMockRecorder) GetLatestAt() *gomock.Call {
 }
 
 // GetReleases mocks base method.
-func (m *MockReleaseClient) GetReleases() ([]news.Release, error) {
+func (m *MockReleaseClient) GetReleases() ([]*news.Release, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetReleases")
-	ret0, _ := ret[0].([]news.Release)
+	ret0, _ := ret[0].([]*news.Release)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -210,4 +212,56 @@ func (m *MockReleaseClient) GetReleases() ([]news.Release, error) {
 func (mr *MockReleaseClientMockRecorder) GetReleases() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReleases", reflect.TypeOf((*MockReleaseClient)(nil).GetReleases))
+}
+
+// MockUserPreferenceManager is a mock of UserPreferenceManager interface.
+type MockUserPreferenceManager struct {
+	ctrl     *gomock.Controller
+	recorder *MockUserPreferenceManagerMockRecorder
+}
+
+// MockUserPreferenceManagerMockRecorder is the mock recorder for MockUserPreferenceManager.
+type MockUserPreferenceManagerMockRecorder struct {
+	mock *MockUserPreferenceManager
+}
+
+// NewMockUserPreferenceManager creates a new mock instance.
+func NewMockUserPreferenceManager(ctrl *gomock.Controller) *MockUserPreferenceManager {
+	mock := &MockUserPreferenceManager{ctrl: ctrl}
+	mock.recorder = &MockUserPreferenceManagerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserPreferenceManager) EXPECT() *MockUserPreferenceManagerMockRecorder {
+	return m.recorder
+}
+
+// BumpLatestNews mocks base method.
+func (m *MockUserPreferenceManager) BumpLatestNews(c echo.Context, user uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BumpLatestNews", c, user)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// BumpLatestNews indicates an expected call of BumpLatestNews.
+func (mr *MockUserPreferenceManagerMockRecorder) BumpLatestNews(c, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BumpLatestNews", reflect.TypeOf((*MockUserPreferenceManager)(nil).BumpLatestNews), c, user)
+}
+
+// Get mocks base method.
+func (m *MockUserPreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", c, user)
+	ret0, _ := ret[0].(*db.UserPreference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockUserPreferenceManagerMockRecorder) Get(c, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockUserPreferenceManager)(nil).Get), c, user)
 }

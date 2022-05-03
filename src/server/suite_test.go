@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/xvello/letsblockit/src/db"
+	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
 	"github.com/xvello/letsblockit/src/server/mocks"
 )
@@ -85,9 +86,12 @@ type ServerTestSuite struct {
 	expectP      *mocks.MockPageRendererMockRecorder
 	expectQ      *mocks.MockQuerierMockRecorder
 	expectR      *mocks.MockReleaseClientMockRecorder
+	expectUP     *mocks.MockUserPreferenceManagerMockRecorder
 	kratosServer *httptest.Server
 	user         uuid.UUID
 	csrf         string
+	releases     []*news.Release
+	preferences  *db.UserPreference
 }
 
 func (s *ServerTestSuite) SetupTest() {
@@ -96,10 +100,12 @@ func (s *ServerTestSuite) SetupTest() {
 	pm := mocks.NewMockPageRenderer(c)
 	qm := mocks.NewMockQuerier(c)
 	rm := mocks.NewMockReleaseClient(c)
+	upm := mocks.NewMockUserPreferenceManager(c)
 	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
 	s.expectQ = qm.EXPECT()
 	s.expectR = rm.EXPECT()
+	s.expectUP = upm.EXPECT()
 
 	s.kratosServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -134,12 +140,36 @@ func (s *ServerTestSuite) SetupTest() {
 			KratosURL: s.kratosServer.URL,
 			silent:    true,
 		},
-		pages:    pm,
-		releases: rm,
-		statsd:   &statsd.NoOpClient{},
-		store:    &mockStore{qm},
+		pages:       pm,
+		preferences: upm,
+		releases:    rm,
+		statsd:      &statsd.NoOpClient{},
+		store:       &mockStore{qm},
 	}
 	s.server.setupRouter()
+
+	// Preferences and releases are called by buildPageContext for logged-in users.
+	// Add catch-all expectations to avoid noise in the tests.
+	// Values can be set by tests before running a query
+	s.preferences = nil
+	s.releases = nil
+	s.expectUP.Get(gomock.Any(), s.user).DoAndReturn(func(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
+		if user == s.user {
+			return s.preferences, nil
+		} else {
+			return nil, db.NotFound
+		}
+	}).AnyTimes()
+	s.expectR.GetLatestAt().DoAndReturn(func() (time.Time, error) {
+		if len(s.releases) > 0 {
+			return s.releases[0].CreatedAt, nil
+		} else {
+			return fixedNow, nil
+		}
+	}).AnyTimes()
+	s.expectR.GetReleases().DoAndReturn(func() ([]*news.Release, error) {
+		return s.releases, nil
+	}).AnyTimes()
 }
 
 func (s *ServerTestSuite) setUserBanned() {

@@ -19,6 +19,7 @@ import (
 	"github.com/xvello/letsblockit/src/filters"
 	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
+	"github.com/xvello/letsblockit/src/users"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -64,16 +65,17 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
-	assets   *wrappedAssets
-	banned   map[uuid.UUID]struct{}
-	echo     *echo.Echo
-	filters  FilterRepository
-	now      func() time.Time
-	options  *Options
-	pages    PageRenderer
-	releases ReleaseClient
-	statsd   statsd.ClientInterface
-	store    db.Store
+	assets      *wrappedAssets
+	banned      map[uuid.UUID]struct{}
+	echo        *echo.Echo
+	filters     FilterRepository
+	now         func() time.Time
+	options     *Options
+	pages       PageRenderer
+	preferences UserPreferenceManager
+	releases    ReleaseClient
+	statsd      statsd.ClientInterface
+	store       db.Store
 }
 
 func NewServer(options *Options) *Server {
@@ -96,6 +98,9 @@ func (s *Server) Start() error {
 			}
 			if errs[0] == nil {
 				errs[0] = s.loadBannedUsers()
+			}
+			if errs[0] == nil {
+				s.preferences, errs[0] = users.NewPreferenceManager(s.store)
 			}
 		},
 	})
@@ -263,6 +268,11 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	if u := getUser(c); u != nil {
 		context.UserID = u.Id()
 		context.UserLoggedIn = true
+		context.Preferences, _ = s.preferences.Get(c, context.UserID)
+		if context.Preferences != nil {
+			latest, _ := s.releases.GetLatestAt()
+			context.HasNews = latest.After(context.Preferences.LatestNews)
+		}
 	}
 	return context
 }

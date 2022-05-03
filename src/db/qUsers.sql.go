@@ -11,6 +11,17 @@ import (
 	"github.com/google/uuid"
 )
 
+const bumpLatestNews = `-- name: BumpLatestNews :exec
+UPDATE user_preferences
+SET latest_news = NOW()
+WHERE user_id = $1
+`
+
+func (q *Queries) BumpLatestNews(ctx context.Context, userID uuid.UUID) error {
+	_, err := q.db.Exec(ctx, bumpLatestNews, userID)
+	return err
+}
+
 const getBannedUsers = `-- name: GetBannedUsers :many
 SELECT user_id
 from banned_users
@@ -35,4 +46,30 @@ func (q *Queries) GetBannedUsers(ctx context.Context) ([]uuid.UUID, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getUserPreferences = `-- name: GetUserPreferences :one
+SELECT user_id, latest_news
+FROM user_preferences
+WHERE user_id = $1
+`
+
+func (q *Queries) GetUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error) {
+	row := q.db.QueryRow(ctx, getUserPreferences, userID)
+	var i UserPreference
+	err := row.Scan(&i.UserID, &i.LatestNews)
+	return i, err
+}
+
+const initUserPreferences = `-- name: InitUserPreferences :one
+INSERT INTO user_preferences (user_id)
+VALUES ($1)
+RETURNING user_id, latest_news
+`
+
+func (q *Queries) InitUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error) {
+	row := q.db.QueryRow(ctx, initUserPreferences, userID)
+	var i UserPreference
+	err := row.Scan(&i.UserID, &i.LatestNews)
+	return i, err
 }

@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/xvello/letsblockit/src/db"
+	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
 )
 
@@ -47,6 +49,33 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 		CSRFToken:    s.csrf,
 		UserID:       s.user,
 		UserLoggedIn: true,
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestAbout_HasNews() {
+	s.preferences = &db.UserPreference{
+		UserID:     s.user,
+		LatestNews: fixedNow,
+	}
+	s.releases = append(s.releases, &news.Release{
+		CreatedAt: fixedNow.Add(time.Hour),
+	})
+	req := httptest.NewRequest(http.MethodGet, "/about", nil)
+	req.AddCookie(verifiedCookie)
+	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
+		CurrentSection:  "help/about",
+		NavigationLinks: navigationLinks,
+		Title:           "About this project",
+		Data: pages.ContextData{
+			"page":          helpMenu[1].Pages[0],
+			"menu_sections": helpMenu,
+		},
+		CSRFToken:    s.csrf,
+		UserID:       s.user,
+		UserLoggedIn: true,
+		Preferences:  s.preferences,
+		HasNews:      true,
 	})
 	s.runRequest(req, assertOk)
 }

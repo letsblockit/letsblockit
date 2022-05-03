@@ -39,3 +39,8 @@ type FilterList struct {
 	Downloaded   bool
 	DownloadedAt sql.NullTime
 }
+
+type UserPreference struct {
+	UserID     uuid.UUID
+	LatestNews time.Time
+}
