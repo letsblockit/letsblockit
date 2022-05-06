@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	lru "github.com/hashicorp/golang-lru"
@@ -52,8 +53,11 @@ func (m *PreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPrefere
 	return prefs, nil
 }
 
-func (m *PreferenceManager) BumpLatestNews(c echo.Context, user uuid.UUID) error {
-	err := m.store.BumpLatestNews(c.Request().Context(), user)
+func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error {
+	err := m.store.UpdateNewsCursor(c.Request().Context(), db.UpdateNewsCursorParams{
+		UserID:     user,
+		NewsCursor: at,
+	})
 	m.cache.Remove(user)
 	return err
 }

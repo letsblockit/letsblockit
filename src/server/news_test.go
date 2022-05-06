@@ -37,15 +37,30 @@ func (s *ServerTestSuite) TestNews_LoggedIn() {
 	s.releases = exampleReleases
 	s.preferences = &db.UserPreference{
 		UserID:     s.user,
-		LatestNews: fixedNow,
+		NewsCursor: fixedNow,
 	}
-	s.expectUP.BumpLatestNews(gomock.Any(), s.user)
+	s.expectUP.UpdateNewsCursor(gomock.Any(), s.user, exampleReleases[0].CreatedAt)
 	s.expectRender("news", pages.ContextData{
 		"releases": exampleReleases,
 		"newReleases": map[string]bool{
 			"0": true,
 			"1": true,
 		},
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestNews_NoNews() {
+	req := httptest.NewRequest(http.MethodGet, "/news", nil)
+	req.AddCookie(verifiedCookie)
+	s.releases = exampleReleases
+	s.preferences = &db.UserPreference{
+		UserID:     s.user,
+		NewsCursor: exampleReleases[0].CreatedAt,
+	}
+	s.expectRender("news", pages.ContextData{
+		"releases":    exampleReleases,
+		"newReleases": map[string]bool{},
 	})
 	s.runRequest(req, assertOk)
 }

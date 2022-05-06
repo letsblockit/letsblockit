@@ -13,7 +13,7 @@ SELECT *
 FROM user_preferences
 WHERE user_id = $1;
 
--- name: BumpLatestNews :exec
+-- name: UpdateNewsCursor :exec
 UPDATE user_preferences
-SET latest_news = NOW()
+SET news_cursor = $2
 WHERE user_id = $1;

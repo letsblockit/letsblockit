@@ -12,7 +12,6 @@ import (
 )
 
 type Querier interface {
-	BumpLatestNews(ctx context.Context, userID uuid.UUID) error
 	CountInstanceForUserAndFilter(ctx context.Context, arg CountInstanceForUserAndFilterParams) (int64, error)
 	CountListsForUser(ctx context.Context, userID uuid.UUID) (int64, error)
 	CreateInstanceForUserAndFilter(ctx context.Context, arg CreateInstanceForUserAndFilterParams) error
@@ -32,6 +31,7 @@ type Querier interface {
 	MarkListDownloaded(ctx context.Context, id int32) error
 	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstanceForUserAndFilter(ctx context.Context, arg UpdateInstanceForUserAndFilterParams) error
+	UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error
 }
 
 var _ Querier = (*Queries)(nil)

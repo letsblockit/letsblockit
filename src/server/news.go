@@ -19,22 +19,23 @@ func (s *Server) newsHandler(c echo.Context) error {
 	}
 
 	hc := s.buildPageContext(c, "Recent changes")
-	if hc.UserLoggedIn {
-		err := s.preferences.BumpLatestNews(c, hc.UserID)
-		if err != nil {
-			c.Logger().Warnf("failed to update latest news for %s: %s", hc.UserID, err)
-		}
-	}
 
 	newReleases := make(map[string]bool) // handlebars lookup only supports string keys
 	if hc.HasNews {
+		if hc.UserLoggedIn && len(releases) > 0 {
+			err := s.preferences.UpdateNewsCursor(c, hc.UserID, releases[0].CreatedAt)
+			if err != nil {
+				c.Logger().Warnf("failed to update latest news for %s: %s", hc.UserID, err)
+			}
+		}
+
 		// Shut down the menubar notification for this page
 		hc.HasNews = false
 
 		// Compute new releases to highlight
 		if hc.Preferences != nil {
 			for i, r := range releases {
-				if r.CreatedAt.After(hc.Preferences.LatestNews) {
+				if r.CreatedAt.After(hc.Preferences.NewsCursor) {
 					newReleases[strconv.Itoa(i)] = true
 				} else {
 					break

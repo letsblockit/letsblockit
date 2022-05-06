@@ -31,5 +31,5 @@ type ReleaseClient interface {
 }
 type UserPreferenceManager interface {
 	Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error)
-	BumpLatestNews(c echo.Context, user uuid.UUID) error
+	UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error
 }

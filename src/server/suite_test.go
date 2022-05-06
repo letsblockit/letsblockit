@@ -159,17 +159,17 @@ func (s *ServerTestSuite) SetupTest() {
 		} else {
 			return nil, db.NotFound
 		}
-	}).AnyTimes()
+	}).MinTimes(0).MaxTimes(1)
 	s.expectR.GetLatestAt().DoAndReturn(func() (time.Time, error) {
 		if len(s.releases) > 0 {
 			return s.releases[0].CreatedAt, nil
 		} else {
 			return fixedNow, nil
 		}
-	}).AnyTimes()
+	}).MinTimes(0).MaxTimes(1)
 	s.expectR.GetReleases().DoAndReturn(func() ([]*news.Release, error) {
 		return s.releases, nil
-	}).AnyTimes()
+	}).MinTimes(0).MaxTimes(1)
 }
 
 func (s *ServerTestSuite) setUserBanned() {

@@ -37,20 +37,6 @@ func (m *MockQuerier) EXPECT() *MockQuerierMockRecorder {
 	return m.recorder
 }
 
-// BumpLatestNews mocks base method.
-func (m *MockQuerier) BumpLatestNews(ctx context.Context, userID uuid.UUID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BumpLatestNews", ctx, userID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// BumpLatestNews indicates an expected call of BumpLatestNews.
-func (mr *MockQuerierMockRecorder) BumpLatestNews(ctx, userID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BumpLatestNews", reflect.TypeOf((*MockQuerier)(nil).BumpLatestNews), ctx, userID)
-}
-
 // CountInstanceForUserAndFilter mocks base method.
 func (m *MockQuerier) CountInstanceForUserAndFilter(ctx context.Context, arg db.CountInstanceForUserAndFilterParams) (int64, error) {
 	m.ctrl.T.Helper()
@@ -329,4 +315,18 @@ func (m *MockQuerier) UpdateInstanceForUserAndFilter(ctx context.Context, arg db
 func (mr *MockQuerierMockRecorder) UpdateInstanceForUserAndFilter(ctx, arg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateInstanceForUserAndFilter", reflect.TypeOf((*MockQuerier)(nil).UpdateInstanceForUserAndFilter), ctx, arg)
+}
+
+// UpdateNewsCursor mocks base method.
+func (m *MockQuerier) UpdateNewsCursor(ctx context.Context, arg db.UpdateNewsCursorParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateNewsCursor", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNewsCursor indicates an expected call of UpdateNewsCursor.
+func (mr *MockQuerierMockRecorder) UpdateNewsCursor(ctx, arg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNewsCursor", reflect.TypeOf((*MockQuerier)(nil).UpdateNewsCursor), ctx, arg)
 }

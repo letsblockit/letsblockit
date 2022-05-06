@@ -237,20 +237,6 @@ func (m *MockUserPreferenceManager) EXPECT() *MockUserPreferenceManagerMockRecor
 	return m.recorder
 }
 
-// BumpLatestNews mocks base method.
-func (m *MockUserPreferenceManager) BumpLatestNews(c echo.Context, user uuid.UUID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BumpLatestNews", c, user)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// BumpLatestNews indicates an expected call of BumpLatestNews.
-func (mr *MockUserPreferenceManagerMockRecorder) BumpLatestNews(c, user interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BumpLatestNews", reflect.TypeOf((*MockUserPreferenceManager)(nil).BumpLatestNews), c, user)
-}
-
 // Get mocks base method.
 func (m *MockUserPreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
 	m.ctrl.T.Helper()
@@ -264,4 +250,18 @@ func (m *MockUserPreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.Use
 func (mr *MockUserPreferenceManagerMockRecorder) Get(c, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockUserPreferenceManager)(nil).Get), c, user)
+}
+
+// UpdateNewsCursor mocks base method.
+func (m *MockUserPreferenceManager) UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateNewsCursor", c, user, at)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNewsCursor indicates an expected call of UpdateNewsCursor.
+func (mr *MockUserPreferenceManagerMockRecorder) UpdateNewsCursor(c, user, at interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNewsCursor", reflect.TypeOf((*MockUserPreferenceManager)(nil).UpdateNewsCursor), c, user, at)
 }

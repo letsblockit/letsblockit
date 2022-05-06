@@ -42,5 +42,5 @@ type FilterList struct {
 
 type UserPreference struct {
 	UserID     uuid.UUID
-	LatestNews time.Time
+	NewsCursor time.Time
 }

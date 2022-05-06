@@ -56,7 +56,7 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 func (s *ServerTestSuite) TestAbout_HasNews() {
 	s.preferences = &db.UserPreference{
 		UserID:     s.user,
-		LatestNews: fixedNow,
+		NewsCursor: fixedNow,
 	}
 	s.releases = append(s.releases, &news.Release{
 		CreatedAt: fixedNow.Add(time.Hour),
