@@ -1,10 +1,13 @@
+<p><a href="https://github.com/xvello/letsblockit/releases.atom">
+    <i class="ti ti-rss pe-2"></i>Feed for new releases</a></p>
+
 {{#each releases}}
     <div class="card mb-3">
         <div class="card-header {{#if (lookup @root.data.newReleases @index)}}bg-success{{/if}}">
             {{date}}
         </div>
         <div class="card-body">
-                {{{Description}}}
+            {{{Description}}}
         </div>
     </div>
 {{/each}}
