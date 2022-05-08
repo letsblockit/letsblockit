@@ -35,7 +35,7 @@ type Release struct {
 }
 
 func (r Release) Date() string {
-	return r.CreatedAt.Format("02 Jan. 2006")
+	return r.CreatedAt.Format("2006-01-02")
 }
 
 // ReleaseClient fetches and parses the github releases for a repository.

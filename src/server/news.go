@@ -21,7 +21,7 @@ func (s *Server) newsHandler(c echo.Context) error {
 		return err
 	}
 
-	hc := s.buildPageContext(c, "Recent changes")
+	hc := s.buildPageContext(c, "Release notes")
 
 	newReleases := make(map[string]bool) // handlebars lookup only supports string keys
 	if hc.HasNews {

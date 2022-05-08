@@ -1,13 +1,40 @@
-<p><a href="{{href "news-atom" ""}}">
-    <i class="ti ti-rss pe-2"></i>Feed for new releases</a></p>
+<h4 class="text-end mb-4">
+    <a href="{{href "news-atom" ""}}" title="ATOM feed for release notes"><i class="ti ti-rss"></i></a>
+</h4>
 
-{{#each releases}}
-    <div class="card mb-3">
-        <div class="card-header {{#if (lookup @root.data.newReleases @index)}}bg-success{{/if}}">
-            {{date}}
+<div class="container release-list">
+    {{#each releases}}
+        <div class="row pb-4{{#if (lookup @root.data.newReleases @index)}} new{{/if}}">
+            <div class="d-none d-lg-block col-lg-3 pt-2 pb-2 pe-4 text-lg-end">
+                <h3>{{date}}</h3>
+                <h5>
+                    {{#if (lookup @root.data.newReleases @index)}}
+                        <span class="badge bg-success me-3">new</span>
+                    {{/if}}
+                    <a href="https://github.com/xvello/letsblockit/releases/{{tagName}}">{{tagName}}</a>
+                </h5>
+            </div>
+            <div class="release-description col-lg-9 pt-2 pb-2 ps-4">
+                <div class="d-lg-none pb-2">
+                    <h3>
+                        <a href="https://github.com/xvello/letsblockit/releases/{{tagName}}">{{tagName}}</a> - {{date}}
+                        {{#if (lookup @root.data.newReleases @index)}}
+                            <span class="badge bg-success ms-2">new</span>
+                        {{/if}}
+                    </h3>
+                </div>
+                {{{Description}}}
+            </div>
         </div>
-        <div class="card-body">
-            {{{Description}}}
-        </div>
-    </div>
-{{/each}}
+    {{/each}}
+</div>
+
+<style>
+    .release-description {
+        border-left: 2px solid var(--bs-secondary);
+    }
+
+    .release-list .new .release-description {
+        border-left: 3px solid var(--bs-success);
+    }
+</style>

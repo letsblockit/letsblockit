@@ -1,25 +1,26 @@
 package server
 
 import (
+	"encoding/xml"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
+	"golang.org/x/tools/blog/atom"
 )
 
-var exampleReleases = []*news.Release{{
-	CreatedAt: fixedNow.Add(time.Hour),
-}, {
-	CreatedAt: fixedNow.Add(time.Hour),
-}, {
-	CreatedAt: fixedNow,
-}, {
-	CreatedAt: fixedNow.Add(-1 * time.Hour),
-}}
+var exampleReleases = []*news.Release{
+	{CreatedAt: fixedNow.Add(time.Hour)},
+	{CreatedAt: fixedNow.Add(time.Hour)},
+	{CreatedAt: fixedNow},
+	{CreatedAt: fixedNow.Add(-1 * time.Hour)},
+}
 
 func (s *ServerTestSuite) TestNews_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/news", nil)
@@ -63,4 +64,15 @@ func (s *ServerTestSuite) TestNews_NoNews() {
 		"newReleases": map[string]bool{},
 	})
 	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestNewsAtom() {
+	req := httptest.NewRequest(http.MethodGet, "/news.atom", nil)
+	s.releases = exampleReleases
+	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, http.StatusOK, rec.Code, rec.Body)
+		var feed atom.Feed
+		assert.NoError(t, xml.Unmarshal(rec.Body.Bytes(), &feed))
+		assert.EqualValues(t, atom.Feed{}, feed)
+	})
 }
