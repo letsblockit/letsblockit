@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -170,6 +171,7 @@ func (s *Server) setupRouter() {
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)
+	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
 
 	withAuth := s.echo.Group("")
 	if s.options.KratosURL != "" {
@@ -219,6 +221,15 @@ func shouldReload(c echo.Context) error {
 	// Block indefinitely to keep the SSE open
 	<-c.Request().Context().Done()
 	return nil
+}
+
+func (s *Server) absoluteReverse(c echo.Context, name string, params ...interface{}) string {
+	u := &url.URL{
+		Scheme: c.Scheme(),
+		Host:   c.Request().Host,
+		Path:   s.echo.Reverse(name, params...),
+	}
+	return u.String()
 }
 
 // redirectToPage the user to another page, either via htmx client-side redirect (form submissions)

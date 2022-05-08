@@ -1,10 +1,13 @@
 package server
 
 import (
+	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/xvello/letsblockit/src/news"
+	"golang.org/x/tools/blog/atom"
 )
 
 type Release struct {
@@ -47,4 +50,58 @@ func (s *Server) newsHandler(c echo.Context) error {
 	hc.Add("releases", releases)
 	hc.Add("newReleases", newReleases)
 	return s.pages.Render(c, "news", hc)
+}
+
+func (s *Server) newsAtomHandler(c echo.Context) error {
+	releases, err := s.releases.GetReleases()
+	if err != nil {
+		return err
+	}
+
+	feed := atom.Feed{
+		Title: "Release notes from letsblock.it",
+		ID:    s.absoluteReverse(c, "news-atom"),
+		Link: []atom.Link{{
+			Rel:  "self",
+			Href: s.absoluteReverse(c, "news-atom"),
+			Type: "application/atom+xml",
+		}, {
+			Rel:      "alternate",
+			Href:     s.absoluteReverse(c, "news"),
+			Type:     "text/html",
+			HrefLang: "en",
+		}},
+		Author: &atom.Person{
+			Name: "Let's Block It contributors",
+			URI:  "https://github.com/xvello/letsblockit",
+		},
+	}
+
+	var latestUpdate time.Time
+	for _, r := range releases {
+		link := "https://github.com/xvello/letsblockit/releases/" + r.TagName
+		feed.Entry = append(feed.Entry, &atom.Entry{
+			Title: fmt.Sprintf("Let's Block It: %s update", r.TagName),
+			ID:    link,
+			Link: []atom.Link{{
+				Rel:  "alternate",
+				Href: link,
+				Type: "text/html",
+			}},
+			Published: atom.Time(r.CreatedAt),
+			Updated:   atom.Time(r.PublishedAt),
+			Author:    nil,
+			Summary:   nil,
+			Content: &atom.Text{
+				Type: "html",
+				Body: r.Description,
+			},
+		})
+		if r.PublishedAt.After(latestUpdate) {
+			latestUpdate = r.PublishedAt
+		}
+	}
+
+	feed.Updated = atom.Time(latestUpdate)
+	return c.XMLPretty(200, &feed, "\t")
 }

@@ -48,7 +48,7 @@ func initRenderer() blackfriday.Option {
 	return blackfriday.WithRenderer(
 		&releaseNoteRenderer{
 			HTMLRenderer: blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
-				HeadingLevelOffset: 1,
+				HeadingLevelOffset: 2,
 			}),
 		})
 }

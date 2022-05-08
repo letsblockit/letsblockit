@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	GithubReleasesEndpoint string = "https://api.github.com/repos/xvello/lbi-release-test/releases?per_page=100"
+	GithubReleasesEndpoint string = "https://api.github.com/repos/xvello/letsblockit/releases?per_page=100"
 )
 
 type githubRelease struct {
@@ -19,6 +19,7 @@ type githubRelease struct {
 	Id          int       `json:"id"`
 	Draft       bool      `json:"draft"`
 	Prerelease  bool      `json:"prerelease"`
+	TagName     string    `json:"tag_name"`
 	CreatedAt   time.Time `json:"created_at"`
 	PublishedAt time.Time `json:"published_at"`
 	Body        string    `json:"body"`
@@ -30,6 +31,7 @@ type Release struct {
 	Description string
 	CreatedAt   time.Time
 	PublishedAt time.Time
+	TagName     string
 }
 
 func (r Release) Date() string {
@@ -102,6 +104,7 @@ func (c *ReleaseClient) populate() error {
 			Description: string(desc),
 			CreatedAt:   r.CreatedAt,
 			PublishedAt: r.PublishedAt,
+			TagName:     r.TagName,
 		})
 		if r.CreatedAt.After(c.latestAt) {
 			c.latestAt = r.CreatedAt
