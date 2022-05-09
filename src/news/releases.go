@@ -2,6 +2,7 @@ package news
 
 import (
 	"encoding/json"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -12,6 +13,11 @@ import (
 
 const (
 	GithubReleasesEndpoint string = "https://api.github.com/repos/xvello/letsblockit/releases?per_page=100"
+)
+
+var (
+	githubUserRegex = regexp.MustCompile(`(\W)@(\w+)(\W)`)
+	githubUserLink  = `$1[**@$2**](https://github.com/$2)$3`
 )
 
 type githubRelease struct {
@@ -98,6 +104,8 @@ func (c *ReleaseClient) populate() error {
 		}
 		// Cleanup \r that mess up with blackfriday parsing
 		body := strings.ReplaceAll(r.Body, "\r\n", "\n")
+		// Insert links for github users
+		body = githubUserRegex.ReplaceAllString(body, githubUserLink)
 		desc := blackfriday.Run([]byte(body), renderer)
 		c.releases = append(c.releases, &Release{
 			Id:          r.Id,
