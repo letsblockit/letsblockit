@@ -79,13 +79,12 @@ func (s *Server) newsAtomHandler(c echo.Context) error {
 
 	var latestUpdate time.Time
 	for _, r := range releases {
-		link := "https://github.com/xvello/letsblockit/releases/" + r.TagName
 		feed.Entry = append(feed.Entry, &atom.Entry{
 			Title: fmt.Sprintf("Let's Block It: %s update", r.TagName),
-			ID:    link,
+			ID:    r.GithubUrl,
 			Link: []atom.Link{{
 				Rel:  "alternate",
-				Href: link,
+				Href: r.GithubUrl,
 				Type: "text/html",
 			}},
 			Published: atom.Time(r.CreatedAt),

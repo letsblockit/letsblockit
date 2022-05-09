@@ -11,13 +11,13 @@
                     {{#if (lookup @root.data.newReleases @index)}}
                         <span class="badge bg-success me-3">new</span>
                     {{/if}}
-                    <a href="https://github.com/xvello/letsblockit/releases/{{tagName}}">{{tagName}}</a>
+                    <a href="{{GithubUrl}}">{{tagName}}</a>
                 </h5>
             </div>
             <div class="release-description col-lg-9 pt-2 pb-2 ps-4">
                 <div class="d-lg-none pb-2">
                     <h3>
-                        <a href="https://github.com/xvello/letsblockit/releases/{{tagName}}">{{tagName}}</a> - {{date}}
+                        <a href="{{GithubUrl}}">{{tagName}}</a> - {{date}}
                         {{#if (lookup @root.data.newReleases @index)}}
                             <span class="badge bg-success ms-2">new</span>
                         {{/if}}

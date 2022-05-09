@@ -32,6 +32,7 @@ type Release struct {
 	CreatedAt   time.Time
 	PublishedAt time.Time
 	TagName     string
+	GithubUrl   string
 }
 
 func (r Release) Date() string {
@@ -105,6 +106,7 @@ func (c *ReleaseClient) populate() error {
 			CreatedAt:   r.CreatedAt,
 			PublishedAt: r.PublishedAt,
 			TagName:     r.TagName,
+			GithubUrl:   r.HtmlUrl,
 		})
 		if r.CreatedAt.After(c.latestAt) {
 			c.latestAt = r.CreatedAt
