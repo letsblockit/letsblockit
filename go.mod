@@ -3,7 +3,7 @@ module github.com/xvello/letsblockit
 go 1.17
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.1.0
+	github.com/DataDog/datadog-go/v5 v5.1.1
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
 	github.com/alecthomas/kong v0.5.0
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
@@ -21,6 +21,7 @@ require (
 	github.com/labstack/gommon v0.3.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.1
+	golang.org/x/tools v0.1.10
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
@@ -54,5 +55,4 @@ require (
 	golang.org/x/sys v0.0.0-20220422013727-9388b58f7150 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
-	golang.org/x/tools v0.1.10 // indirect
 )
