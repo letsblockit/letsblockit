@@ -7,10 +7,14 @@ package mocks
 import (
 	io "io"
 	reflect "reflect"
+	time "time"
 
 	gomock "github.com/golang/mock/gomock"
+	uuid "github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
+	db "github.com/xvello/letsblockit/src/db"
 	filters "github.com/xvello/letsblockit/src/filters"
+	news "github.com/xvello/letsblockit/src/news"
 	pages "github.com/xvello/letsblockit/src/pages"
 )
 
@@ -155,4 +159,109 @@ func (m *MockFilterRepository) Render(w io.Writer, name string, data map[string]
 func (mr *MockFilterRepositoryMockRecorder) Render(w, name, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Render", reflect.TypeOf((*MockFilterRepository)(nil).Render), w, name, data)
+}
+
+// MockReleaseClient is a mock of ReleaseClient interface.
+type MockReleaseClient struct {
+	ctrl     *gomock.Controller
+	recorder *MockReleaseClientMockRecorder
+}
+
+// MockReleaseClientMockRecorder is the mock recorder for MockReleaseClient.
+type MockReleaseClientMockRecorder struct {
+	mock *MockReleaseClient
+}
+
+// NewMockReleaseClient creates a new mock instance.
+func NewMockReleaseClient(ctrl *gomock.Controller) *MockReleaseClient {
+	mock := &MockReleaseClient{ctrl: ctrl}
+	mock.recorder = &MockReleaseClientMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockReleaseClient) EXPECT() *MockReleaseClientMockRecorder {
+	return m.recorder
+}
+
+// GetLatestAt mocks base method.
+func (m *MockReleaseClient) GetLatestAt() (time.Time, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLatestAt")
+	ret0, _ := ret[0].(time.Time)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLatestAt indicates an expected call of GetLatestAt.
+func (mr *MockReleaseClientMockRecorder) GetLatestAt() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLatestAt", reflect.TypeOf((*MockReleaseClient)(nil).GetLatestAt))
+}
+
+// GetReleases mocks base method.
+func (m *MockReleaseClient) GetReleases() ([]*news.Release, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetReleases")
+	ret0, _ := ret[0].([]*news.Release)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetReleases indicates an expected call of GetReleases.
+func (mr *MockReleaseClientMockRecorder) GetReleases() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReleases", reflect.TypeOf((*MockReleaseClient)(nil).GetReleases))
+}
+
+// MockUserPreferenceManager is a mock of UserPreferenceManager interface.
+type MockUserPreferenceManager struct {
+	ctrl     *gomock.Controller
+	recorder *MockUserPreferenceManagerMockRecorder
+}
+
+// MockUserPreferenceManagerMockRecorder is the mock recorder for MockUserPreferenceManager.
+type MockUserPreferenceManagerMockRecorder struct {
+	mock *MockUserPreferenceManager
+}
+
+// NewMockUserPreferenceManager creates a new mock instance.
+func NewMockUserPreferenceManager(ctrl *gomock.Controller) *MockUserPreferenceManager {
+	mock := &MockUserPreferenceManager{ctrl: ctrl}
+	mock.recorder = &MockUserPreferenceManagerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockUserPreferenceManager) EXPECT() *MockUserPreferenceManagerMockRecorder {
+	return m.recorder
+}
+
+// Get mocks base method.
+func (m *MockUserPreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", c, user)
+	ret0, _ := ret[0].(*db.UserPreference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockUserPreferenceManagerMockRecorder) Get(c, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockUserPreferenceManager)(nil).Get), c, user)
+}
+
+// UpdateNewsCursor mocks base method.
+func (m *MockUserPreferenceManager) UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateNewsCursor", c, user, at)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNewsCursor indicates an expected call of UpdateNewsCursor.
+func (mr *MockUserPreferenceManagerMockRecorder) UpdateNewsCursor(c, user, at interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNewsCursor", reflect.TypeOf((*MockUserPreferenceManager)(nil).UpdateNewsCursor), c, user, at)
 }

@@ -18,6 +18,7 @@
     <meta property="og:site_name" content="Let's Block It"/>
     <meta name="twitter:card" content="summary"/>
     <meta name="twitter:site" content="@LetsBlockIt1"/>
+    <link rel="alternate" type="application/atom+xml" title="Release notes from letsblock.it" href="{{href "news-atom" ""}}" />
 </head>
 <body hx-boost="true"{{#if HotReload}} data-hot-reload{{/if}}>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
@@ -37,6 +38,12 @@
                             aria-current="page{{/equal}}" href="/{{target}}">{{name}}</a>
                 {{/each}}
             </div>
+            <a class="nav-link{{#if @root.HasNews}} active{{/if}}{{#equal "news" @root.CurrentSection}} active"
+                    aria-current="page{{/equal}}" href="{{href "news" ""}}">
+                {{#if @root.HasNews}}<i class="ti ti-bell-ringing"></i>{{/if}}
+                News
+                {{#if @root.HasNews}}<i class="ti ti-bell-ringing"></i>{{/if}}
+            </a>
             {{#if UserLoggedIn}}
                 <a class="nav-link{{#equal "user" @root.CurrentSection}} active"
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>

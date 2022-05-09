@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -17,7 +18,9 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/xvello/letsblockit/src/db"
 	"github.com/xvello/letsblockit/src/filters"
+	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
+	"github.com/xvello/letsblockit/src/users"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -63,15 +66,17 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
-	assets  *wrappedAssets
-	echo    *echo.Echo
-	options *Options
-	filters FilterRepository
-	pages   PageRenderer
-	store   db.Store
-	statsd  statsd.ClientInterface
-	banned  map[uuid.UUID]struct{}
-	now     func() time.Time
+	assets      *wrappedAssets
+	banned      map[uuid.UUID]struct{}
+	echo        *echo.Echo
+	filters     FilterRepository
+	now         func() time.Time
+	options     *Options
+	pages       PageRenderer
+	preferences UserPreferenceManager
+	releases    ReleaseClient
+	statsd      statsd.ClientInterface
+	store       db.Store
 }
 
 func NewServer(options *Options) *Server {
@@ -95,9 +100,13 @@ func (s *Server) Start() error {
 			if errs[0] == nil {
 				errs[0] = s.loadBannedUsers()
 			}
+			if errs[0] == nil {
+				s.preferences, errs[0] = users.NewPreferenceManager(s.store)
+			}
 		},
 	})
 
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint)
 	if s.options.Statsd != "" {
 		dsd, err := statsd.New(s.options.Statsd)
 		if err != nil {
@@ -162,6 +171,7 @@ func (s *Server) setupRouter() {
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)
+	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
 
 	withAuth := s.echo.Group("")
 	if s.options.KratosURL != "" {
@@ -179,6 +189,7 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/", s.landingPageHandler).Name = "landing"
 	withAuth.GET("/help", s.helpPages).Name = "help-main"
 	withAuth.GET("/help/:page", s.helpPages).Name = "help"
+	withAuth.GET("/news", s.newsHandler).Name = "news"
 
 	withAuth.GET("/filters", s.listFilters).Name = "list-filters"
 	withAuth.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
@@ -210,6 +221,15 @@ func shouldReload(c echo.Context) error {
 	// Block indefinitely to keep the SSE open
 	<-c.Request().Context().Done()
 	return nil
+}
+
+func (s *Server) absoluteReverse(c echo.Context, name string, params ...interface{}) string {
+	u := &url.URL{
+		Scheme: c.Scheme(),
+		Host:   c.Request().Host,
+		Path:   s.echo.Reverse(name, params...),
+	}
+	return u.String()
 }
 
 // redirectToPage the user to another page, either via htmx client-side redirect (form submissions)
@@ -259,6 +279,11 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	if u := getUser(c); u != nil {
 		context.UserID = u.Id()
 		context.UserLoggedIn = true
+		context.Preferences, _ = s.preferences.Get(c, context.UserID)
+		if context.Preferences != nil {
+			latest, _ := s.releases.GetLatestAt()
+			context.HasNews = latest.After(context.Preferences.NewsCursor)
+		}
 	}
 	return context
 }

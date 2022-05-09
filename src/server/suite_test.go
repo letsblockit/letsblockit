@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"github.com/xvello/letsblockit/src/db"
+	"github.com/xvello/letsblockit/src/news"
 	"github.com/xvello/letsblockit/src/pages"
 	"github.com/xvello/letsblockit/src/server/mocks"
 )
@@ -38,14 +39,6 @@ var (
 	  }
 	}`
 )
-
-type mockStore struct {
-	*mocks.MockQuerier
-}
-
-func (m mockStore) RunTx(e echo.Context, f db.TxFunc) error {
-	return f(e.Request().Context(), m)
-}
 
 type pageContextMatcher struct {
 	t   *testing.T
@@ -84,9 +77,13 @@ type ServerTestSuite struct {
 	expectF      *mocks.MockFilterRepositoryMockRecorder
 	expectP      *mocks.MockPageRendererMockRecorder
 	expectQ      *mocks.MockQuerierMockRecorder
+	expectR      *mocks.MockReleaseClientMockRecorder
+	expectUP     *mocks.MockUserPreferenceManagerMockRecorder
 	kratosServer *httptest.Server
 	user         uuid.UUID
 	csrf         string
+	releases     []*news.Release
+	preferences  *db.UserPreference
 }
 
 func (s *ServerTestSuite) SetupTest() {
@@ -94,9 +91,13 @@ func (s *ServerTestSuite) SetupTest() {
 	fm := mocks.NewMockFilterRepository(c)
 	pm := mocks.NewMockPageRenderer(c)
 	qm := mocks.NewMockQuerier(c)
+	rm := mocks.NewMockReleaseClient(c)
+	upm := mocks.NewMockUserPreferenceManager(c)
 	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
 	s.expectQ = qm.EXPECT()
+	s.expectR = rm.EXPECT()
+	s.expectUP = upm.EXPECT()
 
 	s.kratosServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
@@ -123,19 +124,44 @@ func (s *ServerTestSuite) SetupTest() {
 	s.user = uuid.New()
 	s.csrf = random.String(32)
 	s.server = &Server{
-		assets: nil,
-		echo:   echo.New(),
+		assets:  nil,
+		echo:    echo.New(),
+		filters: fm,
+		now:     func() time.Time { return fixedNow },
 		options: &Options{
 			KratosURL: s.kratosServer.URL,
 			silent:    true,
 		},
-		filters: fm,
-		pages:   pm,
-		store:   &mockStore{qm},
-		statsd:  &statsd.NoOpClient{},
-		now:     func() time.Time { return fixedNow },
+		pages:       pm,
+		preferences: upm,
+		releases:    rm,
+		statsd:      &statsd.NoOpClient{},
+		store:       mocks.NewMockStore(qm),
 	}
 	s.server.setupRouter()
+
+	// Preferences and releases are called by buildPageContext for logged-in users.
+	// Add catch-all expectations to avoid noise in the tests.
+	// Values can be set by tests before running a query
+	s.preferences = nil
+	s.releases = nil
+	s.expectUP.Get(gomock.Any(), s.user).DoAndReturn(func(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
+		if user == s.user {
+			return s.preferences, nil
+		} else {
+			return nil, db.NotFound
+		}
+	}).MinTimes(0).MaxTimes(1)
+	s.expectR.GetLatestAt().DoAndReturn(func() (time.Time, error) {
+		if len(s.releases) > 0 {
+			return s.releases[0].CreatedAt, nil
+		} else {
+			return fixedNow, nil
+		}
+	}).MinTimes(0).MaxTimes(1)
+	s.expectR.GetReleases().DoAndReturn(func() ([]*news.Release, error) {
+		return s.releases, nil
+	}).MinTimes(0).MaxTimes(1)
 }
 
 func (s *ServerTestSuite) setUserBanned() {

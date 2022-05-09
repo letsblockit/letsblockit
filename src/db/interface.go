@@ -25,10 +25,13 @@ type Querier interface {
 	GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error)
 	GetListForUser(ctx context.Context, userID uuid.UUID) (GetListForUserRow, error)
 	GetStats(ctx context.Context) (GetStatsRow, error)
+	GetUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error)
 	HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error)
+	InitUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error)
 	MarkListDownloaded(ctx context.Context, id int32) error
 	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstanceForUserAndFilter(ctx context.Context, arg UpdateInstanceForUserAndFilterParams) error
+	UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error
 }
 
 var _ Querier = (*Queries)(nil)
