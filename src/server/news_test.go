@@ -15,12 +15,18 @@ import (
 	"golang.org/x/tools/blog/atom"
 )
 
-var exampleReleases = []*news.Release{
-	{CreatedAt: fixedNow.Add(time.Hour)},
-	{CreatedAt: fixedNow.Add(time.Hour)},
-	{CreatedAt: fixedNow},
-	{CreatedAt: fixedNow.Add(-1 * time.Hour)},
-}
+var exampleReleases = []*news.Release{{
+	CreatedAt:   fixedNow.Add(time.Hour),
+	PublishedAt: fixedNow.Add(time.Hour),
+}, {
+	CreatedAt: fixedNow.Add(time.Hour),
+}, {
+	CreatedAt:   fixedNow,
+	PublishedAt: fixedNow.Add(2 * time.Hour),
+}, {
+	CreatedAt:   fixedNow.Add(-1 * time.Hour),
+	PublishedAt: fixedNow,
+}}
 
 func (s *ServerTestSuite) TestNews_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/news", nil)
@@ -71,8 +77,10 @@ func (s *ServerTestSuite) TestNewsAtom() {
 	s.releases = exampleReleases
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, http.StatusOK, rec.Code, rec.Body)
+		assert.Equal(t, "application/atom+xml", rec.Header().Get("Content-Type"))
 		var feed atom.Feed
 		assert.NoError(t, xml.Unmarshal(rec.Body.Bytes(), &feed))
-		assert.EqualValues(t, atom.Feed{}, feed)
+		assert.Len(t, feed.Entry, 4)
+		assert.Equal(t, atom.Time(fixedNow.Add(2*time.Hour)), feed.Updated)
 	})
 }

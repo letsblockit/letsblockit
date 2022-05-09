@@ -103,5 +103,6 @@ func (s *Server) newsAtomHandler(c echo.Context) error {
 	}
 
 	feed.Updated = atom.Time(latestUpdate)
+	c.Response().Header().Set(echo.HeaderContentType, "application/atom+xml")
 	return c.XMLPretty(200, &feed, "\t")
 }
