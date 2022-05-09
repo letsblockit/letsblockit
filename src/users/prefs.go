@@ -35,22 +35,19 @@ func (m *PreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPrefere
 			return prefs, nil
 		}
 	}
-	var prefs *db.UserPreference
-	err := m.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
-		existing, err := q.GetUserPreferences(ctx, user)
+	var prefs db.UserPreference
+	if err := m.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
+		var err error
+		prefs, err = q.GetUserPreferences(ctx, user)
 		if err == db.NotFound {
-			defaults, err := q.InitUserPreferences(ctx, user)
-			prefs = &defaults
-			return err
+			prefs, err = q.InitUserPreferences(ctx, user)
 		}
-		prefs = &existing
 		return err
-	})
-	if err != nil {
+	}); err != nil {
 		return nil, err
 	}
-	m.cache.Add(user, prefs)
-	return prefs, nil
+	m.cache.Add(user, &prefs)
+	return &prefs, nil
 }
 
 func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error {

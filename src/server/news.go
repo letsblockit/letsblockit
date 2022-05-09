@@ -6,14 +6,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/news"
 	"golang.org/x/tools/blog/atom"
 )
-
-type Release struct {
-	*news.Release
-	Fresh bool
-}
 
 func (s *Server) newsHandler(c echo.Context) error {
 	releases, err := s.releases.GetReleases()
@@ -75,6 +69,7 @@ func (s *Server) newsAtomHandler(c echo.Context) error {
 			Name: "Let's Block It contributors",
 			URI:  "https://github.com/xvello/letsblockit",
 		},
+		Entry: make([]*atom.Entry, 0, len(releases)),
 	}
 
 	var latestUpdate time.Time

@@ -40,14 +40,6 @@ var (
 	}`
 )
 
-type mockStore struct {
-	*mocks.MockQuerier
-}
-
-func (m mockStore) RunTx(e echo.Context, f db.TxFunc) error {
-	return f(e.Request().Context(), m)
-}
-
 type pageContextMatcher struct {
 	t   *testing.T
 	ctx *pages.Context
@@ -144,7 +136,7 @@ func (s *ServerTestSuite) SetupTest() {
 		preferences: upm,
 		releases:    rm,
 		statsd:      &statsd.NoOpClient{},
-		store:       &mockStore{qm},
+		store:       mocks.NewMockStore(qm),
 	}
 	s.server.setupRouter()
 
