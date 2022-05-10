@@ -16,6 +16,6 @@ jobs:
         with:
           commit-message: "search-results: update presets"
           title: Update search-results presets
+          labels: filter-data
           branch: update-presets
           delete-branch: true
-          reviewers: xvello
