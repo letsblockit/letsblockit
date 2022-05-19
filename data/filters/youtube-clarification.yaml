@@ -2,7 +2,7 @@ title: Hide Youtube channel clarification
 tags:
   - youtube
 template: |
-  www.youtube.com###clarify-box > .ytd-watch-flexy.style-scope
+  www.youtube.com###clarify-box
   www.youtube.com##div[id*="info-panel"]:has(div[id="content"]):has(div[class^="disclaimer-container"]):matches-path(/shorts)
 tests:
   - params: {}
