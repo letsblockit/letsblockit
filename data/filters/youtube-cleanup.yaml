@@ -37,13 +37,6 @@ tests:
     output: |
       www.youtube.com###clarify-box
       www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
-  - params:
-      remove-text-after-buttons-below-video: true
-      channel-clarification: true
-    output: |
-      www.youtube.com###clarify-box
-      www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
-      www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
 ---
 
 Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
