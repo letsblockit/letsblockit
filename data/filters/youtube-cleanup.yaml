@@ -32,7 +32,7 @@ tests:
       www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
   - params:
       remove-text-after-buttons-below-video: true
-     output: |
+    output: |
       www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
       www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
   - params:
