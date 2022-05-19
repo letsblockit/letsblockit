@@ -1,0 +1,53 @@
+title: Cleanup YouTube pages
+params:
+  - name: channel-clarification
+    description: Hide the channel description box under videos and shorts.
+    type: checkbox
+    default: false
+  - name: remove-text-after-buttons-below-video
+    description: Hide the text next to the dislike/share/download/report/save buttons below a video.
+    type: checkbox
+    default: false
+tags:
+  - youtube
+template: |
+  {{#if channel-clarification}}
+  www.youtube.com###clarify-box
+  www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
+  {{/if}}
+  {{#if remove-text-after-buttons-below-video}}
+  www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      remove-text-after-buttons-below-video: true
+      channel-clarification: true
+    output: |
+      www.youtube.com###clarify-box
+      www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
+      www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
+  - params:
+      remove-text-after-buttons-below-video: true
+     output: |
+      www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
+  - params:
+      channel-clarification: true
+    output: |
+      www.youtube.com###clarify-box
+      www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
+  - params:
+      remove-text-after-buttons-below-video: true
+      channel-clarification: true
+    output: |
+      www.youtube.com###clarify-box
+      www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
+      www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
+---
+
+Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
+"descriptions" of the buttons below a video to dislike, share, save, etc. a video. 
+
+Don't hesitate to [open a issue](https://github.com/xvello/letsblockit/issues/new/choose) to suggest additions or fixes ;
+and check out the [Hide websites from search results](search-results) filter too.
