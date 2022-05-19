@@ -13,7 +13,7 @@ tags:
 template: |
   {{#if channel-clarification}}
   www.youtube.com###clarify-box
-  www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
+  www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
   {{/if}}
   {{#if remove-text-after-buttons-below-video}}
   www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
@@ -26,7 +26,7 @@ tests:
       channel-clarification: true
     output: |
       www.youtube.com###clarify-box
-      www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
+      www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
       www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
   - params:
       remove-text-after-buttons-below-video: true
@@ -36,7 +36,7 @@ tests:
       channel-clarification: true
     output: |
       www.youtube.com###clarify-box
-      www.youtube.com##ytd-shorts #info-panel:has(* > div[class*="disclaimer-container"])
+      www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
 ---
 
 Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
