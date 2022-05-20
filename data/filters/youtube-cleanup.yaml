@@ -38,7 +38,7 @@ tests:
   - params: {}
     output: ""
   - params:
-      hashtags: true
+      remove-video-hashtags: true
     output: |
       www.youtube.com###super-title
       www.youtube.com##.super-title
