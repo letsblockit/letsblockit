@@ -1,5 +1,9 @@
 title: Cleanup YouTube pages
 params:
+  - name: remove-video-hashtags
+    description: Hide the hashtags above of the video title.
+    type: checkbox
+    default: false
   - name: channel-clarification
     description: Hide the channel description box under videos and shorts.
     type: checkbox
@@ -8,9 +12,17 @@ params:
     description: Hide the text next to the dislike/share/download/report/save buttons below a video.
     type: checkbox
     default: false
+  - name: remove-comment-section
+    description: Hide the comment section below a video.
+    type: checkbox
+    default: false
 tags:
   - youtube
 template: |
+  {{#if remove-video-hashtags}}
+  www.youtube.com###super-title
+  www.youtube.com##.super-title
+  {{/if}}
   {{#if channel-clarification}}
   www.youtube.com###clarify-box
   www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
@@ -19,27 +31,31 @@ template: |
   www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
   www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
   {{/if}}
+  {{#if remove-comment-section}}
+  www.youtube.com###comments #contents:remove()
+  {{/if}}
 tests:
   - params: {}
     output: ""
   - params:
-      remove-text-after-buttons-below-video: true
+      remove-video-hashtags: true
+    output: |
+      www.youtube.com###super-title
+      www.youtube.com##.super-title
+  - params:
       channel-clarification: true
     output: |
       www.youtube.com###clarify-box
       www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
-      www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
-      www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
   - params:
       remove-text-after-buttons-below-video: true
     output: |
       www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
       www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
   - params:
-      channel-clarification: true
+      remove-comment-section: true
     output: |
-      www.youtube.com###clarify-box
-      www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
+      www.youtube.com###comments #contents:remove()
 ---
 
 Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
