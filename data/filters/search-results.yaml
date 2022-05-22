@@ -53,6 +53,7 @@ params:
           - bestofreactjs.com/
           - bestofvue.com/
           - bleepcoder.com/
+          - bytemeta.vip/
           - coder.social/
           - fantashit.com/
           - findbestopensource.com/
@@ -128,6 +129,7 @@ params:
           - .fitforlearning.org/
           - .fluffyfables.com/
           - .gupgallery.com/
+          - .icopy.site/
           - .mediatagtw.com/
           - .narkive.jp/
           - .noblenaz.org/
@@ -171,6 +173,7 @@ params:
           - bootpanic.com/
           - brocante.dev/
           - cainiaojiaocheng.com/
+          - catchconsole.com/
           - catwolf.org/
           - christfever.in/
           - classmethod.dev/
@@ -199,6 +202,8 @@ params:
           - de.askdev.info/
           - debiantutorials.org/
           - devbugfix.com/
+          - devdreamz.com/
+          - devqanda.com/
           - dockerquestions.com/
           - dogovori.info/
           - dtuto.com/
@@ -209,6 +214,7 @@ params:
           - exchangetuts.com/
           - farath.com/
           - fooobar.com/
+          - frameboxxindore.com/
           - fullstackuser.com/
           - grokbase.com/
           - helpex.vn/
@@ -238,7 +244,9 @@ params:
           - mlink.in/
           - mlog.club/
           - newbedev.com/
+          - nibes.cn/
           - nxtstage.net/
+          - ogeek.cn/
           - ohandroid.com/
           - ostack.cn/
           - ourpython.com/
@@ -256,6 +264,7 @@ params:
           - qa-help.ru/
           - qa-stack.pl/
           - qa.1r1g.com/
+          - qa.wujigu.com/
           - qacode.ru/
           - qapicks.com/
           - qarchive.ru/
@@ -286,9 +295,12 @@ params:
           - rotadev.com/
           - routinepanic.com/
           - ruphp.com/
+          - sargon24.com/
           - serveanswer.com/
           - server-fault.ru/
+          - shenzhenjia.net/
           - sobrelinux.info/
+          - software-testing.com/
           - solveforums.msomimaktaba.com/
           - sprosi.pro/
           - sqlite.in/
@@ -360,9 +372,11 @@ params:
           - www.it-swarm.com.de/
           - www.it-swarm.com.ru/
           - www.it-swarm.jp.net/
+          - www.itbaoku.cn/
           - www.itdaan.com/
           - www.itranslater.com/
           - www.javaer101.com/
+          - www.javafixing.com/
           - www.jscodetips.com/
           - www.nuomiphp.com/
           - www.py4u.net/
