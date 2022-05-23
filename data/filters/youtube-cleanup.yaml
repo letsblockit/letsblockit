@@ -16,13 +16,10 @@ params:
     description: Hide the comment section below a video.
     type: checkbox
     default: false
-  - name: remove-specific-comments
-    description: Hide only comments with specific words
-    type: checkbox
-  - name: keywords
-    description: "Keywords to block"
+  - name: remove-comments-with-words
+    description: Hide comments containing the following words
     type: list
-    default: [ Idiot ]
+    default: [ ]
 tags:
   - youtube
 template: |
