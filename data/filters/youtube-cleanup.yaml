@@ -69,7 +69,7 @@ tests:
       remove-comments-with-words: true
       keywords: [ "Keyword1" ]
     output: |
-      www.youtube.com###comment:has-text(Keyword1):upward(1)
+      www.youtube.com###content-text:has-text(/\b(word)\b/i):upward(ytd-comment-thread-renderer)
 ---
 
 Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
