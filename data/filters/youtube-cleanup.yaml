@@ -39,7 +39,7 @@ template: |
   www.youtube.com###comments #contents:remove()
   {{/if}}
   {{#each keywords as |keyword id|}}
-  {{#if ../remove-specific-comments}}
+  {{#if ../remove-comments-with-words}}
   www.youtube.com###comment:has-text({{keyword}}):upward(1)
   {{/if}}
   {{/each}}
@@ -66,7 +66,7 @@ tests:
     output: |
       www.youtube.com###comments #contents:remove()
   - params:
-      remove-specific-comments: true
+      remove-comments-with-words: true
       keywords: [ "Keyword1" ]
     output: |
       www.youtube.com###comment:has-text(Keyword1):upward(1)
