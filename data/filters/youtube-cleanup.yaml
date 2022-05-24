@@ -37,6 +37,7 @@ template: |
   {{/if}}
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
+  {{/if}}
   {{#each remove-comments-with-words}}
   www.youtube.com##ytd-comments #content-text:has-text(/\b{{this}}\b/i):upward(ytd-comment-thread-renderer)
   {{/each}}
