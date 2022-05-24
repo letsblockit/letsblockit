@@ -1,19 +1,19 @@
-title: Cleanup YouTube pages
+title: Cleanup the YouTube video playing interface
 params:
-  - name: remove-video-hashtags
-    description: Hide the hashtags above of the video title.
+  - name: channel-clarification
+    description: Hide the channel description box under videos and shorts
     type: checkbox
     default: false
-  - name: channel-clarification
-    description: Hide the channel description box under videos and shorts.
+  - name: remove-video-hashtags
+    description: Hide the hashtags above the video title
     type: checkbox
     default: false
   - name: remove-text-after-buttons-below-video
-    description: Hide the text next to the dislike/share/download/report/save buttons below a video.
+    description: Hide the text label of the dislike/share/download/report/save buttons
     type: checkbox
     default: false
   - name: remove-comment-section
-    description: Hide the comment section below a video.
+    description: Hide all comments below the video
     type: checkbox
     default: false
   - name: remove-comments-with-words
@@ -23,13 +23,13 @@ params:
 tags:
   - youtube
 template: |
-  {{#if remove-video-hashtags}}
-  www.youtube.com###super-title
-  www.youtube.com##.super-title
-  {{/if}}
   {{#if channel-clarification}}
   www.youtube.com###clarify-box
   www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
+  {{/if}}
+  {{#if remove-video-hashtags}}
+  www.youtube.com###super-title
+  www.youtube.com##.super-title
   {{/if}}
   {{#if remove-text-after-buttons-below-video}}
   www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
@@ -72,8 +72,7 @@ tests:
       www.youtube.com##ytd-comments #content-text:has-text(/\bword pair2\b/i):upward(ytd-comment-thread-renderer)
 ---
 
-Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
-"descriptions" of the buttons below a video to dislike, share, save, etc. a video. 
+This filter template allows you to remove parts of the Youtube interface when watching videos, for a cleaner experience.
 
-Don't hesitate to [open a issue](https://github.com/xvello/letsblockit/issues/new/choose) to suggest additions or fixes ;
-and check out the [other Youtube filters](/filters/tag/youtube) too.
+Check out the [other Youtube filters](/filters/tag/youtube) too, and don't hesitate to suggest additions or fixes
+via the _Suggest a change_ link in the sidebar.
