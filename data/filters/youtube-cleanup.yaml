@@ -16,6 +16,10 @@ params:
     description: Hide the comment section below a video.
     type: checkbox
     default: false
+  - name: remove-comments-with-words
+    description: Hide comments containing the following words
+    type: list
+    default: [ ]
 tags:
   - youtube
 template: |
@@ -34,6 +38,9 @@ template: |
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
   {{/if}}
+  {{#each remove-comments-with-words}}
+  www.youtube.com##ytd-comments #content-text:has-text(/\b{{this}}\b/i):upward(ytd-comment-thread-renderer)
+  {{/each}}
 tests:
   - params: {}
     output: ""
@@ -56,6 +63,13 @@ tests:
       remove-comment-section: true
     output: |
       www.youtube.com###comments #contents:remove()
+  - params:
+      remove-comments-with-words:
+        - word1
+        - word pair2
+    output: |
+      www.youtube.com##ytd-comments #content-text:has-text(/\bword1\b/i):upward(ytd-comment-thread-renderer)
+      www.youtube.com##ytd-comments #content-text:has-text(/\bword pair2\b/i):upward(ytd-comment-thread-renderer)
 ---
 
 Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
