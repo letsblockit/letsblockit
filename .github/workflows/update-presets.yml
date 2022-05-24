@@ -15,7 +15,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "search-results: update presets"
-          title: Update search-results presets
+          title: "search-results: update presets"
           labels: filter-data
           branch: update-presets
           delete-branch: true
