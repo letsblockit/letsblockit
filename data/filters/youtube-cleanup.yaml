@@ -14,7 +14,7 @@ params:
     default: false
   - name: copyright-notice-in-video-description
     description: Hide the copyright notice in the video description
-    tyoe: checkbox
+    type: checkbox
     default: false
   - name: remove-comment-section
     description: Hide all comments below the video
