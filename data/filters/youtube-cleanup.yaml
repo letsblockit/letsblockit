@@ -37,11 +37,8 @@ template: |
   {{/if}}
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
-  {{/if}}
-  {{#each keywords as |keyword id|}}
-  {{#if ../remove-comments-with-words}}
-  www.youtube.com###comment:has-text({{keyword}}):upward(1)
-  {{/if}}
+  {{#each remove-comments-with-words}}
+  www.youtube.com##ytd-comments #content-text:has-text(/\b{{this}}\b/i):upward(ytd-comment-thread-renderer)
   {{/each}}
 tests:
   - params: {}
@@ -69,7 +66,7 @@ tests:
       remove-comments-with-words: true
       keywords: [ "Keyword1" ]
     output: |
-      www.youtube.com###content-text:has-text(/\b(word)\b/i):upward(ytd-comment-thread-renderer)
+      www.youtube.com##ytd-comments #content-text:has-text(/\b{{Keyword1}}\b/i):upward(ytd-comment-thread-renderer)
 ---
 
 Youtube has a lot of text around their videos, which is not really necessary, such as channel clarifications and  
