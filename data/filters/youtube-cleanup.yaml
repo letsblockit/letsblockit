@@ -75,7 +75,7 @@ tests:
       www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
       www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
   - params:
-      remove-: true
+      remove-copyright-notice: true
     output: |
       www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
       www.youtube.com###description-and-actions #always-shown + #collapsible
