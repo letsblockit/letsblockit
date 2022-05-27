@@ -16,6 +16,10 @@ params:
     description: Hide the copyright notice in the video description
     type: checkbox
     default: false
+  - name: remove-stream-chat
+    description: Hide the live chat when viewing streams
+    type: checkbox
+    default: false
   - name: remove-comment-section
     description: Hide all comments below the video
     type: checkbox
@@ -42,6 +46,9 @@ template: |
   {{#if copyright-notice-in-video-description}}
   www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
   www.youtube.com###description-and-actions #always-shown + #collapsible
+  {{/if}}
+  {{#if remove-stream-chat}}
+  www.youtube.com###chat:remove()
   {{/if}}
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
@@ -72,6 +79,10 @@ tests:
     output: |
       www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
       www.youtube.com###description-and-actions #always-shown + #collapsible
+  - params:
+      remove-stream-chat: true
+    output: |
+      www.youtube.com###chat:remove()
   - params:
       remove-comment-section: true
     output: |

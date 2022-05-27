@@ -173,6 +173,10 @@ func (s *Server) setupRouter() {
 	anon.GET("/should-reload", shouldReload)
 	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
 
+	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
+		return s.redirectToPage(c, "view-filter", "youtube-cleanup")
+	})
+
 	withAuth := s.echo.Group("")
 	if s.options.KratosURL != "" {
 		withAuth.Use(s.buildOryMiddleware())
