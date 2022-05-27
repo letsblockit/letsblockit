@@ -1,6 +1,6 @@
 {{#if (eq type "checkbox")}}
-    <div class="mb-3 form-check{{#with OnlyIf}} ps-lg-4" data-hide-unless="{{this}}{{/with}}">
-        <input type="checkbox" class="form-check-input" id="{{name}}" name="{{name}}"
+    <div class="mb-3 form-check form-switch{{#with OnlyIf}} ps-lg-4" data-hide-unless="{{this}}{{/with}}">
+        <input type="checkbox" role="switch" class="form-check-input" id="{{name}}" name="{{name}}"
                {{#equal true (lookup @root.data.params name)}}checked{{/equal}}>
         <label class="form-check-label" for="{{name}}">
             {{description}}
