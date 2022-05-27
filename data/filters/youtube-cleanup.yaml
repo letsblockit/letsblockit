@@ -12,6 +12,10 @@ params:
     description: Hide the text label of the dislike/share/download/report/save buttons
     type: checkbox
     default: false
+  - name: remove-copyright-notice
+    description: Hide the copyright notice in the video description
+    type: checkbox
+    default: false
   - name: remove-stream-chat
     description: Hide the live chat when viewing streams
     type: checkbox
@@ -38,6 +42,10 @@ template: |
   {{#if remove-text-after-buttons-below-video}}
   www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
   www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
+  {{/if}}
+  {{#if remove-copyright-notice}}
+  www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
+  www.youtube.com###description-and-actions #always-shown + #collapsible
   {{/if}}
   {{#if remove-stream-chat}}
   www.youtube.com###chat:remove()
@@ -66,6 +74,11 @@ tests:
     output: |
       www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
       www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
+  - params:
+      remove-copyright-notice: true
+    output: |
+      www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
+      www.youtube.com###description-and-actions #always-shown + #collapsible
   - params:
       remove-stream-chat: true
     output: |
