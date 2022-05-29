@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	githubLinkPrefix = []byte("https://github.com/letsblockit/letsblockit/")
+	githubLinkPrefix = []byte("https://github.com/")
+	githubRepoName   = "letsblockit"
 )
 
 type releaseNoteRenderer struct {
@@ -25,17 +26,26 @@ func (r *releaseNoteRenderer) RenderNode(w io.Writer, node *blackfriday.Node, en
 		// Match github pull/commit links and shorten the anchor text
 		if bytes.HasPrefix(node.LinkData.Destination, githubLinkPrefix) && node.FirstChild != nil {
 			textNode := node.FirstChild
-			linkParts := strings.Split(string(node.LinkData.Destination), "/")
+			linkParts := strings.Split(string(bytes.TrimPrefix(node.LinkData.Destination, githubLinkPrefix)), "/")
 
-			if len(linkParts) > 2 && textNode != nil && textNode.Type == blackfriday.Text {
+			if len(linkParts) >= 4 && textNode != nil && textNode.Type == blackfriday.Text {
 				linkedType := linkParts[len(linkParts)-2]
 				linkedId := linkParts[len(linkParts)-1]
+				repoName := linkParts[1]
+				sameRepo := repoName == githubRepoName
+
 				switch linkedType {
 				case "pull", "issues":
-					node.FirstChild.Literal = append([]byte("#"), linkedId...)
+					if sameRepo {
+						node.FirstChild.Literal = append([]byte("#"), linkedId...)
+					} else {
+						node.FirstChild.Literal = append([]byte(repoName+"#"), linkedId...)
+					}
 				case "commit":
-					if len(linkedId) >= 7 {
-						node.FirstChild.Literal = []byte(linkedId[0:7])
+					if sameRepo {
+						node.FirstChild.Literal = append([]byte("@"), []byte(linkedId[0:7])...)
+					} else {
+						node.FirstChild.Literal = append([]byte(repoName+"@"), []byte(linkedId[0:7])...)
 					}
 				}
 			}
