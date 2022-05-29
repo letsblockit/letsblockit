@@ -11,7 +11,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 	pgtype "github.com/jackc/pgtype"
-	db "github.com/xvello/letsblockit/src/db"
+	db "github.com/letsblockit/letsblockit/src/db"
 )
 
 // MockQuerier is a mock of Querier interface.

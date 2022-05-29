@@ -20,12 +20,12 @@ instances:                          # List of instances, multiple instances of a
 ```
 
 Check the available filters and parameters by browsing
-[the filter sources](https://github.com/xvello/letsblockit/tree/main/data/filters).
+[the filter sources](https://github.com/letsblockit/letsblockit/tree/main/data/filters).
 
 ## How to run the render
 
 [Install the golang compiler](https://go.dev/doc/install), then run:
 
 ```shell
-go run github.com/xvello/letsblockit/cmd/render@latest my-list.yaml > output.txt
+go run github.com/letsblockit/letsblockit/cmd/render@latest my-list.yaml > output.txt
 ```

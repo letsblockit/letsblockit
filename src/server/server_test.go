@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/news"
+	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/db"
-	"github.com/xvello/letsblockit/src/news"
-	"github.com/xvello/letsblockit/src/pages"
 )
 
 func (s *ServerTestSuite) TestHomepage_Anonymous() {

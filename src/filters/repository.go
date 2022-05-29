@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/imantung/mario"
-	"github.com/xvello/letsblockit/data"
+	"github.com/letsblockit/letsblockit/data"
 )
 
 const CustomRulesFilterName = "custom-rules"

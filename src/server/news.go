@@ -67,7 +67,7 @@ func (s *Server) newsAtomHandler(c echo.Context) error {
 		}},
 		Author: &atom.Person{
 			Name: "Let's Block It contributors",
-			URI:  "https://github.com/xvello/letsblockit",
+			URI:  "https://github.com/letsblockit/letsblockit",
 		},
 		Entry: make([]*atom.Entry, 0, len(releases)),
 	}

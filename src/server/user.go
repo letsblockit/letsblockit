@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/db"
 )
 
 var (

@@ -2,8 +2,8 @@
 
 ## Remove low-quality content and useless nags, focus on what matters.
 
-[![CI](https://github.com/xvello/letsblockit/actions/workflows/ci.yml/badge.svg)](https://github.com/xvello/letsblockit/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/xvello/letsblockit)](https://goreportcard.com/report/github.com/xvello/letsblockit)
+[![CI](https://github.com/letsblockit/letsblockit/actions/workflows/ci.yml/badge.svg)](https://github.com/letsblockit/letsblockit/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/letsblockit/letsblockit)](https://goreportcard.com/report/github.com/letsblockit/letsblockit)
 [![Uptime Robot status](https://img.shields.io/uptimerobot/status/m790590578-5dd39cb706475421fade8af1)](https://stats.uptimerobot.com/YxoOltDPJX)
 
 This repository holds the data and server source code for the Let's Block It project. 
@@ -34,7 +34,7 @@ and handlebars page templates from [data/pages/](data/pages)
 
 Don't hesitate to open issues on this repository, using the following templates:
 
-- [Improve / fix an existing filter template](https://github.com/xvello/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml)
-- [Suggest a new filter template](https://github.com/xvello/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml)
-- [Report a bug](https://github.com/xvello/letsblockit/issues/new?labels=&template=bug-report.yaml)
-- [Other topics](https://github.com/xvello/letsblockit/issues/new)
+- [Improve / fix an existing filter template](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml)
+- [Suggest a new filter template](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml)
+- [Report a bug](https://github.com/letsblockit/letsblockit/issues/new?labels=&template=bug-report.yaml)
+- [Other topics](https://github.com/letsblockit/letsblockit/issues/new)

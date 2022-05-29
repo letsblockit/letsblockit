@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/db"
-	"github.com/xvello/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/filters"
 )
 
 type filterAction uint8

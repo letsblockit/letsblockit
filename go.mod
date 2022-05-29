@@ -1,4 +1,4 @@
-module github.com/xvello/letsblockit
+module github.com/letsblockit/letsblockit
 
 go 1.17
 

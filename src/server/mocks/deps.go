@@ -12,10 +12,10 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
-	db "github.com/xvello/letsblockit/src/db"
-	filters "github.com/xvello/letsblockit/src/filters"
-	news "github.com/xvello/letsblockit/src/news"
-	pages "github.com/xvello/letsblockit/src/pages"
+	db "github.com/letsblockit/letsblockit/src/db"
+	filters "github.com/letsblockit/letsblockit/src/filters"
+	news "github.com/letsblockit/letsblockit/src/news"
+	pages "github.com/letsblockit/letsblockit/src/pages"
 )
 
 // MockPageRenderer is a mock of PageRenderer interface.

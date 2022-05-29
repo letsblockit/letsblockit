@@ -11,8 +11,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/pages"
 )
 
 func TestNilOryUser(t *testing.T) {

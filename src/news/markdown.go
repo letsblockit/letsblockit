@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	githubLinkPrefix = []byte("https://github.com/xvello/letsblockit/")
+	githubLinkPrefix = []byte("https://github.com/letsblockit/letsblockit/")
 )
 
 type releaseNoteRenderer struct {

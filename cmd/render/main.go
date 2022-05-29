@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/xvello/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"gopkg.in/yaml.v2"
 )
 

@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/letsblockit/letsblockit/src/server"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/server"
 )
 
 func TestServerDryRun(t *testing.T) {

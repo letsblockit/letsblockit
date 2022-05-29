@@ -11,7 +11,7 @@ import (
 
 	"github.com/DataDog/mmh3"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/data"
+	"github.com/letsblockit/letsblockit/data"
 )
 
 /* wrappedAssets handles serving static assets. It:

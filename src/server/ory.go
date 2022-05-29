@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/pages"
+	"github.com/letsblockit/letsblockit/src/pages"
 	"zgo.at/zcache"
 )
 
@@ -55,7 +55,7 @@ var (
 	}{
 		"error": {
 			Title: "Account management error",
-			Intro: `There was an error. If it persists, please <a href="https://github.com/xvello/letsblockit/issues">open an issue</a>.`,
+			Intro: `There was an error. If it persists, please <a href="https://github.com/letsblockit/letsblockit/issues">open an issue</a>.`,
 		},
 		"login": {
 			Title: "Log into your account",
