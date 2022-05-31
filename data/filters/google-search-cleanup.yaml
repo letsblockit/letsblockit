@@ -31,7 +31,7 @@ template: |
   google.*###rso > div:has(div.related-question-pair)
   {{/if}}
   {{#if related-searches}}
-  google.*###botstuff
+  google.*###botstuff #bres
   {{/if}}
   {{#if also-search}}
   google.*###rso div.g div[jscontroller]
@@ -53,7 +53,7 @@ tests:
       related-searches: true
     output: |
       google.*###rso > div:has(div.related-question-pair)
-      google.*###botstuff
+      google.*###botstuff #bres
   - params:
       also-search: true
     output: |
@@ -64,7 +64,7 @@ tests:
       only-results: true
     output: |
       google.*###rso > div:has(div.related-question-pair)
-      google.*###botstuff
+      google.*###botstuff #bres
       google.*###rso > :not(div.g):not(:has(:scope>div.g))
   - params:
       similar-image-searches: true
