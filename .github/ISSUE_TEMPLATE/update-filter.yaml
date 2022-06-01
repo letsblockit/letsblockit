@@ -9,7 +9,7 @@ body:
         Thanks for taking the time to suggest a new filter!
         Please take a look at our [contribution guidelines](https://letsblock.it/help/contributing) first.
         
-        To suggest a new filter, [use this form](https://github.com/xvello/letsblockit/issues/new?template=new-filter.yaml) instead.
+        To suggest a new filter, [use this form](https://github.com/letsblockit/letsblockit/issues/new?template=new-filter.yaml) instead.
   - type: input
     attributes:
       label: What filter does this issue target?

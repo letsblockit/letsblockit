@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/xvello/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/db"
 )
 
 // RequestInfo is a subset of echo.Context

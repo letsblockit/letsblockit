@@ -11,7 +11,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/pages"
+	"github.com/letsblockit/letsblockit/src/pages"
+	"zgo.at/zcache"
 )
 
 const (
@@ -54,7 +55,7 @@ var (
 	}{
 		"error": {
 			Title: "Account management error",
-			Intro: `There was an error. If it persists, please <a href="https://github.com/xvello/letsblockit/issues">open an issue</a>.`,
+			Intro: `There was an error. If it persists, please <a href="https://github.com/letsblockit/letsblockit/issues">open an issue</a>.`,
 		},
 		"login": {
 			Title: "Log into your account",
@@ -108,6 +109,7 @@ func (u *oryUser) IsActive() bool {
 // buildOryMiddleware tries to resolve an Ory Cloud session from the cookies.
 // If it succeeds, a "user" value is added to the context for use by handlers.
 func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
+	authCache := zcache.New(15*time.Minute, 10*time.Minute)
 	endpoint := s.options.KratosURL + oryWhoamiPath
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -116,18 +118,23 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 			if !strings.Contains(cookies, oryCookieNamePrefix) {
 				return next(c)
 			}
+
+			if u, ok := authCache.Get(cookies); ok {
+				c.Set(userContextKey, u)
+				return next(c)
+			}
+
 			var user oryUser
 			if err := s.queryKratos(c, "whoami", endpoint, &user); err != nil {
 				s.echo.Logger.Error("auth error: %w", err)
+			} else if s.isUserBanned(user.Id()) {
+				return echo.ErrForbidden
 			} else if user.IsActive() {
+				authCache.SetDefault(cookies, &user)
 				c.Set(userContextKey, &user)
 			}
 
-			if s.isUserBanned(user.Id()) {
-				return echo.ErrForbidden
-			} else {
-				return next(c)
-			}
+			return next(c)
 		}
 	}
 }

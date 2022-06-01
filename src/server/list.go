@@ -6,8 +6,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/db"
-	"github.com/xvello/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"gopkg.in/yaml.v2"
 )
 
@@ -17,7 +17,7 @@ const listExportTemplate = `# letsblock.it filter list export
 # Export date: %s
 #
 # You can edit this file and render it locally, check out instructions at:
-# https://github.com/xvello/letsblockit/tree/main/cmd/render/README.md
+# https://github.com/letsblockit/letsblockit/tree/main/cmd/render/README.md
 
 `
 

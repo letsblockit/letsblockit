@@ -22,7 +22,7 @@ they don't know or care about what pages you see, or how you interact with them.
 
 The website is hosted on [Hetzner Cloud](https://www.hetzner.com/cloud), in their Nuremberg (Germany) datacenter.
 Servers are secured to the best of my knowledge and abilities, and the source of this website is
-[available on GitHub](https://github.com/xvello/letsblockit), under the Apache License version 2.0.
+[available on GitHub](https://github.com/letsblockit/letsblockit), under the Apache License version 2.0.
 
 Thanks to delegating the authentication to Ory, the servers don't know or store your e-mail, just
 [a random unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier). This means that

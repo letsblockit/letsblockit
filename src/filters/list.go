@@ -11,7 +11,7 @@ const (
 	listHeaderTemplate = `! Title: letsblock.it - %s
 ! Expires: 12 hours
 ! Homepage: https://letsblock.it
-! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 `
 	filterHeaderTemplate = `
 ! %s

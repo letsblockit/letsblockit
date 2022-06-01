@@ -16,11 +16,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	"github.com/xvello/letsblockit/src/db"
-	"github.com/xvello/letsblockit/src/filters"
-	"github.com/xvello/letsblockit/src/news"
-	"github.com/xvello/letsblockit/src/pages"
-	"github.com/xvello/letsblockit/src/users"
+	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/news"
+	"github.com/letsblockit/letsblockit/src/pages"
+	"github.com/letsblockit/letsblockit/src/users"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -172,6 +172,10 @@ func (s *Server) setupRouter() {
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)
 	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
+
+	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
+		return s.redirectToPage(c, "view-filter", "youtube-cleanup")
+	})
 
 	withAuth := s.echo.Group("")
 	if s.options.KratosURL != "" {

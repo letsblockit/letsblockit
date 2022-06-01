@@ -31,7 +31,7 @@ template: |
   google.*###rso > div:has(div.related-question-pair)
   {{/if}}
   {{#if related-searches}}
-  google.*###botstuff
+  google.*###botstuff #bres
   {{/if}}
   {{#if also-search}}
   google.*###rso div.g div[jscontroller]
@@ -53,7 +53,7 @@ tests:
       related-searches: true
     output: |
       google.*###rso > div:has(div.related-question-pair)
-      google.*###botstuff
+      google.*###botstuff #bres
   - params:
       also-search: true
     output: |
@@ -64,7 +64,7 @@ tests:
       only-results: true
     output: |
       google.*###rso > div:has(div.related-question-pair)
-      google.*###botstuff
+      google.*###botstuff #bres
       google.*###rso > :not(div.g):not(:has(:scope>div.g))
   - params:
       similar-image-searches: true
@@ -78,5 +78,5 @@ you to selectively remove these from the results, to only focus on the links.
 The last option (Remove everything but simple search results), will remove everything but simple `div.g` elements,
 removing images, videos, maps and most of other sections. It is disabled by default due to its greedy nature.
 
-Don't hesitate to [open a issue](https://github.com/xvello/letsblockit/issues/new/choose) to suggest additions or fixes ;
+Don't hesitate to [open a issue](https://github.com/letsblockit/letsblockit/issues/new/choose) to suggest additions or fixes ;
 and check out the [Hide websites from search results](search-results) filter too.

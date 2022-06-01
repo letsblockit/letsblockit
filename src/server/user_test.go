@@ -7,9 +7,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
+	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/db"
-	"github.com/xvello/letsblockit/src/pages"
 )
 
 func (s *ServerTestSuite) TestLoadBannedUsers() {

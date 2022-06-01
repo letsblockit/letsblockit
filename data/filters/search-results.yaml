@@ -98,6 +98,7 @@ params:
           - softbranchdevelopers.com/
           - swiftobc.com/
           - vuejscode.com/
+          - www.editcode.net/
           - www.fuscin.com/
           - www.higithub.com/
           - zzun.app/
@@ -130,6 +131,8 @@ params:
           - .fluffyfables.com/
           - .gupgallery.com/
           - .icopy.site/
+          - .imtqy.com/
+          - .javawenti.com/
           - .mediatagtw.com/
           - .narkive.jp/
           - .noblenaz.org/
@@ -139,11 +142,13 @@ params:
           - .pcbconline.org/
           - .programmierfrage.com/
           - .projectbackpack.org/
+          - .runexception.com/
           - .safehavenpetrescue.org/
           - .sch22.org/
           - .sierrasummit2005.org/
           - .siwib.org/
           - .softwareuser.asklobster.com/
+          - .solveforum.com/
           - .sunflowercreations.org/
           - .theshuggahpies.com/
           - .try2explore.com/
@@ -208,6 +213,7 @@ params:
           - dogovori.info/
           - dtuto.com/
           - easysavecode.com/
+          - ebestcode.com/
           - edupro.id/
           - errorsfixing.com/
           - exceptionshub.com/
@@ -221,6 +227,7 @@ params:
           - howtofix.io/
           - husl.ru/
           - ibootweb.com/
+          - idqna.com/
           - intelligentsystemsmonitoring.com/
           - intellipaat.com/
           - isolution.pro/
@@ -253,6 +260,7 @@ params:
           - over.wiki/
           - overcoder.net/
           - overcoder.ru/
+          - peaku.co/
           - poweruser.guru/
           - pretagteam.com/
           - prog-help.ru/
@@ -351,6 +359,7 @@ params:
           - www.buzzphp.com/
           - www.codenong.com/
           - www.coder.work/
+          - www.codetd.com/
           - www.debugcn.com/
           - www.desenv-web-rp-bd.com/
           - www.desenv-web-rp.com/
@@ -378,6 +387,7 @@ params:
           - www.javaer101.com/
           - www.javafixing.com/
           - www.jscodetips.com/
+          - www.likecs.com/
           - www.nuomiphp.com/
           - www.py4u.net/
           - www.pythonfixing.com/
@@ -532,7 +542,7 @@ results that are returned to us by search engines.
 
 This template allows you to remove search results based on their URL for **both text and image searches**.
 It supports several search engines (and [contributions]
-(https://github.com/xvello/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=search-results)
+(https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=search-results)
 are welcome to add suport for more!).
 Results will be hidden if their link destination contains one of the values you pass. For example:
 

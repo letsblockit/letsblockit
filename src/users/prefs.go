@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/labstack/echo/v4"
-	"github.com/xvello/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/db"
 )
 
 const prefCacheSize = 2048

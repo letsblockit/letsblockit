@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/xvello/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"gopkg.in/yaml.v3"
 )
 

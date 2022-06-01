@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
+	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/news"
+	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/db"
-	"github.com/xvello/letsblockit/src/news"
-	"github.com/xvello/letsblockit/src/pages"
 	"golang.org/x/tools/blog/atom"
 )
 

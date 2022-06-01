@@ -12,10 +12,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
+	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/db"
-	"github.com/xvello/letsblockit/src/filters"
-	"github.com/xvello/letsblockit/src/pages"
 )
 
 var filter1 = &filters.Filter{

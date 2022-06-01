@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/xvello/letsblockit/src/server"
+	"github.com/letsblockit/letsblockit/src/server"
 )
 
 func main() {

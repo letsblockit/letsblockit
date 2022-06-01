@@ -1,7 +1,7 @@
 ## Contributing to the project
 
 Thanks for your interest in moving this project forward! If you have any question or suggestion, don't hesitate to
-[open an issue on GitHub](https://github.com/xvello/letsblockit/issues) for any question or bug, or send us an email
+[open an issue on GitHub](https://github.com/letsblockit/letsblockit/issues) for any question or bug, or send us an email
 at `hello@<this-domain>.it`.
 
 ### Contributing filters {#filters}
@@ -9,11 +9,11 @@ at `hello@<this-domain>.it`.
 The best way you can help the project is by contributing new filters or improving existing ones:
 
 - If you know how to open a pull request, check out
-  [the syntax documentation](https://github.com/xvello/letsblockit/blob/main/data/filters/README.md) and
-  [the existing filter sources](https://github.com/xvello/letsblockit/tree/main/data/filters). Please enable the
+  [the syntax documentation](https://github.com/letsblockit/letsblockit/blob/main/data/filters/README.md) and
+  [the existing filter sources](https://github.com/letsblockit/letsblockit/tree/main/data/filters). Please enable the
   `Allow edits by maintainers` option on your PR to allow me to help fix syntax issues.
 - Don't hesitate to open a GitHub issue to suggest filter improvements, [open an account](https://github.com/join)
-  and [use the relevant issue template](https://github.com/xvello/letsblockit/issues/new/choose).
+  and [use the relevant issue template](https://github.com/letsblockit/letsblockit/issues/new/choose).
 
 *Please note the following scope limitations:*
 
@@ -39,7 +39,7 @@ contributions are very welcome (this is not my area of expertise), but need to s
 ### Licencing of your contributions
 
 Both the code and data for this project are licensed under the
-[Apache License version 2.0](https://github.com/xvello/letsblockit/blob/main/LICENSE.txt), which contains the following
+[Apache License version 2.0](https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt), which contains the following
 clause:
 
 <div class="alert alert-secondary me-md-5 ms-md-5" role="alert">

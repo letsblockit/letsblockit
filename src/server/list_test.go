@@ -10,8 +10,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
+	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/stretchr/testify/assert"
-	"github.com/xvello/letsblockit/src/db"
 )
 
 func (s *ServerTestSuite) TestRenderList_NotFound() {
@@ -64,7 +64,7 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 	s.Equal(rec.Body.String(), `! Title: letsblock.it - My filters
 ! Expires: 12 hours
 ! Homepage: https://letsblock.it
-! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 
 ! one
 content1
@@ -137,7 +137,7 @@ func (s *ServerTestSuite) TestExportList_OK() {
 # Export date: 2020-06-02
 #
 # You can edit this file and render it locally, check out instructions at:
-# https://github.com/xvello/letsblockit/tree/main/cmd/render/README.md
+# https://github.com/letsblockit/letsblockit/tree/main/cmd/render/README.md
 
 title: My filters
 instances:

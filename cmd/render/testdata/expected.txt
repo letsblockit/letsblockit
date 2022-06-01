@@ -1,7 +1,7 @@
 ! Title: letsblock.it - locally rendered list
 ! Expires: 12 hours
 ! Homepage: https://letsblock.it
-! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 
 ! custom-rules
 line1##ruleA

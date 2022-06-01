@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/letsblockit/letsblockit/src/filters/mocks"
 	"github.com/stretchr/testify/suite"
-	"github.com/xvello/letsblockit/src/filters/mocks"
 )
 
 type ListTestSuite struct {
@@ -34,7 +34,7 @@ func (s *ListTestSuite) TestRenderEmpty() {
 	s.Equal(`! Title: letsblock.it - 
 ! Expires: 12 hours
 ! Homepage: https://letsblock.it
-! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 `, buf.String())
 }
 
@@ -60,7 +60,7 @@ func (s *ListTestSuite) TestRenderOK() {
 	s.Equal(`! Title: letsblock.it - Test list
 ! Expires: 12 hours
 ! Homepage: https://letsblock.it
-! License: https://github.com/xvello/letsblockit/blob/main/LICENSE.txt
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 
 ! hello
 Hello

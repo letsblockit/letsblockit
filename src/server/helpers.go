@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/xvello/letsblockit/src/filters"
-	"github.com/xvello/letsblockit/src/pages"
+	"github.com/letsblockit/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/pages"
 )
 
 type echoInterface interface {
