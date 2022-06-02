@@ -2,7 +2,7 @@
   description = "letsblock.it server and helpers";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -18,7 +18,7 @@
           run-migrate = [ self.packages.${system}.migrate ];
           run-server = [ pinnedGo reflex self.packages.${system}.ory ];
           run-tests = [ pinnedGo golangci-lint ];
-          update-assets = [ nodejs-17_x nodePackages.npm ];
+          update-assets = [ nodejs-slim-18_x nodePackages.npm ];
           update-codegen = [ mockgen self.packages.${system}.sqlc ];
           update-vendorsha = [ pkgs.nix-prefetch ];
         };
