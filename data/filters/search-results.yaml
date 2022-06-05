@@ -554,6 +554,21 @@ tests:
       kagi.com##._0_image_item[data-host_url*="snapcraft.io/install"]
       searx.thegpm.org###main_results .result:has(a[href*="snapcraft.io/install"])
       search.disroot.org###main_results .result:has(a[href*="snapcraft.io/install"])
+  - params:
+      duckduckgo-html: true
+      sites:
+        - .pinterest.
+    output: |
+      html.duckduckgo.com##.results a.result__a[href*=".pinterest."]:upward(.result)
+  - params:
+      duckduckgo-lite: true
+      sites:
+        - .pinterest.
+    output: |
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr)
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr + tr
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr + tr + tr
   - output: ""
 ---
 
