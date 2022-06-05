@@ -1,0 +1,49 @@
+title: Hide products on Amazon
+params:
+  - name: rules
+    description: Rules to hide products
+    type: list
+    default: [ ]
+    presets:
+      - name: amazon-devices
+        description: Hide Amazon devices (Echo, Kindle, FireTV) and accessories
+        values:
+          - '/\bEcho (Dot|Show|Studio|Sub|Buds|Auto|Flex)\b/'
+          - '/\bEcho (4\w+/'
+          - '/\bKindle\b/'
+          - '/\bFire TV (Stick|Cube)\b/'
+      - name: amazon-basics
+        description: Hide Amazon Basics products
+        values:
+          - '/\bAmazon Basics\b/'
+tags:
+  - amazon
+template: |
+  {{#each rules}}
+  amazon.*###search h2 span:has-text({{{this}}}):upward(div.s-result-item):style(background:red)
+  amazon.*##div.deals-react-app div[class^=DealContent]:has-text({{{this}}}):upward(div[class^=DealGridItem-module__dealItem_]):style(background:red)
+  {{/each}}
+tests:
+  - params: {}
+    output: ""
+---
+
+This filter template allows you to hide selected products from the Amazon store. It comes with some presets
+that might be useful for you, at the bottom of the parameters.
+
+Instead of simple word matching, this template uses Regular Expressions to reduce the risk of false positives.
+You should [read this documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
+to learn the syntax, but the following examples should help you get started:
+
+- You can specify any sequence of characters, that will be searched in the product title. For example:
+    - `/Echo Show/` will match the `Echo Show 8` product, but not the `Echo Dot`
+    - `/Cat/` will match `Cat Hammock`, but also `Catapult`
+- For a case-insensitive search, simply add `i` at the end of your expression. For example:
+    - `/cat/i` will match both `Cat`, `cat` and `CAT`
+- To make sure you match on the exact word, you should use the `\b` "word boundary" matcher. For example:
+    - `/\bcat\b/i` will match `Cat Food`, but not `Catapult` or `copycat`
+- You can also use other operators for a better match, for example
+    - `/\bcat(s)?\b/i` will match both occurrences of singular `Cat`, but also the plural `Cats`
+
+
+You can test your rules at [regex101](https://regex101.com/).
