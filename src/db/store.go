@@ -51,9 +51,8 @@ func (d *pgxStore) RunTx(e echo.Context, f TxFunc) error {
 	})
 }
 
-func Connect(host, database string) (Store, error) {
-	dsn := fmt.Sprintf("postgresql:///%s?host=%s", database, host)
-	pool, err := pgxpool.Connect(context.Background(), dsn)
+func Connect(databaseUrl string) (Store, error) {
+	pool, err := pgxpool.Connect(context.Background(), databaseUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +62,8 @@ func Connect(host, database string) (Store, error) {
 	}, nil
 }
 
-func Migrate(host, database string) error {
-	db, err := (&mpgx.Postgres{}).Open(fmt.Sprintf("pgx:///%s?host=%s", database, host))
+func Migrate(databaseUrl string) error {
+	db, err := (&mpgx.Postgres{}).Open(databaseUrl)
 	if err != nil {
 		return err
 	}
@@ -77,7 +76,10 @@ func Migrate(host, database string) error {
 	if err != nil {
 		return err
 	}
-	instance.Log = &migrateLogger{db: database}
+	if c, err := pgx.ParseConfig(databaseUrl); err == nil {
+		instance.Log = &migrateLogger{db: c.Database}
+	}
+
 	if err = instance.Up(); err != nil {
 		if err == migrate.ErrNoChange {
 			instance.Log.Printf("No database migration to run\n")
