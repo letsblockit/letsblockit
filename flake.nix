@@ -32,13 +32,24 @@
           ory = pkgs.callPackage ./nix/ory.nix { };
           sqlc = pkgs.callPackage ./nix/sqlc.nix { };
 
-          render-docker = pkgs.dockerTools.streamLayeredImage {
-            name = "letsblockit-render";
+          render-container = pkgs.dockerTools.streamLayeredImage {
+            name = "ghcr.io/letsblockit/render";
             tag = "latest";
-            created = "now";
+            created = builtins.substring 0 8 self.lastModifiedDate;
             contents = self.packages.${system}.render;
             config = {
-              Cmd = [ "render" "--help" ];
+              Cmd = [ "render" ];
+            };
+          };
+          server-container = pkgs.dockerTools.streamLayeredImage {
+            name = "ghcr.io/letsblockit/server";
+            tag = "latest";
+            created = builtins.substring 0 8 self.lastModifiedDate;
+            contents = self.packages.${system}.server;
+            config = {
+              Cmd = [ "server" ];
+              Env = [ "LETSBLOCKIT_ADDRESS=:8765" ];
+              ExposedPorts."8765/tcp" = {};
             };
           };
         } // (builtins.mapAttrs

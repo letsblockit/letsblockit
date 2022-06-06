@@ -43,8 +43,8 @@ type Options struct {
 	AuthMethod       string `required:"" enum:"kratos" help:"authentication method to use"`
 	AuthKratosUrl    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
 	StatsdTarget     string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
-	DryRun           bool   `help:"instantiate all components and exit"`
 	HotReload        bool   `help:"reload frontend when the backend restarts"`
+	DryRun           bool   `hidden:""`
 }
 
 var navigationLinks = []struct {
