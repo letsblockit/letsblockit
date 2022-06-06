@@ -54,7 +54,7 @@ func (d *pgxStore) RunTx(e echo.Context, f TxFunc) error {
 func Connect(databaseUrl string) (Store, error) {
 	pool, err := pgxpool.Connect(context.Background(), databaseUrl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot connect: %w", err)
 	}
 	return &pgxStore{
 		Queries: New(pool),
@@ -65,16 +65,16 @@ func Connect(databaseUrl string) (Store, error) {
 func Migrate(databaseUrl string) error {
 	db, err := (&mpgx.Postgres{}).Open(databaseUrl)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot open db for migration: %w", err)
 	}
 	source, err := iofs.New(migrations, "migrations")
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot open migration source: %w", err)
 	}
 
 	instance, err := migrate.NewWithInstance("embedded", source, "pgx", db)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot init migrator: %w", err)
 	}
 	if c, err := pgx.ParseConfig(databaseUrl); err == nil {
 		instance.Log = &migrateLogger{db: c.Database}
@@ -84,11 +84,11 @@ func Migrate(databaseUrl string) error {
 		if err == migrate.ErrNoChange {
 			instance.Log.Printf("No database migration to run\n")
 		} else {
-			return err
+			return fmt.Errorf("migration error: %w", err)
 		}
 	}
 	if err = source.Close(); err != nil {
-		return err
+		return fmt.Errorf("cannot close migration source: %w", err)
 	}
 	return db.Close()
 }
