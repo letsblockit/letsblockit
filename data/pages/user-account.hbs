@@ -29,10 +29,10 @@
                 Read more about it in <a href="{{href "help" "privacy"}}">our privacy page</a>.
             </p>
             <button type="submit" class="btn btn-primary me-2"
-                    formaction="{{href "start-flow" "settings"}}">Change email or password
+                    formaction="{{href "user-action" "settings"}}">Change email or password
             </button>
             <button type="submit" class="btn btn-dark"
-                    formaction="{{href "start-flow" "logout"}}">Log out
+                    formaction="{{href "user-action" "logout"}}">Log out
             </button>
         </form>
     </div>
@@ -64,7 +64,7 @@
         <div class="card-header">Account needed</div>
         <div class="card-body">
             <p>You need to create an account or login</p>
-            <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
+            <form method="POST" action="{{href "user-action" "loginOrRegistration"}}">
                 {{{csrf @root}}}
                 <button type="submit" class="btn btn-primary">Create an account or login</button>
             </form>

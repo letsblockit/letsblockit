@@ -209,7 +209,7 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/list/:token/export", s.exportList).Name = "export-filterlist"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
 	withAuth.GET("/user/forms/:type", s.renderKratosForm)
-	withAuth.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
+	withAuth.POST("/user/action/:type", s.startKratosFlow).Name = "user-action"
 	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 }
 

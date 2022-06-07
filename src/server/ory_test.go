@@ -91,19 +91,19 @@ func (s *ServerTestSuite) TestRenderKratosForm_ErrBadFlow() {
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Settings() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/settings", s.csrfBody())
+	req := httptest.NewRequest(http.MethodPost, "/user/action/settings", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/settings/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Register() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", s.csrfBody())
+	req := httptest.NewRequest(http.MethodPost, "/user/action/loginOrRegistration", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/registration/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Login() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/loginOrRegistration", s.csrfBody())
+	req := httptest.NewRequest(http.MethodPost, "/user/action/loginOrRegistration", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(&http.Cookie{
 		Name:  "has_account",
@@ -113,7 +113,7 @@ func (s *ServerTestSuite) TestStartKratosFlow_LoginOrRegistration_Login() {
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/login", s.csrfBody())
+	req := httptest.NewRequest(http.MethodPost, "/user/action/login", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser"))
 }
@@ -122,7 +122,7 @@ func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromForm() {
 	form := make(url.Values)
 	form.Add(csrfLookup, s.csrf)
 	form.Add("return_to", "https://myserver/page")
-	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login",
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/action/login",
 		strings.NewReader(form.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://myserver/ignore")
@@ -130,28 +130,28 @@ func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromForm() {
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToFromReferer() {
-	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", s.csrfBody())
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/action/login", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://myserver/page")
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser?return_to=https://myserver/page"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Login_ReturnToNotInDomain() {
-	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/start/login", s.csrfBody())
+	req := httptest.NewRequest(http.MethodPost, "https://myserver/user/action/login", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.Header.Set("Referer", "https://anotherserver/page")
 	s.runRequest(req, assertSeeOther(s.kratosServer.URL+"/self-service/login/browser"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_Logout() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/logout", s.csrfBody())
+	req := httptest.NewRequest(http.MethodPost, "/user/action/logout", s.csrfBody())
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
 	s.runRequest(req, assertSeeOther("targetURL"))
 }
 
 func (s *ServerTestSuite) TestStartKratosFlow_MissingCSRF() {
-	req := httptest.NewRequest(http.MethodPost, "/user/start/logout", nil)
+	req := httptest.NewRequest(http.MethodPost, "/user/action/logout", nil)
 	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
 		assert.Equal(t, 400, recorder.Result().StatusCode)
