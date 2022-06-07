@@ -36,16 +36,15 @@ const (
 )
 
 type Options struct {
-	Address       string `default:"127.0.0.1:8765" help:"address to listen to"`
-	SystemdSocket bool   `help:"use a systemd socket instead of opening a port"`
-	Debug         bool   `help:"log with debug level"`
-	DryRun        bool   `help:"instantiate all components and exit"`
-	KratosURL     string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local proxy"`
-	Reload        bool   `help:"reload frontend when the backend restarts"`
-	Statsd        string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
-	DatabaseName  string `default:"letsblockit" help:"psql database name to use"`
-	DatabaseHost  string `default:"/var/run/postgresql" help:"psql host to connect to"`
-	silent        bool
+	Address          string `default:"127.0.0.1:8765" help:"address to listen to"`
+	UseSystemdSocket bool   `help:"use a systemd socket instead of opening a port"`
+	DatabaseUrl      string `default:"postgresql:///letsblockit" help:"psql database to connect to"`
+	LogLevel         string `default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
+	AuthMethod       string `required:"" enum:"kratos" help:"authentication method to use"`
+	AuthKratosUrl    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
+	StatsdTarget     string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
+	HotReload        bool   `help:"reload frontend when the backend restarts"`
+	DryRun           bool   `hidden:""`
 }
 
 var navigationLinks = []struct {
@@ -93,9 +92,9 @@ func (s *Server) Start() error {
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(errs []error) {
-			s.store, errs[0] = db.Connect(s.options.DatabaseHost, s.options.DatabaseName)
+			s.store, errs[0] = db.Connect(s.options.DatabaseUrl)
 			if errs[0] == nil {
-				errs[0] = db.Migrate(s.options.DatabaseHost, s.options.DatabaseName)
+				errs[0] = db.Migrate(s.options.DatabaseUrl)
 			}
 			if errs[0] == nil {
 				errs[0] = s.loadBannedUsers()
@@ -107,8 +106,8 @@ func (s *Server) Start() error {
 	})
 
 	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint)
-	if s.options.Statsd != "" {
-		dsd, err := statsd.New(s.options.Statsd)
+	if s.options.StatsdTarget != "" {
+		dsd, err := statsd.New(s.options.StatsdTarget)
 		if err != nil {
 			return err
 		}
@@ -125,7 +124,7 @@ func (s *Server) Start() error {
 		return ErrDryRunFinished
 	}
 
-	if s.options.SystemdSocket {
+	if s.options.UseSystemdSocket {
 		listeners, err := activation.Listeners()
 		if err != nil {
 			return err
@@ -141,17 +140,22 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) setupRouter() {
-	s.echo.Use(middleware.Recover())
-	if !s.options.silent {
-		if s.options.Debug {
-			s.echo.Logger.SetLevel(log.DEBUG)
-		} else {
-			s.echo.Logger.SetLevel(log.INFO)
-		}
-		s.echo.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-			Format: loggerFormat,
-		}))
+	switch s.options.LogLevel {
+	case "debug":
+		s.echo.Logger.SetLevel(log.DEBUG)
+	case "info":
+		s.echo.Logger.SetLevel(log.INFO)
+	case "warn":
+		s.echo.Logger.SetLevel(log.WARN)
+	case "error":
+		s.echo.Logger.SetLevel(log.ERROR)
+	case "off":
+		s.echo.Logger.SetLevel(log.OFF)
 	}
+	s.echo.Use(
+		middleware.Recover(),
+		middleware.LoggerWithConfig(middleware.LoggerConfig{Format: loggerFormat}),
+	)
 
 	s.echo.HideBanner = true
 	s.echo.IPExtractor = echo.ExtractIPFromXFFHeader(
@@ -178,7 +182,7 @@ func (s *Server) setupRouter() {
 	})
 
 	withAuth := s.echo.Group("")
-	if s.options.KratosURL != "" {
+	if s.options.AuthKratosUrl != "" {
 		withAuth.Use(s.buildOryMiddleware())
 	}
 	withAuth.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
@@ -271,7 +275,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		NavigationLinks: navigationLinks,
 		Title:           title,
 		MainDomain:      c.Request().Host == mainDomain,
-		HotReload:       s.options.Reload,
+		HotReload:       s.options.HotReload,
 		RequestInfo:     c,
 	}
 	if _, err := c.Cookie(hasAccountCookieName); err == nil {

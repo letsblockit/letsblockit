@@ -11,7 +11,7 @@ import (
 func main() {
 	start := time.Now()
 	options := &server.Options{}
-	k := kong.Parse(options)
+	k := kong.Parse(options, kong.DefaultEnvars("LETSBLOCKIT"))
 	err := server.NewServer(options).Start()
 
 	if err == server.ErrDryRunFinished {

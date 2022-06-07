@@ -129,8 +129,8 @@ func (s *ServerTestSuite) SetupTest() {
 		filters: fm,
 		now:     func() time.Time { return fixedNow },
 		options: &Options{
-			KratosURL: s.kratosServer.URL,
-			silent:    true,
+			AuthKratosUrl: s.kratosServer.URL,
+			LogLevel:      "off",
 		},
 		pages:       pm,
 		preferences: upm,

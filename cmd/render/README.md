@@ -24,6 +24,16 @@ Check the available filters and parameters by browsing
 
 ## How to run the render
 
+### With docker
+
+```shell
+# Run pull everytime to get the latest templates
+docker pull ghcr.io/letsblockit/render:latest
+# Pipe your config file into the container's default command
+cat my-list.yaml | docker run -i ghcr.io/letsblockit/render:latest > output.txt
+```
+
+### With golang
 [Install the golang compiler](https://go.dev/doc/install), then run:
 
 ```shell
