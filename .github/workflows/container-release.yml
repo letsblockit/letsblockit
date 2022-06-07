@@ -1,8 +1,8 @@
 name: "Release container images"
 on:
   push:
-    branches:
-      - main
+#    branches:
+#      - main
     tags:
       - '*'
 jobs:
