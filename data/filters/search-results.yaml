@@ -119,6 +119,7 @@ params:
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/npm_copycats.txt
         values:
           - cnpmjs.org/
+          - codespots.com/
           - npm.io/
           - npmmirror.com/
       - name: stackoverflow-copycats
@@ -145,10 +146,12 @@ params:
           - .icopy.site/
           - .imtqy.com/
           - .javawenti.com/
+          - .jonic.cn/
           - .mediatagtw.com/
           - .narkive.jp/
           - .noblenaz.org/
           - .ourladylakes.org/
+          - .overstack.in/
           - .pakostnici.com/
           - .panaindustrial.com/
           - .pcbconline.org/
@@ -183,6 +186,7 @@ params:
           - askcodez.com/
           - askdev.ru/
           - askdev.vn/
+          - askdevz.com/
           - askentire.net/
           - askfrance.me/
           - askubuntu.ru/
@@ -190,6 +194,7 @@ params:
           - bootpanic.com/
           - brocante.dev/
           - cainiaojiaocheng.com/
+          - cans.pro/
           - catchconsole.com/
           - catwolf.org/
           - christfever.in/
@@ -367,6 +372,7 @@ params:
           - wp-qa.com/
           - www.5axxw.com/
           - www.answerlib.com/
+          - www.anycodings.com/
           - www.bilee.com/
           - www.buzzphp.com/
           - www.codenong.com/
@@ -375,6 +381,7 @@ params:
           - www.debugcn.com/
           - www.desenv-web-rp-bd.com/
           - www.desenv-web-rp.com/
+          - www.devasking.com/
           - www.devfaq.fr/
           - www.examplefiles.net/
           - www.extutorial.com/
@@ -442,6 +449,7 @@ params:
           - hmong.ru/
           - livepcwiki.ru/
           - mediawiki.feverous.co.uk/
+          - static.hlt.bme.hu/
           - sv.abcdef.wiki/
           - th.hmong.wiki/
           - wiki-org.ru/
