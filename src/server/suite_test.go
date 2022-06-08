@@ -16,6 +16,7 @@ import (
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/letsblockit/letsblockit/src/server/mocks"
+	"github.com/letsblockit/letsblockit/src/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -165,10 +166,8 @@ func (s *ServerTestSuite) SetupTest() {
 }
 
 func (s *ServerTestSuite) setUserBanned() {
-	if s.server.banned == nil {
-		s.server.banned = make(map[string]struct{})
-	}
-	s.server.banned[s.user] = struct{}{}
+	s.expectQ.GetBannedUsers(gomock.Any()).Return([]string{s.user}, nil)
+	s.server.bans, _ = users.LoadUserBans(s.server.store)
 }
 
 func (s *ServerTestSuite) expectRender(page string, data pages.ContextData) *gomock.Call {

@@ -127,7 +127,7 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 			var user oryUser
 			if err := s.queryKratos(c, "whoami", endpoint, &user); err != nil {
 				s.echo.Logger.Error("auth error: %w", err)
-			} else if s.isUserBanned(user.Id()) {
+			} else if s.bans.IsBanned(user.Id()) {
 				return echo.ErrForbidden
 			} else if user.IsActive() {
 				authCache.SetDefault(cookies, &user)

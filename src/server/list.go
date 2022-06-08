@@ -34,7 +34,7 @@ func (s *Server) renderList(c echo.Context) error {
 			return echo.ErrNotFound
 		} else if e != nil {
 			return e
-		} else if s.isUserBanned(storedList.UserID) {
+		} else if s.bans.IsBanned(storedList.UserID) {
 			return echo.ErrForbidden
 		}
 

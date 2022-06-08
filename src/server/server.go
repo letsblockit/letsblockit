@@ -67,7 +67,7 @@ var navigationLinks = []struct {
 
 type Server struct {
 	assets      *wrappedAssets
-	banned      map[string]struct{}
+	bans        *users.BanManager
 	echo        *echo.Echo
 	filters     FilterRepository
 	now         func() time.Time
@@ -98,7 +98,7 @@ func (s *Server) Start() error {
 				errs[0] = db.Migrate(s.options.DatabaseUrl)
 			}
 			if errs[0] == nil {
-				errs[0] = s.loadBannedUsers()
+				s.bans, errs[0] = users.LoadUserBans(s.store)
 			}
 			if errs[0] == nil {
 				s.preferences, errs[0] = users.NewPreferenceManager(s.store)
