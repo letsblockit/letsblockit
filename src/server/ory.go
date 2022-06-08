@@ -92,11 +92,11 @@ type oryLogoutInfo struct {
 	URL string `json:"logout_url"`
 }
 
-func (u *oryUser) Id() uuid.UUID {
+func (u *oryUser) Id() string {
 	if u == nil {
-		return uuid.Nil
+		return ""
 	}
-	return u.Identity.Id
+	return u.Identity.Id.String()
 }
 
 func (u *oryUser) IsActive() bool {

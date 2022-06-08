@@ -151,12 +151,12 @@ instances:
 }
 
 func (s *ServerTestSuite) TestExportList_BadUser() {
-	token, otherUser := uuid.New(), uuid.New()
+	token, otherUser := uuid.New(), uuid.New().String()
 	for {
 		if otherUser != s.user {
 			break
 		}
-		otherUser = uuid.New()
+		otherUser = uuid.New().String()
 	}
 	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+"/export", nil)
 	req.AddCookie(verifiedCookie)

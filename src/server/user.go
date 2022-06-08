@@ -21,14 +21,14 @@ func (s *Server) loadBannedUsers() error {
 	if err != nil {
 		return err
 	}
-	s.banned = make(map[uuid.UUID]struct{}, len(users))
+	s.banned = make(map[string]struct{}, len(users))
 	for _, u := range users {
 		s.banned[u] = struct{}{}
 	}
 	return nil
 }
 
-func (s *Server) isUserBanned(id uuid.UUID) bool {
+func (s *Server) isUserBanned(id string) bool {
 	_, found := s.banned[id]
 	return found
 }

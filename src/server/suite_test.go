@@ -80,7 +80,7 @@ type ServerTestSuite struct {
 	expectR      *mocks.MockReleaseClientMockRecorder
 	expectUP     *mocks.MockUserPreferenceManagerMockRecorder
 	kratosServer *httptest.Server
-	user         uuid.UUID
+	user         string
 	csrf         string
 	releases     []*news.Release
 	preferences  *db.UserPreference
@@ -121,7 +121,7 @@ func (s *ServerTestSuite) SetupTest() {
 		s.NoError(err)
 	}))
 
-	s.user = uuid.New()
+	s.user = uuid.New().String()
 	s.csrf = random.String(32)
 	s.server = &Server{
 		assets:  nil,
@@ -145,7 +145,7 @@ func (s *ServerTestSuite) SetupTest() {
 	// Values can be set by tests before running a query
 	s.preferences = nil
 	s.releases = nil
-	s.expectUP.Get(gomock.Any(), s.user).DoAndReturn(func(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
+	s.expectUP.Get(gomock.Any(), s.user).DoAndReturn(func(c echo.Context, user string) (*db.UserPreference, error) {
 		if user == s.user {
 			return s.preferences, nil
 		} else {
@@ -166,7 +166,7 @@ func (s *ServerTestSuite) SetupTest() {
 
 func (s *ServerTestSuite) setUserBanned() {
 	if s.server.banned == nil {
-		s.server.banned = make(map[uuid.UUID]struct{})
+		s.server.banned = make(map[string]struct{})
 	}
 	s.server.banned[s.user] = struct{}{}
 }

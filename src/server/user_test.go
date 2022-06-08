@@ -14,14 +14,14 @@ import (
 
 func (s *ServerTestSuite) TestLoadBannedUsers() {
 	assert.Nil(s.T(), s.server.banned)
-	id1, id2, id3 := uuid.New(), uuid.New(), uuid.New()
+	id1, id2, id3 := uuid.New().String(), uuid.New().String(), uuid.New().String()
 	for {
 		if id1 != id2 && id1 != id3 && id2 != id3 {
 			break
 		}
-		id2, id3 = uuid.New(), uuid.New()
+		id2, id3 = uuid.New().String(), uuid.New().String()
 	}
-	s.expectQ.GetBannedUsers(gomock.Any()).Return([]uuid.UUID{id1, id2, id1}, nil)
+	s.expectQ.GetBannedUsers(gomock.Any()).Return([]string{id1, id2, id1}, nil)
 	assert.NoError(s.T(), s.server.loadBannedUsers())
 
 	assert.Len(s.T(), s.server.banned, 2)

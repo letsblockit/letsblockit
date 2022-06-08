@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/golang/mock/gomock"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/random"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/server/mocks"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +20,7 @@ type PreferenceManagerSuite struct {
 	suite.Suite
 	expectQ *mocks.MockQuerierMockRecorder
 	prefs   *PreferenceManager
-	user    uuid.UUID
+	user    string
 	ctx     echo.Context
 }
 
@@ -28,7 +28,7 @@ func (s *PreferenceManagerSuite) SetupTest() {
 	c := gomock.NewController(s.T())
 	qm := mocks.NewMockQuerier(c)
 	s.expectQ = qm.EXPECT()
-	s.user = uuid.New()
+	s.user = random.String(12)
 	s.ctx = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
 
 	var err error
