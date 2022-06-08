@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/users/auth"
 )
 
 func (s *Server) userAccount(c echo.Context) error {
@@ -50,17 +51,17 @@ func (s *Server) rotateListToken(c echo.Context) error {
 		confirmation := formParams.Get("confirm")
 		tokenString := formParams.Get("token")
 		token, err := uuid.Parse(tokenString)
-		u := getUser(c)
-		if !u.IsActive() || err != nil || confirmation != "on" {
+		user := auth.GetUserId(c)
+		if user == "" || err != nil || confirmation != "on" {
 			return errors.New("invalid arguments")
 		}
 		return q.RotateListToken(ctx, db.RotateListTokenParams{
-			UserID: u.Id(),
+			UserID: user,
 			Token:  token,
 		})
 	}); err != nil {
 		return err
 	}
 
-	return s.redirect(c, http.StatusSeeOther, s.echo.Reverse("user-account"))
+	return s.pages.Redirect(c, http.StatusSeeOther, s.echo.Reverse("user-account"))
 }

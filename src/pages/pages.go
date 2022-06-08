@@ -18,11 +18,14 @@ type page struct {
 	Contents string
 }
 
+type ContextBuilder func(c echo.Context, title string) *Context
+
 // Pages holds parsed pages ready for rendering
 type Pages struct {
-	main  *mario.Template
-	naked *mario.Template
-	pages map[string]*page
+	main    *mario.Template
+	naked   *mario.Template
+	pages   map[string]*page
+	builder ContextBuilder
 }
 
 // LoadPages parses all web pages found in the pages folder
@@ -105,21 +108,32 @@ func LoadPages() (*Pages, error) {
 	return &pp, err
 }
 
-func (t *Pages) RegisterHelpers(helpers map[string]interface{}) {
+func (p *Pages) RegisterHelpers(helpers map[string]interface{}) {
 	for n, h := range helpers {
-		_ = t.main.WithHelperFunc(n, h)
+		_ = p.main.WithHelperFunc(n, h)
 	}
 }
 
-func (t *Pages) Render(c echo.Context, name string, data *Context) error {
+func (p *Pages) RegisterContextBuilder(b ContextBuilder) {
+	p.builder = b
+}
+
+func (p *Pages) BuildPageContext(c echo.Context, title string) *Context {
+	if p.builder == nil {
+		return nil
+	}
+	return p.builder(c, title)
+}
+
+func (p *Pages) Render(c echo.Context, name string, data *Context) error {
 	var found bool
-	data.Page, found = t.pages[name]
+	data.Page, found = p.pages[name]
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "template not found: "+name)
 	}
-	tpl := t.main
+	tpl := p.main
 	if data.NakedContent {
-		tpl = t.naked
+		tpl = p.naked
 	}
 	buf := new(bytes.Buffer)
 	if err := tpl.Execute(buf, data); err != nil {
@@ -128,11 +142,25 @@ func (t *Pages) Render(c echo.Context, name string, data *Context) error {
 	return c.HTMLBlob(http.StatusOK, buf.Bytes())
 }
 
-func (t *Pages) RenderWithSidebar(c echo.Context, name, sidebar string, data *Context) error {
+func (p *Pages) RenderWithSidebar(c echo.Context, name, sidebar string, data *Context) error {
 	var found bool
-	data.Sidebar, found = t.pages[sidebar]
+	data.Sidebar, found = p.pages[sidebar]
 	if !found {
 		return echo.NewHTTPError(http.StatusNotFound, "sidebar template not found: "+name)
 	}
-	return t.Render(c, name, data)
+	return p.Render(c, name, data)
+}
+
+// RedirectToPage the user to another page, either via htmx client-side Redirect (form submissions)
+// or http 302 Redirect (direct access, js disabled)
+func (p *Pages) RedirectToPage(c echo.Context, name string, params ...interface{}) error {
+	return p.Redirect(c, http.StatusFound, c.Echo().Reverse(name, params...))
+}
+
+func (p *Pages) Redirect(c echo.Context, code int, target string) error {
+	if c.Request().Header.Get("HX-Request") == "true" {
+		c.Response().Header().Set("HX-Redirect", target)
+		return c.NoContent(200)
+	}
+	return c.Redirect(code, target)
 }

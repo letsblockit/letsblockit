@@ -108,7 +108,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 		}); err != nil {
 			return err
 		}
-		return s.redirectToPage(c, "list-filters")
+		return s.pages.RedirectToPage(c, "list-filters")
 	case hc.UserLoggedIn:
 		// If no params are passed, source from the user's filters
 		f, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{

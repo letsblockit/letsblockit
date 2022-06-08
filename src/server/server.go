@@ -20,6 +20,7 @@ import (
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/letsblockit/letsblockit/src/users"
+	"github.com/letsblockit/letsblockit/src/users/auth"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -67,6 +68,7 @@ var navigationLinks = []struct {
 
 type Server struct {
 	assets      *wrappedAssets
+	auth        auth.Backend
 	bans        *users.BanManager
 	echo        *echo.Echo
 	filters     FilterRepository
@@ -119,7 +121,18 @@ func (s *Server) Start() error {
 		s.statsd = &statsd.NoOpClient{}
 	}
 
+	switch s.options.AuthMethod {
+	case "kratos":
+		if s.options.AuthKratosUrl == "" {
+			return fmt.Errorf("missing required parameter auth-kratos-url")
+		}
+		s.auth = auth.NewOryBackend(s.options.AuthKratosUrl, s.pages, s.statsd)
+	default:
+		return fmt.Errorf("unsupported auth method %s", s.options.AuthMethod)
+	}
+
 	s.pages.RegisterHelpers(buildHelpers(s.echo, s.assets.hash))
+	s.pages.RegisterContextBuilder(s.buildPageContext)
 	s.setupRouter()
 	if s.options.DryRun {
 		return ErrDryRunFinished
@@ -179,21 +192,29 @@ func (s *Server) setupRouter() {
 	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
 
 	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
-		return s.redirectToPage(c, "view-filter", "youtube-cleanup")
+		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
 	})
 
-	withAuth := s.echo.Group("")
-	if s.options.AuthKratosUrl != "" {
-		withAuth.Use(s.buildOryMiddleware())
-	}
-	withAuth.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
-		TokenLookup:    "form:" + csrfLookup,
-		ContextKey:     csrfLookup,
-		CookieName:     csrfLookup,
-		CookiePath:     "/",
-		CookieSameSite: http.SameSiteStrictMode,
-		CookieHTTPOnly: true,
-	}))
+	withAuth := s.echo.Group("",
+		s.auth.BuildMiddleware(),
+		func(next echo.HandlerFunc) echo.HandlerFunc {
+			return func(c echo.Context) error {
+				if s.bans.IsBanned(auth.GetUserId(c)) {
+					return echo.ErrForbidden
+				}
+				return next(c)
+			}
+		},
+		middleware.CSRFWithConfig(middleware.CSRFConfig{
+			TokenLookup:    "form:" + csrfLookup,
+			ContextKey:     csrfLookup,
+			CookieName:     csrfLookup,
+			CookiePath:     "/",
+			CookieSameSite: http.SameSiteStrictMode,
+			CookieHTTPOnly: true,
+		}),
+	)
+	s.auth.RegisterRoutes(withAuth)
 
 	withAuth.GET("/", s.landingPageHandler).Name = "landing"
 	withAuth.GET("/help", s.helpPages).Name = "help-main"
@@ -208,8 +229,6 @@ func (s *Server) setupRouter() {
 
 	withAuth.GET("/list/:token/export", s.exportList).Name = "export-filterlist"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
-	withAuth.GET("/user/forms/:type", s.renderKratosForm)
-	withAuth.POST("/user/action/:type", s.startKratosFlow).Name = "user-action"
 	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 }
 
@@ -241,20 +260,6 @@ func (s *Server) absoluteReverse(c echo.Context, name string, params ...interfac
 	return u.String()
 }
 
-// redirectToPage the user to another page, either via htmx client-side redirect (form submissions)
-// or http 302 redirect (direct access, js disabled)
-func (s *Server) redirectToPage(c echo.Context, name string, params ...interface{}) error {
-	return s.redirect(c, http.StatusFound, s.echo.Reverse(name, params...))
-}
-
-func (s *Server) redirect(c echo.Context, code int, target string) error {
-	if c.Request().Header.Get("HX-Request") == "true" {
-		c.Response().Header().Set("HX-Redirect", target)
-		return c.NoContent(200)
-	}
-	return c.Redirect(code, target)
-}
-
 func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	var section string
 	switch c.Request().URL.Path {
@@ -279,15 +284,13 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		GreyLogo:         s.options.OfficialInstance && c.Request().Host != mainDomain,
 		HotReload:        s.options.HotReload,
 		RequestInfo:      c,
-	}
-	if _, err := c.Cookie(hasAccountCookieName); err == nil {
-		context.UserHasAccount = true
+		UserHasAccount:   auth.HasAccount(c),
 	}
 	if t, ok := c.Get(csrfLookup).(string); ok {
 		context.CSRFToken = t
 	}
-	if u := getUser(c); u != nil {
-		context.UserID = u.Id()
+	if u := auth.GetUserId(c); u != "" {
+		context.UserID = u
 		context.UserLoggedIn = true
 		context.Preferences, _ = s.preferences.Get(c, context.UserID)
 		if context.Preferences != nil {
@@ -333,7 +336,7 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 			if err := next(c); err != nil {
 				c.Error(err)
 			}
-			loggedTag := fmt.Sprintf("logged:%t", c.Get(hasKratosContextKey) != nil)
+			loggedTag := fmt.Sprintf("logged:%t", auth.HasAuth(c))
 			duration := time.Since(start)
 			_ = dsd.Distribution("letsblockit.request_duration", float64(duration.Nanoseconds()), []string{loggedTag}, 1)
 			_ = dsd.Incr("letsblockit.request_count", []string{loggedTag, fmt.Sprintf("status:%d", c.Response().Status)}, 1)
