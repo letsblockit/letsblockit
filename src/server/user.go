@@ -4,16 +4,10 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
-)
-
-var (
-	hasAccountCookieName  = "has_account"
-	hasAccountCookieValue = "true"
 )
 
 func (s *Server) userAccount(c echo.Context) error {
@@ -41,15 +35,6 @@ func (s *Server) userAccount(c echo.Context) error {
 			return err
 		}
 	}
-
-	c.SetCookie(&http.Cookie{
-		Name:     hasAccountCookieName,
-		Value:    hasAccountCookieValue,
-		Path:     "/",
-		Expires:  time.Now().AddDate(10, 0, 0),
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-	})
 	return s.pages.Render(c, "user-account", hc)
 }
 

@@ -16,15 +16,17 @@ import (
 )
 
 const (
-	userContextKey      = "_user"
-	hasKratosContextKey = "_has_kratos"
-	oryCookieNamePrefix = "ory_session_"
-	oryGetFlowPattern   = "/self-service/%s/flows?id=%s"
-	oryStartFlowPattern = "/self-service/%s/browser"
-	oryReturnToPattern  = "?return_to=%s"
-	oryLogoutInfoPath   = "/self-service/logout/browser"
-	oryWhoamiPath       = "/sessions/whoami"
-	returnToKey         = "return_to"
+	hasAccountCookieName  = "has_account"
+	hasAccountCookieValue = "true"
+	userContextKey        = "_user"
+	hasKratosContextKey   = "_has_kratos"
+	oryCookieNamePrefix   = "ory_session_"
+	oryGetFlowPattern     = "/self-service/%s/flows?id=%s"
+	oryStartFlowPattern   = "/self-service/%s/browser"
+	oryReturnToPattern    = "?return_to=%s"
+	oryLogoutInfoPath     = "/self-service/logout/browser"
+	oryWhoamiPath         = "/sessions/whoami"
+	returnToKey           = "return_to"
 )
 
 var proxyClient = http.Client{
@@ -132,6 +134,17 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 			} else if user.IsActive() {
 				authCache.SetDefault(cookies, &user)
 				c.Set(userContextKey, &user)
+			}
+
+			if _, err := c.Cookie(hasAccountCookieName); err == http.ErrNoCookie {
+				c.SetCookie(&http.Cookie{
+					Name:     hasAccountCookieName,
+					Value:    hasAccountCookieValue,
+					Path:     "/",
+					Expires:  time.Now().AddDate(10, 0, 0),
+					HttpOnly: true,
+					SameSite: http.SameSiteStrictMode,
+				})
 			}
 
 			return next(c)
