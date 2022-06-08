@@ -4,49 +4,57 @@ params:
     description: Generate rules for Bing
     type: checkbox
     default: false
+    link: ""
   - name: duckduckgo
     description: Generate rules for DuckDuckGo
     type: checkbox
     default: false
+    link: ""
   - name: duckduckgo-html
     description: Also support DuckDuckGo's html-only interface
-    link: "https://html.duckduckgo.com/html/"
     type: checkbox
     onlyif: duckduckgo
     default: false
+    link: https://html.duckduckgo.com/html/
   - name: duckduckgo-lite
     description: Also support DuckDuckGo's lite interface
-    link: "https://lite.duckduckgo.com/lite/"
     type: checkbox
     onlyif: duckduckgo
     default: false
+    link: https://lite.duckduckgo.com/lite/
   - name: google
     description: Generate rules for Google Search
     type: checkbox
     default: true
+    link: ""
   - name: kagi
     description: Generate rules for Kagi
     type: checkbox
     default: false
+    link: ""
   - name: searx-enable
     description: Generate rules for SearX
     type: checkbox
     default: false
+    link: ""
   - name: searx-instances
     description: SearX instances
     type: list
     onlyif: searx-enable
     default:
       - searx.thegpm.org
+    link: ""
   - name: startpage
     description: Generate rules for Startpage.com
     type: checkbox
     default: false
+    link: ""
   - name: sites
     description: Sites to hide
     type: list
     default:
       - .pinterest.
+    link: ""
     presets:
       - name: github-copycats
         description: Hide Github copycat websites
