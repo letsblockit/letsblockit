@@ -44,10 +44,10 @@ type FilterAndTests struct {
 type FilterParam struct {
 	Name        string      `validate:"required"`
 	Description string      `validate:"required"`
+	Link        string      `validate:"omitempty,url" yaml:",omitempty"`
 	Type        ParamType   `validate:"required,oneof=checkbox string list multiline"`
 	OnlyIf      string      `validate:"omitempty,valid_only_if" yaml:",omitempty"`
 	Default     interface{} `validate:"valid_default"`
-	Link        string      `validate:"omitempty,url"`
 	Presets     []Preset    `validate:"omitempty,preset_allowed,dive" yaml:",omitempty"`
 }
 

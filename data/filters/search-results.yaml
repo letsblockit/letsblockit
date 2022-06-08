@@ -10,13 +10,13 @@ params:
     default: false
   - name: duckduckgo-html
     description: Also support DuckDuckGo's html-only interface
-    link: "https://html.duckduckgo.com/html/"
+    link: https://html.duckduckgo.com/html/
     type: checkbox
     onlyif: duckduckgo
     default: false
   - name: duckduckgo-lite
     description: Also support DuckDuckGo's lite interface
-    link: "https://lite.duckduckgo.com/lite/"
+    link: https://lite.duckduckgo.com/lite/
     type: checkbox
     onlyif: duckduckgo
     default: false
