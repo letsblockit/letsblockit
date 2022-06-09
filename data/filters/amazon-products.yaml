@@ -20,10 +20,19 @@ tags:
   - amazon
 template: |
   {{#each rules}}
-  amazon.*###search h2 span:has-text({{{this}}}):upward(div.s-result-item):style(background:red)
-  amazon.*##div.deals-react-app div[class^=DealContent]:has-text({{{this}}}):upward(div[class^=DealGridItem-module__dealItem_]):style(background:red)
+  amazon.*###search h2 span:has-text({{{this}}}):upward(div.s-result-item)
+  amazon.*##div.deals-react-app div[class^=DealContent]:has-text({{{this}}}):upward(div[class^=DealGridItem-module__dealItem_])
   {{/each}}
 tests:
+  - params:
+      rules:
+        - "/cat/i"
+        - "DOGS"
+    output: |
+      amazon.*###search h2 span:has-text(/cat/i):upward(div.s-result-item)
+      amazon.*##div.deals-react-app div[class^=DealContent]:has-text(/cat/i):upward(div[class^=DealGridItem-module__dealItem_])
+      amazon.*###search h2 span:has-text(DOGS):upward(div.s-result-item)
+      amazon.*##div.deals-react-app div[class^=DealContent]:has-text(DOGS):upward(div[class^=DealGridItem-module__dealItem_])
   - params: {}
     output: ""
 ---
