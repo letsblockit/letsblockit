@@ -110,7 +110,7 @@ func (u *oryUser) IsActive() bool {
 // If it succeeds, a "user" value is added to the context for use by handlers.
 func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 	authCache := zcache.New(15*time.Minute, 10*time.Minute)
-	endpoint := s.options.KratosURL + oryWhoamiPath
+	endpoint := s.options.AuthKratosUrl + oryWhoamiPath
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -142,7 +142,7 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 // getLogoutUrl retrieves the logout url for the current session by calling the proxy
 func (s *Server) getLogoutUrl(c echo.Context) (string, error) {
 	var info oryLogoutInfo
-	if err := s.queryKratos(c, "logout", s.options.KratosURL+oryLogoutInfoPath, &info); err != nil {
+	if err := s.queryKratos(c, "logout", s.options.AuthKratosUrl+oryLogoutInfoPath, &info); err != nil {
 		return "", err
 	}
 	if info.URL == "" {
@@ -166,7 +166,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 		}
 
 		body := make(map[string]interface{})
-		endpoint := s.options.KratosURL + fmt.Sprintf(oryGetFlowPattern, formType, flowID)
+		endpoint := s.options.AuthKratosUrl + fmt.Sprintf(oryGetFlowPattern, formType, flowID)
 		if err := s.queryKratos(c, "flow", endpoint, &body); err != nil {
 			return nil, err
 		}
@@ -216,7 +216,7 @@ func (s *Server) startKratosFlow(c echo.Context) error {
 		allowReturnTo = true
 	}
 
-	redirect := s.options.KratosURL + fmt.Sprintf(oryStartFlowPattern, target)
+	redirect := s.options.AuthKratosUrl + fmt.Sprintf(oryStartFlowPattern, target)
 	if allowReturnTo {
 		if returnTo, inDomain := computeReturnTo(c); inDomain {
 			redirect += fmt.Sprintf(oryReturnToPattern, returnTo)

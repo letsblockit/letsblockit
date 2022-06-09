@@ -1,0 +1,20 @@
+name: Upgrade flake dependencies
+on:
+  schedule:
+    - cron:  '0 7 * * 6'
+  workflow_dispatch:
+jobs:
+  update-dep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v17
+      - run: nix flake update
+      - run: nix build
+      - run: nix build .#server-container
+      - uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "upgrade flake dependencies"
+          title: "upgrade flake dependencies"
+          branch: upgrade-flake
+          delete-branch: true

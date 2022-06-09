@@ -1,34 +1,34 @@
 {{#if (eq type "checkbox")}}
-    <div class="mb-3 form-check form-switch{{#with OnlyIf}} ps-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <div class="mb-3 form-check form-switch{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
         <input type="checkbox" role="switch" class="form-check-input" id="{{name}}" name="{{name}}"
                {{#equal true (lookup @root.data.params name)}}checked{{/equal}}>
         <label class="form-check-label" for="{{name}}">
-            {{description}}
+            {{description}}{{>view-filter-param-link this}}
             {{>view-filter-pill-new name}}
         </label>
     </div>
 {{else if (eq type "string")}}
-    <div class="mb-3{{#with OnlyIf}} ps-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <div class="mb-3{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
         <label class="form-label" for="{{name}}">
-            {{description}}:
+            {{description}}{{>view-filter-param-link this}}:
             {{>view-filter-pill-new name}}
         </label>
         <input class="form-control" id="{{name}}" name="{{name}}" spellcheck="false"
                value="{{lookup @root.data.params name}}">
     </div>
 {{else if (eq type "multiline")}}
-    <div class="mb-3{{#with OnlyIf}} ps-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <div class="mb-3{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
         <label class="form-label" for="{{name}}">
-            {{description}}:
+            {{description}}{{>view-filter-param-link this}}:
             {{>view-filter-pill-new name}}
         </label>
         <textarea class="form-control" id="{{name}}" name="{{name}}" spellcheck="false" rows="10">
             {{~lookup @root.data.params name}}</textarea>
     </div>
 {{else if (eq type "list")}}
-    <fieldset class="row mb-3{{#with OnlyIf}} ps-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <fieldset class="row mb-3{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
         <legend class="col-form-label col-sm-auto pt-0">
-            {{description}}:
+            {{description}}{{>view-filter-param-link this}}:
             {{>view-filter-pill-new name}}
         </legend>
         <div class="col-lg-9">

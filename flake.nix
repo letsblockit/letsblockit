@@ -2,7 +2,7 @@
   description = "letsblock.it server and helpers";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -18,7 +18,7 @@
           run-migrate = [ self.packages.${system}.migrate ];
           run-server = [ pinnedGo reflex self.packages.${system}.ory ];
           run-tests = [ pinnedGo golangci-lint ];
-          update-assets = [ nodejs-17_x nodePackages.npm ];
+          update-assets = [ nodejs-slim-18_x nodePackages.npm ];
           update-codegen = [ mockgen self.packages.${system}.sqlc ];
           update-vendorsha = [ pkgs.nix-prefetch ];
         };
@@ -32,13 +32,24 @@
           ory = pkgs.callPackage ./nix/ory.nix { };
           sqlc = pkgs.callPackage ./nix/sqlc.nix { };
 
-          render-docker = pkgs.dockerTools.streamLayeredImage {
-            name = "letsblockit-render";
+          render-container = pkgs.dockerTools.streamLayeredImage {
+            name = "ghcr.io/letsblockit/render";
             tag = "latest";
-            created = "now";
+            created = builtins.substring 0 8 self.lastModifiedDate;
             contents = self.packages.${system}.render;
             config = {
-              Cmd = [ "render" "--help" ];
+              Cmd = [ "render" ];
+            };
+          };
+          server-container = pkgs.dockerTools.streamLayeredImage {
+            name = "ghcr.io/letsblockit/server";
+            tag = "latest";
+            created = builtins.substring 0 8 self.lastModifiedDate;
+            contents = self.packages.${system}.server;
+            config = {
+              Cmd = [ "server" ];
+              Env = [ "LETSBLOCKIT_ADDRESS=:8765" ];
+              ExposedPorts."8765/tcp" = {};
             };
           };
         } // (builtins.mapAttrs
