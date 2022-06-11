@@ -2,6 +2,10 @@ package news
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"os"
+	"path"
 	"regexp"
 	"strings"
 	"sync"
@@ -13,6 +17,7 @@ import (
 
 const (
 	GithubReleasesEndpoint string = "https://api.github.com/repos/xvello/letsblockit/releases?per_page=100"
+	cacheFileName          string = "lbi-releases.json"
 )
 
 var (
@@ -50,12 +55,16 @@ func (r Release) Date() string {
 type ReleaseClient struct {
 	sync.Mutex
 	url      string
+	cacheDir string
 	latestAt time.Time
 	releases []*Release
 }
 
-func NewReleaseClient(url string) *ReleaseClient {
-	return &ReleaseClient{url: url}
+func NewReleaseClient(url string, cacheDir string) *ReleaseClient {
+	return &ReleaseClient{
+		url:      url,
+		cacheDir: cacheDir,
+	}
 }
 
 func (c *ReleaseClient) GetReleases() ([]*Release, error) {
@@ -85,14 +94,14 @@ func (c *ReleaseClient) GetLatestAt() (time.Time, error) {
 }
 
 func (c *ReleaseClient) populate() error {
-	resp, err := retryablehttp.Get(c.url)
+	contents, err := download(c.url, c.cacheDir, cacheFileName)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = contents.Close() }()
 
 	var githubReleases []githubRelease
-	if err = json.NewDecoder(resp.Body).Decode(&githubReleases); err != nil {
+	if err = json.NewDecoder(contents).Decode(&githubReleases); err != nil {
 		return err
 	}
 
@@ -121,4 +130,40 @@ func (c *ReleaseClient) populate() error {
 		}
 	}
 	return nil
+}
+
+func download(url string, cacheDir, cacheFileName string) (io.ReadCloser, error) {
+	// Try opening the cache file
+	if cacheDir != "" {
+		if file, err := os.Open(path.Join(cacheDir, cacheFileName)); err == nil {
+			return file, nil
+		}
+	}
+
+	// Else, download it from the server
+	resp, err := retryablehttp.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	// If caching, copy the bytes to a file and pass that file as contents
+	if cacheDir != "" {
+		file, err := os.OpenFile(path.Join(cacheDir, cacheFileName), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+		if err != nil {
+			return nil, fmt.Errorf("cannot create changelog cache file: %w", err)
+		}
+		if _, err = io.Copy(file, resp.Body); err != nil {
+			return nil, fmt.Errorf("cannot write changelog to cache: %w", err)
+		}
+		if err = resp.Body.Close(); err != nil {
+			return nil, fmt.Errorf("error closing the http response: %w", err)
+		}
+		if _, err = file.Seek(0, io.SeekStart); err != nil {
+			return nil, fmt.Errorf("cannot rewind cachelog cache file: %w", err)
+		}
+		return file, nil
+	}
+
+	// If not caching, return the response body directly
+	return resp.Body, nil
 }

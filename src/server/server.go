@@ -43,6 +43,7 @@ type Options struct {
 	AuthMethod       string `required:"" enum:"kratos" help:"authentication method to use"`
 	AuthKratosUrl    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
 	StatsdTarget     string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
+	CacheDir         string `placeholder:"/tmp" help:"folder to cache external resources in during local development"`
 	HotReload        bool   `help:"reload frontend when the backend restarts"`
 	DryRun           bool   `hidden:""`
 }
@@ -105,7 +106,7 @@ func (s *Server) Start() error {
 		},
 	})
 
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint)
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir)
 	if s.options.StatsdTarget != "" {
 		dsd, err := statsd.New(s.options.StatsdTarget)
 		if err != nil {
