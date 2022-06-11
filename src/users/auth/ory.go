@@ -148,16 +148,19 @@ func (o *OryBackend) BuildMiddleware() echo.MiddlewareFunc {
 			}
 
 			if u, ok := authCache.Get(cookies); ok {
-				c.Set(userContextKey, u)
-				return next(c)
+				if id, ok := u.(string); ok {
+					setUserId(c, id)
+					return next(c)
+				}
 			}
 
 			var user oryUser
 			if err := o.queryKratos(c, "whoami", endpoint, &user); err != nil {
 				c.Logger().Error("auth error: %w", err)
 			} else if user.IsActive() {
-				authCache.SetDefault(cookies, &user)
-				c.Set(userContextKey, &user)
+				id := user.Id()
+				authCache.SetDefault(cookies, id)
+				setUserId(c, id)
 			}
 
 			if _, err := c.Cookie(hasAccountCookieName); err == http.ErrNoCookie {

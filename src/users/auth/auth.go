@@ -10,18 +10,18 @@ const (
 	userActionRouteName   = "user-action"
 )
 
-type User interface {
-	Id() string
-}
-
 type Backend interface {
 	BuildMiddleware() echo.MiddlewareFunc
 	RegisterRoutes(group *echo.Group)
 }
 
+func setUserId(c echo.Context, id string) {
+	c.Set(userContextKey, id)
+}
+
 func GetUserId(c echo.Context) string {
-	if u, ok := c.Get(userContextKey).(User); ok {
-		return u.Id()
+	if u, ok := c.Get(userContextKey).(string); ok {
+		return u
 	}
 	return ""
 }
