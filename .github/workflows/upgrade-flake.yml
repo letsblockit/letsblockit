@@ -14,6 +14,8 @@ jobs:
       - run: nix build .#server-container
       - uses: peter-evans/create-pull-request@v4
         with:
+          token: ${{ secrets.BOT_TOKEN }}
+          push-to-fork: lbi-bot/letsblockit
           commit-message: "upgrade flake dependencies"
           title: "upgrade flake dependencies"
           branch: upgrade-flake
