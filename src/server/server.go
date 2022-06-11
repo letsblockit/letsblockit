@@ -36,17 +36,18 @@ const (
 )
 
 type Options struct {
-	Address          string `default:"127.0.0.1:8765" help:"address to listen to"`
-	UseSystemdSocket bool   `help:"use a systemd socket instead of opening a port"`
-	DatabaseUrl      string `default:"postgresql:///letsblockit" help:"psql database to connect to"`
-	LogLevel         string `default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
-	AuthMethod       string `required:"" enum:"kratos" help:"authentication method to use"`
-	AuthKratosUrl    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
-	StatsdTarget     string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
-	CacheDir         string `placeholder:"/tmp" help:"folder to cache external resources in during local development"`
-	OfficialInstance bool   `help:"turn on behaviours specific to the official letsblock.it instances"`
-	HotReload        bool   `help:"reload frontend when the backend restarts"`
-	DryRun           bool   `hidden:""`
+	Address                string `default:"127.0.0.1:8765" help:"address to listen to"`
+	UseSystemdSocket       bool   `help:"use a systemd socket instead of opening a port"`
+	DatabaseUrl            string `default:"postgresql:///letsblockit" help:"psql database to connect to"`
+	LogLevel               string `default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
+	AuthMethod             string `required:"" enum:"kratos" help:"authentication method to use"`
+	AuthExternalHeaderName string `placeholder:"X-Auth-Request-User" help:"name for the cookie set by the external authenticating proxy"`
+	AuthKratosUrl          string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
+	StatsdTarget           string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
+	CacheDir               string `placeholder:"/tmp" help:"folder to cache external resources in during local development"`
+	OfficialInstance       bool   `help:"turn on behaviours specific to the official letsblock.it instances"`
+	HotReload              bool   `help:"reload frontend when the backend restarts"`
+	DryRun                 bool   `hidden:""`
 }
 
 var navigationLinks = []struct {
@@ -127,6 +128,11 @@ func (s *Server) Start() error {
 			return fmt.Errorf("missing required parameter auth-kratos-url")
 		}
 		s.auth = auth.NewOryBackend(s.options.AuthKratosUrl, s.pages, s.statsd)
+	case "external":
+		if s.options.AuthExternalHeaderName == "" {
+			return fmt.Errorf("missing required parameter auth-external-header-name")
+		}
+		s.auth = auth.NewExternal(s.options.AuthExternalHeaderName)
 	default:
 		return fmt.Errorf("unsupported auth method %s", s.options.AuthMethod)
 	}
