@@ -14,7 +14,7 @@ import (
 
 type BannedUser struct {
 	ID         int32
-	UserID     uuid.UUID
+	UserID     string
 	CreatedAt  time.Time
 	Reason     string
 	LiftedAt   sql.NullTime
@@ -23,7 +23,7 @@ type BannedUser struct {
 
 type FilterInstance struct {
 	ID           int32
-	UserID       uuid.UUID
+	UserID       string
 	FilterListID int32
 	FilterName   string
 	Params       pgtype.JSONB
@@ -33,7 +33,7 @@ type FilterInstance struct {
 
 type FilterList struct {
 	ID           int32
-	UserID       uuid.UUID
+	UserID       string
 	Token        uuid.UUID
 	CreatedAt    time.Time
 	Downloaded   bool
@@ -41,6 +41,6 @@ type FilterList struct {
 }
 
 type UserPreference struct {
-	UserID     uuid.UUID
+	UserID     string
 	NewsCursor time.Time
 }

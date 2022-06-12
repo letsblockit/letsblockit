@@ -9,7 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +17,7 @@ import (
 func TestNilOryUser(t *testing.T) {
 	var user *oryUser
 	assert.False(t, user.IsActive())
-	assert.EqualValues(t, uuid.Nil, user.Id())
+	assert.EqualValues(t, "", user.Id())
 }
 
 func TestVerifiedOryUser(t *testing.T) {
@@ -39,7 +38,7 @@ func TestVerifiedOryUser(t *testing.T) {
 	user := new(oryUser)
 	assert.NoError(t, json.Unmarshal([]byte(payload), user))
 	assert.True(t, user.IsActive())
-	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id().String())
+	assert.Equal(t, "9a3f8aeb-729a-44cf-bede-f885175344ef", user.Id())
 }
 
 func TestInactiveOrySession(t *testing.T) {

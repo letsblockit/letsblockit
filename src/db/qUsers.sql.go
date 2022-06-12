@@ -8,8 +8,6 @@ package db
 import (
 	"context"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 const getBannedUsers = `-- name: GetBannedUsers :many
@@ -18,15 +16,15 @@ from banned_users
 WHERE lifted_at IS NULL
 `
 
-func (q *Queries) GetBannedUsers(ctx context.Context) ([]uuid.UUID, error) {
+func (q *Queries) GetBannedUsers(ctx context.Context) ([]string, error) {
 	rows, err := q.db.Query(ctx, getBannedUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []uuid.UUID
+	var items []string
 	for rows.Next() {
-		var user_id uuid.UUID
+		var user_id string
 		if err := rows.Scan(&user_id); err != nil {
 			return nil, err
 		}
@@ -44,7 +42,7 @@ FROM user_preferences
 WHERE user_id = $1
 `
 
-func (q *Queries) GetUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error) {
+func (q *Queries) GetUserPreferences(ctx context.Context, userID string) (UserPreference, error) {
 	row := q.db.QueryRow(ctx, getUserPreferences, userID)
 	var i UserPreference
 	err := row.Scan(&i.UserID, &i.NewsCursor)
@@ -57,7 +55,7 @@ VALUES ($1)
 RETURNING user_id, news_cursor
 `
 
-func (q *Queries) InitUserPreferences(ctx context.Context, userID uuid.UUID) (UserPreference, error) {
+func (q *Queries) InitUserPreferences(ctx context.Context, userID string) (UserPreference, error) {
 	row := q.db.QueryRow(ctx, initUserPreferences, userID)
 	var i UserPreference
 	err := row.Scan(&i.UserID, &i.NewsCursor)
@@ -71,7 +69,7 @@ WHERE user_id = $1
 `
 
 type UpdateNewsCursorParams struct {
-	UserID     uuid.UUID
+	UserID     string
 	NewsCursor time.Time
 }
 

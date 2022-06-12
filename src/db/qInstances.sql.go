@@ -8,7 +8,6 @@ package db
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 )
 
@@ -19,7 +18,7 @@ WHERE (user_id = $1 AND filter_name = $2)
 `
 
 type CountInstanceForUserAndFilterParams struct {
-	UserID     uuid.UUID
+	UserID     string
 	FilterName string
 }
 
@@ -36,7 +35,7 @@ VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3)
 `
 
 type CreateInstanceForUserAndFilterParams struct {
-	UserID     uuid.UUID
+	UserID     string
 	FilterName string
 	Params     pgtype.JSONB
 }
@@ -53,7 +52,7 @@ WHERE (user_id = $1 AND filter_name = $2)
 `
 
 type DeleteInstanceForUserAndFilterParams struct {
-	UserID     uuid.UUID
+	UserID     string
 	FilterName string
 }
 
@@ -73,7 +72,7 @@ type GetActiveFiltersForUserRow struct {
 	Params     pgtype.JSONB
 }
 
-func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]GetActiveFiltersForUserRow, error) {
+func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID string) ([]GetActiveFiltersForUserRow, error) {
 	rows, err := q.db.Query(ctx, getActiveFiltersForUser, userID)
 	if err != nil {
 		return nil, err
@@ -100,7 +99,7 @@ WHERE (user_id = $1 AND filter_name = $2)
 `
 
 type GetInstanceForUserAndFilterParams struct {
-	UserID     uuid.UUID
+	UserID     string
 	FilterName string
 }
 
@@ -151,7 +150,7 @@ WHERE (user_id = $1 AND filter_name = $2)
 `
 
 type UpdateInstanceForUserAndFilterParams struct {
-	UserID     uuid.UUID
+	UserID     string
 	FilterName string
 	Params     pgtype.JSONB
 }

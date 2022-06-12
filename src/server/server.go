@@ -12,7 +12,6 @@ import (
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/coreos/go-systemd/activation"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -67,7 +66,7 @@ var navigationLinks = []struct {
 
 type Server struct {
 	assets      *wrappedAssets
-	banned      map[uuid.UUID]struct{}
+	banned      map[string]struct{}
 	echo        *echo.Echo
 	filters     FilterRepository
 	now         func() time.Time

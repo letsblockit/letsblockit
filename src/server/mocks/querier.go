@@ -53,7 +53,7 @@ func (mr *MockQuerierMockRecorder) CountInstanceForUserAndFilter(ctx, arg interf
 }
 
 // CountListsForUser mocks base method.
-func (m *MockQuerier) CountListsForUser(ctx context.Context, userID uuid.UUID) (int64, error) {
+func (m *MockQuerier) CountListsForUser(ctx context.Context, userID string) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CountListsForUser", ctx, userID)
 	ret0, _ := ret[0].(int64)
@@ -82,7 +82,7 @@ func (mr *MockQuerierMockRecorder) CreateInstanceForUserAndFilter(ctx, arg inter
 }
 
 // CreateListForUser mocks base method.
-func (m *MockQuerier) CreateListForUser(ctx context.Context, userID uuid.UUID) (uuid.UUID, error) {
+func (m *MockQuerier) CreateListForUser(ctx context.Context, userID string) (uuid.UUID, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateListForUser", ctx, userID)
 	ret0, _ := ret[0].(uuid.UUID)
@@ -111,7 +111,7 @@ func (mr *MockQuerierMockRecorder) DeleteInstanceForUserAndFilter(ctx, arg inter
 }
 
 // GetActiveFiltersForUser mocks base method.
-func (m *MockQuerier) GetActiveFiltersForUser(ctx context.Context, userID uuid.UUID) ([]db.GetActiveFiltersForUserRow, error) {
+func (m *MockQuerier) GetActiveFiltersForUser(ctx context.Context, userID string) ([]db.GetActiveFiltersForUserRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetActiveFiltersForUser", ctx, userID)
 	ret0, _ := ret[0].([]db.GetActiveFiltersForUserRow)
@@ -126,10 +126,10 @@ func (mr *MockQuerierMockRecorder) GetActiveFiltersForUser(ctx, userID interface
 }
 
 // GetBannedUsers mocks base method.
-func (m *MockQuerier) GetBannedUsers(ctx context.Context) ([]uuid.UUID, error) {
+func (m *MockQuerier) GetBannedUsers(ctx context.Context) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBannedUsers", ctx)
-	ret0, _ := ret[0].([]uuid.UUID)
+	ret0, _ := ret[0].([]string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -201,7 +201,7 @@ func (mr *MockQuerierMockRecorder) GetListForToken(ctx, token interface{}) *gomo
 }
 
 // GetListForUser mocks base method.
-func (m *MockQuerier) GetListForUser(ctx context.Context, userID uuid.UUID) (db.GetListForUserRow, error) {
+func (m *MockQuerier) GetListForUser(ctx context.Context, userID string) (db.GetListForUserRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListForUser", ctx, userID)
 	ret0, _ := ret[0].(db.GetListForUserRow)
@@ -231,7 +231,7 @@ func (mr *MockQuerierMockRecorder) GetStats(ctx interface{}) *gomock.Call {
 }
 
 // GetUserPreferences mocks base method.
-func (m *MockQuerier) GetUserPreferences(ctx context.Context, userID uuid.UUID) (db.UserPreference, error) {
+func (m *MockQuerier) GetUserPreferences(ctx context.Context, userID string) (db.UserPreference, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserPreferences", ctx, userID)
 	ret0, _ := ret[0].(db.UserPreference)
@@ -246,7 +246,7 @@ func (mr *MockQuerierMockRecorder) GetUserPreferences(ctx, userID interface{}) *
 }
 
 // HasUserDownloadedList mocks base method.
-func (m *MockQuerier) HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error) {
+func (m *MockQuerier) HasUserDownloadedList(ctx context.Context, userID string) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasUserDownloadedList", ctx, userID)
 	ret0, _ := ret[0].(bool)
@@ -261,7 +261,7 @@ func (mr *MockQuerierMockRecorder) HasUserDownloadedList(ctx, userID interface{}
 }
 
 // InitUserPreferences mocks base method.
-func (m *MockQuerier) InitUserPreferences(ctx context.Context, userID uuid.UUID) (db.UserPreference, error) {
+func (m *MockQuerier) InitUserPreferences(ctx context.Context, userID string) (db.UserPreference, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InitUserPreferences", ctx, userID)
 	ret0, _ := ret[0].(db.UserPreference)

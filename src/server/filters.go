@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
@@ -209,7 +208,7 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	return s.pages.Render(c, "view-filter-render", hc)
 }
 
-func (s *Server) upsertFilterParams(c echo.Context, user uuid.UUID, filter string, params map[string]interface{}) error {
+func (s *Server) upsertFilterParams(c echo.Context, user string, filter string, params map[string]interface{}) error {
 	out := pgtype.JSONB{
 		Bytes:  nil,
 		Status: pgtype.Null,

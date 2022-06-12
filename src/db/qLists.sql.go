@@ -17,7 +17,7 @@ FROM filter_lists
 WHERE user_id = $1
 `
 
-func (q *Queries) CountListsForUser(ctx context.Context, userID uuid.UUID) (int64, error) {
+func (q *Queries) CountListsForUser(ctx context.Context, userID string) (int64, error) {
 	row := q.db.QueryRow(ctx, countListsForUser, userID)
 	var count int64
 	err := row.Scan(&count)
@@ -30,7 +30,7 @@ VALUES ($1)
 RETURNING token
 `
 
-func (q *Queries) CreateListForUser(ctx context.Context, userID uuid.UUID) (uuid.UUID, error) {
+func (q *Queries) CreateListForUser(ctx context.Context, userID string) (uuid.UUID, error) {
 	row := q.db.QueryRow(ctx, createListForUser, userID)
 	var token uuid.UUID
 	err := row.Scan(&token)
@@ -46,7 +46,7 @@ LIMIT 1
 
 type GetListForTokenRow struct {
 	ID         int32
-	UserID     uuid.UUID
+	UserID     string
 	Downloaded bool
 }
 
@@ -72,7 +72,7 @@ type GetListForUserRow struct {
 	InstanceCount int64
 }
 
-func (q *Queries) GetListForUser(ctx context.Context, userID uuid.UUID) (GetListForUserRow, error) {
+func (q *Queries) GetListForUser(ctx context.Context, userID string) (GetListForUserRow, error) {
 	row := q.db.QueryRow(ctx, getListForUser, userID)
 	var i GetListForUserRow
 	err := row.Scan(&i.Token, &i.Downloaded, &i.InstanceCount)
@@ -86,7 +86,7 @@ WHERE filter_lists.user_id = $1
 LIMIT 1
 `
 
-func (q *Queries) HasUserDownloadedList(ctx context.Context, userID uuid.UUID) (bool, error) {
+func (q *Queries) HasUserDownloadedList(ctx context.Context, userID string) (bool, error) {
 	row := q.db.QueryRow(ctx, hasUserDownloadedList, userID)
 	var downloaded bool
 	err := row.Scan(&downloaded)
@@ -114,7 +114,7 @@ WHERE user_id = $1
 `
 
 type RotateListTokenParams struct {
-	UserID uuid.UUID
+	UserID string
 	Token  uuid.UUID
 }
 

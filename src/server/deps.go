@@ -4,7 +4,6 @@ import (
 	"io"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
@@ -30,6 +29,6 @@ type ReleaseClient interface {
 	GetLatestAt() (time.Time, error)
 }
 type UserPreferenceManager interface {
-	Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error)
-	UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error
+	Get(c echo.Context, user string) (*db.UserPreference, error)
+	UpdateNewsCursor(c echo.Context, user string, at time.Time) error
 }

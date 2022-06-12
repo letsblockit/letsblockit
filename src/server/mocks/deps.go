@@ -10,7 +10,6 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
-	uuid "github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
 	db "github.com/letsblockit/letsblockit/src/db"
 	filters "github.com/letsblockit/letsblockit/src/filters"
@@ -238,7 +237,7 @@ func (m *MockUserPreferenceManager) EXPECT() *MockUserPreferenceManagerMockRecor
 }
 
 // Get mocks base method.
-func (m *MockUserPreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
+func (m *MockUserPreferenceManager) Get(c echo.Context, user string) (*db.UserPreference, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", c, user)
 	ret0, _ := ret[0].(*db.UserPreference)
@@ -253,7 +252,7 @@ func (mr *MockUserPreferenceManagerMockRecorder) Get(c, user interface{}) *gomoc
 }
 
 // UpdateNewsCursor mocks base method.
-func (m *MockUserPreferenceManager) UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error {
+func (m *MockUserPreferenceManager) UpdateNewsCursor(c echo.Context, user string, at time.Time) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateNewsCursor", c, user, at)
 	ret0, _ := ret[0].(error)
