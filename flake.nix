@@ -45,7 +45,7 @@
             name = "ghcr.io/letsblockit/server";
             tag = "latest";
             created = builtins.substring 0 8 self.lastModifiedDate;
-            contents = self.packages.${system}.server;
+            contents = [ pkgs.cacert self.packages.${system}.server ];
             config = {
               Cmd = [ "server" ];
               Env = [ "LETSBLOCKIT_ADDRESS=:8765" ];
