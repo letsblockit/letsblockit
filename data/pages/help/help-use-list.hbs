@@ -20,7 +20,7 @@
                  data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                     <ul>
-                        <li><a href="{{abp_subscribe_href list_token}}">Click on this link</a></li>
+                        <li><a href="{{abp_subscribe_href list_url}}">Click on this link</a></li>
                         <li>A new tab will open, click the <code>Subscribe</code> button in the top right corner,
                             then close that tab.
                         </li>
@@ -54,7 +54,7 @@
                             <a onclick="copyListAddress()" class="text-decoration-none" style="cursor: pointer">
                                 <span id="list-button" class="badge rounded-pill bg-secondary ms-1">copy it</span>
                                 <br/>
-                                <code id="list-address">{{list_href list_token}}</code>
+                                <code id="list-address">{{list_url}}</code>
                             </a>
                         </li>
                         <li>Click on <code>Apply changes</code></li>
@@ -74,9 +74,9 @@
                 <div class="accordion-body">
                     <p>While uBlock Origin is the main target for this project, most filters should work with
                         other browser-based adblockers.</p>
-                    <p>To install your filter list, <a href="{{abp_subscribe_href list_token}}">click on this link</a>,
+                    <p>To install your filter list, <a href="{{abp_subscribe_href list_url}}">click on this link</a>,
                         or manually add the following URL to your lists:</p>
-                    <code id="list-address">{{list_href list_token}}</code>
+                    <code id="list-address">{{list_url}}</code>
                 </div>
             </div>
         </div>

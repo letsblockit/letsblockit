@@ -43,6 +43,7 @@ type Options struct {
 	AuthMethod             string `required:"" enum:"kratos" help:"authentication method to use"`
 	AuthExternalHeaderName string `placeholder:"X-Auth-Request-User" help:"name for the cookie set by the external authenticating proxy"`
 	AuthKratosUrl          string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
+	ListDownloadDomain     string `help:"domain to use for list downloads, leave empty to use the main domain"`
 	StatsdTarget           string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	CacheDir               string `placeholder:"/tmp" help:"folder to cache external resources in during local development"`
 	OfficialInstance       bool   `help:"turn on behaviours specific to the official letsblock.it instances"`

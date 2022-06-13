@@ -1,6 +1,7 @@
 package server
 
 import (
+	"net/url"
 	"sync"
 
 	"github.com/labstack/echo/v4"
@@ -74,7 +75,15 @@ func (s *Server) helpPages(c echo.Context) error {
 		info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID)
 		if err == nil {
 			hc.Add("has_filters", info.InstanceCount > 0)
-			hc.Add("list_token", info.Token.String())
+			listUrl := url.URL{
+				Scheme: c.Scheme(),
+				Host:   c.Request().Host,
+				Path:   c.Echo().Reverse("render-filterlist", info.Token.String()),
+			}
+			if s.options.ListDownloadDomain != "" {
+				listUrl.Host = s.options.ListDownloadDomain
+			}
+			hc.Add("list_url", listUrl.String())
 		}
 	}
 
