@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/DataDog/datadog-go/v5 v5.1.1
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
-	github.com/alecthomas/kong v0.5.0
+	github.com/alecthomas/kong v0.6.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
@@ -46,7 +46,6 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
