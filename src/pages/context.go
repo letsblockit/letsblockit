@@ -17,13 +17,14 @@ type RequestInfo interface {
 type ContextData map[string]interface{}
 
 type Context struct {
-	NakedContent bool
-	Page         *page
-	Sidebar      *page
-	NoBoost      bool
-	HotReload    bool
-	MainDomain   bool
-	RequestInfo  RequestInfo
+	NakedContent     bool
+	Page             *page
+	Sidebar          *page
+	NoBoost          bool
+	HotReload        bool
+	OfficialInstance bool
+	GreyLogo         bool
+	RequestInfo      RequestInfo
 
 	CurrentSection  string
 	NavigationLinks interface{}

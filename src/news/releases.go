@@ -54,16 +54,18 @@ func (r Release) Date() string {
 // The parsed results are cached in memory until the next restart.
 type ReleaseClient struct {
 	sync.Mutex
-	url      string
-	cacheDir string
-	latestAt time.Time
-	releases []*Release
+	url              string
+	cacheDir         string
+	officialInstance bool
+	latestAt         time.Time
+	releases         []*Release
 }
 
-func NewReleaseClient(url string, cacheDir string) *ReleaseClient {
+func NewReleaseClient(url string, cacheDir string, officialInstance bool) *ReleaseClient {
 	return &ReleaseClient{
-		url:      url,
-		cacheDir: cacheDir,
+		url:              url,
+		cacheDir:         cacheDir,
+		officialInstance: officialInstance,
 	}
 }
 
@@ -105,7 +107,7 @@ func (c *ReleaseClient) populate() error {
 		return err
 	}
 
-	renderer := initRenderer()
+	renderer := initRenderer(c.officialInstance)
 	c.releases = make([]*Release, 0, len(githubReleases))
 	for _, r := range githubReleases {
 		if r.Prerelease || r.Draft {

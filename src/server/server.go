@@ -43,6 +43,7 @@ type Options struct {
 	AuthKratosUrl    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
 	StatsdTarget     string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	CacheDir         string `placeholder:"/tmp" help:"folder to cache external resources in during local development"`
+	OfficialInstance bool   `help:"turn on behaviours specific to the official letsblock.it instances"`
 	HotReload        bool   `help:"reload frontend when the backend restarts"`
 	DryRun           bool   `hidden:""`
 }
@@ -105,7 +106,7 @@ func (s *Server) Start() error {
 		},
 	})
 
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir)
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance)
 	if s.options.StatsdTarget != "" {
 		dsd, err := statsd.New(s.options.StatsdTarget)
 		if err != nil {
@@ -271,12 +272,13 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	}
 
 	context := &pages.Context{
-		CurrentSection:  section,
-		NavigationLinks: navigationLinks,
-		Title:           title,
-		MainDomain:      c.Request().Host == mainDomain,
-		HotReload:       s.options.HotReload,
-		RequestInfo:     c,
+		CurrentSection:   section,
+		NavigationLinks:  navigationLinks,
+		Title:            title,
+		OfficialInstance: s.options.OfficialInstance,
+		GreyLogo:         s.options.OfficialInstance && c.Request().Host != mainDomain,
+		HotReload:        s.options.HotReload,
+		RequestInfo:      c,
 	}
 	if _, err := c.Cookie(hasAccountCookieName); err == nil {
 		context.UserHasAccount = true
