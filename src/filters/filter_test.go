@@ -44,7 +44,11 @@ func TestValidateFilters(t *testing.T) {
 				for k, v := range tc.Params {
 					ctx[k] = v
 				}
-				assert.NoError(t, repo.Render(&buf, filter.Name, ctx))
+				assert.NoError(t, repo.Render(&buf, &Instance{
+					Filter:   filter.Name,
+					Params:   ctx,
+					TestMode: false,
+				}))
 				assert.Equal(t, tc.Output, buf.String())
 			})
 		}

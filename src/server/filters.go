@@ -83,7 +83,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	hc.Add("filter", filter)
 
 	// Parse filters param and render output if non-empty
-	params, action, err := parseFilterParams(c, filter)
+	instance, action, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
@@ -92,10 +92,10 @@ func (s *Server) viewFilter(c echo.Context) error {
 	case hc.UserLoggedIn && action == actionSave:
 		// Save filter params if requested
 		var out pgtype.JSONB
-		if err = out.Set(params); err != nil {
+		if err = out.Set(instance.Params); err != nil {
 			return err
 		}
-		if err = s.upsertFilterParams(c, hc.UserID, filter.Name, params); err != nil {
+		if err = s.upsertFilterParams(c, hc.UserID, filter.Name, instance.Params); err != nil {
 			return err
 		}
 		hc.Add("saved_ok", true)
@@ -118,8 +118,8 @@ func (s *Server) viewFilter(c echo.Context) error {
 		switch err {
 		case nil:
 			hc.Add("has_instance", true)
-			if params == nil {
-				if err = f.AssignTo(&params); err != nil {
+			if instance.Params == nil {
+				if err = f.AssignTo(&instance.Params); err != nil {
 					return err
 				}
 			}
@@ -129,14 +129,14 @@ func (s *Server) viewFilter(c echo.Context) error {
 		}
 	}
 
-	if params == nil {
+	if instance.Params == nil {
 		// If no params found, inject the default values
 		if len(filter.Params) > 0 {
-			params = make(map[string]interface{})
+			instance.Params = make(map[string]interface{})
 			for _, param := range filter.Params {
-				params[param.Name] = param.Default
+				instance.Params[param.Name] = param.Default
 				for _, preset := range param.Presets {
-					params[param.BuildPresetParamName(preset.Name)] = preset.Default
+					instance.Params[param.BuildPresetParamName(preset.Name)] = preset.Default
 				}
 			}
 		}
@@ -144,12 +144,12 @@ func (s *Server) viewFilter(c echo.Context) error {
 		// Check whether new params have been added
 		newParams := make(map[string]bool)
 		for _, param := range filter.Params {
-			if _, found := params[param.Name]; !found {
+			if _, found := instance.Params[param.Name]; !found {
 				newParams[param.Name] = true
 			}
 			for _, preset := range param.Presets {
 				name := param.BuildPresetParamName(preset.Name)
-				if _, found := params[name]; !found {
+				if _, found := instance.Params[name]; !found {
 					newParams[name] = true
 				}
 			}
@@ -161,11 +161,11 @@ func (s *Server) viewFilter(c echo.Context) error {
 
 	// Render the filter template
 	var buf strings.Builder
-	if err = s.filters.Render(&buf, filter.Name, params); err != nil {
+	if err = s.filters.Render(&buf, instance); err != nil {
 		return err
 	}
 	hc.Add("rendered", buf.String())
-	hc.Add("params", params)
+	hc.Add("params", instance.Params)
 	return s.pages.Render(c, "view-filter", hc)
 }
 
@@ -247,7 +247,7 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, filter string, 
 	})
 }
 
-func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]interface{}, filterAction, error) {
+func parseFilterParams(c echo.Context, filter *filters.Filter) (*filters.Instance, filterAction, error) {
 	formParams, err := c.FormParams()
 	if err != nil {
 		return nil, actionRender, err
@@ -263,7 +263,11 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 		action = actionDelete
 	}
 
-	params := make(map[string]interface{})
+	instance := &filters.Instance{
+		Filter:   filter.Name,
+		Params:   make(map[string]interface{}),
+		TestMode: false,
+	}
 	for _, p := range filter.Params {
 		switch p.Type {
 		case filters.StringListParam:
@@ -273,22 +277,22 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (map[string]inter
 					values = append(values, v)
 				}
 			}
-			params[p.Name] = values
+			instance.Params[p.Name] = values
 			for _, preset := range p.Presets {
 				name := p.BuildPresetParamName(preset.Name)
-				params[name] = formParams.Get(name) == "on"
+				instance.Params[name] = formParams.Get(name) == "on"
 			}
 		case filters.StringParam:
-			params[p.Name] = formParams.Get(p.Name)
+			instance.Params[p.Name] = formParams.Get(p.Name)
 		case filters.MultiLineParam:
-			params[p.Name] = formParams.Get(p.Name)
+			instance.Params[p.Name] = formParams.Get(p.Name)
 		case filters.BooleanParam:
-			params[p.Name] = formParams.Get(p.Name) == "on"
+			instance.Params[p.Name] = formParams.Get(p.Name) == "on"
 		default:
 			return nil, action, echo.NewHTTPError(http.StatusInternalServerError, "unknown param type "+p.Type)
 		}
 	}
-	return params, action, err
+	return instance, action, err
 }
 
 func (s *Server) hasMissingParams(instance db.GetActiveFiltersForUserRow) bool {

@@ -75,25 +75,25 @@ func (r *Repository) GetTags() []string {
 	return r.tagList
 }
 
-func (r *Repository) Render(w io.Writer, name string, input map[string]interface{}) error {
-	filter, found := r.filterMap[name]
+func (r *Repository) Render(w io.Writer, instance *Instance) error {
+	filter, found := r.filterMap[instance.Filter]
 	if !found {
-		return fmt.Errorf("template '%s' not found", name)
+		return fmt.Errorf("template '%s' not found", instance.Filter)
 	}
-	input = shallowCopy(input)
-	input["_filter"] = name
-	if err := r.main.Execute(w, input); err != nil {
+	params := shallowCopy(instance.Params)
+	params["_filter"] = instance.Filter
+	if err := r.main.Execute(w, params); err != nil {
 		return err
 	}
 
 	for _, preset := range filter.presets {
-		if input[preset.EnableKey] == true {
-			if _, err := fmt.Fprintln(w, "!!", name, "with", preset.Name, "preset"); err != nil {
+		if params[preset.EnableKey] == true {
+			if _, err := fmt.Fprintln(w, "!!", instance.Filter, "with", preset.Name, "preset"); err != nil {
 				return err
 			}
-			input := shallowCopy(input)
-			input[preset.TargetKey] = preset.Value
-			if err := r.main.Execute(w, input); err != nil {
+			params := shallowCopy(params)
+			params[preset.TargetKey] = preset.Value
+			if err := r.main.Execute(w, params); err != nil {
 				return err
 			}
 		}

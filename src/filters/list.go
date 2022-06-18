@@ -19,18 +19,20 @@ const (
 )
 
 type Instance struct {
-	Filter string                 `yaml:"filter" validate:"required"`
-	Params map[string]interface{} `yaml:"params,omitempty"`
+	Filter   string                 `yaml:"filter" validate:"required"`
+	Params   map[string]interface{} `yaml:"params,omitempty"`
+	TestMode bool                   `yaml:"test_node,omitempty"`
 }
 
 type List struct {
 	Title     string      `yaml:"title" validate:"required"`
 	Instances []*Instance `yaml:"instances" validate:"dive,required"`
+	TestMode  bool        `yaml:"test_node,omitempty"`
 }
 
 type repository interface {
 	GetFilter(name string) (*Filter, error)
-	Render(w io.Writer, name string, data map[string]interface{}) error
+	Render(w io.Writer, instance *Instance) error
 }
 
 func (i *Instance) Render(out io.Writer, repo repository) error {
@@ -38,7 +40,7 @@ func (i *Instance) Render(out io.Writer, repo repository) error {
 	if e != nil {
 		return e
 	}
-	return repo.Render(out, i.Filter, i.Params)
+	return repo.Render(out, i)
 }
 
 func (l *List) Render(out io.Writer, logger logger, repo repository) error {
@@ -48,6 +50,9 @@ func (l *List) Render(out io.Writer, logger logger, repo repository) error {
 	}
 
 	for _, i := range l.Instances {
+		if l.TestMode {
+			i.TestMode = true
+		}
 		if err := i.Render(out, repo); err != nil {
 			logger.Warnf("skipping filter %s: %s", i.Filter, err)
 		}
