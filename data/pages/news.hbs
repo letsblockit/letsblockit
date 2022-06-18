@@ -1,6 +1,13 @@
-<h4 class="text-end mb-4">
-    <a href="{{href "news-atom" ""}}" title="ATOM feed for release notes"><i class="ti ti-rss"></i></a>
-</h4>
+<div class="container mb-4 ms-lg-5 me-lg-5 text-center alert">
+    Here are the new filter updates and user-facing features the project has released.
+    You can also subscribe to <a href="{{href "news-atom" ""}}">the RSS feed</a> to stay in the loop.
+
+    {{#if @root.OfficialInstance}}<br/>
+        Self-hosting users can find the full list of changes in
+        <a href="https://github.com/letsblockit/letsblockit/releases">the Github release list</a>.
+    {{/if}}
+</div>
+
 
 <div class="container release-list">
     {{#each releases}}

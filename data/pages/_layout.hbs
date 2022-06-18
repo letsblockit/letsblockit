@@ -24,8 +24,8 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
     <div class="container-lg">
         <a class="navbar-brand" href="/">
-            <img src="/assets/images/logo.svg{{assetHash}}"
-                 {{#unless MainDomain}}style="filter: grayscale(100%);"{{/unless}}>
+            <img src="/assets/images/logo.svg{{assetHash}}" {{#if GreyLogo}}
+                 style="filter: grayscale(100%);"{{/if}}>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
