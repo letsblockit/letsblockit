@@ -18,5 +18,6 @@ jobs:
           push-to-fork: lbi-bot/letsblockit
           commit-message: "upgrade external dependencies"
           title: "upgrade external dependencies"
+          labels: dependencies
           branch: upgrade-deps
           delete-branch: true
