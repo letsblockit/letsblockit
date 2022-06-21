@@ -20,6 +20,6 @@ git rm -rf data/assets/dist/
 git add data/assets/dist/
 
 # Upgrade golang deps
-go get -u ./...
+go get -t -u ./...
 go mod tidy
 ./scripts/update-vendorsha.sh
