@@ -67,6 +67,7 @@ params:
           - bleepcoder.com/
           - bytemeta.vip/
           - coder.social/
+          - codespots.com/
           - fantashit.com/
           - findbestopensource.com/
           - flutterrepos.com/
@@ -122,7 +123,6 @@ params:
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/npm_copycats.txt
         values:
           - cnpmjs.org/
-          - codespots.com/
           - npm.io/
           - npmmirror.com/
       - name: stackoverflow-copycats
@@ -175,6 +175,8 @@ params:
           - .waymanamechurch.org/
           - .xszz.org/
           - .zsharp.org/
+          - 955yes.com/
+          - ajaxhispano.com/
           - akuum.org/
           - alltodev.com/
           - alwaysemmyhope.com/
@@ -183,7 +185,9 @@ params:
           - answer-id.com/
           - answeright.com/
           - antwortenhier.me/
+          - appsloveworld.com/
           - article.docway.net/
+          - ask-dev.ru/
           - ask-ubuntu.ru/
           - askandroidquestions.com/
           - askcodez.com/
@@ -222,7 +226,9 @@ params:
           - codersatellite.com/
           - codeutility.org/
           - codewdw.com/
+          - codingdict.com/
           - configrouter.com/
+          - csdn.net/
           - dapper-tutorial.net/
           - ddcode.net/
           - de-vraag.com/
@@ -231,9 +237,12 @@ params:
           - devbugfix.com/
           - devdreamz.com/
           - devqanda.com/
+          - devtip.in/
           - dockerquestions.com/
           - dogovori.info/
+          - dovov.com/
           - dtuto.com/
+          - duoduokou.com/
           - easysavecode.com/
           - ebestcode.com/
           - edupro.id/
@@ -248,8 +257,11 @@ params:
           - helpex.vn/
           - howtofix.io/
           - husl.ru/
+          - i4k.xyz/
           - ibootweb.com/
+          - icode.best/
           - idqna.com/
+          - igiftidea.com/
           - intelligentsystemsmonitoring.com/
           - intellipaat.com/
           - isolution.pro/
@@ -264,6 +276,7 @@ params:
           - kompsekret.ru/
           - kotaeta.com/
           - laravelquestions.com/
+          - learnfk.com/
           - legkovopros.ru/
           - levitrares.com/
           - living-sun.com/
@@ -354,6 +367,7 @@ params:
           - tech.wayne-chu.com/
           - techarks.ru/
           - techfeed.net/
+          - thecodeteacher.com/
           - thelivingtrove.com/
           - tipsfordev.com/
           - tousu.in/
@@ -436,8 +450,10 @@ params:
           - www.xsprogram.com/
           - www.ylhow.com/
           - xiu2.net/
+          - yocker.com/
           - younggeeks.in/
           - yuanmacha.com/
+          - yy123.ink/
       - name: wikipedia-copycats
         description: Hide Wikipedia copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
