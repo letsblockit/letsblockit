@@ -40,6 +40,65 @@ func (m *MockPageRenderer) EXPECT() *MockPageRendererMockRecorder {
 	return m.recorder
 }
 
+// BuildPageContext mocks base method.
+func (m *MockPageRenderer) BuildPageContext(c echo.Context, title string) *pages.Context {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BuildPageContext", c, title)
+	ret0, _ := ret[0].(*pages.Context)
+	return ret0
+}
+
+// BuildPageContext indicates an expected call of BuildPageContext.
+func (mr *MockPageRendererMockRecorder) BuildPageContext(c, title interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuildPageContext", reflect.TypeOf((*MockPageRenderer)(nil).BuildPageContext), c, title)
+}
+
+// Redirect mocks base method.
+func (m *MockPageRenderer) Redirect(c echo.Context, code int, target string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Redirect", c, code, target)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Redirect indicates an expected call of Redirect.
+func (mr *MockPageRendererMockRecorder) Redirect(c, code, target interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Redirect", reflect.TypeOf((*MockPageRenderer)(nil).Redirect), c, code, target)
+}
+
+// RedirectToPage mocks base method.
+func (m *MockPageRenderer) RedirectToPage(c echo.Context, name string, params ...interface{}) error {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{c, name}
+	for _, a := range params {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RedirectToPage", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RedirectToPage indicates an expected call of RedirectToPage.
+func (mr *MockPageRendererMockRecorder) RedirectToPage(c, name interface{}, params ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{c, name}, params...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RedirectToPage", reflect.TypeOf((*MockPageRenderer)(nil).RedirectToPage), varargs...)
+}
+
+// RegisterContextBuilder mocks base method.
+func (m *MockPageRenderer) RegisterContextBuilder(b pages.ContextBuilder) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "RegisterContextBuilder", b)
+}
+
+// RegisterContextBuilder indicates an expected call of RegisterContextBuilder.
+func (mr *MockPageRendererMockRecorder) RegisterContextBuilder(b interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterContextBuilder", reflect.TypeOf((*MockPageRenderer)(nil).RegisterContextBuilder), b)
+}
+
 // RegisterHelpers mocks base method.
 func (m *MockPageRenderer) RegisterHelpers(helpers map[string]interface{}) {
 	m.ctrl.T.Helper()

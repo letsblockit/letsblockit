@@ -4,34 +4,12 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/users/auth"
 )
-
-var (
-	hasAccountCookieName  = "has_account"
-	hasAccountCookieValue = "true"
-)
-
-func (s *Server) loadBannedUsers() error {
-	users, err := s.store.GetBannedUsers(context.Background())
-	if err != nil {
-		return err
-	}
-	s.banned = make(map[string]struct{}, len(users))
-	for _, u := range users {
-		s.banned[u] = struct{}{}
-	}
-	return nil
-}
-
-func (s *Server) isUserBanned(id string) bool {
-	_, found := s.banned[id]
-	return found
-}
 
 func (s *Server) userAccount(c echo.Context) error {
 	hc := s.buildPageContext(c, "My account")
@@ -58,15 +36,6 @@ func (s *Server) userAccount(c echo.Context) error {
 			return err
 		}
 	}
-
-	c.SetCookie(&http.Cookie{
-		Name:     hasAccountCookieName,
-		Value:    hasAccountCookieValue,
-		Path:     "/",
-		Expires:  time.Now().AddDate(10, 0, 0),
-		HttpOnly: true,
-		SameSite: http.SameSiteStrictMode,
-	})
 	return s.pages.Render(c, "user-account", hc)
 }
 
@@ -82,17 +51,17 @@ func (s *Server) rotateListToken(c echo.Context) error {
 		confirmation := formParams.Get("confirm")
 		tokenString := formParams.Get("token")
 		token, err := uuid.Parse(tokenString)
-		u := getUser(c)
-		if !u.IsActive() || err != nil || confirmation != "on" {
+		user := auth.GetUserId(c)
+		if user == "" || err != nil || confirmation != "on" {
 			return errors.New("invalid arguments")
 		}
 		return q.RotateListToken(ctx, db.RotateListTokenParams{
-			UserID: u.Id(),
+			UserID: user,
 			Token:  token,
 		})
 	}); err != nil {
 		return err
 	}
 
-	return s.redirect(c, http.StatusSeeOther, s.echo.Reverse("user-account"))
+	return s.pages.Redirect(c, http.StatusSeeOther, s.echo.Reverse("user-account"))
 }

@@ -9,7 +9,7 @@
             Preview
         </div>
     {{else}}
-        <form method="POST" class="card-header" action="{{href "start-flow" "loginOrRegistration"}}">
+        <form method="POST" class="card-header" action="{{href "user-action" "loginOrRegistration"}}">
             {{{csrf @root}}}
             <button type="button" class="btn btn-sm btn-outline-success me-1" onclick="copyFilterOutput(this);">
                 <i id="output-copy-icon" class="ti ti-clipboard me-1"></i>

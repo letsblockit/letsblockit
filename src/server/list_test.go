@@ -107,7 +107,7 @@ func (s *ServerTestSuite) TestRenderList_BannedUser() {
 func (s *ServerTestSuite) TestExportList_OK() {
 	token, err := uuid.Parse("59dc36b7-aca5-46a1-a742-cf46dd2cac10")
 	s.NoError(err)
-	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+"/export", nil)
+	req := httptest.NewRequest(http.MethodGet, "/export/"+token.String(), nil)
 	req.AddCookie(verifiedCookie)
 
 	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
@@ -158,7 +158,7 @@ func (s *ServerTestSuite) TestExportList_BadUser() {
 		}
 		otherUser = uuid.New().String()
 	}
-	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+"/export", nil)
+	req := httptest.NewRequest(http.MethodGet, "/export/"+token.String(), nil)
 	req.AddCookie(verifiedCookie)
 
 	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{

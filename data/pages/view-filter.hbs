@@ -98,8 +98,8 @@
                         <div role="alert" class="alert alert-secondary has-background-secondary-light mt-3 ms-3 me-3">
                             <span class="align-middle">This filter does not have any parameters.</span>
                             <button type="submit" class="btn btn-link p-0"
-                                    formaction="{{href "start-flow" "loginOrRegistration"}}"
-                                    hx-post="{{href "start-flow" "loginOrRegistration"}}">
+                                    formaction="{{href "user-action" "loginOrRegistration"}}"
+                                    hx-post="{{href "user-action" "loginOrRegistration"}}">
                                 {{#if @root.UserHasAccount}}
                                     Login to save this filter to your list.
                                 {{else}}

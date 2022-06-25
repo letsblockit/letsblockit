@@ -9,10 +9,11 @@ import (
 
 func TestServerDryRun(t *testing.T) {
 	assert.Equal(t, server.ErrDryRunFinished, server.NewServer(&server.Options{
-		AuthMethod:   "kratos",
-		DatabaseUrl:  "postgresql:///letsblockit",
-		StatsdTarget: "localhost:8125",
-		DryRun:       true,
-		HotReload:    true,
+		AuthMethod:    "kratos",
+		AuthKratosUrl: "http://localhost:4000/.ory",
+		DatabaseUrl:   "postgresql:///letsblockit",
+		StatsdTarget:  "localhost:8125",
+		DryRun:        true,
+		HotReload:     true,
 	}).Start())
 }

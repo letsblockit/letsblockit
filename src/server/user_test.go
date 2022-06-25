@@ -12,24 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (s *ServerTestSuite) TestLoadBannedUsers() {
-	assert.Nil(s.T(), s.server.banned)
-	id1, id2, id3 := uuid.New().String(), uuid.New().String(), uuid.New().String()
-	for {
-		if id1 != id2 && id1 != id3 && id2 != id3 {
-			break
-		}
-		id2, id3 = uuid.New().String(), uuid.New().String()
-	}
-	s.expectQ.GetBannedUsers(gomock.Any()).Return([]string{id1, id2, id1}, nil)
-	assert.NoError(s.T(), s.server.loadBannedUsers())
-
-	assert.Len(s.T(), s.server.banned, 2)
-	assert.True(s.T(), s.server.isUserBanned(id1))
-	assert.True(s.T(), s.server.isUserBanned(id2))
-	assert.False(s.T(), s.server.isUserBanned(id3))
-}
-
 func (s *ServerTestSuite) TestUserAccount_Verified() {
 	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
@@ -47,7 +29,7 @@ func (s *ServerTestSuite) TestUserAccount_Verified() {
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 200, rec.Code, rec.Body)
 		assert.Len(t, rec.Result().Cookies(), 2)
-		cookie := rec.Result().Cookies()[1]
+		cookie := rec.Result().Cookies()[0]
 		assert.Equal(t, "has_account", cookie.Name)
 		assert.Equal(t, "true", cookie.Value)
 		assert.Equal(t, "/", cookie.Path)

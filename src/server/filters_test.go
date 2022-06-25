@@ -335,11 +335,8 @@ func (s *ServerTestSuite) TestViewFilter_Disable() {
 		UserID:     s.user,
 		FilterName: "filter2",
 	}).Return(nil)
-
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code)
-		assert.Equal(t, "/filters", rec.Header().Get("Location"))
-	})
+	s.expectP.RedirectToPage(gomock.Any(), "list-filters")
+	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestViewFilter_MissingCSRF() {

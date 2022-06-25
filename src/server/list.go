@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/users/auth"
 	"gopkg.in/yaml.v2"
 )
 
@@ -34,7 +35,7 @@ func (s *Server) renderList(c echo.Context) error {
 			return echo.ErrNotFound
 		} else if e != nil {
 			return e
-		} else if s.isUserBanned(storedList.UserID) {
+		} else if s.bans.IsBanned(storedList.UserID) {
 			return echo.ErrForbidden
 		}
 
@@ -71,7 +72,7 @@ func (s *Server) exportList(c echo.Context) error {
 			return echo.ErrNotFound
 		} else if e != nil {
 			return e
-		} else if getUser(c).Id() != storedList.UserID {
+		} else if auth.GetUserId(c) != storedList.UserID {
 			return echo.ErrForbidden
 		}
 		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)

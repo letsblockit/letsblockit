@@ -1,4 +1,4 @@
-package server
+package auth
 
 import (
 	"encoding/json"
@@ -9,15 +9,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/google/uuid"
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"zgo.at/zcache"
 )
 
 const (
-	userContextKey      = "_user"
-	hasKratosContextKey = "_has_kratos"
 	oryCookieNamePrefix = "ory_session_"
 	oryGetFlowPattern   = "/self-service/%s/flows?id=%s"
 	oryStartFlowPattern = "/self-service/%s/browser"
@@ -27,8 +27,11 @@ const (
 	returnToKey         = "return_to"
 )
 
-var proxyClient = http.Client{
-	Timeout: 30 * time.Second,
+// renderer is currently fulfilled by server.Server, we need to decouple this
+type renderer interface {
+	BuildPageContext(c echo.Context, title string) *pages.Context
+	Redirect(c echo.Context, code int, target string) error
+	Render(c echo.Context, name string, data *pages.Context) error
 }
 
 type formTab struct {
@@ -48,7 +51,7 @@ var (
 		Type:  "recovery",
 	}}
 
-	supportedForms = map[string]struct {
+	SupportedForms = map[string]struct {
 		Title string
 		Tabs  []formTab
 		Intro string
@@ -106,11 +109,36 @@ func (u *oryUser) IsActive() bool {
 	return u.Active && u.Identity.Id != uuid.Nil
 }
 
-// buildOryMiddleware tries to resolve an Ory Cloud session from the cookies.
+type OryBackend struct {
+	client   *retryablehttp.Client
+	rootUrl  string
+	renderer renderer
+	statsd   statsd.ClientInterface
+}
+
+func NewOryBackend(rootUrl string, renderer renderer, statsd statsd.ClientInterface) *OryBackend {
+	client := retryablehttp.NewClient()
+	client.RetryWaitMin = 100 * time.Millisecond
+	client.RetryWaitMax = time.Second
+	client.HTTPClient.Timeout = 10 * time.Second
+	return &OryBackend{
+		client:   client,
+		rootUrl:  rootUrl,
+		renderer: renderer,
+		statsd:   statsd,
+	}
+}
+
+func (o *OryBackend) RegisterRoutes(group *echo.Group) {
+	group.GET("/user/forms/:type", o.renderKratosForm)
+	group.POST("/user/action/:type", o.startKratosFlow).Name = userActionRouteName
+}
+
+// BuildMiddleware tries to resolve an Ory Cloud session from the cookies.
 // If it succeeds, a "user" value is added to the context for use by handlers.
-func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
+func (o *OryBackend) BuildMiddleware() echo.MiddlewareFunc {
 	authCache := zcache.New(15*time.Minute, 10*time.Minute)
-	endpoint := s.options.AuthKratosUrl + oryWhoamiPath
+	endpoint := o.rootUrl + oryWhoamiPath
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -120,18 +148,30 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 			}
 
 			if u, ok := authCache.Get(cookies); ok {
-				c.Set(userContextKey, u)
-				return next(c)
+				if id, ok := u.(string); ok {
+					setUserId(c, id)
+					return next(c)
+				}
 			}
 
 			var user oryUser
-			if err := s.queryKratos(c, "whoami", endpoint, &user); err != nil {
-				s.echo.Logger.Error("auth error: %w", err)
-			} else if s.isUserBanned(user.Id()) {
-				return echo.ErrForbidden
+			if err := o.queryKratos(c, "whoami", endpoint, &user); err != nil {
+				c.Logger().Error("auth error: %w", err)
 			} else if user.IsActive() {
-				authCache.SetDefault(cookies, &user)
-				c.Set(userContextKey, &user)
+				id := user.Id()
+				authCache.SetDefault(cookies, id)
+				setUserId(c, id)
+			}
+
+			if _, err := c.Cookie(hasAccountCookieName); err == http.ErrNoCookie {
+				c.SetCookie(&http.Cookie{
+					Name:     hasAccountCookieName,
+					Value:    hasAccountCookieValue,
+					Path:     "/",
+					Expires:  time.Now().AddDate(10, 0, 0),
+					HttpOnly: true,
+					SameSite: http.SameSiteStrictMode,
+				})
 			}
 
 			return next(c)
@@ -140,9 +180,9 @@ func (s *Server) buildOryMiddleware() echo.MiddlewareFunc {
 }
 
 // getLogoutUrl retrieves the logout url for the current session by calling the proxy
-func (s *Server) getLogoutUrl(c echo.Context) (string, error) {
+func (o *OryBackend) getLogoutUrl(c echo.Context) (string, error) {
 	var info oryLogoutInfo
-	if err := s.queryKratos(c, "logout", s.options.AuthKratosUrl+oryLogoutInfoPath, &info); err != nil {
+	if err := o.queryKratos(c, "logout", o.rootUrl+oryLogoutInfoPath, &info); err != nil {
 		return "", err
 	}
 	if info.URL == "" {
@@ -153,21 +193,21 @@ func (s *Server) getLogoutUrl(c echo.Context) (string, error) {
 
 // renderKratosForm retrieves the flow definition from the proxy and renders the form.
 // If any error occurs, the user is redirected to the Cloud Managed UI as a fallback.
-func (s *Server) renderKratosForm(c echo.Context) error {
+func (o *OryBackend) renderKratosForm(c echo.Context) error {
 	formType := c.Param("type")
 	flowID := c.QueryParams().Get("flow")
 	if formType == "" || flowID == "" {
 		return fmt.Errorf("missing args, got type '%s', flow '%s'", formType, flowID)
 	}
 	hc, err := func() (*pages.Context, error) {
-		formSettings, ok := supportedForms[formType]
+		formSettings, ok := SupportedForms[formType]
 		if !ok {
 			return nil, fmt.Errorf("unsupported form type %s", formType)
 		}
 
 		body := make(map[string]interface{})
-		endpoint := s.options.AuthKratosUrl + fmt.Sprintf(oryGetFlowPattern, formType, flowID)
-		if err := s.queryKratos(c, "flow", endpoint, &body); err != nil {
+		endpoint := o.rootUrl + fmt.Sprintf(oryGetFlowPattern, formType, flowID)
+		if err := o.queryKratos(c, "flow", endpoint, &body); err != nil {
 			return nil, err
 		}
 		ui, ok := body["ui"]
@@ -175,7 +215,7 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 			return nil, errors.New("no UI field in payload")
 		}
 
-		hc := s.buildPageContext(c, formSettings.Title)
+		hc := o.renderer.BuildPageContext(c, formSettings.Title)
 		hc.NoBoost = true
 		hc.Add("type", formType)
 		hc.Add("ui", ui)
@@ -187,24 +227,24 @@ func (s *Server) renderKratosForm(c echo.Context) error {
 	}()
 	if err != nil {
 		c.Logger().Warnf("falling-back to managed UI: %s", err.Error())
-		return c.Redirect(http.StatusFound, fmt.Sprintf("/.ory/ui/%s?flow=%s", formType, flowID))
+		return o.renderer.Redirect(c, http.StatusFound, fmt.Sprintf("%s/ui/%s?flow=%s", o.rootUrl, formType, flowID))
 	}
-	return s.pages.Render(c, "kratos-form", hc)
+	return o.renderer.Render(c, "kratos-form", hc)
 }
 
 // startKratosFlow redirects the requested user to the Kratos flow. It is used via POST instead
 // of direct GET links to avoid search engines and preloading logics starting Kratos flows.
-func (s *Server) startKratosFlow(c echo.Context) error {
+func (o *OryBackend) startKratosFlow(c echo.Context) error {
 	target := c.Param("type")
 	var allowReturnTo bool
 
 	switch target {
 	case "logout":
-		target, err := s.getLogoutUrl(c)
+		target, err := o.getLogoutUrl(c)
 		if err != nil {
 			return nil
 		}
-		return s.redirect(c, http.StatusSeeOther, target)
+		return o.renderer.Redirect(c, http.StatusSeeOther, target)
 	case "loginOrRegistration":
 		allowReturnTo = true
 		if _, err := c.Cookie(hasAccountCookieName); err == nil {
@@ -216,27 +256,27 @@ func (s *Server) startKratosFlow(c echo.Context) error {
 		allowReturnTo = true
 	}
 
-	redirect := s.options.AuthKratosUrl + fmt.Sprintf(oryStartFlowPattern, target)
+	redirect := o.rootUrl + fmt.Sprintf(oryStartFlowPattern, target)
 	if allowReturnTo {
 		if returnTo, inDomain := computeReturnTo(c); inDomain {
 			redirect += fmt.Sprintf(oryReturnToPattern, returnTo)
 		}
 	}
-	return s.redirect(c, http.StatusSeeOther, redirect)
+	return o.renderer.Redirect(c, http.StatusSeeOther, redirect)
 }
 
-func (s *Server) queryKratos(c echo.Context, typeTag, endpoint string, body interface{}) error {
+func (o *OryBackend) queryKratos(c echo.Context, typeTag, endpoint string, body interface{}) error {
 	start := time.Now()
-	c.Set(hasKratosContextKey, true)
+	c.Set(hasAuthContextKey, true)
 
-	req, err := http.NewRequest("GET", endpoint, nil)
+	req, err := retryablehttp.NewRequest("GET", endpoint, nil)
 	if err != nil {
 		return fmt.Errorf("failed to instantiate request: %w", err)
 	}
 	req.Header.Set(echo.HeaderCookie, c.Request().Header.Get(echo.HeaderCookie))
 	req.Header.Set("Accept", "application/json")
-	res, err := proxyClient.Do(req)
-	_ = s.statsd.Distribution("letsblockit.ory_request_duration", float64(time.Since(start).Nanoseconds()),
+	res, err := o.client.Do(req)
+	_ = o.statsd.Distribution("letsblockit.ory_request_duration", float64(time.Since(start).Nanoseconds()),
 		[]string{"type:" + typeTag, fmt.Sprintf("ok:%t", err == nil && res.StatusCode == http.StatusOK)}, 1)
 
 	if err != nil {
@@ -246,13 +286,6 @@ func (s *Server) queryKratos(c echo.Context, typeTag, endpoint string, body inte
 
 	if err := json.NewDecoder(res.Body).Decode(body); err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
-	}
-	return nil
-}
-
-func getUser(c echo.Context) *oryUser {
-	if u, ok := c.Get(userContextKey).(*oryUser); ok {
-		return u
 	}
 	return nil
 }

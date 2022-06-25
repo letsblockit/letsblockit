@@ -16,6 +16,8 @@ import (
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/letsblockit/letsblockit/src/server/mocks"
+	"github.com/letsblockit/letsblockit/src/users"
+	"github.com/letsblockit/letsblockit/src/users/auth"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -103,9 +105,9 @@ func (s *ServerTestSuite) SetupTest() {
 		var err error
 		fmt.Println(r.URL.Path)
 		switch r.URL.Path {
-		case oryLogoutInfoPath:
+		case "/self-service/logout/browser":
 			_, err = fmt.Fprint(w, `{"logout_url":"targetURL"}`)
-		case oryWhoamiPath:
+		case "/sessions/whoami":
 			cookie, _ := r.Cookie("ory_session_verified")
 			_, err = fmt.Fprintf(w, whoAmiPattern, s.user, cookie.Value)
 		case "/self-service/login/flows":
@@ -125,6 +127,7 @@ func (s *ServerTestSuite) SetupTest() {
 	s.csrf = random.String(32)
 	s.server = &Server{
 		assets:  nil,
+		auth:    auth.NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{}),
 		echo:    echo.New(),
 		filters: fm,
 		now:     func() time.Time { return fixedNow },
@@ -139,6 +142,10 @@ func (s *ServerTestSuite) SetupTest() {
 		store:       mocks.NewMockStore(qm),
 	}
 	s.server.setupRouter()
+
+	// TODO: Used by ory_test.go, remove after moving these tests to their own suite
+	s.expectP.BuildPageContext(gomock.Any(), gomock.Any()).DoAndReturn(s.server.buildPageContext).
+		MinTimes(0).MaxTimes(1)
 
 	// Preferences and releases are called by buildPageContext for logged-in users.
 	// Add catch-all expectations to avoid noise in the tests.
@@ -164,11 +171,13 @@ func (s *ServerTestSuite) SetupTest() {
 	}).MinTimes(0).MaxTimes(1)
 }
 
+func (s *ServerTestSuite) TearDownTest() {
+	s.kratosServer.Close()
+}
+
 func (s *ServerTestSuite) setUserBanned() {
-	if s.server.banned == nil {
-		s.server.banned = make(map[string]struct{})
-	}
-	s.server.banned[s.user] = struct{}{}
+	s.expectQ.GetBannedUsers(gomock.Any()).Return([]string{s.user}, nil)
+	s.server.bans, _ = users.LoadUserBans(s.server.store)
 }
 
 func (s *ServerTestSuite) expectRender(page string, data pages.ContextData) *gomock.Call {
@@ -201,20 +210,6 @@ func (s *ServerTestSuite) expectRenderWithContext(page string, ctx *pages.Contex
 
 func assertOk(t *testing.T, rec *httptest.ResponseRecorder) {
 	assert.Equal(t, http.StatusOK, rec.Code, rec.Body)
-}
-
-func assertRedirect(target string) func(t *testing.T, rec *httptest.ResponseRecorder) {
-	return func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 302, rec.Code, rec.Body)
-		assert.Equal(t, target, rec.Header().Get("Location"))
-	}
-}
-
-func assertSeeOther(target string) func(t *testing.T, rec *httptest.ResponseRecorder) {
-	return func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 303, rec.Code, rec.Body)
-		assert.Equal(t, target, rec.Header().Get("Location"))
-	}
 }
 
 func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, *httptest.ResponseRecorder)) {

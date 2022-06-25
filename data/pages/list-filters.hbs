@@ -47,7 +47,7 @@
             </div>
         {{else}}
             <div role="alert" class="alert alert-secondary has-background-secondary-light">
-                <form method="POST" class="form-inline" action="{{href "start-flow" "loginOrRegistration"}}">
+                <form method="POST" class="form-inline" action="{{href "user-action" "loginOrRegistration"}}">
                     {{{csrf @root}}}
                     <span class="align-middle">This website is a collaborative repository of uBlock content filters
                         you can customize and sync across your browsers.
