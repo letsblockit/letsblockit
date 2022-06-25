@@ -10,6 +10,7 @@ template: |
   {{#each keywords}}
   www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="{{ . }}" i])
   www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="{{ . }}" i])
+  www.youtube.com##ytd-browse ytd-item-section-renderer:has(#video-title-link[title~="{{ . }}" i])
   www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="{{ . }}" i])
   www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="{{ . }}" i])
   {{/each}}
@@ -21,10 +22,12 @@ tests:
     output: |
       www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="lofi" i])
       www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="lofi" i])
+      www.youtube.com##ytd-browse ytd-item-section-renderer:has(#video-title-link[title~="lofi" i])
       www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="lofi" i])
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="lofi" i])
       www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title~="#shorts" i])
       www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title~="#shorts" i])
+      www.youtube.com##ytd-browse ytd-item-section-renderer:has(#video-title-link[title~="#shorts" i])
       www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title~="#shorts" i])
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title~="#shorts" i])
 ---
