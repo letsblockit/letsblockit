@@ -3,7 +3,6 @@ tags:
   - youtube
 template: |
   www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[href*="&start_radio=1"])
-  www.youtube.com##ytd-browse ytd-item-section-renderer:has(#video-title-link[href*="&start_radio=1"])
   www.youtube.com##ytd-search ytd-radio-renderer
   www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
   www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
@@ -11,7 +10,6 @@ tests:
   - params: {}
     output: |
       www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[href*="&start_radio=1"])
-      www.youtube.com##ytd-browse ytd-item-section-renderer:has(#video-title-link[href*="&start_radio=1"])
       www.youtube.com##ytd-search ytd-radio-renderer
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
       www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
