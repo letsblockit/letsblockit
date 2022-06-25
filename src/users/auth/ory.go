@@ -27,7 +27,7 @@ const (
 	returnToKey         = "return_to"
 )
 
-// renderer is currently fulfilled by server.Server, we need to decouple this
+// renderer is fulfilled by pages.Pages
 type renderer interface {
 	BuildPageContext(c echo.Context, title string) *pages.Context
 	Redirect(c echo.Context, code int, target string) error
@@ -109,6 +109,8 @@ func (u *oryUser) IsActive() bool {
 	return u.Active && u.Identity.Id != uuid.Nil
 }
 
+// OryBackend is used for the Kratos auth method. It is used by the official instance with Ory Cloud.
+// It should work with a self-hosted Kratos, but this has not been tested.
 type OryBackend struct {
 	client   *retryablehttp.Client
 	rootUrl  string
