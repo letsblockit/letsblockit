@@ -6,17 +6,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// External is used to run the server being an authenticating proxy.
+// Proxy is used to run the server being an authenticating proxy.
 // It expects an HTTP header to be set by the proxy, and uses its value as the unique user ID.
-type External struct {
+type Proxy struct {
 	headerName string
 }
 
-func NewExternal(headerName string) *External {
-	return &External{headerName: headerName}
+func NewProxy(headerName string) *Proxy {
+	return &Proxy{headerName: headerName}
 }
 
-func (e *External) BuildMiddleware() echo.MiddlewareFunc {
+func (e *Proxy) BuildMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			if id := c.Request().Header.Get(e.headerName); id != "" {
@@ -28,4 +28,4 @@ func (e *External) BuildMiddleware() echo.MiddlewareFunc {
 	}
 }
 
-func (e *External) RegisterRoutes(_ *echo.Group) {}
+func (e *Proxy) RegisterRoutes(_ *echo.Group) {}
