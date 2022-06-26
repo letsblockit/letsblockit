@@ -36,18 +36,18 @@ const (
 )
 
 type Options struct {
-	Address             string `default:"127.0.0.1:8765" help:"address to listen to"`
-	UseSystemdSocket    bool   `help:"use a systemd socket instead of opening a port"`
-	DatabaseUrl         string `default:"postgresql:///letsblockit" help:"psql database to connect to"`
-	LogLevel            string `default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
-	AuthMethod          string `required:"" enum:"kratos,proxy" help:"authentication method to use"`
-	AuthKratosUrl       string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
-	AuthProxyHeaderName string `placeholder:"X-Auth-Request-User" help:"name for the cookie set by the reverse proxy"`
-	ListDownloadDomain  string `help:"domain to use for list downloads, leave empty to use the main domain"`
-	StatsdTarget        string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
-	CacheDir            string `placeholder:"/tmp" help:"folder to cache external resources in during local development"`
-	OfficialInstance    bool   `help:"turn on behaviours specific to the official letsblock.it instances"`
-	HotReload           bool   `help:"reload frontend when the backend restarts"`
+	Address             string `group:"Networking" default:"127.0.0.1:8765" help:"address to listen to"`
+	UseSystemdSocket    bool   `group:"Networking" help:"use a systemd socket instead of opening a port"`
+	DatabaseUrl         string `group:"Database" default:"postgresql:///letsblockit" help:"psql database to connect to"`
+	AuthMethod          string `group:"Authentication" required:"" enum:"kratos,proxy" help:"authentication method to use"`
+	AuthKratosUrl       string `group:"Authentication" default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
+	AuthProxyHeaderName string `group:"Authentication" placeholder:"X-Auth-Request-User" help:"name for the cookie set by the reverse proxy"`
+	LogLevel            string `group:"Development" default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
+	CacheDir            string `group:"Development" placeholder:"/tmp" help:"folder to cache external resources in during local development"`
+	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
+	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
+	StatsdTarget        string `group:"Miscellaneous" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
+	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
 	DryRun              bool   `hidden:""`
 }
 

@@ -24,7 +24,7 @@ type migrateLogger struct {
 }
 
 func (m migrateLogger) Printf(format string, v ...interface{}) {
-	format = fmt.Sprintf("db[%s]: %s", m.db, format)
+	format = fmt.Sprintf("migrate[%s]: %s", m.db, format)
 	fmt.Printf(format, v...)
 }
 
