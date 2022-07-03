@@ -94,19 +94,6 @@
                             <i class="ti ti-circle-plus text-white me-1"></i>
                             Add filter
                         </button>
-                    {{else}}
-                        <div role="alert" class="alert alert-secondary has-background-secondary-light mt-3 ms-3 me-3">
-                            <span class="align-middle">This filter does not have any parameters.</span>
-                            <button type="submit" class="btn btn-link p-0"
-                                    formaction="{{href "user-action" "loginOrRegistration"}}"
-                                    hx-post="{{href "user-action" "loginOrRegistration"}}">
-                                {{#if @root.UserHasAccount}}
-                                    Login to save this filter to your list.
-                                {{else}}
-                                    Create an account and start building your list.
-                                {{/if}}
-                            </button>
-                        </div>
                     {{/if}}
                 </form>
             </div>
