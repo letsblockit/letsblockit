@@ -1,0 +1,58 @@
+title: Hide Youtube videos you already watched
+tags:
+  - youtube
+params:
+  - name: only-fully
+    description: Only hide fully-watched videos (keep partially-watched videos)
+    type: checkbox
+    default: false
+  - name: homepage
+    description: Hide watched videos on the homepage
+    type: checkbox
+    default: true
+  - name: subscriptions
+    description: Hide watched videos on the subscriptions and channel pages
+    type: checkbox
+    default: true
+  - name: recommendations
+    description: Hide watched videos in recommendations
+    type: checkbox
+    default: true
+  - name: search
+    description: Hide watched videos in the search results
+    type: checkbox
+    default: false
+template: |
+  {{#if homepage}}
+  www.youtube.com##ytd-browse ytd-rich-item-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  {{/if}}
+  {{#if subscriptions}}
+  www.youtube.com##ytd-browse ytd-grid-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-item-section-renderer)
+  {{/if}}
+  {{#if recommendations}}
+  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  {{/if}}
+  {{#if search}}
+  www.youtube.com##ytd-search ytd-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  {{/if}}
+
+tests:
+  - params:
+      homepage: true
+      subscriptions: true
+    output: |
+      www.youtube.com##ytd-browse ytd-rich-item-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer)
+      www.youtube.com##ytd-browse ytd-grid-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer)
+      www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail-overlay-resume-playback-renderer:upward(ytd-item-section-renderer)
+  - params:
+      only-fully: true
+      recommendations: true
+    output: |
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer #progress[style="width: 100%;"])
+---
+This filter hides videos you already watched from the homepage, to allow to focus on new content only.
+
+You can select below which pages to filter videos on, and whether you'd want to keep partially-viewed videos, or hide
+them as well (the default behaviour).
