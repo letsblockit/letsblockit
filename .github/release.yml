@@ -1,0 +1,19 @@
+changelog:
+  exclude:
+    labels:
+      - dependencies
+    authors:
+      - app/dependabot
+  categories:
+    - title: New filter templates
+      labels:
+        - new-filter
+    - title: Updated filter templates
+      labels:
+        - filter-data
+    - title: Self hosting
+      labels:
+        - self-hosting
+    - title: New features
+      labels:
+        - "*"
