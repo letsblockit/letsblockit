@@ -47,7 +47,7 @@ func load(input fs.FS) (*Repository, error) {
 		}
 		partial, e := mario.New().Parse(f.Template)
 		if e != nil {
-			return fmt.Errorf("failed to parse filter template: %w", err)
+			return fmt.Errorf("failed to parse filter template: %w", e)
 		}
 		_ = main.WithPartial(name, partial)
 		repo.filterMap[name] = f

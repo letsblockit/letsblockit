@@ -1,0 +1,81 @@
+title: Hide reposts on Soundcloud
+tags:
+  - soundcloud
+params:
+  - name: stream-page
+    description: Hide reposts in the Stream page
+    type: checkbox
+    default: true
+  - name: user-page
+    description: Hide reposts in the user pages
+    type: checkbox
+    default: true
+  - name: only-users
+    description: Only hide reposts from the following users
+    type: checkbox
+    default: false
+  - name: users-list
+    description: Users
+    type: list
+    onlyif: only-users
+    default: []
+
+template: |
+  {{#if stream-page}}
+  {{#if only-users}}
+  {{#each users-list}}
+  soundcloud.com##.stream .stream__list a.soundContext__usernameLink[href="/{{.}}"] + span.sc-ministats-reposts:upward(li.soundList__item)
+  {{/each}}
+  {{else}}
+  soundcloud.com##.stream .stream__list span.sc-ministats-reposts:upward(li.soundList__item)
+  {{/if}}
+  {{/if}}
+  {{#if user-page}}
+  {{#if only-users}}
+  {{#each users-list}}
+  soundcloud.com##:matches-path(/{{.}}) .userStream__list span.sc-ministats-reposts:upward(li.soundList__item)
+  {{/each}}
+  {{else}}
+  soundcloud.com##.userStream .userStream__list span.sc-ministats-reposts:upward(li.soundList__item)
+  {{/if}}
+  {{/if}}
+tests:
+  - params:
+      stream-page: true
+      only-users: false
+      users-list: [ "ignored" ]
+    output: |
+      soundcloud.com##.stream .stream__list span.sc-ministats-reposts:upward(li.soundList__item)
+  - params:
+      user-page: true
+      only-users: false
+      users-list: [ "ignored" ]
+    output: |
+      soundcloud.com##.userStream .userStream__list span.sc-ministats-reposts:upward(li.soundList__item)
+  - params:
+      stream-page: true
+      user-page: true
+      only-users: true
+    output: ""
+  - params:
+      stream-page: true
+      user-page: true
+      only-users: true
+      users-list:
+        - userA
+        - userB
+    output: |
+      soundcloud.com##.stream .stream__list a.soundContext__usernameLink[href="/userA"] + span.sc-ministats-reposts:upward(li.soundList__item)
+      soundcloud.com##.stream .stream__list a.soundContext__usernameLink[href="/userB"] + span.sc-ministats-reposts:upward(li.soundList__item)
+      soundcloud.com##:matches-path(/userA) .userStream__list span.sc-ministats-reposts:upward(li.soundList__item)
+      soundcloud.com##:matches-path(/userB) .userStream__list span.sc-ministats-reposts:upward(li.soundList__item)
+  - output: ""
+---
+
+Soundcloud allows artists to post original music, but also to share ("repost") other user's tracks. If you are only
+interested in original music by the artists you follow, this filter template is for you.
+
+It will hide reposts in the stream page and the user page. By default, reposts from all users are hidden, but you
+can chose to only hide them from a specific list of users. To specify users, you need to give the last part of the
+address of their profile page. For example Levi Patel's page is [https://soundcloud.com/levipatel](https://soundcloud.com/levipatel),
+so you should input `levipatel`.
