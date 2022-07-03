@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	githubUserRegex = regexp.MustCompile(`(\W)@(\w+)(\W)`)
+	githubUserRegex = regexp.MustCompile(`(\W)@([0-9A-Za-z-]+)(\W)`)
 	githubUserLink  = `$1[**@$2**](https://github.com/$2)$3`
 )
 
