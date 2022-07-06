@@ -15,12 +15,14 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/letsblockit/letsblockit/data"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/letsblockit/letsblockit/src/users"
 	"github.com/letsblockit/letsblockit/src/users/auth"
+	"github.com/vearutop/statigz"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -69,7 +71,6 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
-	assets      *wrappedAssets
 	auth        auth.Backend
 	bans        *users.BanManager
 	echo        *echo.Echo
@@ -93,7 +94,6 @@ func NewServer(options *Options) *Server {
 
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
-		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
 		func(errs []error) {
@@ -138,7 +138,7 @@ func (s *Server) Start() error {
 		return fmt.Errorf("unsupported auth method %s", s.options.AuthMethod)
 	}
 
-	s.pages.RegisterHelpers(buildHelpers(s.echo, s.assets.hash))
+	s.pages.RegisterHelpers(buildHelpers(s.echo))
 	s.pages.RegisterContextBuilder(s.buildPageContext)
 	s.setupRouter()
 	if s.options.DryRun {
@@ -192,7 +192,7 @@ func (s *Server) setupRouter() {
 	}))
 
 	anon := s.echo.Group("")
-	anon.GET("/assets/*", s.assets.serve)
+	anon.GET("/assets/*", echo.WrapHandler(statigz.FileServer(data.Assets)))
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)

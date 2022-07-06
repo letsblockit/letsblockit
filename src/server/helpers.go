@@ -13,15 +13,10 @@ type echoInterface interface {
 	Reverse(name string, params ...interface{}) string
 }
 
-func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
-	assetHashQuery := "?h=" + assetHash
-
+func buildHelpers(e echoInterface) map[string]interface{} {
 	return map[string]interface{}{
 		"eq": func(a string, b string) bool {
 			return strings.Compare(a, b) == 0
-		},
-		"assetHash": func() string {
-			return assetHashQuery
 		},
 		"tag": func(name string) string {
 			return fmt.Sprintf(

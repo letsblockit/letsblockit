@@ -126,7 +126,6 @@ func (s *ServerTestSuite) SetupTest() {
 	s.user = uuid.New().String()
 	s.csrf = random.String(32)
 	s.server = &Server{
-		assets:  nil,
 		auth:    auth.NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{}),
 		echo:    echo.New(),
 		filters: fm,
