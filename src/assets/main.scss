@@ -1,8 +1,5 @@
 @charset "utf-8";
 
-$ti-font-path: 'node_modules/@tabler/icons/iconfont/fonts/';
-@import 'node_modules/@tabler/icons/iconfont/tabler-icons';
-
 $primary: #b83e51;
 $secondary: #DC926E;
 $success: #81a65e;
@@ -16,6 +13,19 @@ $navbar-nav-link-padding-x: 1rem;
 $headings-margin-bottom: 1rem;
 
 @import "node_modules/bootstrap/scss/bootstrap";
+
+svg.icon {
+  width: 1.25em;
+  height: 1.25em;
+  stroke-width: 1.5;
+  display: inline-block;
+  vertical-align: sub;
+}
+
+svg.button-icon {
+  margin-left: -1 * map-get($spacers, 1);
+  margin-right: map-get($spacers, 1);
+}
 
 main li:not(.nav-item) {
    margin-bottom: 0.25rem;

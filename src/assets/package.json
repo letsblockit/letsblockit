@@ -4,10 +4,17 @@
     "default": {
       "source": [
         "main.js",
-        "main.scss"
+        "main.scss",
+        "node_modules/@tabler/icons/tabler-sprite-nostroke.svg"
       ],
       "context": "browser",
       "distDir": "../../data/assets/dist/"
+    }
+  },
+  "parcel-namer-rewrite": {
+    "chain": "@parcel/namer-default",
+    "rules": {
+      ".*/(.*).svg": "$1.svg"
     }
   },
   "scripts": {
@@ -17,11 +24,13 @@
     "watch": "parcel watch"
   },
   "devDependencies": {
+    "@parcel/compressor-gzip": "^2.6.2",
     "@parcel/transformer-sass": "^2.6.2",
     "@tabler/icons": "^1.72.0",
     "bootstrap": "^5.1.3",
     "htmx.org": "^1.7.0",
     "parcel": "^2.6.2",
+    "parcel-namer-rewrite": "^2.0.0-rc.2",
     "patch-package": "^6.4.7",
     "popper.js": "^1.16.1",
     "postcss": "^8.4.14"

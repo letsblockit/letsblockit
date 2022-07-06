@@ -1,0 +1,7 @@
+{
+  "extends": "@parcel/config-default",
+  "namers": [ "parcel-namer-rewrite" ],
+  "compressors": {
+    "*": [ "@parcel/compressor-gzip" ]
+  }
+}
