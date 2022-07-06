@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/pages"
-	"zgo.at/zcache"
+	"zgo.at/zcache/v2"
 )
 
 const (
@@ -139,7 +139,7 @@ func (o *OryBackend) RegisterRoutes(group *echo.Group) {
 // BuildMiddleware tries to resolve an Ory Cloud session from the cookies.
 // If it succeeds, a "user" value is added to the context for use by handlers.
 func (o *OryBackend) BuildMiddleware() echo.MiddlewareFunc {
-	authCache := zcache.New(15*time.Minute, 10*time.Minute)
+	authCache := zcache.New[string, string](15*time.Minute, 10*time.Minute)
 	endpoint := o.rootUrl + oryWhoamiPath
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -150,10 +150,8 @@ func (o *OryBackend) BuildMiddleware() echo.MiddlewareFunc {
 			}
 
 			if u, ok := authCache.Get(cookies); ok {
-				if id, ok := u.(string); ok {
-					setUserId(c, id)
-					return next(c)
-				}
+				setUserId(c, u)
+				return next(c)
 			}
 
 			var user oryUser
@@ -161,7 +159,7 @@ func (o *OryBackend) BuildMiddleware() echo.MiddlewareFunc {
 				c.Logger().Error("auth error: %w", err)
 			} else if user.IsActive() {
 				id := user.Id()
-				authCache.SetDefault(cookies, id)
+				authCache.Set(cookies, id)
 				setUserId(c, id)
 			}
 

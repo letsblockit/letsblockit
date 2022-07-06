@@ -1,6 +1,6 @@
 module github.com/letsblockit/letsblockit
 
-go 1.17
+go 1.18
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.1.1
@@ -24,7 +24,7 @@ require (
 	golang.org/x/tools v0.1.11
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	zgo.at/zcache v1.2.0
+	zgo.at/zcache/v2 v2.1.0
 )
 
 require (
