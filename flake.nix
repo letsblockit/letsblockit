@@ -10,7 +10,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        pinnedGo = pkgs.go_1_17;
+        pinnedGo = pkgs.go_1_18;
 
         # Scripts to wrap, with their dependencies, available via `nix run .#script-name`
         scripts = with pkgs; {
