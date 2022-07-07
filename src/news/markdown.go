@@ -19,6 +19,7 @@ type releaseNoteRenderer struct {
 }
 
 func (r *releaseNoteRenderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
+	//nolint:exhaustive
 	switch node.Type {
 	case blackfriday.HorizontalRule:
 		if r.officialInstance {

@@ -38,35 +38,36 @@
                     <div class="d-flex align-items-center">
                         {{#if @root.UserLoggedIn}}
                             <input type="hidden" name="__logged_in" value="true">
-                            <button type="submit" name="__render" class="btn btn-secondary me-2">
-                                <i class="ti ti-eye me-2"></i>
+                            <noscript><button type="submit" name="__render" class="btn btn-secondary me-2">
                                 Preview
-                            </button>
+                            </button></noscript>
                             <button type="submit" name="__save" class="ms-2 me-2 btn btn-primary"
                                     hx-vals='{"__save": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
                                 {{#if has_instance}}
-                                    <i class="ti ti-edit text-white me-1"></i>
+                                    {{>icon name="edit" class="button-icon"}}
                                     Update filter
                                 {{else}}
-                                    <i class="ti ti-circle-plus text-white me-1"></i>
+                                    {{>icon name="plus" stroke=2.5 class="button-icon"}}
                                     Add filter
                                 {{/if}}
                             </button>
                         {{else}}
-                            <button type="submit" name="__render" class="btn btn-primary">Render</button>
+                            <noscript>
+                                <button type="submit" name="__render" class="btn btn-primary">Render</button>
+                            </noscript>
                         {{/if}}
                         <div class="ms-2 htmx-indicator spinner-border text-secondary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         {{#if has_instance}}
-                            <button type="submit" name="__disable" class="btn btn-dark ms-auto"
+                            <button type="submit" name="__disable" class="btn btn-outline-dark ms-auto"
                                     hx-confirm="Remove filter and delete its configuration?"
                                     hx-vals='{"__disable": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
-                                <i class="ti ti-trash text-white me-1"></i>
+                                {{>icon name="trash" class="button-icon"}}
                                 Remove filter
                             </button>
                         {{/if}}
@@ -81,17 +82,17 @@
                     {{{csrf @root}}}
                     {{#if has_instance}}
                         <button class="btn btn-primary me-2" disabled>Filter already in your list.</button>
-                        <button type="submit" name="__disable" class="ms-2 btn btn-dark ms-auto"
+                        <button type="submit" name="__disable" class="ms-2 btn btn-outline-dark ms-auto"
                                 hx-confirm="Remove filter and delete its configuration?"
                                 hx-vals='{"__disable": ""}'
                                 hx-post="{{href "view-filter" filter.name}}"
                                 hx-select="#main" hx-target="#main" hx-swap="outerHTML">
-                            <i class="ti ti-trash text-white me-1"></i>
+                            {{>icon name="trash" class="button-icon"}}
                             Remove filter
                         </button>
                     {{else if @root.UserLoggedIn}}
                         <button type="submit" name="__save" class="btn btn-primary">
-                            <i class="ti ti-circle-plus text-white me-1"></i>
+                            {{>icon name="plus" stroke=2.5 class="button-icon"}}
                             Add filter
                         </button>
                     {{/if}}

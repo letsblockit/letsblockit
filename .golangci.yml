@@ -1,8 +1,16 @@
 linters:
   enable:
+    - asciicheck
+    - bidichk
+    - durationcheck
+    - exhaustive
+    - gochecknoinits
+    - gocritic
     - goimports
+    - makezero
     - misspell
+    - nilnil
     - nolintlint
-    - unconvert
-    - predeclared
     - prealloc
+    - predeclared
+    - unconvert

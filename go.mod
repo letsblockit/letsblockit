@@ -1,10 +1,9 @@
 module github.com/letsblockit/letsblockit
 
-go 1.17
+go 1.18
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.1.1
-	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49
 	github.com/alecthomas/kong v0.6.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.11.0
@@ -21,10 +20,11 @@ require (
 	github.com/labstack/gommon v0.3.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.8.0
+	github.com/vearutop/statigz v1.1.8
 	golang.org/x/tools v0.1.11
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	zgo.at/zcache v1.2.0
+	zgo.at/zcache/v2 v2.1.0
 )
 
 require (
@@ -51,8 +51,8 @@ require (
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
-	golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e // indirect
-	golang.org/x/sys v0.0.0-20220627191245-f75cf1eec38b // indirect
+	golang.org/x/net v0.0.0-20220706163947-c90051bbdb60 // indirect
+	golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
 )

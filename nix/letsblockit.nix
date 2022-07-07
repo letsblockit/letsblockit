@@ -1,9 +1,9 @@
-{ buildGoModule, go_1_17, cmd ? "server" }:
-buildGoModule.override { go = go_1_17; } {
+{ buildGoModule, go_1_18, cmd ? "server" }:
+buildGoModule.override { go = go_1_18; } {
   doCheck = false;
   pname = "letsblockit";
   src = ./..;
   subPackages = "cmd/" + cmd;
-  vendorSha256 = "sha256-CFSMxaohP6H3uHQZndRmQKld3FQJHwvb5Ief7OXa4aU=";
+  vendorSha256 = "sha256-XTgdqcRlvS0yxyKTHR/reAVsLD/rtNe3wBpi33bhQI8=";
   version = "1.0";
 }

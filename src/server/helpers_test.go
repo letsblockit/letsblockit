@@ -22,17 +22,10 @@ func (m *mockedEcho) Reverse(name string, params ...interface{}) string {
 
 func TestHelpers(t *testing.T) {
 	tests := map[string]struct {
-		input     string
-		ctx       map[string]interface{}
-		assetHash string
-		expected  string
+		input    string
+		ctx      map[string]interface{}
+		expected string
 	}{
-		"assert_hash": {
-			input:     `.css{{assetHash}}`,
-			ctx:       nil,
-			assetHash: "1234",
-			expected:  ".css?h=1234",
-		},
 		"href_noarg": {
 			input:    `{{href "name" ""}}`,
 			expected: "//name",
@@ -69,7 +62,7 @@ func TestHelpers(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			helpers := buildHelpers(&mockedEcho{}, tc.assetHash)
+			helpers := buildHelpers(&mockedEcho{})
 			tpl, err := mario.New().Parse(tc.input)
 			assert.NoError(t, err)
 			for n, f := range helpers {

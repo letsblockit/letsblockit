@@ -31,11 +31,12 @@ func (s *Server) renderList(c echo.Context) error {
 	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		storedList, e := q.GetListForToken(ctx, token)
-		if e == db.NotFound {
+		switch {
+		case e == db.NotFound:
 			return echo.ErrNotFound
-		} else if e != nil {
+		case e != nil:
 			return e
-		} else if s.bans.IsBanned(storedList.UserID) {
+		case s.bans.IsBanned(storedList.UserID):
 			return echo.ErrForbidden
 		}
 
@@ -68,11 +69,12 @@ func (s *Server) exportList(c echo.Context) error {
 	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		storedList, e := q.GetListForToken(ctx, token)
-		if e == db.NotFound {
+		switch {
+		case e == db.NotFound:
 			return echo.ErrNotFound
-		} else if e != nil {
+		case e != nil:
 			return e
-		} else if auth.GetUserId(c) != storedList.UserID {
+		case auth.GetUserId(c) != storedList.UserID:
 			return echo.ErrForbidden
 		}
 		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
