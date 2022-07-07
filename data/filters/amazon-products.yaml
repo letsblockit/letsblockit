@@ -21,7 +21,7 @@ tags:
 template: |
   {{#each rules}}
   amazon.*###search h2 span:has-text({{{this}}}):upward(div.s-result-item)
-  amazon.*##div.deals-react-app div[class^=DealContent]:has-text({{{this}}}):upward(div[class^=DealGridItem-module__dealItem_])
+  amazon.*##div.deals-react-app div[class^=DealContent]:has-text({{{this}}}):upward(div[class^=DealGridItem-module__dealItemDisplayGrid])
   {{/each}}
 tests:
   - params:
@@ -30,9 +30,9 @@ tests:
         - "DOGS"
     output: |
       amazon.*###search h2 span:has-text(/cat/i):upward(div.s-result-item)
-      amazon.*##div.deals-react-app div[class^=DealContent]:has-text(/cat/i):upward(div[class^=DealGridItem-module__dealItem_])
+      amazon.*##div.deals-react-app div[class^=DealContent]:has-text(/cat/i):upward(div[class^=DealGridItem-module__dealItemDisplayGrid])
       amazon.*###search h2 span:has-text(DOGS):upward(div.s-result-item)
-      amazon.*##div.deals-react-app div[class^=DealContent]:has-text(DOGS):upward(div[class^=DealGridItem-module__dealItem_])
+      amazon.*##div.deals-react-app div[class^=DealContent]:has-text(DOGS):upward(div[class^=DealGridItem-module__dealItemDisplayGrid])
   - params: {}
     output: ""
 ---
