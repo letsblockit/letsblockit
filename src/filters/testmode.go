@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	testStyle      = []byte(":style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)\n")
+	testStyle      = []byte(":style(border: 2px dashed red !important)\n")
 	commentMatch   = regexp.MustCompile(`^[!#]`)
 	forbiddenRules = regexp.MustCompile(`:(style|remove)\(`)
 )

@@ -27,17 +27,17 @@ www.youtube.com##.ytp-ce-element
 `
 	expected := `
 ! youtube-cleanup
-www.youtube.com###clarify-box:style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)
-www.youtube.com###chat:style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)
+www.youtube.com###clarify-box:style(border: 2px dashed red !important)
+www.youtube.com###chat:style(border: 2px dashed red !important)
 
 ! youtube-mixes
-www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[href*="&start_radio=1"]):style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)
-www.youtube.com##ytd-search ytd-radio-renderer:style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)
-www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer:style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)
-www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]:style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)
+www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[href*="&start_radio=1"]):style(border: 2px dashed red !important)
+www.youtube.com##ytd-search ytd-radio-renderer:style(border: 2px dashed red !important)
+www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer:style(border: 2px dashed red !important)
+www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]:style(border: 2px dashed red !important)
 
 ! youtube-recommendations
-www.youtube.com##.ytp-ce-element:style(background: rgba(255,63,63,0.20) !important; border: 1px solid red !important)
+www.youtube.com##.ytp-ce-element:style(border: 2px dashed red !important)
 
 `
 	for chunkSize := 1; chunkSize < 256; chunkSize += 7 {
