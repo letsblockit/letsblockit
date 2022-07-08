@@ -35,6 +35,12 @@
                     {{#each filter.params}}
                         {{~>view-filter-param}}
                     {{/each}}
+                    <div class="mb-3 form-check form-switch">
+                        <input type="checkbox" role="switch" class="form-check-input" id="__test_mode" name="__test_mode"
+                               {{#equal true @root.data.test_mode}}checked{{/equal}}>
+                        <label class="form-check-label" for="__test_mode">Test mode</label>
+                    </div>
+
                     <div class="d-flex align-items-center">
                         {{#if @root.UserLoggedIn}}
                             <input type="hidden" name="__logged_in" value="true">

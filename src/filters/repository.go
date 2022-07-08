@@ -82,6 +82,10 @@ func (r *Repository) Render(w io.Writer, instance *Instance) error {
 	}
 	params := shallowCopy(instance.Params)
 	params["_filter"] = instance.Filter
+
+	if instance.TestMode {
+		w = NewTestModeTransformer(w)
+	}
 	if err := r.main.Execute(w, params); err != nil {
 		return err
 	}

@@ -95,7 +95,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 		if err = out.Set(instance.Params); err != nil {
 			return err
 		}
-		if err = s.upsertFilterParams(c, hc.UserID, filter.Name, instance.Params); err != nil {
+		if err = s.upsertFilterParams(c, hc.UserID, instance); err != nil {
 			return err
 		}
 		hc.Add("saved_ok", true)
@@ -111,7 +111,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 		return s.pages.RedirectToPage(c, "list-filters")
 	case hc.UserLoggedIn:
 		// If no params are passed, source from the user's filters
-		f, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{
+		stored, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{
 			UserID:     hc.UserID,
 			FilterName: filter.Name,
 		})
@@ -119,10 +119,11 @@ func (s *Server) viewFilter(c echo.Context) error {
 		case nil:
 			hc.Add("has_instance", true)
 			if instance.Params == nil {
-				if err = f.AssignTo(&instance.Params); err != nil {
+				if err = stored.Params.AssignTo(&instance.Params); err != nil {
 					return err
 				}
 			}
+			instance.TestMode = stored.TestMode
 		case db.NotFound: // ok
 		default:
 			return err
@@ -166,6 +167,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 	}
 	hc.Add("rendered", buf.String())
 	hc.Add("params", instance.Params)
+	hc.Add("test_mode", instance.TestMode)
 	return s.pages.Render(c, "view-filter", hc)
 }
 
@@ -176,22 +178,22 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	}
 
 	// Parse filters param and render output if non empty
-	params, _, err := parseFilterParams(c, filter)
+	instance, _, err := parseFilterParams(c, filter)
 	if err != nil {
 		return err
 	}
 
 	// If no params are passed, inject the default ones
-	if params == nil {
-		params = make(map[string]interface{})
+	if instance.Params == nil {
+		instance.Params = make(map[string]interface{})
 		for _, p := range filter.Params {
-			params[p.Name] = p.Default
+			instance.Params[p.Name] = p.Default
 		}
 	}
 
 	// Render the filter template
 	var buf strings.Builder
-	if err = s.filters.Render(&buf, filter.Name, params); err != nil {
+	if err = s.filters.Render(&buf, instance); err != nil {
 		return err
 	}
 	hc := s.buildPageContext(c, "")
@@ -208,20 +210,20 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 	return s.pages.Render(c, "view-filter-render", hc)
 }
 
-func (s *Server) upsertFilterParams(c echo.Context, user string, filter string, params map[string]interface{}) error {
+func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filters.Instance) error {
 	out := pgtype.JSONB{
 		Bytes:  nil,
 		Status: pgtype.Null,
 	}
-	if len(params) > 0 {
-		if err := out.Set(&params); err != nil {
+	if len(instance.Params) > 0 {
+		if err := out.Set(&instance.Params); err != nil {
 			return err
 		}
 	}
 	return s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		count, err := q.CountInstanceForUserAndFilter(ctx, db.CountInstanceForUserAndFilterParams{
 			UserID:     user,
-			FilterName: filter,
+			FilterName: instance.Filter,
 		})
 		if err != nil {
 			return err
@@ -234,14 +236,16 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, filter string, 
 			}
 			return q.CreateInstanceForUserAndFilter(ctx, db.CreateInstanceForUserAndFilterParams{
 				UserID:     user,
-				FilterName: filter,
+				FilterName: instance.Filter,
 				Params:     out,
+				TestMode:   instance.TestMode,
 			})
 		} else {
 			return q.UpdateInstanceForUserAndFilter(ctx, db.UpdateInstanceForUserAndFilterParams{
 				UserID:     user,
-				FilterName: filter,
+				FilterName: instance.Filter,
 				Params:     out,
+				TestMode:   instance.TestMode,
 			})
 		}
 	})
@@ -253,7 +257,9 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (*filters.Instanc
 		return nil, actionRender, err
 	}
 	if len(formParams) == 0 {
-		return nil, actionRender, nil
+		return &filters.Instance{
+			Filter: filter.Name,
+		}, actionRender, nil
 	}
 
 	action := actionRender
@@ -268,6 +274,10 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (*filters.Instanc
 		Params:   make(map[string]interface{}),
 		TestMode: false,
 	}
+	if formParams.Get("__test_mode") == "on" {
+		instance.TestMode = true
+	}
+
 	for _, p := range filter.Params {
 		switch p.Type {
 		case filters.StringListParam:

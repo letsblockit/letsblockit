@@ -29,6 +29,7 @@ type FilterInstance struct {
 	Params       pgtype.JSONB
 	CreatedAt    time.Time
 	UpdatedAt    sql.NullTime
+	TestMode     bool
 }
 
 type FilterList struct {

@@ -30,18 +30,24 @@ func (q *Queries) CountInstanceForUserAndFilter(ctx context.Context, arg CountIn
 }
 
 const createInstanceForUserAndFilter = `-- name: CreateInstanceForUserAndFilter :exec
-INSERT INTO filter_instances (filter_list_id, user_id, filter_name, params)
-VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3)
+INSERT INTO filter_instances (filter_list_id, user_id, filter_name, params, test_mode)
+VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3, $4)
 `
 
 type CreateInstanceForUserAndFilterParams struct {
 	UserID     string
 	FilterName string
 	Params     pgtype.JSONB
+	TestMode   bool
 }
 
 func (q *Queries) CreateInstanceForUserAndFilter(ctx context.Context, arg CreateInstanceForUserAndFilterParams) error {
-	_, err := q.db.Exec(ctx, createInstanceForUserAndFilter, arg.UserID, arg.FilterName, arg.Params)
+	_, err := q.db.Exec(ctx, createInstanceForUserAndFilter,
+		arg.UserID,
+		arg.FilterName,
+		arg.Params,
+		arg.TestMode,
+	)
 	return err
 }
 
@@ -93,7 +99,7 @@ func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID string) ([
 }
 
 const getInstanceForUserAndFilter = `-- name: GetInstanceForUserAndFilter :one
-SELECT params
+SELECT params, test_mode
 FROM filter_instances
 WHERE (user_id = $1 AND filter_name = $2)
 `
@@ -103,15 +109,20 @@ type GetInstanceForUserAndFilterParams struct {
 	FilterName string
 }
 
-func (q *Queries) GetInstanceForUserAndFilter(ctx context.Context, arg GetInstanceForUserAndFilterParams) (pgtype.JSONB, error) {
+type GetInstanceForUserAndFilterRow struct {
+	Params   pgtype.JSONB
+	TestMode bool
+}
+
+func (q *Queries) GetInstanceForUserAndFilter(ctx context.Context, arg GetInstanceForUserAndFilterParams) (GetInstanceForUserAndFilterRow, error) {
 	row := q.db.QueryRow(ctx, getInstanceForUserAndFilter, arg.UserID, arg.FilterName)
-	var params pgtype.JSONB
-	err := row.Scan(&params)
-	return params, err
+	var i GetInstanceForUserAndFilterRow
+	err := row.Scan(&i.Params, &i.TestMode)
+	return i, err
 }
 
 const getInstancesForList = `-- name: GetInstancesForList :many
-SELECT filter_name, params
+SELECT filter_name, params, test_mode
 FROM filter_instances
 WHERE filter_list_id = $1
 ORDER BY filter_name ASC
@@ -120,6 +131,7 @@ ORDER BY filter_name ASC
 type GetInstancesForListRow struct {
 	FilterName string
 	Params     pgtype.JSONB
+	TestMode   bool
 }
 
 func (q *Queries) GetInstancesForList(ctx context.Context, filterListID int32) ([]GetInstancesForListRow, error) {
@@ -131,7 +143,7 @@ func (q *Queries) GetInstancesForList(ctx context.Context, filterListID int32) (
 	var items []GetInstancesForListRow
 	for rows.Next() {
 		var i GetInstancesForListRow
-		if err := rows.Scan(&i.FilterName, &i.Params); err != nil {
+		if err := rows.Scan(&i.FilterName, &i.Params, &i.TestMode); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -145,6 +157,7 @@ func (q *Queries) GetInstancesForList(ctx context.Context, filterListID int32) (
 const updateInstanceForUserAndFilter = `-- name: UpdateInstanceForUserAndFilter :exec
 UPDATE filter_instances
 SET params     = $3,
+    test_mode  = $4,
     updated_at = NOW()
 WHERE (user_id = $1 AND filter_name = $2)
 `
@@ -153,9 +166,15 @@ type UpdateInstanceForUserAndFilterParams struct {
 	UserID     string
 	FilterName string
 	Params     pgtype.JSONB
+	TestMode   bool
 }
 
 func (q *Queries) UpdateInstanceForUserAndFilter(ctx context.Context, arg UpdateInstanceForUserAndFilterParams) error {
-	_, err := q.db.Exec(ctx, updateInstanceForUserAndFilter, arg.UserID, arg.FilterName, arg.Params)
+	_, err := q.db.Exec(ctx, updateInstanceForUserAndFilter,
+		arg.UserID,
+		arg.FilterName,
+		arg.Params,
+		arg.TestMode,
+	)
 	return err
 }
