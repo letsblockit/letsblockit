@@ -84,14 +84,12 @@ type ServerTestSuite struct {
 	expectP      *mocks.MockPageRendererMockRecorder
 	expectR      *mocks.MockReleaseClientMockRecorder
 	expectUP     *mocks.MockUserPreferenceManagerMockRecorder
-	expectQ      *mocks.MockQuerierMockRecorder // FIXME: remove
 	kratosServer *httptest.Server
 	user         string
 	csrf         string
 	releases     []*news.Release
 	preferences  *db.UserPreference
 	store        db.Store
-	listToken    uuid.UUID
 }
 
 func (s *ServerTestSuite) SetupTest() {
@@ -104,10 +102,6 @@ func (s *ServerTestSuite) SetupTest() {
 	s.expectP = pm.EXPECT()
 	s.expectR = rm.EXPECT()
 	s.expectUP = upm.EXPECT()
-
-	// FIXME: remove
-	qm := mocks.NewMockQuerier(c)
-	s.expectQ = qm.EXPECT()
 
 	s.c = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
 	s.store = db.NewTestStore(s.T())
