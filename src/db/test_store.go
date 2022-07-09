@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	templateSchemaName     = "test_template"
-	ephemeralSchemaPattern = "test_%s"
+	schemaNamePrefix   = "test_"
+	templateSchemaName = schemaNamePrefix + "template"
 
-	forkSchemeQuery = `SELECT clone_schema($1,$2);`
-	cloneFuncQuery  = `-- From https://wiki.postgresql.org/wiki/Clone_schema
+	forkSchemaQuery      = `SELECT clone_schema($1,$2);`
+	createCloneFuncQuery = `-- From https://wiki.postgresql.org/wiki/Clone_schema
 CREATE OR REPLACE FUNCTION clone_schema(source_schema text, dest_schema text) RETURNS void AS
 $BODY$
 DECLARE
@@ -44,7 +44,7 @@ LANGUAGE plpgsql VOLATILE;`
 	dropSchemaPattern   = `DROP SCHEMA %s CASCADE;`
 )
 
-var initTemplate sync.Once
+var initTemplateOnce sync.Once
 
 func GetTestDatabaseURL() string {
 	if url := os.Getenv("TEST_DATABASE_URL"); url != "" {
@@ -62,15 +62,15 @@ func NewTestStore(t *testing.T) Store {
 	conn, err := pgx.Connect(ctx, GetTestDatabaseURL())
 	require.NoError(t, err)
 
-	initTemplate.Do(func() {
-		mustExec(t, conn, cloneFuncQuery)
+	initTemplateOnce.Do(func() { // Create test_template and clone_schema only once
+		mustExec(t, conn, createCloneFuncQuery)
 		mustExec(t, conn, createSchemaPattern, templateSchemaName)
 		require.NoError(t, Migrate(buildConnString(templateSchemaName)))
 	})
 
 	for i := 0; i < 30; i++ { // Retry schema fork to be resilient to name collision
-		clonedSchema := fmt.Sprintf(ephemeralSchemaPattern, random.String(16, random.Alphabetic))
-		if _, err = conn.Exec(ctx, forkSchemeQuery, templateSchemaName, clonedSchema); err == nil {
+		clonedSchema := schemaNamePrefix + random.String(16, random.Alphabetic)
+		if _, err = conn.Exec(ctx, forkSchemaQuery, templateSchemaName, clonedSchema); err == nil {
 			t.Cleanup(func() {
 				mustExec(t, conn, dropSchemaPattern, clonedSchema)
 				require.NoError(t, conn.Close(context.Background()))
@@ -80,7 +80,6 @@ func NewTestStore(t *testing.T) Store {
 			return store
 		}
 	}
-	require.NoError(t, conn.Close(context.Background()))
 	require.NoError(t, err)
 	return nil
 }
