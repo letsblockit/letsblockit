@@ -23,7 +23,7 @@ func (s *ListTestSuite) SetupTest() {
 	s.expectL = s.logger.EXPECT()
 
 	var err error
-	s.repository, err = load(os.DirFS("testdata"))
+	s.repository, err = LoadFilters(os.DirFS("testdata"))
 	s.NoError(err)
 }
 

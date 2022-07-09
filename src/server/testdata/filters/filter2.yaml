@@ -1,0 +1,24 @@
+title: Second filter
+params:
+  - name: one
+    type: string
+    default: default
+  - name: two
+    type: checkbox
+    default: true
+  - name: three
+    type: list
+    default:
+      - a
+      - b
+tags:
+  - tag2
+  - tag3
+template: |
+  {{#if two}}
+  {{#each three}}
+  hello {{.}} {{one}}
+  {{/each}}
+  {{/if}}
+---
+description

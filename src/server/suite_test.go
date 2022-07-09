@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/random"
 	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/letsblockit/letsblockit/src/server/mocks"
@@ -26,6 +28,9 @@ import (
 )
 
 var (
+	//go:embed testdata/filters
+	testFilters embed.FS
+
 	fixedNow       = time.Date(2020, 06, 02, 17, 44, 22, 0, time.UTC)
 	verifiedCookie = &http.Cookie{
 		Name:  "ory_session_verified",
@@ -80,7 +85,6 @@ type ServerTestSuite struct {
 	suite.Suite
 	c            echo.Context
 	server       *Server
-	expectF      *mocks.MockFilterRepositoryMockRecorder
 	expectP      *mocks.MockPageRendererMockRecorder
 	expectR      *mocks.MockReleaseClientMockRecorder
 	kratosServer *httptest.Server
@@ -92,10 +96,8 @@ type ServerTestSuite struct {
 
 func (s *ServerTestSuite) SetupTest() {
 	c := gomock.NewController(s.T())
-	fm := mocks.NewMockFilterRepository(c)
 	pm := mocks.NewMockPageRenderer(c)
 	rm := mocks.NewMockReleaseClient(c)
-	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
 	s.expectR = rm.EXPECT()
 
@@ -123,6 +125,10 @@ func (s *ServerTestSuite) SetupTest() {
 		s.NoError(err)
 	}))
 
+	repo, err := filters.LoadFilters(testFilters)
+	require.NoError(s.T(), err)
+	require.NotEmpty(s.T(), repo.GetFilters())
+
 	s.user = uuid.New().String()
 	pref, err := users.NewPreferenceManager(s.store)
 	require.NoError(s.T(), err)
@@ -131,7 +137,7 @@ func (s *ServerTestSuite) SetupTest() {
 	s.server = &Server{
 		auth:    auth.NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{}),
 		echo:    echo.New(),
-		filters: fm,
+		filters: repo,
 		now:     func() time.Time { return fixedNow },
 		options: &Options{
 			AuthKratosUrl: s.kratosServer.URL,

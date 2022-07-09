@@ -74,7 +74,7 @@ type Server struct {
 	auth        auth.Backend
 	bans        *users.BanManager
 	echo        *echo.Echo
-	filters     FilterRepository
+	filters     *filters.Repository
 	now         func() time.Time
 	options     *Options
 	pages       PageRenderer
@@ -95,7 +95,7 @@ func NewServer(options *Options) *Server {
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
-		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
+		func(errs []error) { s.filters, errs[0] = filters.LoadFilters(data.Filters) },
 		func(errs []error) {
 			s.store, errs[0] = db.Connect(s.options.DatabaseUrl)
 			if errs[0] == nil {

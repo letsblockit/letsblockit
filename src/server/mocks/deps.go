@@ -5,13 +5,11 @@
 package mocks
 
 import (
-	io "io"
 	reflect "reflect"
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
 	echo "github.com/labstack/echo/v4"
-	filters "github.com/letsblockit/letsblockit/src/filters"
 	news "github.com/letsblockit/letsblockit/src/news"
 	pages "github.com/letsblockit/letsblockit/src/pages"
 )
@@ -136,86 +134,6 @@ func (m *MockPageRenderer) RenderWithSidebar(c echo.Context, name, sidebar strin
 func (mr *MockPageRendererMockRecorder) RenderWithSidebar(c, name, sidebar, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenderWithSidebar", reflect.TypeOf((*MockPageRenderer)(nil).RenderWithSidebar), c, name, sidebar, data)
-}
-
-// MockFilterRepository is a mock of FilterRepository interface.
-type MockFilterRepository struct {
-	ctrl     *gomock.Controller
-	recorder *MockFilterRepositoryMockRecorder
-}
-
-// MockFilterRepositoryMockRecorder is the mock recorder for MockFilterRepository.
-type MockFilterRepositoryMockRecorder struct {
-	mock *MockFilterRepository
-}
-
-// NewMockFilterRepository creates a new mock instance.
-func NewMockFilterRepository(ctrl *gomock.Controller) *MockFilterRepository {
-	mock := &MockFilterRepository{ctrl: ctrl}
-	mock.recorder = &MockFilterRepositoryMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockFilterRepository) EXPECT() *MockFilterRepositoryMockRecorder {
-	return m.recorder
-}
-
-// GetFilter mocks base method.
-func (m *MockFilterRepository) GetFilter(name string) (*filters.Filter, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilter", name)
-	ret0, _ := ret[0].(*filters.Filter)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetFilter indicates an expected call of GetFilter.
-func (mr *MockFilterRepositoryMockRecorder) GetFilter(name interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilter", reflect.TypeOf((*MockFilterRepository)(nil).GetFilter), name)
-}
-
-// GetFilters mocks base method.
-func (m *MockFilterRepository) GetFilters() []*filters.Filter {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilters")
-	ret0, _ := ret[0].([]*filters.Filter)
-	return ret0
-}
-
-// GetFilters indicates an expected call of GetFilters.
-func (mr *MockFilterRepositoryMockRecorder) GetFilters() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilters", reflect.TypeOf((*MockFilterRepository)(nil).GetFilters))
-}
-
-// GetTags mocks base method.
-func (m *MockFilterRepository) GetTags() []string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTags")
-	ret0, _ := ret[0].([]string)
-	return ret0
-}
-
-// GetTags indicates an expected call of GetTags.
-func (mr *MockFilterRepositoryMockRecorder) GetTags() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockFilterRepository)(nil).GetTags))
-}
-
-// Render mocks base method.
-func (m *MockFilterRepository) Render(w io.Writer, name string, data map[string]interface{}) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Render", w, name, data)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Render indicates an expected call of Render.
-func (mr *MockFilterRepositoryMockRecorder) Render(w, name, data interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Render", reflect.TypeOf((*MockFilterRepository)(nil).Render), w, name, data)
 }
 
 // MockReleaseClient is a mock of ReleaseClient interface.

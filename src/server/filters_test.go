@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -19,57 +18,70 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var filter1 = &filters.Filter{
-	Name: "filter1",
-	Tags: []string{"tag1", "tag2"},
-}
+const filterDesc = "<p>description</p>\n"
 
-var filter2 = &filters.Filter{
-	Name:  "filter2",
-	Title: "TITLE2",
-	Params: []filters.FilterParam{{
-		Name:    "one",
-		Type:    filters.StringParam,
-		Default: "default",
-	}, {
-		Name:    "two",
-		Type:    filters.BooleanParam,
-		Default: true,
-	}, {
-		Name:    "three",
-		Type:    filters.StringListParam,
-		Default: []string{"a", "b"},
-	}},
-	Tags: []string{"tag2", "tag3"},
-}
+var (
+	filter1 = &filters.Filter{
+		Name:        "filter1",
+		Title:       "Filter 1",
+		Tags:        []string{"tag1", "tag2"},
+		Template:    "hello from one",
+		Description: filterDesc,
+	}
+	filter2 = &filters.Filter{
+		Name:  "filter2",
+		Title: "Second filter",
+		Params: []filters.FilterParam{{
+			Name:    "one",
+			Type:    filters.StringParam,
+			Default: "default",
+		}, {
+			Name:    "two",
+			Type:    filters.BooleanParam,
+			Default: true,
+		}, {
+			Name:    "three",
+			Type:    filters.StringListParam,
+			Default: []any{"a", "b"},
+		}},
+		Tags:        []string{"tag2", "tag3"},
+		Template:    "{{#if two}}\n{{#each three}}\nhello {{.}} {{one}}\n{{/each}}\n{{/if}}\n",
+		Description: filterDesc,
+	}
+	filter3 = &filters.Filter{
+		Name:        "custom-rules",
+		Title:       "Add custom blocking rules",
+		Tags:        []string{"tag3"},
+		Template:    "custom",
+		Description: filterDesc,
+	}
 
-var filter2Defaults = map[string]interface{}{
-	"one":   "default",
-	"two":   true,
-	"three": []string{"a", "b"},
-}
+	filter2Defaults = map[string]any{
+		"one":   "default",
+		"two":   true,
+		"three": []any{"a", "b"},
+	}
+	filter2DefaultOutput = "hello a default\nhello b default\n"
+	filter2Custom        = map[string]any{
+		"one":   "blep",
+		"two":   true,
+		"three": []string{"one", "two"},
+	}
+	filter2CustomOutput = "hello one blep\nhello two blep\n"
 
-var filter3 = &filters.Filter{
-	Name: "filter3",
-	Tags: []string{"tag3"},
-}
+	filterTags = []string{"tag1", "tag2", "tag3"}
+)
 
 func (s *ServerTestSuite) TestListFilters_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/filters", nil)
 	req.AddCookie(verifiedCookie)
-
-	tList := []string{"tag1", "tag2", "tag3"}
-	s.expectF.GetTags().Return(tList)
-	s.expectF.GetFilter("filter1").Return(filter1, nil)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
-	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
 
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
 	s.markListDownloaded()
 
 	s.expectRender("list-filters", pages.ContextData{
-		"filter_tags":       tList,
+		"filter_tags":       filterTags,
 		"active_filters":    []*filters.Filter{filter1, filter2},
 		"available_filters": []*filters.Filter{filter3},
 		"list_downloaded":   true,
@@ -83,14 +95,8 @@ func (s *ServerTestSuite) TestListFilters_ByTag() {
 	req.AddCookie(verifiedCookie)
 
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
-
-	tList := []string{"tag1", "tag2", "tag3"}
-	s.expectF.GetTags().Return(tList)
-	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
-	s.expectF.GetFilter("filter1").Return(filter1, nil)
-
 	s.expectRender("list-filters", pages.ContextData{
-		"filter_tags":       tList,
+		"filter_tags":       filterTags,
 		"tag_search":        "tag2",
 		"active_filters":    []*filters.Filter{filter1},
 		"available_filters": []*filters.Filter{filter2},
@@ -101,11 +107,9 @@ func (s *ServerTestSuite) TestListFilters_ByTag() {
 
 func (s *ServerTestSuite) TestViewFilter_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
-	s.expectRenderFilter("filter2", filter2Defaults, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":   filter2,
-		"rendered": "output",
+		"rendered": filter2DefaultOutput,
 		"params":   filter2Defaults,
 	})
 	s.runRequest(req, assertOk)
@@ -114,11 +118,9 @@ func (s *ServerTestSuite) TestViewFilter_Anonymous() {
 func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
-	s.expectRenderFilter("filter2", filter2Defaults, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":   filter2,
-		"rendered": "output",
+		"rendered": filter2DefaultOutput,
 		"params":   filter2Defaults,
 	})
 	s.runRequest(req, assertOk)
@@ -127,17 +129,18 @@ func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
-	params := map[string]interface{}{"one": "1", "two": false}
+	params := map[string]any{
+		"two":   true,
+		"three": []any{"one", "two"},
+	}
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", params))
-	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
-		"rendered":     "output",
+		"rendered":     "hello one \nhello two \n",
 		"params":       params,
 		"has_instance": true,
-		"new_params":   map[string]bool{"three": true},
+		"new_params":   map[string]bool{"one": true},
 	})
 	s.runRequest(req, assertOk)
 }
@@ -148,18 +151,11 @@ func (s *ServerTestSuite) TestViewFilter_Preview() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
-	params := map[string]interface{}{
-		"one":   "1",
-		"two":   false,
-		"three": []string{"option1", "option2"},
-	}
 
-	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":   filter2,
-		"params":   params,
-		"rendered": "output",
+		"params":   filter2Custom,
+		"rendered": filter2CustomOutput,
 	})
 	s.runRequest(req, assertOk)
 	s.requireInstanceCount("filter2", 0)
@@ -172,18 +168,11 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
-	params := map[string]interface{}{
-		"one":   "1",
-		"two":   false,
-		"three": []string{"option1", "option2"},
-	}
-	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
-		"params":       params,
-		"rendered":     "output",
+		"params":       filter2Custom,
+		"rendered":     filter2CustomOutput,
 		"has_instance": true,
 		"saved_ok":     true,
 	})
@@ -194,7 +183,7 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 		FilterName: "filter2",
 	})
 	require.NoError(s.T(), err)
-	s.requireJSONEq(params, stored)
+	s.requireJSONEq(filter2Custom, stored)
 	s.requireInstanceCount("filter2", 1)
 }
 
@@ -208,13 +197,11 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter1", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter1").Return(filter1, nil)
 
-	s.expectRenderFilter("filter1", map[string]interface{}{}, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter1,
-		"params":       map[string]interface{}{},
-		"rendered":     "output",
+		"params":       map[string]any{},
+		"rendered":     "hello from one",
 		"has_instance": true,
 		"saved_ok":     true,
 	})
@@ -239,18 +226,11 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
-	params := map[string]interface{}{
-		"one":   "1",
-		"two":   false,
-		"three": []string{"option1", "option2"},
-	}
-	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
-		"params":       params,
-		"rendered":     "output",
+		"params":       filter2Custom,
+		"rendered":     filter2CustomOutput,
 		"has_instance": true,
 		"saved_ok":     true,
 	})
@@ -261,7 +241,7 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 		FilterName: "filter2",
 	})
 	require.NoError(s.T(), err)
-	s.requireJSONEq(params, stored)
+	s.requireJSONEq(filter2Custom, stored)
 	s.requireInstanceCount("filter2", 1)
 
 }
@@ -276,7 +256,6 @@ func (s *ServerTestSuite) TestViewFilter_Disable() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
 	s.expectP.RedirectToPage(gomock.Any(), "list-filters")
 	s.runRequest(req, assertOk)
 	s.requireInstanceCount("filter2", 0)
@@ -297,11 +276,8 @@ func (s *ServerTestSuite) TestViewFilterRender_Defaults() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
-
-	s.expectRenderFilter("filter2", filter2Defaults, "output")
 	s.expectRender("view-filter-render", pages.ContextData{
-		"rendered": "output",
+		"rendered": filter2DefaultOutput,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -310,17 +286,9 @@ func (s *ServerTestSuite) TestViewFilterRender_Params() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(buildFilter2FormBody().Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
-	params := map[string]interface{}{
-		"one":   "1",
-		"two":   false,
-		"three": []string{"option1", "option2"},
-	}
-
-	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter-render", pages.ContextData{
-		"rendered": "output",
+		"rendered": filter2CustomOutput,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -331,22 +299,14 @@ func (s *ServerTestSuite) TestViewFilterRender_LoggedIn() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
-	params := map[string]interface{}{
-		"one":   "1",
-		"two":   false,
-		"three": []string{"option1", "option2"},
-	}
-
-	s.expectRenderFilter("filter2", params, "output")
 	s.expectRenderWithContext("view-filter-render", &pages.Context{
 		NakedContent:    true,
 		CurrentSection:  "filters",
 		NavigationLinks: navigationLinks,
 		UserLoggedIn:    true,
 		Data: pages.ContextData{
-			"rendered": "output",
+			"rendered": filter2CustomOutput,
 		},
 	})
 	s.runRequest(req, assertOk)
@@ -354,17 +314,9 @@ func (s *ServerTestSuite) TestViewFilterRender_LoggedIn() {
 
 func buildFilter2FormBody() url.Values {
 	f := make(url.Values)
-	f.Add("one", "1")
-	f.Add("two", "off")
-	f.Add("three", "option1")
-	f.Add("three", "option2")
+	f.Add("one", "blep")
+	f.Add("two", "on")
+	f.Add("three", "one")
+	f.Add("three", "two")
 	return f
-}
-
-func (s *ServerTestSuite) expectRenderFilter(name string, params interface{}, output string) {
-	s.expectF.Render(gomock.Any(), name, params).
-		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
-			_, err := w.Write([]byte(output))
-			return err
-		})
 }

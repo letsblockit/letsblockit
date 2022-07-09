@@ -21,12 +21,8 @@ type Repository struct {
 	tagList    []string
 }
 
-// LoadFilters parses all filter definitions found in the data folder
-func LoadFilters() (*Repository, error) {
-	return load(data.Filters)
-}
-
-func load(input fs.FS) (*Repository, error) {
+// LoadFilters parses all filter definitions in the given filesystem
+func LoadFilters(input fs.FS) (*Repository, error) {
 	main, err := mario.New().Parse("{{>(_filter)}}")
 	main.WithHelperFunc("string_split", func(args string) []string {
 		return strings.Split(args, " ")
@@ -84,9 +80,7 @@ func (r *Repository) Render(w io.Writer, name string, input map[string]interface
 	if !found {
 		return fmt.Errorf("template '%s' not found", name)
 	}
-	if input == nil {
-		input = make(map[string]interface{})
-	}
+	input = shallowCopy(input)
 	input["_filter"] = name
 	if err := r.main.Execute(w, input); err != nil {
 		return err
