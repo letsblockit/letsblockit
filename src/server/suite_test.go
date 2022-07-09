@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -19,6 +21,7 @@ import (
 	"github.com/letsblockit/letsblockit/src/users"
 	"github.com/letsblockit/letsblockit/src/users/auth"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -75,32 +78,39 @@ func (m *pageDataMatcher) String() string {
 
 type ServerTestSuite struct {
 	suite.Suite
+	c            echo.Context
 	server       *Server
 	expectF      *mocks.MockFilterRepositoryMockRecorder
 	expectP      *mocks.MockPageRendererMockRecorder
-	expectQ      *mocks.MockQuerierMockRecorder
 	expectR      *mocks.MockReleaseClientMockRecorder
 	expectUP     *mocks.MockUserPreferenceManagerMockRecorder
+	expectQ      *mocks.MockQuerierMockRecorder // FIXME: remove
 	kratosServer *httptest.Server
 	user         string
 	csrf         string
 	releases     []*news.Release
 	preferences  *db.UserPreference
+	store        db.Store
+	listToken    uuid.UUID
 }
 
 func (s *ServerTestSuite) SetupTest() {
 	c := gomock.NewController(s.T())
 	fm := mocks.NewMockFilterRepository(c)
 	pm := mocks.NewMockPageRenderer(c)
-	qm := mocks.NewMockQuerier(c)
 	rm := mocks.NewMockReleaseClient(c)
 	upm := mocks.NewMockUserPreferenceManager(c)
 	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
-	s.expectQ = qm.EXPECT()
 	s.expectR = rm.EXPECT()
 	s.expectUP = upm.EXPECT()
 
+	// FIXME: remove
+	qm := mocks.NewMockQuerier(c)
+	s.expectQ = qm.EXPECT()
+
+	s.c = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
+	s.store = db.NewTestStore(s.T())
 	s.kratosServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		fmt.Println(r.URL.Path)
@@ -138,7 +148,7 @@ func (s *ServerTestSuite) SetupTest() {
 		preferences: upm,
 		releases:    rm,
 		statsd:      &statsd.NoOpClient{},
-		store:       mocks.NewMockStore(qm),
+		store:       s.store,
 	}
 	s.server.setupRouter()
 
@@ -157,17 +167,17 @@ func (s *ServerTestSuite) SetupTest() {
 		} else {
 			return nil, db.NotFound
 		}
-	}).MinTimes(0).MaxTimes(1)
+	}).MinTimes(0)
 	s.expectR.GetLatestAt().DoAndReturn(func() (time.Time, error) {
 		if len(s.releases) > 0 {
 			return s.releases[0].CreatedAt, nil
 		} else {
 			return fixedNow, nil
 		}
-	}).MinTimes(0).MaxTimes(1)
+	}).MinTimes(0)
 	s.expectR.GetReleases().DoAndReturn(func() ([]*news.Release, error) {
 		return s.releases, nil
-	}).MinTimes(0).MaxTimes(1)
+	}).MinTimes(0)
 }
 
 func (s *ServerTestSuite) TearDownTest() {
@@ -175,8 +185,18 @@ func (s *ServerTestSuite) TearDownTest() {
 }
 
 func (s *ServerTestSuite) setUserBanned() {
-	s.expectQ.GetBannedUsers(gomock.Any()).Return([]string{s.user}, nil)
+	s.T().Helper()
+	require.NoError(s.T(), s.store.AddUserBan(context.Background(), db.AddUserBanParams{
+		UserID: s.user,
+	}))
 	s.server.bans, _ = users.LoadUserBans(s.server.store)
+}
+
+func (s *ServerTestSuite) markListDownloaded() {
+	s.T().Helper()
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), s.store.MarkListDownloaded(context.Background(), list.Token))
 }
 
 func (s *ServerTestSuite) expectRender(page string, data pages.ContextData) *gomock.Call {
@@ -221,6 +241,25 @@ func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, 
 	}
 	s.server.echo.ServeHTTP(rec, req)
 	checks(s.T(), rec)
+}
+
+func (s *ServerTestSuite) requireJSONEq(expected, actual any) {
+	s.T().Helper()
+	expectedJSON, err := json.Marshal(expected)
+	require.NoError(s.T(), err)
+	actualJSON, err := json.Marshal(actual)
+	require.NoError(s.T(), err)
+	require.JSONEq(s.T(), string(expectedJSON), string(actualJSON))
+}
+
+func (s *ServerTestSuite) requireInstanceCount(filter string, expected int64) {
+	s.T().Helper()
+	count, err := s.store.CountInstanceForUserAndFilter(context.Background(), db.CountInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: filter,
+	})
+	require.NoError(s.T(), err)
+	require.EqualValues(s.T(), expected, count)
 }
 
 func TestServerTestSuite(t *testing.T) {

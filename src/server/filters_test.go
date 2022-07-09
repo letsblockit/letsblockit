@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -9,13 +10,13 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var filter1 = &filters.Filter{
@@ -62,12 +63,10 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 	s.expectF.GetFilter("filter1").Return(filter1, nil)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
-	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]db.GetActiveFiltersForUserRow{{
-		FilterName: "filter1",
-	}, {
-		FilterName: "filter2",
-	}}, nil)
-	s.expectQ.HasUserDownloadedList(gomock.Any(), s.user).Return(true, nil)
+
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
+	s.markListDownloaded()
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       tList,
@@ -83,14 +82,12 @@ func (s *ServerTestSuite) TestListFilters_ByTag() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/tag/tag2", nil)
 	req.AddCookie(verifiedCookie)
 
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
+
 	tList := []string{"tag1", "tag2", "tag3"}
 	s.expectF.GetTags().Return(tList)
 	s.expectF.GetFilters().Return([]*filters.Filter{filter1, filter2, filter3})
 	s.expectF.GetFilter("filter1").Return(filter1, nil)
-	s.expectQ.GetActiveFiltersForUser(gomock.Any(), s.user).Return([]db.GetActiveFiltersForUserRow{{
-		FilterName: "filter1",
-	}}, nil)
-	s.expectQ.HasUserDownloadedList(gomock.Any(), s.user).Return(false, nil)
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       tList,
@@ -118,10 +115,6 @@ func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
 	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
-	s.expectQ.GetInstanceForUserAndFilter(gomock.Any(), db.GetInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-	}).Return(pgtype.JSONB{}, db.NotFound)
 	s.expectRenderFilter("filter2", filter2Defaults, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":   filter2,
@@ -137,12 +130,7 @@ func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
 
 	params := map[string]interface{}{"one": "1", "two": false}
-	paramsB := pgtype.JSONB{}
-	s.NoError(paramsB.Set(&params))
-	s.expectQ.GetInstanceForUserAndFilter(gomock.Any(), db.GetInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-	}).Return(paramsB, nil)
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", params))
 	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
@@ -161,10 +149,6 @@ func (s *ServerTestSuite) TestViewFilter_Preview() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
-	s.expectQ.GetInstanceForUserAndFilter(gomock.Any(), db.GetInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-	}).Return(pgtype.JSONB{}, db.NotFound)
 	params := map[string]interface{}{
 		"one":   "1",
 		"two":   false,
@@ -178,6 +162,7 @@ func (s *ServerTestSuite) TestViewFilter_Preview() {
 		"rendered": "output",
 	})
 	s.runRequest(req, assertOk)
+	s.requireInstanceCount("filter2", 0)
 }
 
 func (s *ServerTestSuite) TestViewFilter_Create() {
@@ -194,18 +179,6 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 		"two":   false,
 		"three": []string{"option1", "option2"},
 	}
-	paramsB := pgtype.JSONB{}
-	s.NoError(paramsB.Set(&params))
-	s.expectQ.CountListsForUser(gomock.Any(), s.user).Return(int64(1), nil)
-	s.expectQ.CountInstanceForUserAndFilter(gomock.Any(), db.CountInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-	}).Return(int64(0), nil)
-	s.expectQ.CreateInstanceForUserAndFilter(gomock.Any(), db.CreateInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-		Params:     paramsB,
-	}).Return(nil)
 	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
@@ -215,9 +188,20 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 		"saved_ok":     true,
 	})
 	s.runRequest(req, assertOk)
+
+	stored, err := s.store.GetInstanceForUserAndFilter(context.Background(), db.GetInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: "filter2",
+	})
+	require.NoError(s.T(), err)
+	s.requireJSONEq(params, stored)
+	s.requireInstanceCount("filter2", 1)
 }
 
 func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
+	_, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
 	f := buildFilter2FormBody() // Add params that will be ignored: filter1 does not have any
 	f.Add(csrfLookup, s.csrf)
 	f.Add("__save", "")
@@ -226,18 +210,6 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter1").Return(filter1, nil)
 
-	paramsB := pgtype.JSONB{}
-	s.NoError(paramsB.Set(nil))
-	s.expectQ.CountInstanceForUserAndFilter(gomock.Any(), db.CountInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter1",
-	}).Return(int64(0), nil)
-	s.expectQ.CreateInstanceForUserAndFilter(gomock.Any(), db.CreateInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter1",
-		Params:     paramsB,
-	}).Return(nil)
-	s.expectQ.CountListsForUser(gomock.Any(), s.user).Return(int64(1), nil)
 	s.expectRenderFilter("filter1", map[string]interface{}{}, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter1,
@@ -247,47 +219,20 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 		"saved_ok":     true,
 	})
 	s.runRequest(req, assertOk)
-}
 
-func (s *ServerTestSuite) TestViewFilter_CreateListToo() {
-	f := buildFilter2FormBody()
-	f.Add(csrfLookup, s.csrf)
-	f.Add("__save", "")
-	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
-	s.expectF.GetFilter("filter2").Return(filter2, nil)
-
-	params := map[string]interface{}{
-		"one":   "1",
-		"two":   false,
-		"three": []string{"option1", "option2"},
-	}
-	paramsB := pgtype.JSONB{}
-	s.NoError(paramsB.Set(&params))
-	s.expectQ.CountListsForUser(gomock.Any(), s.user).Return(int64(0), nil)
-	s.expectQ.CreateListForUser(gomock.Any(), s.user).Return(uuid.New(), nil)
-	s.expectQ.CountInstanceForUserAndFilter(gomock.Any(), db.CountInstanceForUserAndFilterParams{
+	stored, err := s.store.GetInstanceForUserAndFilter(context.Background(), db.GetInstanceForUserAndFilterParams{
 		UserID:     s.user,
-		FilterName: "filter2",
-	}).Return(int64(0), nil)
-	s.expectQ.CreateInstanceForUserAndFilter(gomock.Any(), db.CreateInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-		Params:     paramsB,
-	}).Return(nil)
-	s.expectRenderFilter("filter2", params, "output")
-	s.expectRender("view-filter", pages.ContextData{
-		"filter":       filter2,
-		"params":       params,
-		"rendered":     "output",
-		"has_instance": true,
-		"saved_ok":     true,
+		FilterName: "filter1",
 	})
-	s.runRequest(req, assertOk)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), pgtype.Null, stored.Status)
+	s.requireInstanceCount("filter1", 1)
 }
 
 func (s *ServerTestSuite) TestViewFilter_Update() {
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
+	s.requireInstanceCount("filter2", 1)
+
 	f := buildFilter2FormBody()
 	f.Add(csrfLookup, s.csrf)
 	f.Add("__save", "")
@@ -301,17 +246,6 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 		"two":   false,
 		"three": []string{"option1", "option2"},
 	}
-	paramsB := pgtype.JSONB{}
-	s.NoError(paramsB.Set(&params))
-	s.expectQ.CountInstanceForUserAndFilter(gomock.Any(), db.CountInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-	}).Return(int64(1), nil)
-	s.expectQ.UpdateInstanceForUserAndFilter(gomock.Any(), db.UpdateInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-		Params:     paramsB,
-	}).Return(nil)
 	s.expectRenderFilter("filter2", params, "output")
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
@@ -321,9 +255,21 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 		"saved_ok":     true,
 	})
 	s.runRequest(req, assertOk)
+
+	stored, err := s.store.GetInstanceForUserAndFilter(context.Background(), db.GetInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: "filter2",
+	})
+	require.NoError(s.T(), err)
+	s.requireJSONEq(params, stored)
+	s.requireInstanceCount("filter2", 1)
+
 }
 
 func (s *ServerTestSuite) TestViewFilter_Disable() {
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
+	s.requireInstanceCount("filter2", 1)
+
 	f := make(url.Values)
 	f.Add(csrfLookup, s.csrf)
 	f.Add("__disable", "")
@@ -331,12 +277,9 @@ func (s *ServerTestSuite) TestViewFilter_Disable() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 	req.AddCookie(verifiedCookie)
 	s.expectF.GetFilter("filter2").Return(filter2, nil)
-	s.expectQ.DeleteInstanceForUserAndFilter(gomock.Any(), db.DeleteInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
-	}).Return(nil)
 	s.expectP.RedirectToPage(gomock.Any(), "list-filters")
 	s.runRequest(req, assertOk)
+	s.requireInstanceCount("filter2", 0)
 }
 
 func (s *ServerTestSuite) TestViewFilter_MissingCSRF() {

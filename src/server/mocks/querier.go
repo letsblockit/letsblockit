@@ -304,17 +304,17 @@ func (mr *MockQuerierMockRecorder) LiftUserBan(ctx, arg interface{}) *gomock.Cal
 }
 
 // MarkListDownloaded mocks base method.
-func (m *MockQuerier) MarkListDownloaded(ctx context.Context, id int32) error {
+func (m *MockQuerier) MarkListDownloaded(ctx context.Context, token uuid.UUID) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MarkListDownloaded", ctx, id)
+	ret := m.ctrl.Call(m, "MarkListDownloaded", ctx, token)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // MarkListDownloaded indicates an expected call of MarkListDownloaded.
-func (mr *MockQuerierMockRecorder) MarkListDownloaded(ctx, id interface{}) *gomock.Call {
+func (mr *MockQuerierMockRecorder) MarkListDownloaded(ctx, token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkListDownloaded", reflect.TypeOf((*MockQuerier)(nil).MarkListDownloaded), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkListDownloaded", reflect.TypeOf((*MockQuerier)(nil).MarkListDownloaded), ctx, token)
 }
 
 // RotateListToken mocks base method.

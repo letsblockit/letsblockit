@@ -1,28 +1,29 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/google/uuid"
-	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func (s *ServerTestSuite) TestUserAccount_Verified() {
-	token := uuid.New()
+func (s *ServerTestSuite) TestUserAccount_Ok() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	s.markListDownloaded()
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "one", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "two", nil))
+
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 	req.AddCookie(verifiedCookie)
-	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{
-		Token:         token,
-		Downloaded:    true,
-		InstanceCount: 5,
-	}, nil)
+
 	s.expectRender("user-account", pages.ContextData{
-		"filter_count":    int64(5),
+		"filter_count":    int64(2),
 		"list_token":      token.String(),
 		"list_downloaded": true,
 	})
@@ -37,15 +38,22 @@ func (s *ServerTestSuite) TestUserAccount_Verified() {
 }
 
 func (s *ServerTestSuite) TestUserAccount_CreateList() {
-	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 	req.AddCookie(verifiedCookie)
-	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{}, db.NotFound)
-	s.expectQ.CreateListForUser(gomock.Any(), s.user).Return(token, nil)
+
+	// First query
+	s.expectP.Render(gomock.Any(), "user-account", gomock.Any())
+	s.runRequest(req, assertOk)
+
+	// Check that a list has been created for the user
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	// Second query asserting the token value
 	s.expectRender("user-account", pages.ContextData{
-		"filter_count":    0,
-		"list_token":      token.String(),
+		"filter_count":    int64(0),
 		"list_downloaded": false,
+		"list_token":      list.Token.String(),
 	})
 	s.runRequest(req, assertOk)
 }

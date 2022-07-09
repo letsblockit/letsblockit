@@ -41,7 +41,7 @@ func (s *Server) renderList(c echo.Context) error {
 		}
 
 		if c.Request().Header.Get("Referer") == "" {
-			e = q.MarkListDownloaded(ctx, storedList.ID)
+			e = q.MarkListDownloaded(ctx, token)
 			if e != nil {
 				return e
 			}
