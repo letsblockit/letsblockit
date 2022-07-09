@@ -19,6 +19,11 @@ import (
 )
 
 var (
+	filterRepo *filters.Repository
+	filter1    *filters.Filter
+	filter2    *filters.Filter
+	filter3    *filters.Filter
+
 	filter2Defaults = map[string]any{
 		"one":                    "default",
 		"two":                    true,

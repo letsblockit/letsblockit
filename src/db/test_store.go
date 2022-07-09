@@ -61,6 +61,7 @@ func NewTestStore(t *testing.T) Store {
 
 	conn, err := pgx.Connect(ctx, GetTestDatabaseURL())
 	require.NoError(t, err)
+	defer conn.Close(ctx)
 
 	initTemplateOnce.Do(func() { // Create test_template and clone_schema only once
 		mustExec(t, conn, createCloneFuncQuery)
@@ -71,17 +72,24 @@ func NewTestStore(t *testing.T) Store {
 	for i := 0; i < 30; i++ { // Retry schema fork to be resilient to name collision
 		clonedSchema := schemaNamePrefix + random.String(16, random.Alphabetic)
 		if _, err = conn.Exec(ctx, forkSchemaQuery, templateSchemaName, clonedSchema); err == nil {
-			t.Cleanup(func() {
-				mustExec(t, conn, dropSchemaPattern, clonedSchema)
-				require.NoError(t, conn.Close(context.Background()))
-			})
 			store, err := Connect(buildConnString(clonedSchema))
 			require.NoError(t, err)
+			t.Cleanup(func() {
+				store.(*pgxStore).cleanup(t, clonedSchema)
+			})
 			return store
 		}
 	}
 	require.NoError(t, err)
 	return nil
+}
+
+func (s *pgxStore) cleanup(t *testing.T, name string) {
+	conn, err := s.pool.Acquire(context.Background())
+	require.NoError(t, err)
+	mustExec(t, conn.Conn(), dropSchemaPattern, name)
+	conn.Release()
+	s.pool.Close()
 }
 
 // mustExec uses string interpolation to execute schema operations

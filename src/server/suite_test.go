@@ -5,6 +5,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -48,11 +49,6 @@ var (
 		]
 	  }
 	}`
-
-	// Filled from SetupTest
-	filter1 = &filters.Filter{}
-	filter2 = &filters.Filter{}
-	filter3 = &filters.Filter{}
 )
 
 type pageContextMatcher struct {
@@ -130,13 +126,6 @@ func (s *ServerTestSuite) SetupTest() {
 		s.NoError(err)
 	}))
 
-	repo, err := filters.LoadFilters(testFilters)
-	require.NoError(s.T(), err)
-	require.NotEmpty(s.T(), repo.GetFilters())
-	filter1, _ = repo.GetFilter("filter1")
-	filter2, _ = repo.GetFilter("filter2")
-	filter3, _ = repo.GetFilter("custom-rules")
-
 	s.user = uuid.New().String()
 	pref, err := users.NewPreferenceManager(s.store)
 	require.NoError(s.T(), err)
@@ -145,7 +134,7 @@ func (s *ServerTestSuite) SetupTest() {
 	s.server = &Server{
 		auth:    auth.NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{}),
 		echo:    echo.New(),
-		filters: repo,
+		filters: filterRepo,
 		now:     func() time.Time { return fixedNow },
 		options: &Options{
 			AuthKratosUrl: s.kratosServer.URL,
@@ -263,5 +252,16 @@ func (s *ServerTestSuite) requireInstanceCount(filter string, expected int64) {
 }
 
 func TestServerTestSuite(t *testing.T) {
+	// Load fixtures
+	filterSources, err := fs.Sub(testFilters, "testdata/filters")
+	require.NoError(t, err)
+	filterRepo, err = filters.LoadFilters(filterSources)
+	require.NoError(t, err)
+	require.Len(t, filterRepo.GetFilters(), 3)
+	filter1, _ = filterRepo.GetFilter("filter1")
+	filter2, _ = filterRepo.GetFilter("filter2")
+	filter3, _ = filterRepo.GetFilter("custom-rules")
+
+	// Run test suite
 	suite.Run(t, new(ServerTestSuite))
 }
