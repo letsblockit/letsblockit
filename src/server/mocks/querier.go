@@ -37,6 +37,20 @@ func (m *MockQuerier) EXPECT() *MockQuerierMockRecorder {
 	return m.recorder
 }
 
+// AddUserBan mocks base method.
+func (m *MockQuerier) AddUserBan(ctx context.Context, arg db.AddUserBanParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddUserBan", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddUserBan indicates an expected call of AddUserBan.
+func (mr *MockQuerierMockRecorder) AddUserBan(ctx, arg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUserBan", reflect.TypeOf((*MockQuerier)(nil).AddUserBan), ctx, arg)
+}
+
 // CountInstanceForUserAndFilter mocks base method.
 func (m *MockQuerier) CountInstanceForUserAndFilter(ctx context.Context, arg db.CountInstanceForUserAndFilterParams) (int64, error) {
 	m.ctrl.T.Helper()
@@ -273,6 +287,20 @@ func (m *MockQuerier) InitUserPreferences(ctx context.Context, userID string) (d
 func (mr *MockQuerierMockRecorder) InitUserPreferences(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitUserPreferences", reflect.TypeOf((*MockQuerier)(nil).InitUserPreferences), ctx, userID)
+}
+
+// LiftUserBan mocks base method.
+func (m *MockQuerier) LiftUserBan(ctx context.Context, arg db.LiftUserBanParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LiftUserBan", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// LiftUserBan indicates an expected call of LiftUserBan.
+func (mr *MockQuerierMockRecorder) LiftUserBan(ctx, arg interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LiftUserBan", reflect.TypeOf((*MockQuerier)(nil).LiftUserBan), ctx, arg)
 }
 
 // MarkListDownloaded mocks base method.
