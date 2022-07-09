@@ -7,10 +7,22 @@ import (
 	"testing"
 	"time"
 
+	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestServerDryRun(t *testing.T) {
+	assert.Equal(t, ErrDryRunFinished, NewServer(&Options{
+		AuthMethod:    "kratos",
+		AuthKratosUrl: "http://localhost:4000/.ory",
+		DatabaseUrl:   db.GetTestDatabaseURL(),
+		StatsdTarget:  "localhost:8125",
+		DryRun:        true,
+		HotReload:     true,
+	}).Start())
+}
 
 func (s *ServerTestSuite) TestHomepage_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
