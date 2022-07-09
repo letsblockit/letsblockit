@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
@@ -36,6 +35,7 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 }
 
 func (s *ServerTestSuite) TestAbout_Logged() {
+	pref, _ := s.server.preferences.Get(s.c, s.user)
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	req.AddCookie(verifiedCookie)
 	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
@@ -49,15 +49,13 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 		CSRFToken:    s.csrf,
 		UserID:       s.user,
 		UserLoggedIn: true,
+		Preferences:  pref,
 	})
 	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestAbout_HasNews() {
-	s.preferences = &db.UserPreference{
-		UserID:     s.user,
-		NewsCursor: fixedNow,
-	}
+	pref, _ := s.server.preferences.Get(s.c, s.user)
 	s.releases = append(s.releases, &news.Release{
 		CreatedAt: fixedNow.Add(time.Hour),
 	})
@@ -74,7 +72,7 @@ func (s *ServerTestSuite) TestAbout_HasNews() {
 		CSRFToken:    s.csrf,
 		UserID:       s.user,
 		UserLoggedIn: true,
-		Preferences:  s.preferences,
+		Preferences:  pref,
 		HasNews:      true,
 	})
 	s.runRequest(req, assertOk)

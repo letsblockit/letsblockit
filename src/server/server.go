@@ -78,7 +78,7 @@ type Server struct {
 	now         func() time.Time
 	options     *Options
 	pages       PageRenderer
-	preferences UserPreferenceManager
+	preferences *users.PreferenceManager
 	releases    ReleaseClient
 	statsd      statsd.ClientInterface
 	store       db.Store

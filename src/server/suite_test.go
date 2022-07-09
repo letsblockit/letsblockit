@@ -83,12 +83,10 @@ type ServerTestSuite struct {
 	expectF      *mocks.MockFilterRepositoryMockRecorder
 	expectP      *mocks.MockPageRendererMockRecorder
 	expectR      *mocks.MockReleaseClientMockRecorder
-	expectUP     *mocks.MockUserPreferenceManagerMockRecorder
 	kratosServer *httptest.Server
 	user         string
 	csrf         string
 	releases     []*news.Release
-	preferences  *db.UserPreference
 	store        db.Store
 }
 
@@ -97,11 +95,9 @@ func (s *ServerTestSuite) SetupTest() {
 	fm := mocks.NewMockFilterRepository(c)
 	pm := mocks.NewMockPageRenderer(c)
 	rm := mocks.NewMockReleaseClient(c)
-	upm := mocks.NewMockUserPreferenceManager(c)
 	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
 	s.expectR = rm.EXPECT()
-	s.expectUP = upm.EXPECT()
 
 	s.c = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
 	s.store = db.NewTestStore(s.T())
@@ -128,6 +124,9 @@ func (s *ServerTestSuite) SetupTest() {
 	}))
 
 	s.user = uuid.New().String()
+	pref, err := users.NewPreferenceManager(s.store)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), pref.UpdateNewsCursor(s.c, s.user, fixedNow))
 	s.csrf = random.String(32)
 	s.server = &Server{
 		auth:    auth.NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{}),
@@ -139,7 +138,7 @@ func (s *ServerTestSuite) SetupTest() {
 			LogLevel:      "off",
 		},
 		pages:       pm,
-		preferences: upm,
+		preferences: pref,
 		releases:    rm,
 		statsd:      &statsd.NoOpClient{},
 		store:       s.store,
@@ -153,15 +152,7 @@ func (s *ServerTestSuite) SetupTest() {
 	// Preferences and releases are called by buildPageContext for logged-in users.
 	// Add catch-all expectations to avoid noise in the tests.
 	// Values can be set by tests before running a query
-	s.preferences = nil
 	s.releases = nil
-	s.expectUP.Get(gomock.Any(), s.user).DoAndReturn(func(c echo.Context, user string) (*db.UserPreference, error) {
-		if user == s.user {
-			return s.preferences, nil
-		} else {
-			return nil, db.NotFound
-		}
-	}).MinTimes(0)
 	s.expectR.GetLatestAt().DoAndReturn(func() (time.Time, error) {
 		if len(s.releases) > 0 {
 			return s.releases[0].CreatedAt, nil
@@ -226,6 +217,7 @@ func assertOk(t *testing.T, rec *httptest.ResponseRecorder) {
 }
 
 func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, *httptest.ResponseRecorder)) {
+	s.T().Helper()
 	rec := httptest.NewRecorder()
 	if len(s.csrf) > 0 {
 		req.AddCookie(&http.Cookie{

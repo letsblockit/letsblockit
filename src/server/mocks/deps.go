@@ -11,7 +11,6 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	echo "github.com/labstack/echo/v4"
-	db "github.com/letsblockit/letsblockit/src/db"
 	filters "github.com/letsblockit/letsblockit/src/filters"
 	news "github.com/letsblockit/letsblockit/src/news"
 	pages "github.com/letsblockit/letsblockit/src/pages"
@@ -270,56 +269,4 @@ func (m *MockReleaseClient) GetReleases() ([]*news.Release, error) {
 func (mr *MockReleaseClientMockRecorder) GetReleases() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReleases", reflect.TypeOf((*MockReleaseClient)(nil).GetReleases))
-}
-
-// MockUserPreferenceManager is a mock of UserPreferenceManager interface.
-type MockUserPreferenceManager struct {
-	ctrl     *gomock.Controller
-	recorder *MockUserPreferenceManagerMockRecorder
-}
-
-// MockUserPreferenceManagerMockRecorder is the mock recorder for MockUserPreferenceManager.
-type MockUserPreferenceManagerMockRecorder struct {
-	mock *MockUserPreferenceManager
-}
-
-// NewMockUserPreferenceManager creates a new mock instance.
-func NewMockUserPreferenceManager(ctrl *gomock.Controller) *MockUserPreferenceManager {
-	mock := &MockUserPreferenceManager{ctrl: ctrl}
-	mock.recorder = &MockUserPreferenceManagerMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockUserPreferenceManager) EXPECT() *MockUserPreferenceManagerMockRecorder {
-	return m.recorder
-}
-
-// Get mocks base method.
-func (m *MockUserPreferenceManager) Get(c echo.Context, user string) (*db.UserPreference, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", c, user)
-	ret0, _ := ret[0].(*db.UserPreference)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Get indicates an expected call of Get.
-func (mr *MockUserPreferenceManagerMockRecorder) Get(c, user interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockUserPreferenceManager)(nil).Get), c, user)
-}
-
-// UpdateNewsCursor mocks base method.
-func (m *MockUserPreferenceManager) UpdateNewsCursor(c echo.Context, user string, at time.Time) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateNewsCursor", c, user, at)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateNewsCursor indicates an expected call of UpdateNewsCursor.
-func (mr *MockUserPreferenceManagerMockRecorder) UpdateNewsCursor(c, user, at interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNewsCursor", reflect.TypeOf((*MockUserPreferenceManager)(nil).UpdateNewsCursor), c, user, at)
 }

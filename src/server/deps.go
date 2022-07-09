@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
-	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
@@ -31,8 +30,4 @@ type FilterRepository interface {
 type ReleaseClient interface {
 	GetReleases() ([]*news.Release, error)
 	GetLatestAt() (time.Time, error)
-}
-type UserPreferenceManager interface {
-	Get(c echo.Context, user string) (*db.UserPreference, error)
-	UpdateNewsCursor(c echo.Context, user string, at time.Time) error
 }

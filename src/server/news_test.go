@@ -7,11 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
-	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/blog/atom"
 )
 
@@ -42,11 +41,6 @@ func (s *ServerTestSuite) TestNews_LoggedIn() {
 	req := httptest.NewRequest(http.MethodGet, "/news", nil)
 	req.AddCookie(verifiedCookie)
 	s.releases = exampleReleases
-	s.preferences = &db.UserPreference{
-		UserID:     s.user,
-		NewsCursor: fixedNow,
-	}
-	s.expectUP.UpdateNewsCursor(gomock.Any(), s.user, exampleReleases[0].CreatedAt)
 	s.expectRender("news", pages.ContextData{
 		"releases": exampleReleases,
 		"newReleases": map[string]bool{
@@ -55,16 +49,18 @@ func (s *ServerTestSuite) TestNews_LoggedIn() {
 		},
 	})
 	s.runRequest(req, assertOk)
+
+	// Test news cursor has been updated
+	pref, err := s.server.preferences.Get(s.c, s.user)
+	require.NoError(s.T(), err)
+	require.EqualValues(s.T(), exampleReleases[0].CreatedAt, pref.NewsCursor)
 }
 
 func (s *ServerTestSuite) TestNews_NoNews() {
+	require.NoError(s.T(), s.server.preferences.UpdateNewsCursor(s.c, s.user, exampleReleases[0].CreatedAt))
 	req := httptest.NewRequest(http.MethodGet, "/news", nil)
 	req.AddCookie(verifiedCookie)
 	s.releases = exampleReleases
-	s.preferences = &db.UserPreference{
-		UserID:     s.user,
-		NewsCursor: exampleReleases[0].CreatedAt,
-	}
 	s.expectRender("news", pages.ContextData{
 		"releases":    exampleReleases,
 		"newReleases": map[string]bool{},
