@@ -48,6 +48,11 @@ var (
 		]
 	  }
 	}`
+
+	// Filled from SetupTest
+	filter1 = &filters.Filter{}
+	filter2 = &filters.Filter{}
+	filter3 = &filters.Filter{}
 )
 
 type pageContextMatcher struct {
@@ -128,6 +133,9 @@ func (s *ServerTestSuite) SetupTest() {
 	repo, err := filters.LoadFilters(testFilters)
 	require.NoError(s.T(), err)
 	require.NotEmpty(s.T(), repo.GetFilters())
+	filter1, _ = repo.GetFilter("filter1")
+	filter2, _ = repo.GetFilter("filter2")
+	filter3, _ = repo.GetFilter("custom-rules")
 
 	s.user = uuid.New().String()
 	pref, err := users.NewPreferenceManager(s.store)

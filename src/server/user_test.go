@@ -4,9 +4,12 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -62,4 +65,41 @@ func (s *ServerTestSuite) TestUserAccount_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 	s.expectRender("user-account", nil)
 	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestRotateListToken_Ok() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	f := make(url.Values)
+	f.Add("one", "blep")
+	f.Add("token", token.String())
+	f.Add("confirm", "on")
+	f.Add(csrfLookup, s.csrf)
+	req := httptest.NewRequest(http.MethodPost, "/user/rotate-token", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	req.AddCookie(verifiedCookie)
+
+	s.expectP.Redirect(gomock.Any(), http.StatusSeeOther, "/user/account")
+	s.runRequest(req, assertOk)
+
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NotEqual(s.T(), token, list.Token)
+}
+
+func (s *ServerTestSuite) TestRotateListToken_MissingCSRF() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	f := make(url.Values)
+	f.Add("one", "blep")
+	f.Add("token", token.String())
+	f.Add("confirm", "on")
+	req := httptest.NewRequest(http.MethodPost, "/user/rotate-token", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	req.AddCookie(verifiedCookie)
+	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		assert.Equal(t, 400, recorder.Result().StatusCode)
+	})
 }

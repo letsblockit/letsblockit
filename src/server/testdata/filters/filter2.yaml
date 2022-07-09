@@ -11,6 +11,11 @@ params:
     default:
       - a
       - b
+    presets:
+      - name: dummy
+        values:
+          - presetA
+          - presetB
 tags:
   - tag2
   - tag3
