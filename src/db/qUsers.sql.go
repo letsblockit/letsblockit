@@ -7,8 +7,24 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
+
+const addUserBan = `-- name: AddUserBan :exec
+INSERT INTO banned_users (user_id, reason)
+VALUES ($1,$2)
+`
+
+type AddUserBanParams struct {
+	UserID string
+	Reason string
+}
+
+func (q *Queries) AddUserBan(ctx context.Context, arg AddUserBanParams) error {
+	_, err := q.db.Exec(ctx, addUserBan, arg.UserID, arg.Reason)
+	return err
+}
 
 const getBannedUsers = `-- name: GetBannedUsers :many
 SELECT user_id
@@ -60,6 +76,23 @@ func (q *Queries) InitUserPreferences(ctx context.Context, userID string) (UserP
 	var i UserPreference
 	err := row.Scan(&i.UserID, &i.NewsCursor)
 	return i, err
+}
+
+const liftUserBan = `-- name: LiftUserBan :exec
+UPDATE banned_users
+SET lift_reason     = $2,
+    lifted_at = NOW()
+WHERE (user_id = $1)
+`
+
+type LiftUserBanParams struct {
+	UserID     string
+	LiftReason sql.NullString
+}
+
+func (q *Queries) LiftUserBan(ctx context.Context, arg LiftUserBanParams) error {
+	_, err := q.db.Exec(ctx, liftUserBan, arg.UserID, arg.LiftReason)
+	return err
 }
 
 const updateNewsCursor = `-- name: UpdateNewsCursor :exec

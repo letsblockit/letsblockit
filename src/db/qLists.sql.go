@@ -97,11 +97,11 @@ const markListDownloaded = `-- name: MarkListDownloaded :exec
 UPDATE filter_lists
 SET downloaded    = true,
     downloaded_at = NOW()
-WHERE id = $1
+WHERE token = $1
 `
 
-func (q *Queries) MarkListDownloaded(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, markListDownloaded, id)
+func (q *Queries) MarkListDownloaded(ctx context.Context, token uuid.UUID) error {
+	_, err := q.db.Exec(ctx, markListDownloaded, token)
 	return err
 }
 

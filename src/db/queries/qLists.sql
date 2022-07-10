@@ -39,4 +39,4 @@ LIMIT 1;
 UPDATE filter_lists
 SET downloaded    = true,
     downloaded_at = NOW()
-WHERE id = $1;
+WHERE token = $1;

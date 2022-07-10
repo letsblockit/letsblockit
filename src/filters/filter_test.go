@@ -12,7 +12,7 @@ import (
 )
 
 func TestValidateFilters(t *testing.T) {
-	repo, err := LoadFilters()
+	repo, err := LoadFilters(data.Filters)
 	assert.NoError(t, err)
 
 	validate := buildValidator(t)

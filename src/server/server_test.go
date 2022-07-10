@@ -13,13 +13,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestServerDryRun(t *testing.T) {
+	assert.Equal(t, ErrDryRunFinished, NewServer(&Options{
+		AuthMethod:    "kratos",
+		AuthKratosUrl: "http://localhost:4000/.ory",
+		DatabaseUrl:   db.GetTestDatabaseURL(),
+		StatsdTarget:  "localhost:8125",
+		DryRun:        true,
+		HotReload:     true,
+	}).Start())
+}
+
 func (s *ServerTestSuite) TestHomepage_Anonymous() {
+	s.user = ""
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	s.expectRender("landing", nil)
 	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestAbout_Anonymous() {
+	s.user = ""
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
 	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
 		CurrentSection:  "help/about",
@@ -36,8 +49,8 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 }
 
 func (s *ServerTestSuite) TestAbout_Logged() {
+	pref, _ := s.server.preferences.Get(s.c, s.user)
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	req.AddCookie(verifiedCookie)
 	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
 		CurrentSection:  "help/about",
 		NavigationLinks: navigationLinks,
@@ -49,20 +62,17 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 		CSRFToken:    s.csrf,
 		UserID:       s.user,
 		UserLoggedIn: true,
+		Preferences:  pref,
 	})
 	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestAbout_HasNews() {
-	s.preferences = &db.UserPreference{
-		UserID:     s.user,
-		NewsCursor: fixedNow,
-	}
+	pref, _ := s.server.preferences.Get(s.c, s.user)
 	s.releases = append(s.releases, &news.Release{
 		CreatedAt: fixedNow.Add(time.Hour),
 	})
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	req.AddCookie(verifiedCookie)
 	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
 		CurrentSection:  "help/about",
 		NavigationLinks: navigationLinks,
@@ -74,7 +84,7 @@ func (s *ServerTestSuite) TestAbout_HasNews() {
 		CSRFToken:    s.csrf,
 		UserID:       s.user,
 		UserLoggedIn: true,
-		Preferences:  s.preferences,
+		Preferences:  pref,
 		HasNews:      true,
 	})
 	s.runRequest(req, assertOk)
@@ -83,46 +93,9 @@ func (s *ServerTestSuite) TestAbout_HasNews() {
 func (s *ServerTestSuite) TestAbout_BannedUser() {
 	s.setUserBanned()
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
 		assert.Equal(t, 403, recorder.Result().StatusCode)
 	})
-}
-
-func (s *ServerTestSuite) TestAbout_KratosDown() {
-	s.kratosServer.Close() // Kratos is unresponsive, continue anonymous
-	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	req.AddCookie(verifiedCookie)
-	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
-		CurrentSection:  "help/about",
-		NavigationLinks: navigationLinks,
-		Title:           "About this project",
-		Data: pages.ContextData{
-			"page":          helpMenu[1].Pages[0],
-			"menu_sections": helpMenu,
-		},
-		CSRFToken: s.csrf,
-	})
-	s.runRequest(req, assertOk)
-}
-
-func (s *ServerTestSuite) TestAbout_InvalidKratosResponse() {
-	req := httptest.NewRequest(http.MethodGet, "/about", nil)
-	req.AddCookie(&http.Cookie{
-		Name:  "ory_session_verified",
-		Value: "invalid ]]]]", // JSON parsing error -> continue anonymous
-	})
-	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
-		CurrentSection:  "help/about",
-		NavigationLinks: navigationLinks,
-		Title:           "About this project",
-		Data: pages.ContextData{
-			"page":          helpMenu[1].Pages[0],
-			"menu_sections": helpMenu,
-		},
-		CSRFToken: s.csrf,
-	})
-	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestShouldReload_OK() {

@@ -1,7 +1,11 @@
 package server
 
 import (
+	"context"
+	"embed"
+	"encoding/json"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,33 +17,21 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/random"
 	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/letsblockit/letsblockit/src/server/mocks"
 	"github.com/letsblockit/letsblockit/src/users"
 	"github.com/letsblockit/letsblockit/src/users/auth"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
 var (
-	fixedNow       = time.Date(2020, 06, 02, 17, 44, 22, 0, time.UTC)
-	verifiedCookie = &http.Cookie{
-		Name:  "ory_session_verified",
-		Value: "true",
-	}
-	whoAmiPattern = `{
-	  "id": "af9b460f-4ca0-453d-8bc7-cf68f30d4174",
-	  "active": true,
-	  "identity": {
-		"id": "%s",
-		"verifiable_addresses": [
-		  {
-			"verified": %s
-		  }
-		]
-	  }
-	}`
+	//go:embed testdata/filters
+	testFilters embed.FS
+	fixedNow    = time.Date(2020, 06, 02, 17, 44, 22, 0, time.UTC)
 )
 
 type pageContextMatcher struct {
@@ -75,108 +67,91 @@ func (m *pageDataMatcher) String() string {
 
 type ServerTestSuite struct {
 	suite.Suite
-	server       *Server
-	expectF      *mocks.MockFilterRepositoryMockRecorder
-	expectP      *mocks.MockPageRendererMockRecorder
-	expectQ      *mocks.MockQuerierMockRecorder
-	expectR      *mocks.MockReleaseClientMockRecorder
-	expectUP     *mocks.MockUserPreferenceManagerMockRecorder
-	kratosServer *httptest.Server
-	user         string
-	csrf         string
-	releases     []*news.Release
-	preferences  *db.UserPreference
+	c        echo.Context
+	server   *Server
+	expectP  *mocks.MockPageRendererMockRecorder
+	expectR  *mocks.MockReleaseClientMockRecorder
+	user     string
+	csrf     string
+	releases []*news.Release
+	store    db.Store
 }
+
+// Implements auth.Backend: authenticates requests when s.user is not empty
+func (s *ServerTestSuite) BuildMiddleware() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if len(s.user) > 0 {
+				c.Set("_user", s.user)
+			}
+			return next(c)
+		}
+	}
+}
+
+// Implements auth.Backend: do nothing
+func (s *ServerTestSuite) RegisterRoutes(_ auth.EchoRouter) {}
 
 func (s *ServerTestSuite) SetupTest() {
 	c := gomock.NewController(s.T())
-	fm := mocks.NewMockFilterRepository(c)
 	pm := mocks.NewMockPageRenderer(c)
-	qm := mocks.NewMockQuerier(c)
 	rm := mocks.NewMockReleaseClient(c)
-	upm := mocks.NewMockUserPreferenceManager(c)
-	s.expectF = fm.EXPECT()
 	s.expectP = pm.EXPECT()
-	s.expectQ = qm.EXPECT()
 	s.expectR = rm.EXPECT()
-	s.expectUP = upm.EXPECT()
 
-	s.kratosServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var err error
-		fmt.Println(r.URL.Path)
-		switch r.URL.Path {
-		case "/self-service/logout/browser":
-			_, err = fmt.Fprint(w, `{"logout_url":"targetURL"}`)
-		case "/sessions/whoami":
-			cookie, _ := r.Cookie("ory_session_verified")
-			_, err = fmt.Fprintf(w, whoAmiPattern, s.user, cookie.Value)
-		case "/self-service/login/flows":
-			switch r.URL.RawQuery {
-			case "id=123456":
-				_, err = fmt.Fprint(w, `{"ui":{"a": "1", "b": "2"},"return_to":"https://target"}`)
-			case "id=666":
-				_, err = fmt.Fprint(w, `{"invalid": true}`)
-			}
-		default:
-			http.NotFound(w, r)
-		}
-		s.NoError(err)
-	}))
-
-	s.user = uuid.New().String()
+	s.c = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
+	s.store = db.NewTestStore(s.T())
 	s.csrf = random.String(32)
+	s.user = uuid.New().String()
+	pref, err := users.NewPreferenceManager(s.store)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), pref.UpdateNewsCursor(s.c, s.user, fixedNow))
+
 	s.server = &Server{
-		auth:    auth.NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{}),
+		auth:    s,
 		echo:    echo.New(),
-		filters: fm,
+		filters: filterRepo,
 		now:     func() time.Time { return fixedNow },
 		options: &Options{
-			AuthKratosUrl: s.kratosServer.URL,
-			LogLevel:      "off",
+			LogLevel: "off",
 		},
 		pages:       pm,
-		preferences: upm,
+		preferences: pref,
 		releases:    rm,
 		statsd:      &statsd.NoOpClient{},
-		store:       mocks.NewMockStore(qm),
+		store:       s.store,
 	}
 	s.server.setupRouter()
-
-	// TODO: Used by ory_test.go, remove after moving these tests to their own suite
-	s.expectP.BuildPageContext(gomock.Any(), gomock.Any()).DoAndReturn(s.server.buildPageContext).
-		MinTimes(0).MaxTimes(1)
 
 	// Preferences and releases are called by buildPageContext for logged-in users.
 	// Add catch-all expectations to avoid noise in the tests.
 	// Values can be set by tests before running a query
-	s.preferences = nil
 	s.releases = nil
-	s.expectUP.Get(gomock.Any(), s.user).DoAndReturn(func(c echo.Context, user string) (*db.UserPreference, error) {
-		if user == s.user {
-			return s.preferences, nil
-		} else {
-			return nil, db.NotFound
-		}
-	}).MinTimes(0).MaxTimes(1)
 	s.expectR.GetLatestAt().DoAndReturn(func() (time.Time, error) {
 		if len(s.releases) > 0 {
 			return s.releases[0].CreatedAt, nil
 		} else {
 			return fixedNow, nil
 		}
-	}).MinTimes(0).MaxTimes(1)
+	}).MinTimes(0)
 	s.expectR.GetReleases().DoAndReturn(func() ([]*news.Release, error) {
 		return s.releases, nil
-	}).MinTimes(0).MaxTimes(1)
-}
-
-func (s *ServerTestSuite) TearDownTest() {
-	s.kratosServer.Close()
+	}).MinTimes(0)
 }
 
 func (s *ServerTestSuite) setUserBanned() {
-	s.expectQ.GetBannedUsers(gomock.Any()).Return([]string{s.user}, nil)
+	s.T().Helper()
+	require.NoError(s.T(), s.store.AddUserBan(context.Background(), db.AddUserBanParams{
+		UserID: s.user,
+	}))
 	s.server.bans, _ = users.LoadUserBans(s.server.store)
+}
+
+func (s *ServerTestSuite) markListDownloaded() {
+	s.T().Helper()
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), s.store.MarkListDownloaded(context.Background(), list.Token))
 }
 
 func (s *ServerTestSuite) expectRender(page string, data pages.ContextData) *gomock.Call {
@@ -212,6 +187,7 @@ func assertOk(t *testing.T, rec *httptest.ResponseRecorder) {
 }
 
 func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, *httptest.ResponseRecorder)) {
+	s.T().Helper()
 	rec := httptest.NewRecorder()
 	if len(s.csrf) > 0 {
 		req.AddCookie(&http.Cookie{
@@ -223,6 +199,36 @@ func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, 
 	checks(s.T(), rec)
 }
 
+func (s *ServerTestSuite) requireJSONEq(expected, actual any) {
+	s.T().Helper()
+	expectedJSON, err := json.Marshal(expected)
+	require.NoError(s.T(), err)
+	actualJSON, err := json.Marshal(actual)
+	require.NoError(s.T(), err)
+	require.JSONEq(s.T(), string(expectedJSON), string(actualJSON))
+}
+
+func (s *ServerTestSuite) requireInstanceCount(filter string, expected int64) {
+	s.T().Helper()
+	count, err := s.store.CountInstanceForUserAndFilter(context.Background(), db.CountInstanceForUserAndFilterParams{
+		UserID:     s.user,
+		FilterName: filter,
+	})
+	require.NoError(s.T(), err)
+	require.EqualValues(s.T(), expected, count)
+}
+
 func TestServerTestSuite(t *testing.T) {
+	// Load fixtures
+	filterSources, err := fs.Sub(testFilters, "testdata/filters")
+	require.NoError(t, err)
+	filterRepo, err = filters.LoadFilters(filterSources)
+	require.NoError(t, err)
+	require.Len(t, filterRepo.GetFilters(), 3)
+	filter1, _ = filterRepo.GetFilter("filter1")
+	filter2, _ = filterRepo.GetFilter("filter2")
+	filter3, _ = filterRepo.GetFilter("custom-rules")
+
+	// Run test suite
 	suite.Run(t, new(ServerTestSuite))
 }

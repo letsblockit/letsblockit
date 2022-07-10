@@ -12,6 +12,7 @@ import (
 )
 
 type Querier interface {
+	AddUserBan(ctx context.Context, arg AddUserBanParams) error
 	CountInstanceForUserAndFilter(ctx context.Context, arg CountInstanceForUserAndFilterParams) (int64, error)
 	CountListsForUser(ctx context.Context, userID string) (int64, error)
 	CreateInstanceForUserAndFilter(ctx context.Context, arg CreateInstanceForUserAndFilterParams) error
@@ -28,7 +29,8 @@ type Querier interface {
 	GetUserPreferences(ctx context.Context, userID string) (UserPreference, error)
 	HasUserDownloadedList(ctx context.Context, userID string) (bool, error)
 	InitUserPreferences(ctx context.Context, userID string) (UserPreference, error)
-	MarkListDownloaded(ctx context.Context, id int32) error
+	LiftUserBan(ctx context.Context, arg LiftUserBanParams) error
+	MarkListDownloaded(ctx context.Context, token uuid.UUID) error
 	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstanceForUserAndFilter(ctx context.Context, arg UpdateInstanceForUserAndFilterParams) error
 	UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error

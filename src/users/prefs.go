@@ -50,6 +50,9 @@ func (m *PreferenceManager) Get(c echo.Context, user string) (*db.UserPreference
 }
 
 func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user string, at time.Time) error {
+	if _, err := m.Get(c, user); err != nil {
+		return err
+	}
 	err := m.store.UpdateNewsCursor(c.Request().Context(), db.UpdateNewsCursorParams{
 		UserID:     user,
 		NewsCursor: at,
