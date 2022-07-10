@@ -12,13 +12,15 @@ and [contributing guidelines](https://letsblock.it/help/contributing).
 
 ## How to use this project
 
-- Go to [letsblock.it](https://letsblock.it), create an account and curate your personal filter list
+There are three ways to use our filter templates:
+
+1. Go to [letsblock.it](https://letsblock.it), create an account and curate your personal filter list
 based on our filter templates. A personal URL will be generated for you to add to your uBlock Origin lists.
-- Alternatively, you can maintain your filter parameters in a YAML file, and use [the local render CLI](cmd/render)
+2. Self-hosting of [the letsblock.it server](cmd/server) is now supported for experienced users, read
+  [the setup doc](cmd/server/README.md) to get started.
+3. Alternatively, you can maintain your filter parameters in a YAML file, and use [the local render CLI](cmd/render)
 to generate your personal filter list. You will still need to host it on a web server for it to be retrievable
 by uBlock Origin.
-- Self-hosting of [the letsblock.it server](cmd/server) is currently not officially supported, as the database schema is
-evolving quickly. Don't hesitate to open an issue to discuss this if you'd be interested.
 
 ## Repository structure
 
