@@ -51,7 +51,7 @@ var (
 		Type:  "recovery",
 	}}
 
-	SupportedForms = map[string]struct {
+	supportedForms = map[string]struct {
 		Title string
 		Tabs  []formTab
 		Intro string
@@ -131,7 +131,7 @@ func NewOryBackend(rootUrl string, renderer renderer, statsd statsd.ClientInterf
 	}
 }
 
-func (o *OryBackend) RegisterRoutes(group *echo.Group) {
+func (o *OryBackend) RegisterRoutes(group EchoRouter) {
 	group.GET("/user/forms/:type", o.renderKratosForm)
 	group.POST("/user/action/:type", o.startKratosFlow).Name = userActionRouteName
 }
@@ -200,7 +200,7 @@ func (o *OryBackend) renderKratosForm(c echo.Context) error {
 		return fmt.Errorf("missing args, got type '%s', flow '%s'", formType, flowID)
 	}
 	hc, err := func() (*pages.Context, error) {
-		formSettings, ok := SupportedForms[formType]
+		formSettings, ok := supportedForms[formType]
 		if !ok {
 			return nil, fmt.Errorf("unsupported form type %s", formType)
 		}

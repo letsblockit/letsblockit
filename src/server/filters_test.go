@@ -50,7 +50,6 @@ var (
 
 func (s *ServerTestSuite) TestListFilters_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/filters", nil)
-	req.AddCookie(verifiedCookie)
 
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
@@ -68,7 +67,6 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 
 func (s *ServerTestSuite) TestListFilters_ByTag() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/tag/tag2", nil)
-	req.AddCookie(verifiedCookie)
 
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
 	s.expectRender("list-filters", pages.ContextData{
@@ -93,7 +91,6 @@ func (s *ServerTestSuite) TestViewFilter_Anonymous() {
 
 func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
-	req.AddCookie(verifiedCookie)
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":   filter2,
 		"rendered": filter2DefaultOutput,
@@ -104,7 +101,6 @@ func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 
 func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
-	req.AddCookie(verifiedCookie)
 
 	params := map[string]any{
 		"two":   true,
@@ -126,7 +122,6 @@ func (s *ServerTestSuite) TestViewFilter_Preview() {
 	f.Add(csrfLookup, s.csrf)
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":   filter2,
@@ -143,7 +138,6 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
@@ -172,7 +166,6 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter1", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter1,
@@ -201,7 +194,6 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
@@ -231,7 +223,6 @@ func (s *ServerTestSuite) TestViewFilter_Disable() {
 	f.Add("__disable", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 	s.expectP.RedirectToPage(gomock.Any(), "list-filters")
 	s.runRequest(req, assertOk)
 	s.requireInstanceCount("filter2", 0)
@@ -242,7 +233,6 @@ func (s *ServerTestSuite) TestViewFilter_MissingCSRF() {
 	f.Add("__save", "")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
 		assert.Equal(t, 400, recorder.Result().StatusCode)
 	})
@@ -258,7 +248,6 @@ func (s *ServerTestSuite) TestViewFilter_NotFound() {
 func (s *ServerTestSuite) TestViewFilterRender_Defaults() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 	s.expectRender("view-filter-render", pages.ContextData{
 		"rendered": filter2DefaultOutput,
 	})
@@ -268,7 +257,6 @@ func (s *ServerTestSuite) TestViewFilterRender_Defaults() {
 func (s *ServerTestSuite) TestViewFilterRender_Custom() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(buildFilter2CustomBody().Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRender("view-filter-render", pages.ContextData{
 		"rendered": filter2CustomOutput,
@@ -279,7 +267,6 @@ func (s *ServerTestSuite) TestViewFilterRender_Custom() {
 func (s *ServerTestSuite) TestViewFilterRender_WithPreset() {
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(buildFilter2PresetBody().Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRender("view-filter-render", pages.ContextData{
 		"rendered": filter2PresetOutput,
@@ -300,7 +287,6 @@ func (s *ServerTestSuite) TestViewFilterRender_LoggedIn() {
 	f.Add("__logged_in", "true")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRenderWithContext("view-filter-render", &pages.Context{
 		NakedContent:    true,

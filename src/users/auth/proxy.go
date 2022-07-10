@@ -28,4 +28,4 @@ func (e *Proxy) BuildMiddleware() echo.MiddlewareFunc {
 	}
 }
 
-func (e *Proxy) RegisterRoutes(_ *echo.Group) {}
+func (e *Proxy) RegisterRoutes(_ EchoRouter) {}

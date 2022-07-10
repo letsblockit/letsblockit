@@ -87,7 +87,6 @@ func (s *ServerTestSuite) TestExportList_OK() {
 	require.NoError(s.T(), err)
 
 	req := httptest.NewRequest(http.MethodGet, "/export/"+list.Token.String(), nil)
-	req.AddCookie(verifiedCookie)
 
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
@@ -127,7 +126,6 @@ func (s *ServerTestSuite) TestExportList_BadUser() {
 	token, err := s.store.CreateListForUser(context.Background(), otherUser)
 	require.NoError(s.T(), err)
 	req := httptest.NewRequest(http.MethodGet, "/export/"+token.String(), nil)
-	req.AddCookie(verifiedCookie)
 
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)

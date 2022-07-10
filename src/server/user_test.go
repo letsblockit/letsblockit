@@ -23,26 +23,17 @@ func (s *ServerTestSuite) TestUserAccount_Ok() {
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "two", nil))
 
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	req.AddCookie(verifiedCookie)
 
 	s.expectRender("user-account", pages.ContextData{
 		"filter_count":    int64(2),
 		"list_token":      token.String(),
 		"list_downloaded": true,
 	})
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 200, rec.Code, rec.Body)
-		assert.Len(t, rec.Result().Cookies(), 2)
-		cookie := rec.Result().Cookies()[0]
-		assert.Equal(t, "has_account", cookie.Name)
-		assert.Equal(t, "true", cookie.Value)
-		assert.Equal(t, "/", cookie.Path)
-	})
+	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestUserAccount_CreateList() {
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	req.AddCookie(verifiedCookie)
 
 	// First query
 	s.expectP.Render(gomock.Any(), "user-account", gomock.Any())
@@ -62,6 +53,7 @@ func (s *ServerTestSuite) TestUserAccount_CreateList() {
 }
 
 func (s *ServerTestSuite) TestUserAccount_Anonymous() {
+	s.user = ""
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 	s.expectRender("user-account", nil)
 	s.runRequest(req, assertOk)
@@ -78,7 +70,6 @@ func (s *ServerTestSuite) TestRotateListToken_Ok() {
 	f.Add(csrfLookup, s.csrf)
 	req := httptest.NewRequest(http.MethodPost, "/user/rotate-token", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 
 	s.expectP.Redirect(gomock.Any(), http.StatusSeeOther, "/user/account")
 	s.runRequest(req, assertOk)
@@ -98,7 +89,6 @@ func (s *ServerTestSuite) TestRotateListToken_MissingCSRF() {
 	f.Add("confirm", "on")
 	req := httptest.NewRequest(http.MethodPost, "/user/rotate-token", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
-	req.AddCookie(verifiedCookie)
 	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
 		assert.Equal(t, 400, recorder.Result().StatusCode)
 	})

@@ -28,6 +28,7 @@ var exampleReleases = []*news.Release{{
 }}
 
 func (s *ServerTestSuite) TestNews_Anonymous() {
+	s.user = ""
 	req := httptest.NewRequest(http.MethodGet, "/news", nil)
 	s.releases = exampleReleases
 	s.expectRender("news", pages.ContextData{
@@ -39,7 +40,6 @@ func (s *ServerTestSuite) TestNews_Anonymous() {
 
 func (s *ServerTestSuite) TestNews_LoggedIn() {
 	req := httptest.NewRequest(http.MethodGet, "/news", nil)
-	req.AddCookie(verifiedCookie)
 	s.releases = exampleReleases
 	s.expectRender("news", pages.ContextData{
 		"releases": exampleReleases,
@@ -59,7 +59,6 @@ func (s *ServerTestSuite) TestNews_LoggedIn() {
 func (s *ServerTestSuite) TestNews_NoNews() {
 	require.NoError(s.T(), s.server.preferences.UpdateNewsCursor(s.c, s.user, exampleReleases[0].CreatedAt))
 	req := httptest.NewRequest(http.MethodGet, "/news", nil)
-	req.AddCookie(verifiedCookie)
 	s.releases = exampleReleases
 	s.expectRender("news", pages.ContextData{
 		"releases":    exampleReleases,

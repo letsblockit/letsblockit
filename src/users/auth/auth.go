@@ -1,6 +1,8 @@
 package auth
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+)
 
 const (
 	hasAccountCookieName  = "has_account"
@@ -12,7 +14,12 @@ const (
 
 type Backend interface {
 	BuildMiddleware() echo.MiddlewareFunc
-	RegisterRoutes(group *echo.Group)
+	RegisterRoutes(group EchoRouter)
+}
+
+type EchoRouter interface {
+	GET(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
+	POST(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
 }
 
 func setUserId(c echo.Context, id string) {
