@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo/v4"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,8 +20,8 @@ func (s *ServerTestSuite) TestUserAccount_Ok() {
 	token, err := s.store.CreateListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
 	s.markListDownloaded()
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "one", nil))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "two", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "one"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "two"}))
 
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 

@@ -272,10 +272,7 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (*filters.Instanc
 	instance := &filters.Instance{
 		Filter:   filter.Name,
 		Params:   make(map[string]interface{}),
-		TestMode: false,
-	}
-	if formParams.Get("__test_mode") == "on" {
-		instance.TestMode = true
+		TestMode: formParams.Get("__test_mode") == "on",
 	}
 
 	for _, p := range filter.Params {

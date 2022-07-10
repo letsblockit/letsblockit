@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -24,9 +25,15 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 	token, err := s.store.CreateListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
 
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", filter2Custom))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "custom-rules", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter:   "filter1",
+		TestMode: true,
+	}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter: "filter2",
+		Params: filter2Custom,
+	}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "custom-rules"}))
 
 	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String(), nil)
 	rec := httptest.NewRecorder()
@@ -38,7 +45,7 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 ! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 
 ! filter1
-hello from one
+hello from one:style(border: 2px dashed red !important)
 
 ! filter2
 hello one blep
@@ -51,6 +58,33 @@ custom
 my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
 
 	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.True(s.T(), list.Downloaded)
+
+	// Test mode
+	req = httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String()+"?test_mode", nil)
+	rec = httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	s.Equal(`! Title: letsblock.it - My filters
+! Expires: 12 hours
+! Homepage: https://letsblock.it
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
+
+! filter1
+hello from one:style(border: 2px dashed red !important)
+
+! filter2
+hello one blep:style(border: 2px dashed red !important)
+hello two blep:style(border: 2px dashed red !important)
+
+! custom-rules
+custom:style(border: 2px dashed red !important)
+
+! Hide the list install prompt for that list
+my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
+
+	list, err = s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
 	require.True(s.T(), list.Downloaded)
 }
@@ -105,9 +139,12 @@ func (s *ServerTestSuite) TestExportList_OK() {
 		"two":   false,
 		"three": []any{"one", "two"},
 	}
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", params))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "custom-rules", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter: "filter2",
+		Params: params,
+	}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "custom-rules"}))
 
 	list, err := s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
