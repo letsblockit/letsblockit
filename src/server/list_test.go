@@ -59,6 +59,10 @@ func (s *ServerTestSuite) TestRenderList_WithReferer() {
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
+
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.False(s.T(), list.Downloaded)
 }
 
 func (s *ServerTestSuite) TestRenderList_BannedUser() {
