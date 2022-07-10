@@ -52,9 +52,6 @@ params:
         description: Hide Github copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/github_copycats.txt
         values:
-          - .fastgit.org/
-          - .gitmemory.com/
-          - .wenyanet.com/
           - androidrepo.com/
           - andywarholpopartillustration.blogspot.com/
           - awesomeopensource.com/
@@ -68,11 +65,15 @@ params:
           - bytemeta.vip/
           - coder.social/
           - codespots.com/
+          - editcode.net/
           - fantashit.com/
+          - fastgit.org/
           - findbestopensource.com/
           - flutterrepos.com/
+          - fuscin.com/
           - gitanswer.com/
           - gitcode.net/
+          - gitdetail.com/
           - giters.com/
           - gitfreak.com/
           - github.astrophel.org/
@@ -86,12 +87,14 @@ params:
           - githubmemory.com/
           - githubplus.com/
           - gitmemory.cn/
+          - gitmemory.com/
           - gitmetadata.com/
           - gitmotion.com/
           - golangexample.com/
           - golangissues.com/
           - golangrepo.com/
           - google-yandex.info/
+          - higithub.com/
           - iboxshare.com/
           - issueantenna.com/
           - issueexplorer.com/
@@ -114,10 +117,7 @@ params:
           - softbranchdevelopers.com/
           - swiftobc.com/
           - vuejscode.com/
-          - www.editcode.net/
-          - www.fuscin.com/
-          - www.gitdetail.com/
-          - www.higithub.com/
+          - wenyanet.com/
           - zzun.app/
       - name: npm-copycats
         description: Hide npm copycat websites
@@ -130,62 +130,23 @@ params:
         description: Hide Stackoverflow copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/stackoverflow_copycats.txt
         values:
-          - .amuddycup.com/
-          - .athabasca-foto.com/
-          - .cfadnc.org/
-          - .codefaq.info/
-          - .codeflow.site/
-          - .codegrepper.com/
-          - .coredump.biz/
-          - .culinarydegree.info/
-          - .developreference.com/
-          - .domainelespailles.net/
-          - .ec-europe.org/
-          - .ecnf2016.org/
-          - .elfishgene.com/
-          - .faithcov.org/
-          - .fitforlearning.org/
-          - .fluffyfables.com/
-          - .gupgallery.com/
-          - .icopy.site/
-          - .imtqy.com/
-          - .javawenti.com/
-          - .jonic.cn/
-          - .mediatagtw.com/
-          - .narkive.jp/
-          - .noblenaz.org/
-          - .ourladylakes.org/
-          - .overstack.in/
-          - .pakostnici.com/
-          - .panaindustrial.com/
-          - .pcbconline.org/
-          - .programmierfrage.com/
-          - .projectbackpack.org/
-          - .runexception.com/
-          - .safehavenpetrescue.org/
-          - .sch22.org/
-          - .sierrasummit2005.org/
-          - .siwib.org/
-          - .softwareuser.asklobster.com/
-          - .solveforum.com/
-          - .sunflowercreations.org/
-          - .theshuggahpies.com/
-          - .try2explore.com/
-          - .uwenku.com/
-          - .voidcc.com/
-          - .waymanamechurch.org/
-          - .xszz.org/
-          - .zsharp.org/
+          - 5axxw.com/
+          - 796t.com/
           - 955yes.com/
+          - adoclib.com/
           - ajaxhispano.com/
           - akuum.org/
           - alltodev.com/
           - alwaysemmyhope.com/
+          - amuddycup.com/
           - angularquestions.com/
           - answacode.com/
           - answer-id.com/
           - answeright.com/
+          - answerlib.com/
+          - answerspoint.com/
           - antwortenhier.me/
+          - anycodings.com/
           - appsloveworld.com/
           - article.docway.net/
           - ask-dev.ru/
@@ -199,12 +160,16 @@ params:
           - askfrance.me/
           - askubuntu.ru/
           - askvoprosy.com/
+          - athabasca-foto.com/
+          - bilee.com/
           - bootpanic.com/
           - brocante.dev/
+          - buzzphp.com/
           - cainiaojiaocheng.com/
           - cans.pro/
           - catchconsole.com/
           - catwolf.org/
+          - cfadnc.org/
           - chowdera.com/
           - christfever.in/
           - classmethod.dev/
@@ -212,67 +177,124 @@ params:
           - cndgn.com/
           - code-examples.net/
           - code.i-harness.com/
+          - codefaq.info/
           - codefaq.ru/
+          - codeflow.site/
+          - codefordev.com/
           - codegear.dev/
+          - codegrepper.com/
           - codeguides.site/
           - codehero.jp/
           - codehunter.cc/
           - codeindex.ru/
           - codengineering.ru/
+          - codenong.com/
           - coder-solution-jp.com/
+          - coder.work/
           - coderedirect.com/
           - coderoad.in/
           - coderoad.ru/
           - coderquestion.ru/
           - codersatellite.com/
+          - codetd.com/
           - codeutility.org/
           - codewdw.com/
           - codingdict.com/
           - configrouter.com/
+          - coredump.biz/
           - csdn.net/
+          - culinarydegree.info/
           - dapper-tutorial.net/
           - ddcode.net/
           - de-vraag.com/
           - de.askdev.info/
           - debiantutorials.org/
+          - debugcn.com/
+          - desenv-web-rp-bd.com/
+          - desenv-web-rp.com/
+          - devasking.com/
           - devbugfix.com/
           - devdreamz.com/
+          - devebee.com/
+          - developreference.com/
+          - devfaq.fr/
           - devqanda.com/
           - devtip.in/
+          - djcxy.com/
           - dockerquestions.com/
           - dogovori.info/
           - dokry.com/
+          - domainelespailles.net/
           - dovov.com/
           - dtuto.com/
           - duoduokou.com/
           - easysavecode.com/
           - ebestcode.com/
+          - ec-europe.org/
+          - ecnf2016.org/
           - edupro.id/
+          - elfishgene.com/
+          - empires-r.us/
           - errorsfixing.com/
+          - examplefiles.net/
           - exceptionshub.com/
           - exchangetuts.com/
+          - extutorial.com/
+          - faithcov.org/
+          - faqcode4u.com/
+          - faqcodes.com/
           - farath.com/
+          - fitforlearning.org/
+          - fixes.pub/
+          - fluffyfables.com/
+          - flvrclothing.com/
           - fooobar.com/
           - frameboxxindore.com/
           - fullstackuser.com/
+          - generacodice.blog/
+          - generacodice.com/
+          - generacodice.it/
+          - ghcc.net/
+          - graef.io/
           - grokbase.com/
+          - gupgallery.com/
           - helpex.vn/
           - howtofix.io/
           - husl.ru/
           - i4k.xyz/
           - ibootweb.com/
           - icode.best/
+          - icopy.site/
           - idqna.com/
           - igiftidea.com/
+          - imtqy.com/
           - intelligentsystemsmonitoring.com/
           - intellipaat.com/
           - isolution.pro/
           - issues-world.com/
+          - it-mure.jp.net/
+          - it-roy-ru.com/
+          - it-swarm-es.com/
+          - it-swarm-fr.com/
+          - it-swarm-ja.com/
+          - it-swarm-ja.tech/
+          - it-swarm.com.de/
+          - it-swarm.com.ru/
+          - it-swarm.jp.net/
+          - it1352.com/
+          - itbaoku.cn/
+          - itdaan.com/
           - itecnote.com/
           - itectec.com/
+          - itranslater.com/
+          - javaer101.com/
+          - javafixing.com/
+          - javawenti.com/
           - jike.in/
+          - jonic.cn/
           - jpcodeqa.com/
           - jpndev.com/
+          - jscodetips.com/
           - justshowmethecode.com/
           - knews.vip/
           - kompsekret.ru/
@@ -281,29 +303,45 @@ params:
           - learnfk.com/
           - legkovopros.ru/
           - levitrares.com/
+          - likecs.com/
           - living-sun.com/
           - localcoder.org/
           - lycaeum.dev/
+          - mediatagtw.com/
           - microeducate.tech/
           - mlink.in/
           - mlog.club/
+          - narkive.jp/
           - newbedev.com/
           - nibes.cn/
+          - noblenaz.org/
+          - nuomiphp.com/
           - nxtstage.net/
           - ogeek.cn/
           - ohandroid.com/
           - ostack.cn/
+          - ourladylakes.org/
           - ourpython.com/
           - over.wiki/
           - overcoder.net/
           - overcoder.ru/
+          - overstack.in/
+          - pakostnici.com/
+          - panaindustrial.com/
+          - pcbconline.org/
           - peaku.co/
           - poweruser.guru/
           - pretagteam.com/
           - prog-help.ru/
           - progi.pro/
+          - programmierfrage.com/
+          - projectbackpack.org/
           - proubuntu.ru/
+          - py4u.net/
+          - pyquestions.com/
           - python-stack.de/
+          - python.engineering/
+          - pythonfixing.com/
           - pythonshowcase.com/
           - pythonwd.com/
           - qa-help.ru/
@@ -330,6 +368,7 @@ params:
           - qastack.net.bd/
           - qastack.ru/
           - qastack.vn/
+          - qi-u.com/
           - quabr.com/
           - quares.ru/
           - question-it.com/
@@ -337,15 +376,25 @@ params:
           - readforlearn.com/
           - recalll.co/
           - respuestas.me/
+          - ringingliberty.com/
           - rotadev.com/
           - routinepanic.com/
+          - runexception.com/
           - ruphp.com/
+          - safehavenpetrescue.org/
           - sargon24.com/
+          - sch22.org/
+          - semicolonworld.com/
           - serveanswer.com/
           - server-fault.ru/
           - shenzhenjia.net/
+          - sierrasummit2005.org/
+          - siwib.org/
           - sobrelinux.info/
           - software-testing.com/
+          - softwareuser.asklobster.com/
+          - soinside.com/
+          - solveforum.com/
           - solveforums.msomimaktaba.com/
           - sprosi.pro/
           - sqlite.in/
@@ -353,6 +402,7 @@ params:
           - stackanswers.net/
           - stackfault.net/
           - stackfinder.jp.net/
+          - stackfinder.ru/
           - stackguides.com/
           - stackify.dev/
           - stackoom.com/
@@ -361,6 +411,8 @@ params:
           - stackqna.com/
           - stackru.com/
           - stormcrow.dev/
+          - studytonight.com/
+          - sunflowercreations.org/
           - suttonedfoundation.org/
           - switch-case.com/
           - switch-case.ru/
@@ -369,10 +421,17 @@ params:
           - tech.wayne-chu.com/
           - techarks.ru/
           - techfeed.net/
+          - techtalk7.com/
           - thecodeteacher.com/
           - thelivingtrove.com/
+          - theshuggahpies.com/
+          - thinbug.com/
+          - ti-enxame.com/
           - tipsfordev.com/
+          - titanwolf.org/
           - tousu.in/
+          - tra-loi-cau-hoi-phat-trien-web.com/
+          - try2explore.com/
           - tutorialguruji.com/
           - tutorialmeta.com/
           - tutorialmore.com/
@@ -380,102 +439,57 @@ params:
           - ubuntuaa.com/
           - ubuntugeeks.com/
           - ubuntuplace.info/
+          - uebu-kaihatsu.jp.net/
           - utyatnishna.ru/
+          - uwenku.com/
           - v-resheno.ru/
           - vigges.net/
+          - voidcc.com/
           - vuejscode.com/
           - w3coded.com/
+          - w3codelab.com/
           - w3programmers.org/
+          - waymanamechurch.org/
           - web-answers.ru/
+          - web-dev-qa-db-pt.com/
+          - web-dev-qa.com/
           - webdevdesigner.com/
+          - webdevqa.jp.net/
           - webknox.com/
           - webmonkez.com/
           - wikiroot.ru/
           - wp-qa.com/
-          - www.5axxw.com/
-          - www.answerlib.com/
-          - www.anycodings.com/
-          - www.bilee.com/
-          - www.buzzphp.com/
-          - www.codenong.com/
-          - www.coder.work/
-          - www.codetd.com/
-          - www.debugcn.com/
-          - www.desenv-web-rp-bd.com/
-          - www.desenv-web-rp.com/
-          - www.devasking.com/
-          - www.devfaq.fr/
-          - www.examplefiles.net/
-          - www.extutorial.com/
-          - www.faqcode4u.com/
-          - www.faqcodes.com/
-          - www.fixes.pub/
-          - www.generacodice.blog/
-          - www.generacodice.com/
-          - www.generacodice.it/
-          - www.ghcc.net/
-          - www.graef.io/
-          - www.it-mure.jp.net/
-          - www.it-roy-ru.com/
-          - www.it-swarm-es.com/
-          - www.it-swarm-fr.com/
-          - www.it-swarm-ja.com/
-          - www.it-swarm-ja.tech/
-          - www.it-swarm.com.de/
-          - www.it-swarm.com.ru/
-          - www.it-swarm.jp.net/
-          - www.itbaoku.cn/
-          - www.itdaan.com/
-          - www.itranslater.com/
-          - www.javaer101.com/
-          - www.javafixing.com/
-          - www.jscodetips.com/
-          - www.likecs.com/
-          - www.nuomiphp.com/
-          - www.py4u.net/
-          - www.pythonfixing.com/
-          - www.qi-u.com/
-          - www.ringingliberty.com/
-          - www.semicolonworld.com/
-          - www.soinside.com/
-          - www.stackfinder.ru/
-          - www.studytonight.com/
-          - www.techtalk7.com/
-          - www.thinbug.com/
-          - www.ti-enxame.com/
-          - www.titanwolf.org/
-          - www.tra-loi-cau-hoi-phat-trien-web.com/
-          - www.uebu-kaihatsu.jp.net/
-          - www.web-dev-qa-db-pt.com/
-          - www.web-dev-qa.com/
-          - www.webdevqa.jp.net/
-          - www.xsprogram.com/
-          - www.ylhow.com/
           - xiu2.net/
+          - xsprogram.com/
+          - xszz.org/
+          - ylhow.com/
           - yocker.com/
           - younggeeks.in/
           - yuanmacha.com/
           - yy123.ink/
+          - zsharp.org/
       - name: wikipedia-copycats
         description: Hide Wikipedia copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
         values:
-          - .datewiki.ru/
-          - .encyclopedia.kz/
-          - .frwiki.wiki/
-          - .zxc.wiki/
           - 360wiki.ru/
+          - algebra.com/
           - buildwiki.ru/
+          - datewiki.ru/
           - encyclopaedia.bid/
+          - encyclopedia.kz/
           - encyclopedia.thefreedictionary.com/
           - enhancedwiki.territorioscuola.it/
           - everything.explained.today/
           - findatwiki.com/
+          - frwiki.wiki/
           - gaz.wiki/
           - globalwikionline.com/
           - hmong.ru/
           - livepcwiki.ru/
           - mediawiki.feverous.co.uk/
+          - scholarship.edu.vn/wiki/
+          - secret-bases.co.uk/wiki/
           - static.hlt.bme.hu/
           - sv.abcdef.wiki/
           - th.hmong.wiki/
@@ -486,19 +500,17 @@ params:
           - wiki2.org/
           - wiki2wiki.ru/
           - wikidark.ru/
+          - wikide.wiki/
           - wikidea.ru/
+          - wikipe.wiki/
           - wikipedia.tel/
           - wikipedia24.ru/
           - wikiredia.ru/
+          - wikit.wiki/
+          - wikiwand.com/
           - wikizero.com/
-          - www.algebra.com/
-          - www.scholarship.edu.vn/wiki/
-          - www.secret-bases.co.uk/wiki/
-          - www.wikide.wiki/
-          - www.wikipe.wiki/
-          - www.wikit.wiki/
-          - www.wikiwand.com/
-          - www.wiwa.wiki/
+          - wiwa.wiki/
+          - zxc.wiki/
 tags:
   - bing
   - duckduckgo
