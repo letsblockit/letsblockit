@@ -80,10 +80,3 @@ removing images, videos, maps and most of other sections. It is disabled by defa
 
 Don't hesitate to [open a issue](https://github.com/letsblockit/letsblockit/issues/new/choose) to suggest additions or fixes ;
 and check out the [Hide websites from search results](search-results) filter too.
-
-<div class="alert alert-warning" role="alert">
-A user has reported that a new design is being tested, or progressively deployed. If the results don't show up anymore,
-please disable the "People also search for" and "Remove everything but simple results" options for now, and comment on
-<a href="https://github.com/letsblockit/letsblockit/issues/170">the Github issue</a> to help us track the progress
-of this redesign.
-</div>
