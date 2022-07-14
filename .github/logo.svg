@@ -5,7 +5,7 @@
    viewBox="0 0 108.47913 16.933334"
    version="1.1"
    id="svg8"
-   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
    sodipodi:docname="logo.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -170,7 +170,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="10.349197"
-     inkscape:cx="41.404179"
+     inkscape:cx="22.465511"
      inkscape:cy="35.171811"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -182,7 +182,9 @@
      inkscape:window-height="1051"
      inkscape:window-x="54"
      inkscape:window-y="0"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -201,21 +203,22 @@
     <g
        id="layer3"
        transform="matrix(0.12257148,0,0,0.12781536,1.5046388,0.18892113)"
-       style="fill:#b83e51;fill-opacity:1;stroke:#fffffd;stroke-width:3.48684;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+       style="fill:#b83e51;fill-opacity:1;stroke:#ffffff;stroke-width:3.48684;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
       <g
          id="g6907"
-         style="fill:#b83e51;fill-opacity:1;stroke:#fffffd;stroke-width:5.27241;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:#b83e51;fill-opacity:1;stroke:#ffffff;stroke-width:5.27241;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          transform="matrix(0.99391919,0,0,0.99391919,0.34512919,0.3446166)">
         <path
            id="path6909"
            class="cls-1"
            d="m 56.8,128.8 c 56,-32 56,-32 56,-112 -24,0 -32,0 -56,-16 m 0,128 c -56,-32 -56,-32 -56,-112 24,0 32,0 56,-16"
-           style="fill:#b83e51;fill-opacity:1;stroke:#fffffd;stroke-width:5.27241;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+           style="fill:#b83e51;fill-opacity:1;stroke:#ffffff;stroke-width:5.27241;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       </g>
     </g>
     <g
        id="g1395-4"
-       transform="matrix(0.87029688,0,0,0.84483037,0.17427676,-0.6785442)">
+       transform="matrix(0.87029688,0,0,0.84483037,0.17427676,-0.6785442)"
+       style="fill:#ffffff">
       <g
          aria-label="L"
          id="text1381-6"
