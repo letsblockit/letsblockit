@@ -85,10 +85,10 @@ The simplest setup would use HTTP Basic auth and a static user list, but you can
 Some examples are documented below, but you can [open an issue](https://github.com/letsblockit/letsblockit/issues/new)
 for configuration assistance on other setups.
 
-### HTTP basic authentication with Nginx (single-user only)
+### HTTP basic authentication with Nginx
 
-Nginx does not support passing the username as a request header, but we can hardcode a header to support a single-user
-use case. The following nginx configuration will set your user ID to `myself` if basic auth succeeds:
+Create a htpasswd file following [the documentation](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/)
+then configure your vhost accordingly:
 
 ```
 location /list {  #  No auth for list download
@@ -98,7 +98,7 @@ location / {  #  Basic auth for the rest
     auth_basic "Restricted";
     auth_basic_user_file /etc/nginx/htpasswd;
     proxy_pass http://letsblockit:8765;
-    proxy_set_header X-Forwarded-User myself;
+    proxy_set_header X-Forwarded-User $remote_user;
 }
 ```
 
@@ -106,7 +106,7 @@ You can then run the server with the following variables:
   - `LETSBLOCKIT_AUTH_METHOD=proxy`
   - `LETSBLOCKIT_AUTH_PROXY_HEADER_NAME=X-Forwarded-User`
 
-### HTTP basic authentication with Traefik (multi-user)
+### HTTP basic authentication with Traefik
 
 You should read the [basicauth middleware doc](https://doc.traefik.io/traefik/middlewares/http/basicauth) and make sure
 `headerField` is set. Here is an example envvars and labels for a `letsblockit` container, for Traefik listening on
