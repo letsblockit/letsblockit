@@ -22,6 +22,11 @@ const listExportTemplate = `# letsblock.it filter list export
 
 `
 
+const installPromptFilterTemplate = `
+! Hide the list install prompt for that list
+%s###install-prompt-%s
+`
+
 func (s *Server) renderList(c echo.Context) error {
 	token, err := uuid.Parse(c.Param("token"))
 	if err != nil {
@@ -57,7 +62,17 @@ func (s *Server) renderList(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return list.Render(c.Response(), c.Logger(), s.filters)
+	if err = list.Render(c.Response(), c.Logger(), s.filters); err != nil {
+		return err
+	}
+
+	if s.options.OfficialInstance {
+		_, err = fmt.Fprintf(c.Response(), installPromptFilterTemplate, mainDomain, token)
+	} else {
+		_, err = fmt.Fprintf(c.Response(), installPromptFilterTemplate, c.Request().Host, token)
+	}
+
+	return err
 }
 
 func (s *Server) exportList(c echo.Context) error {

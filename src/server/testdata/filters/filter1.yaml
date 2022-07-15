@@ -2,6 +2,7 @@ title: Filter 1
 tags:
   - tag1
   - tag2
-template: "hello from one"
+template: |
+  hello from one
 ---
 description

@@ -28,7 +28,7 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "custom-rules", nil))
 
-	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
+	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String(), nil)
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
@@ -39,16 +39,38 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 
 ! filter1
 hello from one
+
 ! filter2
 hello one blep
 hello two blep
 
 ! custom-rules
-custom`, rec.Body.String())
+custom
+
+! Hide the list install prompt for that list
+my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
 
 	list, err := s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
 	require.True(s.T(), list.Downloaded)
+}
+
+func (s *ServerTestSuite) TestRenderList_OfficialInstance() {
+	s.server.options.OfficialInstance = true
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String(), nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	s.Equal(`! Title: letsblock.it - My filters
+! Expires: 12 hours
+! Homepage: https://letsblock.it
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
+
+! Hide the list install prompt for that list
+letsblock.it###install-prompt-`+token.String()+"\n", rec.Body.String())
 }
 
 func (s *ServerTestSuite) TestRenderList_WithReferer() {

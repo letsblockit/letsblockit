@@ -170,7 +170,7 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter1,
 		"params":       map[string]any{},
-		"rendered":     "hello from one",
+		"rendered":     "hello from one\n",
 		"has_instance": true,
 		"saved_ok":     true,
 	})
