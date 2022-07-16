@@ -1,15 +1,15 @@
 title: Cleanup Google search result pages
 params:
+  - name: rich-results
+    description: Hide most rich-content results (images, stories, businesses...)
+    type: checkbox
+    default: true
   - name: related-questions
     description: Hide the "People also ask" contextual content
     type: checkbox
     default: true
   - name: related-searches
     description: Hide the "Related searches" bottom content
-    type: checkbox
-    default: true
-  - name: also-search
-    description: Hide the "People also search for" popup
     type: checkbox
     default: true
   - name: similar-image-searches
@@ -20,30 +20,31 @@ params:
     description: Hide the search page footer showing your address
     type: checkbox
     default: false
-  - name: only-results
-    description: Remove everything but simple results in the text search
-    type: checkbox
-    default: false
 tags:
   - google
 template: |
+  {{#if rich-results}}
+  !!! Toplevel rich content above columns
+  google.*###rcnt > div:not([id]) > div:has(g-more-link,g-scrolling-carousel)
+  !!! Rich content in normal pages
+  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(>div g-more-link,g-scrolling-carousel)
+  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-section-with-header)
+  !!! Rich content in new "kp" layout
+  google.*###kp-wp-tab-overview > div:has(>div g-more-link,g-scrolling-carousel,#media_result_group)
+  google.*###kp-wp-tab-overview > div:has(g-section-with-header)
+  {{/if}}
   {{#if related-questions}}
-  google.*###rso > div:has(div.related-question-pair)
+  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
+  google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
   {{/if}}
   {{#if related-searches}}
   google.*###botstuff #bres
-  {{/if}}
-  {{#if also-search}}
-  google.*###rso div.g div[jscontroller]
   {{/if}}
   {{#if similar-image-searches}}
   google.*##div.isv-r[data-rfg]
   {{/if}}
   {{#if page-footer}}
   google.*###footcnt > #fbarcnt
-  {{/if}}
-  {{#if only-results}}
-  google.*###rso > :not(div.g):not(:has(:scope>div.g))
   {{/if}}
 tests:
   - params: {}
@@ -52,31 +53,35 @@ tests:
       related-questions: true
       related-searches: true
     output: |
-      google.*###rso > div:has(div.related-question-pair)
+      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
+      google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
       google.*###botstuff #bres
   - params:
-      also-search: true
+      rich-results: true
     output: |
-      google.*###rso div.g div[jscontroller]
+      !!! Toplevel rich content above columns
+      google.*###rcnt > div:not([id]) > div:has(g-more-link,g-scrolling-carousel)
+      !!! Rich content in normal pages
+      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(>div g-more-link,g-scrolling-carousel)
+      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-section-with-header)
+      !!! Rich content in new "kp" layout
+      google.*###kp-wp-tab-overview > div:has(>div g-more-link,g-scrolling-carousel,#media_result_group)
+      google.*###kp-wp-tab-overview > div:has(g-section-with-header)
   - params:
-      related-questions: true
+      page-footer: true
       related-searches: true
-      only-results: true
     output: |
-      google.*###rso > div:has(div.related-question-pair)
       google.*###botstuff #bres
-      google.*###rso > :not(div.g):not(:has(:scope>div.g))
+      google.*###footcnt > #fbarcnt
   - params:
       similar-image-searches: true
     output: |
       google.*##div.isv-r[data-rfg]
+  - params: {}
 ---
 
 Google is adding more and more "contextual results" to its result page, with mixed usefulness. This filter will allow
 you to selectively remove these from the results, to only focus on the links.
-
-The last option (Remove everything but simple search results), will remove everything but simple `div.g` elements,
-removing images, videos, maps and most of other sections. It is disabled by default due to its greedy nature.
 
 Don't hesitate to [open a issue](https://github.com/letsblockit/letsblockit/issues/new/choose) to suggest additions or fixes ;
 and check out the [Hide websites from search results](search-results) filter too.
