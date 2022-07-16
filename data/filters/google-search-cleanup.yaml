@@ -31,11 +31,9 @@ template: |
   !!! Toplevel rich content above columns
   google.*###rcnt > div:not([id]) > div:has(g-more-link,g-scrolling-carousel)
   !!! Rich content in normal pages
-  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(>div g-more-link,g-scrolling-carousel)
-  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-section-with-header)
+  google.*###rso:not(:has(#kp-wp-tab-overview,video-voyager)) > div:has(g-more-link,g-scrolling-carousel,g-section-with-header)
   !!! Rich content in new "kp" layout
-  google.*###kp-wp-tab-overview > div:has(>div g-more-link,g-scrolling-carousel,#media_result_group)
-  google.*###kp-wp-tab-overview > div:has(g-section-with-header)
+  google.*###kp-wp-tab-overview > div:has(g-more-link,g-scrolling-carousel,#media_result_group,g-section-with-header)
   {{/if}}
   {{#if related-questions}}
   google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
