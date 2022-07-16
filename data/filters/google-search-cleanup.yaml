@@ -12,6 +12,10 @@ params:
     description: Hide the "Related searches" bottom content
     type: checkbox
     default: true
+  - name: also-search
+    description: Hide the "People also search for" popup shown when returning to results
+    type: checkbox
+    default: true
   - name: similar-image-searches
     description: Hide the "Similar searches" contextual content in image searches
     type: checkbox
@@ -39,6 +43,9 @@ template: |
   {{/if}}
   {{#if related-searches}}
   google.*###botstuff #bres
+  {{/if}}
+  {{#if also-search}}
+  google.*###rso div.g div[jscontroller][id^="eob_"]
   {{/if}}
   {{#if similar-image-searches}}
   google.*##div.isv-r[data-rfg]
