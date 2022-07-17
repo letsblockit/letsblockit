@@ -1,9 +1,9 @@
 title: Cleanup Google search result pages
 params:
   - name: rich-results
-    description: Hide most rich-content results (images, stories, businesses...)
+    description: Hide most rich-content results (images, stories, businesses...) in the web search
     type: checkbox
-    default: true
+    default: false
   - name: related-questions
     description: Hide the "People also ask" contextual content
     type: checkbox
@@ -28,13 +28,13 @@ tags:
   - google
 template: |
   {{#if rich-results}}
-  !!! Toplevel rich content above columns
+  {{! Toplevel rich content above columns }}
   google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
-  !!! Rich content in normal pages
+  {{! Rich content in normal pages }}
   google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
-  !!! "Find results on" carousel
+  {{! "Find results on" carousel }}
   google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
-  !!! Rich content in new "kp" layout
+  {{! New page layout for books / movies / shows, some rich elements are not handled yet }}
   google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   {{/if}}
   {{#if related-questions}}
@@ -45,6 +45,7 @@ template: |
   google.*###botstuff #bres
   {{/if}}
   {{#if also-search}}
+  {{! These unfurl after clicking on a result and going back to the results page }}
   google.*###rso div.g div[jscontroller][id^="eob_"]
   {{/if}}
   {{#if similar-image-searches}}
@@ -66,13 +67,9 @@ tests:
   - params:
       rich-results: true
     output: |
-      !!! Toplevel rich content above columns
       google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
-      !!! Rich content in normal pages
       google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
-      !!! "Find results on" carousel
       google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
-      !!! Rich content in new "kp" layout
       google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   - params:
       page-footer: true
