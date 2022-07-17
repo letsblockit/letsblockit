@@ -1,5 +1,5 @@
 -- name: GetActiveFiltersForUser :many
-SELECT filter_name, params
+SELECT filter_name, params, test_mode
 FROM filter_instances
 WHERE user_id = $1;
 

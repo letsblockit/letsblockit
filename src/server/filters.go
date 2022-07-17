@@ -31,6 +31,7 @@ func (s *Server) listFilters(c echo.Context) error {
 	var activeNames map[string]struct{}
 	if hc.UserLoggedIn {
 		var updatedFilters map[string]bool
+		var testingFilters map[string]bool
 		activeNames = make(map[string]struct{})
 		instances, _ := s.store.GetActiveFiltersForUser(c.Request().Context(), hc.UserID)
 		for _, instance := range instances {
@@ -41,6 +42,12 @@ func (s *Server) listFilters(c echo.Context) error {
 				}
 				updatedFilters[instance.FilterName] = true
 			}
+			if instance.TestMode {
+				if testingFilters == nil {
+					testingFilters = make(map[string]bool)
+				}
+				testingFilters[instance.FilterName] = true
+			}
 		}
 		if len(instances) > 0 {
 			downloaded, _ := s.store.HasUserDownloadedList(c.Request().Context(), hc.UserID)
@@ -48,6 +55,9 @@ func (s *Server) listFilters(c echo.Context) error {
 		}
 		if len(updatedFilters) > 0 {
 			hc.Add("updated_filters", updatedFilters)
+		}
+		if len(testingFilters) > 0 {
+			hc.Add("testing_filters", testingFilters)
 		}
 	}
 

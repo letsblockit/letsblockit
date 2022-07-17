@@ -60,7 +60,7 @@ hello presetB blep:style(border: 2px dashed red !important)
 func (s *ServerTestSuite) TestListFilters_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/filters", nil)
 
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1", TestMode: true}))
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
 	s.markListDownloaded()
 
@@ -68,6 +68,7 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 		"filter_tags":       filterTags,
 		"active_filters":    []*filters.Filter{filter1, filter2},
 		"available_filters": []*filters.Filter{filter3},
+		"testing_filters":   map[string]bool{"filter1": true},
 		"list_downloaded":   true,
 		"updated_filters":   map[string]bool{"filter2": true},
 	})

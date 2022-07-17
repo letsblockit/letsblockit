@@ -68,7 +68,7 @@ func (q *Queries) DeleteInstanceForUserAndFilter(ctx context.Context, arg Delete
 }
 
 const getActiveFiltersForUser = `-- name: GetActiveFiltersForUser :many
-SELECT filter_name, params
+SELECT filter_name, params, test_mode
 FROM filter_instances
 WHERE user_id = $1
 `
@@ -76,6 +76,7 @@ WHERE user_id = $1
 type GetActiveFiltersForUserRow struct {
 	FilterName string
 	Params     pgtype.JSONB
+	TestMode   bool
 }
 
 func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID string) ([]GetActiveFiltersForUserRow, error) {
@@ -87,7 +88,7 @@ func (q *Queries) GetActiveFiltersForUser(ctx context.Context, userID string) ([
 	var items []GetActiveFiltersForUserRow
 	for rows.Next() {
 		var i GetActiveFiltersForUserRow
-		if err := rows.Scan(&i.FilterName, &i.Params); err != nil {
+		if err := rows.Scan(&i.FilterName, &i.Params, &i.TestMode); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

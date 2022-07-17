@@ -1,4 +1,5 @@
-<svg class="icon {{class}}" aria-hidden="true"
+<svg class="icon {{class}}" {{#if alt}}alt="{{alt}}"{{else}}aria-hidden="true"{{/if}}
      style="{{#with size}}width:{{.}}em; height:{{.}}em;{{/with}}{{#with stroke}}stroke-width:{{.}};{{/with}}">
+    {{#with alt}}<title>{{.}}</title>{{/with}}
     <use xlink:href="/assets/dist/tabler-sprite-nostroke.svg#tabler-{{name}}"/>
 </svg>
