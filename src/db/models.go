@@ -42,6 +42,7 @@ type FilterList struct {
 }
 
 type UserPreference struct {
-	UserID     string
-	NewsCursor time.Time
+	UserID       string
+	NewsCursor   time.Time
+	BetaFeatures bool
 }

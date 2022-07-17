@@ -1,1 +1,0 @@
-ALTER TABLE filter_instances ADD COLUMN test_mode BOOLEAN NOT NULL DEFAULT FALSE;
