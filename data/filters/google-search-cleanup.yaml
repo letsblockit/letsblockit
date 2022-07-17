@@ -3,7 +3,7 @@ params:
   - name: rich-results
     description: Hide most rich-content results (images, stories, businesses...) in the web search
     type: checkbox
-    default: false
+    default: true
   - name: related-questions
     description: Hide the "People also ask" contextual content
     type: checkbox
@@ -86,8 +86,18 @@ tests:
   - params: {}
 ---
 
-Google is adding more and more "contextual results" to its result page, with mixed usefulness. This filter will allow
-you to selectively remove these from the results, to only focus on the links.
+Google has dramatically decreased the information density of their search results, by mixing in more and more "Rich
+content" and contextual suggestions. This filter template helps reducing that noise, to focus on web pages only:
 
-Don't hesitate to [open a issue](https://github.com/letsblockit/letsblockit/issues/new/choose) to suggest additions or fixes ;
-and check out the [Hide websites from search results](search-results) filter too.
+- The first option removes most "Rich content" blocks (videos, images, maps, news...). You can still access these
+  results by going to the specific search pages
+- The other options remove the "related questions" / "related searches" prompts within and under the results,
+  for a denser layout
+- The last option hides your location from the page footer, for people with privacy concerns
+
+Another issue with Google search results is the amount of irrelevant websites that manage to get into the top results.
+To remove these, you should checkout the [Hide websites from search results](search-results) filter template too.
+
+As new contextual blocks are regularly added and modified, we expect some of them to pass through the filter, but
+don't hesitate to [open an issue](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=google-search-cleanup)
+to report them. Don't forget to add a screenshot and a search link to help us reproduce.
