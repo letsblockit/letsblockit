@@ -1,5 +1,9 @@
 title: Cleanup Google search result pages
 params:
+  - name: rich-results
+    description: Hide most rich-content results (images, stories, businesses...) in the web search
+    type: checkbox
+    default: true
   - name: related-questions
     description: Hide the "People also ask" contextual content
     type: checkbox
@@ -9,7 +13,7 @@ params:
     type: checkbox
     default: true
   - name: also-search
-    description: Hide the "People also search for" popup
+    description: Hide the "People also search for" popup shown when returning to results
     type: checkbox
     default: true
   - name: similar-image-searches
@@ -20,30 +24,35 @@ params:
     description: Hide the search page footer showing your address
     type: checkbox
     default: false
-  - name: only-results
-    description: Remove everything but simple results in the text search
-    type: checkbox
-    default: false
 tags:
   - google
 template: |
+  {{#if rich-results}}
+  {{! Toplevel rich content above columns }}
+  google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
+  {{! Rich content in normal pages }}
+  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
+  {{! "Find results on" carousel }}
+  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
+  {{! New page layout for books / movies / shows, some rich elements are not handled yet }}
+  google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
+  {{/if}}
   {{#if related-questions}}
-  google.*###rso > div:has(div.related-question-pair)
+  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
+  google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
   {{/if}}
   {{#if related-searches}}
   google.*###botstuff #bres
   {{/if}}
   {{#if also-search}}
-  google.*###rso div.g div[jscontroller]
+  {{! These unfurl after clicking on a result and going back to the results page }}
+  google.*###rso div.g div[jscontroller][id^="eob_"]
   {{/if}}
   {{#if similar-image-searches}}
   google.*##div.isv-r[data-rfg]
   {{/if}}
   {{#if page-footer}}
   google.*###footcnt > #fbarcnt
-  {{/if}}
-  {{#if only-results}}
-  google.*###rso > :not(div.g):not(:has(:scope>div.g))
   {{/if}}
 tests:
   - params: {}
@@ -52,31 +61,43 @@ tests:
       related-questions: true
       related-searches: true
     output: |
-      google.*###rso > div:has(div.related-question-pair)
+      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
+      google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
       google.*###botstuff #bres
   - params:
+      rich-results: true
+    output: |
+      google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
+      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
+      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
+      google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
+  - params:
+      page-footer: true
+      related-searches: true
       also-search: true
     output: |
-      google.*###rso div.g div[jscontroller]
-  - params:
-      related-questions: true
-      related-searches: true
-      only-results: true
-    output: |
-      google.*###rso > div:has(div.related-question-pair)
       google.*###botstuff #bres
-      google.*###rso > :not(div.g):not(:has(:scope>div.g))
+      google.*###rso div.g div[jscontroller][id^="eob_"]
+      google.*###footcnt > #fbarcnt
   - params:
       similar-image-searches: true
     output: |
       google.*##div.isv-r[data-rfg]
+  - params: {}
 ---
 
-Google is adding more and more "contextual results" to its result page, with mixed usefulness. This filter will allow
-you to selectively remove these from the results, to only focus on the links.
+Google has dramatically decreased the information density of their search results, by mixing in more and more "Rich
+content" and contextual suggestions. This filter template helps reducing that noise, to focus on web pages only:
 
-The last option (Remove everything but simple search results), will remove everything but simple `div.g` elements,
-removing images, videos, maps and most of other sections. It is disabled by default due to its greedy nature.
+- The first option removes most "Rich content" blocks (videos, images, maps, news...). You can still access these
+  results by going to the specific search pages
+- The other options remove the "related questions" / "related searches" prompts within and under the results,
+  for a denser layout
+- The last option hides your location from the page footer, for people with privacy concerns
 
-Don't hesitate to [open a issue](https://github.com/letsblockit/letsblockit/issues/new/choose) to suggest additions or fixes ;
-and check out the [Hide websites from search results](search-results) filter too.
+Another issue with Google search results is the amount of irrelevant websites that manage to get into the top results.
+To remove these, you should checkout the [Hide websites from search results](search-results) filter template too.
+
+As new contextual blocks are regularly added and modified, we expect some of them to pass through the filter, but
+don't hesitate to [open an issue](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=google-search-cleanup)
+to report them. Don't forget to add a screenshot and a search link to help us reproduce.
