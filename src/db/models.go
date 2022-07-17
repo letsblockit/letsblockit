@@ -29,6 +29,7 @@ type FilterInstance struct {
 	Params       pgtype.JSONB
 	CreatedAt    time.Time
 	UpdatedAt    sql.NullTime
+	TestMode     bool
 }
 
 type FilterList struct {
@@ -41,6 +42,7 @@ type FilterList struct {
 }
 
 type UserPreference struct {
-	UserID     string
-	NewsCursor time.Time
+	UserID       string
+	NewsCursor   time.Time
+	BetaFeatures bool
 }

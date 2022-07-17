@@ -62,6 +62,9 @@ func (s *Server) renderList(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+	if _, ok := c.QueryParams()["test_mode"]; ok {
+		list.TestMode = true
+	}
 	if err = list.Render(c.Response(), c.Logger(), s.filters); err != nil {
 		return err
 	}
@@ -122,8 +125,9 @@ func convertFilterList(storedInstances []db.GetInstancesForListRow) (*filters.Li
 	var customFilterInstances []*filters.Instance
 	for _, storedInstance := range storedInstances {
 		instance := &filters.Instance{
-			Filter: storedInstance.FilterName,
-			Params: make(map[string]interface{}),
+			Filter:   storedInstance.FilterName,
+			Params:   make(map[string]interface{}),
+			TestMode: storedInstance.TestMode,
 		}
 		err := storedInstance.Params.AssignTo(&instance.Params)
 		if err != nil {

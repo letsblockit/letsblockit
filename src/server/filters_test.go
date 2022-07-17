@@ -44,21 +44,31 @@ var (
 		"three":                  []string{"one"},
 		"three---preset---dummy": true,
 	}
-	filter2PresetOutput = "hello one blep\n!! filter2 with dummy preset\nhello presetA blep\nhello presetB blep\n"
-	filterTags          = []string{"tag1", "tag2", "tag3"}
+	filter2PresetOutput = `hello one blep
+!! filter2 with dummy preset
+hello presetA blep
+hello presetB blep
+`
+	filter2PresetTestOutput = `hello one blep:style(border: 2px dashed red !important)
+!! filter2 with dummy preset
+hello presetA blep:style(border: 2px dashed red !important)
+hello presetB blep:style(border: 2px dashed red !important)
+`
+	filterTags = []string{"tag1", "tag2", "tag3"}
 )
 
 func (s *ServerTestSuite) TestListFilters_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/filters", nil)
 
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1", TestMode: true}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
 	s.markListDownloaded()
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       filterTags,
 		"active_filters":    []*filters.Filter{filter1, filter2},
 		"available_filters": []*filters.Filter{filter3},
+		"testing_filters":   map[string]bool{"filter1": true},
 		"list_downloaded":   true,
 		"updated_filters":   map[string]bool{"filter2": true},
 	})
@@ -68,7 +78,7 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 func (s *ServerTestSuite) TestListFilters_ByTag() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/tag/tag2", nil)
 
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter1", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1"}))
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       filterTags,
 		"tag_search":        "tag2",
@@ -82,9 +92,10 @@ func (s *ServerTestSuite) TestListFilters_ByTag() {
 func (s *ServerTestSuite) TestViewFilter_Anonymous() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
 	s.expectRender("view-filter", pages.ContextData{
-		"filter":   filter2,
-		"rendered": filter2DefaultOutput,
-		"params":   filter2Defaults,
+		"filter":    filter2,
+		"rendered":  filter2DefaultOutput,
+		"params":    filter2Defaults,
+		"test_mode": false,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -92,9 +103,10 @@ func (s *ServerTestSuite) TestViewFilter_Anonymous() {
 func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
 	s.expectRender("view-filter", pages.ContextData{
-		"filter":   filter2,
-		"rendered": filter2DefaultOutput,
-		"params":   filter2Defaults,
+		"filter":    filter2,
+		"rendered":  filter2DefaultOutput,
+		"params":    filter2Defaults,
+		"test_mode": false,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -106,12 +118,39 @@ func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 		"two":   true,
 		"three": []any{"one", "two"},
 	}
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", params))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter: "filter2",
+		Params: params,
+	}))
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
 		"rendered":     "hello one \nhello two \n",
 		"params":       params,
 		"has_instance": true,
+		"test_mode":    false,
+		"new_params":   map[string]bool{"one": true, "three---preset---dummy": true},
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestViewFilter_HasTestInstance() {
+	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
+
+	params := map[string]any{
+		"two":   true,
+		"three": []any{"one", "two"},
+	}
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter:   "filter2",
+		Params:   params,
+		TestMode: true,
+	}))
+	s.expectRender("view-filter", pages.ContextData{
+		"filter":       filter2,
+		"rendered":     "hello one :style(border: 2px dashed red !important)\nhello two :style(border: 2px dashed red !important)\n",
+		"params":       params,
+		"has_instance": true,
+		"test_mode":    true,
 		"new_params":   map[string]bool{"one": true, "three---preset---dummy": true},
 	})
 	s.runRequest(req, assertOk)
@@ -124,9 +163,10 @@ func (s *ServerTestSuite) TestViewFilter_Preview() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 
 	s.expectRender("view-filter", pages.ContextData{
-		"filter":   filter2,
-		"params":   filter2Custom,
-		"rendered": filter2CustomOutput,
+		"filter":    filter2,
+		"params":    filter2Custom,
+		"rendered":  filter2CustomOutput,
+		"test_mode": false,
 	})
 	s.runRequest(req, assertOk)
 	s.requireInstanceCount("filter2", 0)
@@ -145,6 +185,7 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 		"rendered":     filter2CustomOutput,
 		"has_instance": true,
 		"saved_ok":     true,
+		"test_mode":    false,
 	})
 	s.runRequest(req, assertOk)
 
@@ -153,7 +194,7 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 		FilterName: "filter2",
 	})
 	require.NoError(s.T(), err)
-	s.requireJSONEq(filter2Custom, stored)
+	s.requireJSONEq(filter2Custom, stored.Params)
 	s.requireInstanceCount("filter2", 1)
 }
 
@@ -173,6 +214,7 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 		"rendered":     "hello from one\n",
 		"has_instance": true,
 		"saved_ok":     true,
+		"test_mode":    false,
 	})
 	s.runRequest(req, assertOk)
 
@@ -181,26 +223,28 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 		FilterName: "filter1",
 	})
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), pgtype.Null, stored.Status)
+	require.Equal(s.T(), pgtype.Null, stored.Params.Status)
 	s.requireInstanceCount("filter1", 1)
 }
 
 func (s *ServerTestSuite) TestViewFilter_Update() {
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
 	s.requireInstanceCount("filter2", 1)
 
 	f := buildFilter2PresetBody()
 	f.Add(csrfLookup, s.csrf)
 	f.Add("__save", "")
+	f.Add("__test_mode", "on")
 	req := httptest.NewRequest(http.MethodPost, "/filters/filter2", strings.NewReader(f.Encode()))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
 
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
 		"params":       filter2Preset,
-		"rendered":     filter2PresetOutput,
+		"rendered":     filter2PresetTestOutput,
 		"has_instance": true,
 		"saved_ok":     true,
+		"test_mode":    true,
 	})
 	s.runRequest(req, assertOk)
 
@@ -209,13 +253,13 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 		FilterName: "filter2",
 	})
 	require.NoError(s.T(), err)
-	s.requireJSONEq(filter2Preset, stored)
+	s.True(stored.TestMode)
+	s.requireJSONEq(filter2Preset, stored.Params)
 	s.requireInstanceCount("filter2", 1)
-
 }
 
 func (s *ServerTestSuite) TestViewFilter_Disable() {
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, "filter2", nil))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
 	s.requireInstanceCount("filter2", 1)
 
 	f := make(url.Values)
@@ -270,6 +314,18 @@ func (s *ServerTestSuite) TestViewFilterRender_WithPreset() {
 
 	s.expectRender("view-filter-render", pages.ContextData{
 		"rendered": filter2PresetOutput,
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestViewFilterRender_WithPresetAndTestMode() {
+	f := buildFilter2PresetBody()
+	f.Add("__test_mode", "on")
+	req := httptest.NewRequest(http.MethodPost, "/filters/filter2/render", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+
+	s.expectRender("view-filter-render", pages.ContextData{
+		"rendered": filter2PresetTestOutput,
 	})
 	s.runRequest(req, assertOk)
 }

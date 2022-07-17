@@ -56,6 +56,9 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 		"http_root": func(c *pages.Context) string {
 			return fmt.Sprintf("%s://%s", c.RequestInfo.Scheme(), c.RequestInfo.Request().Host)
 		},
+		"beta_features": func(c *pages.Context) bool {
+			return c.Preferences != nil && c.Preferences.BetaFeatures
+		},
 	}
 }
 

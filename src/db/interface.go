@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgtype"
 )
 
 type Querier interface {
@@ -20,7 +19,7 @@ type Querier interface {
 	DeleteInstanceForUserAndFilter(ctx context.Context, arg DeleteInstanceForUserAndFilterParams) error
 	GetActiveFiltersForUser(ctx context.Context, userID string) ([]GetActiveFiltersForUserRow, error)
 	GetBannedUsers(ctx context.Context) ([]string, error)
-	GetInstanceForUserAndFilter(ctx context.Context, arg GetInstanceForUserAndFilterParams) (pgtype.JSONB, error)
+	GetInstanceForUserAndFilter(ctx context.Context, arg GetInstanceForUserAndFilterParams) (GetInstanceForUserAndFilterRow, error)
 	GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, error)
 	GetInstancesForList(ctx context.Context, filterListID int32) ([]GetInstancesForListRow, error)
 	GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error)

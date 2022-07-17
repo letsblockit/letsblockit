@@ -2,7 +2,12 @@
     {{#each .}}
         <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-start">
             <div class="me-auto">
-                <div class="fw-bold"><a class="stretched-link" href="{{href "view-filter" name}}">{{title}}</a></div>
+                <div class="fw-bold">
+                    <a class="stretched-link" href="{{href "view-filter" name}}">{{title}}</a>
+                    {{#if (lookup @root.data.testing_filters name)}}
+                        <span class="ms-1 text-secondary">{{>icon name="test-pipe" stroke=2 alt="Test mode enabled"}}</span>
+                    {{/if}}
+                </div>
             </div>
             <div class="text-end" style="z-index: 2000;">
                 {{#if (lookup @root.data.updated_filters name)}}

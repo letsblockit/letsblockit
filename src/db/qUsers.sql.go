@@ -53,7 +53,7 @@ func (q *Queries) GetBannedUsers(ctx context.Context) ([]string, error) {
 }
 
 const getUserPreferences = `-- name: GetUserPreferences :one
-SELECT user_id, news_cursor
+SELECT user_id, news_cursor, beta_features
 FROM user_preferences
 WHERE user_id = $1
 `
@@ -61,20 +61,20 @@ WHERE user_id = $1
 func (q *Queries) GetUserPreferences(ctx context.Context, userID string) (UserPreference, error) {
 	row := q.db.QueryRow(ctx, getUserPreferences, userID)
 	var i UserPreference
-	err := row.Scan(&i.UserID, &i.NewsCursor)
+	err := row.Scan(&i.UserID, &i.NewsCursor, &i.BetaFeatures)
 	return i, err
 }
 
 const initUserPreferences = `-- name: InitUserPreferences :one
 INSERT INTO user_preferences (user_id)
 VALUES ($1)
-RETURNING user_id, news_cursor
+RETURNING user_id, news_cursor, beta_features
 `
 
 func (q *Queries) InitUserPreferences(ctx context.Context, userID string) (UserPreference, error) {
 	row := q.db.QueryRow(ctx, initUserPreferences, userID)
 	var i UserPreference
-	err := row.Scan(&i.UserID, &i.NewsCursor)
+	err := row.Scan(&i.UserID, &i.NewsCursor, &i.BetaFeatures)
 	return i, err
 }
 

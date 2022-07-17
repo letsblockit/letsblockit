@@ -35,6 +35,7 @@
                     {{#each filter.params}}
                         {{~>view-filter-param}}
                     {{/each}}
+
                     <div class="d-flex align-items-center">
                         {{#if @root.UserLoggedIn}}
                             <input type="hidden" name="__logged_in" value="true">
@@ -57,6 +58,13 @@
                             <noscript>
                                 <button type="submit" name="__render" class="btn btn-primary">Render</button>
                             </noscript>
+                        {{/if}}
+                        {{#if (beta_features @root) }}
+                        <div class="ms-2 form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" id="__test_mode" name="__test_mode"
+                                   {{#equal true @root.data.test_mode}}checked{{/equal}}>
+                            <label class="form-check-label" for="__test_mode">Test</label>
+                        </div>
                         {{/if}}
                         <div class="ms-2 htmx-indicator spinner-border text-secondary" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -95,6 +103,13 @@
                             {{>icon name="plus" stroke=2.5 class="button-icon"}}
                             Add filter
                         </button>
+                        {{#if (beta_features @root) }}
+                            <div class="ms-2 form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" id="__test_mode" name="__test_mode"
+                                       {{#equal true @root.data.test_mode}}checked{{/equal}}>
+                                <label class="form-check-label" for="__test_mode">Test</label>
+                            </div>
+                        {{/if}}
                     {{/if}}
                 </form>
             </div>
