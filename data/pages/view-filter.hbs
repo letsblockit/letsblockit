@@ -1,22 +1,18 @@
 <div class="row">
     <div class="col-12 col-lg-2 order-last pt-5 pt-lg-0">
         <hr class="d-lg-none"/>
-        <a href="{{href "list-filters" ""}}">← Back to list</a>
-        <div class="card-body">
-            <h5 class="card-title">Tags</h5>
-            <p class="card-text">{{#each filter.tags}}{{{tag this}}}{{/each}}</p>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Contribute</h5>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml
-&what_filter_does_this_issue_target={{filter.name}}">Suggest a change</a>
-            </p>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/{{filter.name}}.yaml">Filter
-                    source</a>
-            </p>
-        </div>
+        <nav class="navbar navbar-light flex-column align-items-stretch">
+            <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
+            <a class="navbar-brand mt-3">Filter tags:</a>
+            <nav class="nav nav-pills flex-column">
+                    <span class="nav-link">{{#each filter.tags}}{{{tag this}}}{{/each}}</span>
+            </nav>
+            <a class="navbar-brand mt-3">Contribute:</a>
+            <nav class="nav nav-pills flex-column">
+                <a class="nav-link" href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target={{filter.name}}">Suggest a change</a>
+                <a class="nav-link" href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/{{filter.name}}.yaml">Filter source</a>
+            </nav>
+        </nav>
     </div>
     <div class="col col-lg-10">
         <h2>{{filter.title}}</h2>
