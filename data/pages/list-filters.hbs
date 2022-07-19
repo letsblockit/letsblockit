@@ -1,28 +1,25 @@
 <div class="row">
     <div class="col-12 col-lg-2 order-last pt-5 pt-lg-0">
         <hr class="d-lg-none"/>
-        <div class="card-body">
-            <h5 class="card-title">Filter by tag:</h5>
+        <nav class="navbar navbar-light flex-column align-items-stretch">
             {{#if tag_search}}
-                <p class="card-text">
-                    <a href="{{href "list-filters" ""}}">← Back to all</a>
-                </p>
+                <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
             {{else}}
-                <p class="card-text">
-                    {{#each filter_tags}}<span class="d-block">{{{tag this}}}</span>{{/each}}
-                </p>
+                <a class="navbar-brand">Filter by tag:</a>
+                <nav class="nav nav-pills flex-column">
+                    <span class="nav-link">{{#each filter_tags}}<span class="d-block">{{{tag this}}}</span>{{/each}}
+                    </span>
+                </nav>
             {{/if}}
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Contribute</h5>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml">Suggest a new filter</a>
-            </p>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/">Filter
+            <a class="navbar-brand mt-3">Contribute:</a>
+            <nav class="nav nav-pills flex-column">
+                <a class="nav-link"
+                   href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml">Suggest
+                    a new filter</a>
+                <a class="nav-link" href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/">Filter
                     sources</a>
-            </p>
-        </div>
+            </nav>
+        </nav>
     </div>
     <div class="col col-lg-10">
         {{#if active_filters }}
@@ -42,8 +39,9 @@
             {{/with}}
         {{else if @root.UserLoggedIn}}
             <div role="alert" class="alert alert-secondary has-background-secondary-light">
-                Let's start adding filters to your list! What about <a href="{{href "view-filter" "search-results"}}">
-                hiding pinterest in your search results?</a>
+                Let's start adding filters to your list! What about
+                <a href="{{href "view-filter" "search-results"}}">
+                    hiding pinterest in your search results?</a>
             </div>
         {{else}}
             <div role="alert" class="alert alert-secondary has-background-secondary-light">
