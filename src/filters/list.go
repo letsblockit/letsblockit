@@ -21,13 +21,13 @@ const (
 type Instance struct {
 	Filter   string                 `yaml:"filter" validate:"required"`
 	Params   map[string]interface{} `yaml:"params,omitempty"`
-	TestMode bool                   `yaml:"test_node,omitempty"`
+	TestMode bool                   `yaml:"test_mode,omitempty"`
 }
 
 type List struct {
 	Title     string      `yaml:"title" validate:"required"`
 	Instances []*Instance `yaml:"instances" validate:"dive,required"`
-	TestMode  bool        `yaml:"test_node,omitempty"`
+	TestMode  bool        `yaml:"test_mode,omitempty"`
 }
 
 type repository interface {
