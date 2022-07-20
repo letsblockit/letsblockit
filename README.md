@@ -40,3 +40,17 @@ Don't hesitate to open issues on this repository, using the following templates:
 - [Suggest a new filter template](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml)
 - [Report a bug](https://github.com/letsblockit/letsblockit/issues/new?labels=&template=bug-report.yaml)
 - [Other topics](https://github.com/letsblockit/letsblockit/issues/new)
+
+## Thanks to our sponsors
+
+<table>
+  <tr>
+    <td align="center"><a href="https://www.ory.sh/"><img src=".github/logo-ory.svg?raw=true"/></a></td>
+    <td>Thanks to Ory for hosting the official instance's<br/>
+        user database on <a href="https://www.ory.sh/cloud/">Ory Cloud.</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.jetbrains.com/opensource/"><img src=".github/logo-jetbrains.svg?raw=true"/></a></td>
+    <td>Thanks to Jetbrains for providing free GoLand licenses.</td>
+  </tr>
+</table>
