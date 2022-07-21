@@ -10,13 +10,17 @@ import (
 )
 
 const getInstanceStats = `-- name: GetInstanceStats :many
-SELECT COUNT(*), filter_name
+SELECT COUNT(*) as total,
+       SUM(case when l.downloaded_at >= NOW() - INTERVAL '7 DAYS' then 1 else 0 end) as fresh,
+       filter_name
 FROM filter_instances
+         JOIN filter_lists AS l ON (filter_list_id = l.id)
 GROUP BY filter_name
 `
 
 type GetInstanceStatsRow struct {
-	Count      int64
+	Total      int64
+	Fresh      int64
 	FilterName string
 }
 
@@ -29,7 +33,7 @@ func (q *Queries) GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, 
 	var items []GetInstanceStatsRow
 	for rows.Next() {
 		var i GetInstanceStatsRow
-		if err := rows.Scan(&i.Count, &i.FilterName); err != nil {
+		if err := rows.Scan(&i.Total, &i.Fresh, &i.FilterName); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
