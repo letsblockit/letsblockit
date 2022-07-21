@@ -50,8 +50,10 @@ func (s *Server) listFilters(c echo.Context) error {
 			}
 		}
 		if len(instances) > 0 {
-			downloaded, _ := s.store.HasUserDownloadedList(c.Request().Context(), hc.UserID)
-			hc.Add("list_downloaded", downloaded)
+			if info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID); err == nil {
+				hc.Add("list_token", info.Token.String())
+				hc.Add("list_downloaded", info.Downloaded)
+			}
 		}
 		if len(updatedFilters) > 0 {
 			hc.Add("updated_filters", updatedFilters)
