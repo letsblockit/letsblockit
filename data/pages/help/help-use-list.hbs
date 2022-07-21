@@ -19,13 +19,26 @@
             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
                  data-bs-parent="#accordionExample">
                 <div class="accordion-body">
-                    <ul>
-                        <li><a href="{{abp_subscribe_href list_url}}">Click on this link</a></li>
-                        <li>A new tab will open, click the <code>Subscribe</code> button in the top right corner,
-                            then close that tab.
-                        </li>
-                        <li>If these instructions fail, check the other methods below.</li>
-                    </ul>
+                    {{#if @root.OfficialInstance}}
+                        <ul>
+                            <li><a href="{{abp_subscribe_href list_url}}">Click on this link</a></li>
+                            <li>A new tab will open, click the <code>Subscribe</code> button in the top right corner,
+                                then close that tab.
+                            </li>
+                            <li>If these instructions fail, check the other methods below.</li>
+                        </ul>
+                    {{else}}
+                        <img src="/assets/images/pages/help-use-list-easy.png" class="mx-auto d-block mb-3">
+                        <ol>
+                            <li><a href="{{abp_subscribe_href list_url}}">Right-click on this link</a></li>
+                            <li>At the bottom of the contextual menu, select <code>uBlock Origin</code> then
+                                <code>Subscribe to filter list...</code></li>
+                            <li>A new tab will open, click the <code>Subscribe</code> button in the top right
+                                corner, then close that tab.
+                            </li>
+                            <li>If these instructions fail, check the other methods below.</li>
+                        </ol>
+                    {{/if}}
                 </div>
             </div>
         </div>
