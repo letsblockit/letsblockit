@@ -147,11 +147,12 @@ func (s *ServerTestSuite) setUserBanned() {
 	s.server.bans, _ = users.LoadUserBans(s.server.store)
 }
 
-func (s *ServerTestSuite) markListDownloaded() {
+func (s *ServerTestSuite) markListDownloaded() string {
 	s.T().Helper()
 	list, err := s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
 	require.NoError(s.T(), s.store.MarkListDownloaded(context.Background(), list.Token))
+	return list.Token.String()
 }
 
 func (s *ServerTestSuite) expectRender(page string, data pages.ContextData) *gomock.Call {

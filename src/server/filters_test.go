@@ -62,7 +62,7 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1", TestMode: true}))
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
-	s.markListDownloaded()
+	token := s.markListDownloaded()
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       filterTags,
@@ -70,6 +70,7 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 		"available_filters": []*filters.Filter{filter3},
 		"testing_filters":   map[string]bool{"filter1": true},
 		"list_downloaded":   true,
+		"list_token":        token,
 		"updated_filters":   map[string]bool{"filter2": true},
 	})
 	s.runRequest(req, assertOk)
@@ -79,12 +80,16 @@ func (s *ServerTestSuite) TestListFilters_ByTag() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/tag/tag2", nil)
 
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1"}))
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       filterTags,
 		"tag_search":        "tag2",
 		"active_filters":    []*filters.Filter{filter1},
 		"available_filters": []*filters.Filter{filter2},
 		"list_downloaded":   false,
+		"list_token":        list.Token.String(),
 	})
 	s.runRequest(req, assertOk)
 }
