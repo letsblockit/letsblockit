@@ -25,7 +25,7 @@
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.6.2",
     "@parcel/transformer-sass": "^2.6.2",
-    "@tabler/icons": "^1.76.0",
+    "@tabler/icons": "^1.77.0",
     "bootstrap": "^5.2.0",
     "htmx.org": "^1.8.0",
     "parcel": "^2.6.2",
