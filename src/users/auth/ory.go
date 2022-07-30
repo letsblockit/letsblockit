@@ -120,9 +120,10 @@ type OryBackend struct {
 
 func NewOryBackend(rootUrl string, renderer renderer, statsd statsd.ClientInterface) *OryBackend {
 	client := retryablehttp.NewClient()
+	client.RetryMax = 2
 	client.RetryWaitMin = 100 * time.Millisecond
 	client.RetryWaitMax = time.Second
-	client.HTTPClient.Timeout = 10 * time.Second
+	client.HTTPClient.Timeout = 5 * time.Second
 	return &OryBackend{
 		client:   client,
 		rootUrl:  rootUrl,
