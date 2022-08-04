@@ -71,6 +71,7 @@ params:
           - findbestopensource.com/
           - flutterrepos.com/
           - fuscin.com/
+          - geeksrepos.com/
           - gitanswer.com/
           - gitcode.net/
           - gitdetail.com/
@@ -177,6 +178,7 @@ params:
           - classmethod.dev/
           - cmsdk.com/
           - cndgn.com/
+          - code-error.com/
           - code-examples.net/
           - code.i-harness.com/
           - codefaq.info/
@@ -214,6 +216,7 @@ params:
           - debugcn.com/
           - desenv-web-rp-bd.com/
           - desenv-web-rp.com/
+          - dev-answers.com/
           - devasking.com/
           - devbugfix.com/
           - devdreamz.com/
@@ -227,14 +230,17 @@ params:
           - dogovori.info/
           - dokry.com/
           - domainelespailles.net/
+          - doraprojects.net/
           - dovov.com/
           - dtuto.com/
           - duoduokou.com/
+          - e-learn.cn/
           - easysavecode.com/
           - ebestcode.com/
           - ec-europe.org/
           - ecnf2016.org/
           - edupro.id/
+          - edureka.co/
           - elfishgene.com/
           - empires-r.us/
           - errorsfixing.com/
@@ -303,6 +309,7 @@ params:
           - kompsekret.ru/
           - kotaeta.com/
           - laravelquestions.com/
+          - learn-codes.net/
           - learnfk.com/
           - legkovopros.ru/
           - levitrares.com/
@@ -335,9 +342,11 @@ params:
           - peaku.co/
           - poweruser.guru/
           - pretagteam.com/
+          - proanswers.org/
           - prog-help.ru/
           - progi.pro/
           - programmierfrage.com/
+          - programming-articles.com/
           - projectbackpack.org/
           - proubuntu.ru/
           - py4u.net/
@@ -352,6 +361,7 @@ params:
           - qa.1r1g.com/
           - qa.wujigu.com/
           - qacode.ru/
+          - qandeelacademy.com/
           - qapicks.com/
           - qarchive.ru/
           - qarus.ru/
@@ -374,6 +384,7 @@ params:
           - qi-u.com/
           - quabr.com/
           - quares.ru/
+          - querythreads.com/
           - question-it.com/
           - questu.ru/
           - reactquestions.com/
@@ -418,6 +429,7 @@ params:
           - string.quest/
           - studytonight.com/
           - sunflowercreations.org/
+          - super-unix.com/
           - suttonedfoundation.org/
           - switch-case.com/
           - switch-case.ru/
@@ -433,13 +445,16 @@ params:
           - thinbug.com/
           - ti-enxame.com/
           - tipsfordev.com/
+          - tistory.com/
           - titanwolf.org/
           - tousu.in/
           - tra-loi-cau-hoi-phat-trien-web.com/
+          - tracholar.top/
           - try2explore.com/
           - tutorialguruji.com/
           - tutorialmeta.com/
           - tutorialmore.com/
+          - twblogs.net/
           - ubuntu.buildwebhost.com/
           - ubuntuaa.com/
           - ubuntugeeks.com/
@@ -454,6 +469,7 @@ params:
           - w3coded.com/
           - w3codelab.com/
           - w3programmers.org/
+          - w3toppers.com/
           - waymanamechurch.org/
           - web-answers.ru/
           - web-dev-qa-db-pt.com/
@@ -463,6 +479,7 @@ params:
           - webknox.com/
           - webmonkez.com/
           - wikiroot.ru/
+          - wikitechy.com/
           - winmundo.com/
           - wp-qa.com/
           - xiu2.net/
