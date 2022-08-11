@@ -105,6 +105,7 @@ params:
           - jsrepos.com/
           - libhunt.com/
           - lifesaver.codes/
+          - lightrun.com/
           - macosrepo.com/
           - news24lite.com/
           - openprojectrepo.com/
@@ -149,12 +150,14 @@ params:
           - answerlib.com/
           - answerspoint.com/
           - antwortenhier.me/
+          - anyabs.com/
           - anycodings.com/
           - appsloveworld.com/
           - article.docway.net/
           - ask-dev.ru/
           - ask-ubuntu.ru/
           - askandroidquestions.com/
+          - askcodes.net/
           - askcodez.com/
           - askdev.ru/
           - askdev.vn/
@@ -200,6 +203,7 @@ params:
           - coderoad.ru/
           - coderquestion.ru/
           - codersatellite.com/
+          - codestyle.tistory.com/
           - codetd.com/
           - codeutility.org/
           - codewdw.com/
@@ -208,6 +212,7 @@ params:
           - coredump.biz/
           - csdn.net/
           - culinarydegree.info/
+          - dailydevsblog.com/
           - dapper-tutorial.net/
           - ddcode.net/
           - de-vraag.com/
@@ -266,6 +271,7 @@ params:
           - graef.io/
           - grokbase.com/
           - gupgallery.com/
+          - hellojava.com/
           - helpex.vn/
           - howtofix.io/
           - husl.ru/
@@ -353,6 +359,7 @@ params:
           - pyquestions.com/
           - python-stack.de/
           - python.engineering/
+          - python2.net/
           - pythonfixing.com/
           - pythonshowcase.com/
           - pythonwd.com/
@@ -387,6 +394,7 @@ params:
           - querythreads.com/
           - question-it.com/
           - questu.ru/
+          - rateye.tistory.com/
           - reactquestions.com/
           - readforlearn.com/
           - recalll.co/
@@ -405,6 +413,7 @@ params:
           - shenzhenjia.net/
           - sierrasummit2005.org/
           - siwib.org/
+          - so.muouseo.com/
           - sobrelinux.info/
           - software-testing.com/
           - softwareuser.asklobster.com/
@@ -445,7 +454,6 @@ params:
           - thinbug.com/
           - ti-enxame.com/
           - tipsfordev.com/
-          - tistory.com/
           - titanwolf.org/
           - tousu.in/
           - tra-loi-cau-hoi-phat-trien-web.com/
