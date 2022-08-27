@@ -29,30 +29,30 @@ tags:
 template: |
   {{#if rich-results}}
   {{! Toplevel rich content above columns }}
-  google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
+  www.google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
   {{! Rich content in normal pages }}
-  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
+  www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
   {{! "Find results on" carousel }}
-  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
+  www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
   {{! New page layout for books / movies / shows, some rich elements are not handled yet }}
-  google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
+  www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   {{/if}}
   {{#if related-questions}}
-  google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
-  google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
+  www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
+  www.google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
   {{/if}}
   {{#if related-searches}}
-  google.*###botstuff #bres
+  www.google.*###botstuff #bres
   {{/if}}
   {{#if also-search}}
   {{! These unfurl after clicking on a result and going back to the results page }}
-  google.*###rso div.g div[jscontroller][id^="eob_"]
+  www.google.*###rso div.g div[jscontroller][id^="eob_"]
   {{/if}}
   {{#if similar-image-searches}}
-  google.*##div.isv-r[data-rfg]
+  www.google.*##div.isv-r[data-rfg]
   {{/if}}
   {{#if page-footer}}
-  google.*###footcnt > #fbarcnt
+  www.google.*###footcnt > #fbarcnt
   {{/if}}
 tests:
   - params: {}
@@ -61,28 +61,28 @@ tests:
       related-questions: true
       related-searches: true
     output: |
-      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
-      google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
-      google.*###botstuff #bres
+      www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
+      www.google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
+      www.google.*###botstuff #bres
   - params:
       rich-results: true
     output: |
-      google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
-      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
-      google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
-      google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
+      www.google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
+      www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
+      www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
+      www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   - params:
       page-footer: true
       related-searches: true
       also-search: true
     output: |
-      google.*###botstuff #bres
-      google.*###rso div.g div[jscontroller][id^="eob_"]
-      google.*###footcnt > #fbarcnt
+      www.google.*###botstuff #bres
+      www.google.*###rso div.g div[jscontroller][id^="eob_"]
+      www.google.*###footcnt > #fbarcnt
   - params:
       similar-image-searches: true
     output: |
-      google.*##div.isv-r[data-rfg]
+      www.google.*##div.isv-r[data-rfg]
   - params: {}
 ---
 
