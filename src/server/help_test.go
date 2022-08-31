@@ -27,7 +27,7 @@ func (s *ServerTestSuite) TestHelpUseList_OK() {
 	req := httptest.NewRequest(http.MethodGet, "http://myhost/help/use-list", nil)
 	s.expectRenderWithSidebar("help-use-list", "help-sidebar", pages.ContextData{
 		"has_filters":   false,
-		"list_url":      fmt.Sprintf("http://myhost/list/%s", token.String()),
+		"list_url":      fmt.Sprintf("http://myhost/list/%s.txt", token.String()),
 		"page":          helpMenu[0].Pages[0],
 		"menu_sections": helpMenu,
 	})
@@ -43,7 +43,7 @@ func (s *ServerTestSuite) TestHelpUseList_DownloadDomainOK() {
 	s.server.options.ListDownloadDomain = "get.letsblock.it"
 	s.expectRenderWithSidebar("help-use-list", "help-sidebar", pages.ContextData{
 		"has_filters":   true,
-		"list_url":      fmt.Sprintf("https://get.letsblock.it/list/%s", token.String()),
+		"list_url":      fmt.Sprintf("https://get.letsblock.it/list/%s.txt", token.String()),
 		"page":          helpMenu[0].Pages[0],
 		"menu_sections": helpMenu,
 	})
