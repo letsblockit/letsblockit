@@ -78,7 +78,7 @@ func (s *Server) helpPages(c echo.Context) error {
 			listUrl := url.URL{
 				Scheme: c.Scheme(),
 				Host:   c.Request().Host,
-				Path:   c.Echo().Reverse("render-filterlist", info.Token.String()),
+				Path:   c.Echo().Reverse("render-filterlist", info.Token.String()) + renderListSuffix,
 			}
 			if s.options.ListDownloadDomain != "" {
 				listUrl.Host = s.options.ListDownloadDomain

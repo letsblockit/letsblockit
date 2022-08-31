@@ -23,13 +23,14 @@ const listExportTemplate = `# letsblock.it filter list export
 
 `
 
+const renderListSuffix = ".txt"
 const installPromptFilterTemplate = `
 ! Hide the list install prompt for that list
 %s###install-prompt-%s
 `
 
 func (s *Server) renderList(c echo.Context) error {
-	token, err := uuid.Parse(strings.TrimSuffix(c.Param("token"), ".txt"))
+	token, err := uuid.Parse(strings.TrimSuffix(c.Param("token"), renderListSuffix))
 	if err != nil {
 		return err
 	}

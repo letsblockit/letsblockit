@@ -194,7 +194,6 @@ func (s *Server) setupRouter() {
 	anon := s.echo.Group("")
 	anon.GET("/assets/*", echo.WrapHandler(statigz.FileServer(data.Assets)))
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
-	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)
 	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
