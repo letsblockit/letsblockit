@@ -89,6 +89,23 @@ my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
 	require.True(s.T(), list.Downloaded)
 }
 
+func (s *ServerTestSuite) TestRenderList_TxtSuffix() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String()+".txt", nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	s.Equal(`! Title: letsblock.it - My filters
+! Expires: 12 hours
+! Homepage: https://letsblock.it
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
+
+! Hide the list install prompt for that list
+my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
+}
+
 func (s *ServerTestSuite) TestRenderList_OfficialInstance() {
 	s.server.options.OfficialInstance = true
 	token, err := s.store.CreateListForUser(context.Background(), s.user)

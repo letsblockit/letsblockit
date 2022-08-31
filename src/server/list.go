@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -28,7 +29,7 @@ const installPromptFilterTemplate = `
 `
 
 func (s *Server) renderList(c echo.Context) error {
-	token, err := uuid.Parse(c.Param("token"))
+	token, err := uuid.Parse(strings.TrimSuffix(c.Param("token"), ".txt"))
 	if err != nil {
 		return err
 	}
