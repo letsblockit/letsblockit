@@ -140,12 +140,15 @@ params:
           - 796t.com/
           - 955yes.com/
           - adoclib.com/
+          - aing.railpage.com.au/
           - ajaxhispano.com/
           - akuum.org/
           - alltodev.com/
           - alwaysemmyhope.com/
           - amuddycup.com/
+          - android.bigresource.com/
           - angularquestions.com/
+          - ansaurus.com/
           - answacode.com/
           - answer-id.com/
           - answeright.com/
@@ -169,6 +172,7 @@ params:
           - askubuntu.ru/
           - askvoprosy.com/
           - athabasca-foto.com/
+          - bildiredi.com/
           - bilee.com/
           - boolchr.com/
           - bootpanic.com/
@@ -181,11 +185,13 @@ params:
           - cfadnc.org/
           - chowdera.com/
           - christfever.in/
+          - ciupacabra.com/
           - classmethod.dev/
           - cmsdk.com/
           - cndgn.com/
           - code-error.com/
           - code-examples.net/
+          - code-paper.com/
           - code.i-harness.com/
           - codefaq.info/
           - codefaq.ru/
@@ -202,6 +208,7 @@ params:
           - codenong.com/
           - coder-solution-jp.com/
           - coder.gay/
+          - coder.horje.com/
           - coder.work/
           - coderedirect.com/
           - coderoad.in/
@@ -214,6 +221,7 @@ params:
           - codewdw.com/
           - codingdict.com/
           - configrouter.com/
+          - contactform.dev/
           - copyprogramming.com/
           - coredump.biz/
           - csdn.net/
@@ -232,17 +240,20 @@ params:
           - devbugfix.com/
           - devdreamz.com/
           - devebee.com/
+          - develop-bugs.com/
           - developerfacts.com/
           - developreference.com/
           - devfaq.fr/
           - devqanda.com/
           - devtip.in/
+          - dirask.com/
           - dizzycoding.com/
           - djcxy.com/
           - dockerquestions.com/
           - dogovori.info/
           - dokry.com/
           - domainelespailles.net/
+          - donolik.com/
           - doraprojects.net/
           - dovov.com/
           - dtuto.com/
@@ -269,10 +280,12 @@ params:
           - farath.com/
           - fitforlearning.org/
           - fixes.pub/
+          - fixpython.com/
           - fluffyfables.com/
           - flvrclothing.com/
           - fooobar.com/
           - frameboxxindore.com/
+          - fullstack.cafe/
           - fullstackuser.com/
           - generacodice.blog/
           - generacodice.com/
@@ -285,7 +298,10 @@ params:
           - gushiciku.cn/
           - hellojava.com/
           - helpex.vn/
+          - howtobuildsoftware.com/
           - howtofix.io/
+          - hrefcode.com/
+          - hsmap.xyz/
           - husl.ru/
           - i4k.xyz/
           - ibootweb.com/
@@ -293,11 +309,13 @@ params:
           - icopy.site/
           - idqna.com/
           - igiftidea.com/
+          - im-coder.com/
           - imtqy.com/
           - intelligentsystemsmonitoring.com/
           - intellipaat.com/
           - invalidtype.com/
           - isolution.pro/
+          - issuecloser.com/
           - issues-world.com/
           - it-mure.jp.net/
           - it-roy-ru.com/
@@ -305,9 +323,13 @@ params:
           - it-swarm-fr.com/
           - it-swarm-ja.com/
           - it-swarm-ja.tech/
+          - it-swarm.asia/
           - it-swarm.com.de/
           - it-swarm.com.ru/
+          - it-swarm.dev/
           - it-swarm.jp.net/
+          - it-swarm.net/
+          - it-swarm.xyz/
           - it1352.com/
           - itbaoku.cn/
           - itdaan.com/
@@ -315,8 +337,11 @@ params:
           - itectec.com/
           - itnursery.com/
           - itranslater.com/
+          - ittone.ma/
+          - ittutorialpoint.com/
           - javaer101.com/
           - javafixing.com/
+          - javascript.tutorialink.com/
           - javawenti.com/
           - jike.in/
           - jonic.cn/
@@ -337,20 +362,26 @@ params:
           - likecs.com/
           - living-sun.com/
           - localcoder.org/
+          - lowongan.live/
           - lycaeum.dev/
           - madanswer.com/
+          - makemeengr.com/
+          - mars.railpage.com.au/
+          - maxinterview.com/
           - mediatagtw.com/
           - microeducate.tech/
           - mlink.in/
           - mlog.club/
           - narkive.jp/
           - newbedev.com/
+          - newdevzone.com/
           - nibes.cn/
           - noblenaz.org/
           - nuomiphp.com/
           - nxtstage.net/
           - ogeek.cn/
           - ohandroid.com/
+          - oraask.com/
           - ostack.cn/
           - ourladylakes.org/
           - ourpython.com/
@@ -373,11 +404,14 @@ params:
           - projectbackpack.org/
           - proubuntu.ru/
           - py4u.net/
+          - py4u.org/
           - pyquestions.com/
           - python-stack.de/
           - python.engineering/
           - python2.net/
+          - pythondict.com/
           - pythonfixing.com/
+          - pythonmana.com/
           - pythonshowcase.com/
           - pythonwd.com/
           - qa-help.ru/
@@ -401,6 +435,7 @@ params:
           - qastack.it/
           - qastack.jp/
           - qastack.kr/
+          - qastack.lk/
           - qastack.mx/
           - qastack.net.bd/
           - qastack.ru/
@@ -433,6 +468,7 @@ params:
           - shenzhenjia.net/
           - sierrasummit2005.org/
           - siwib.org/
+          - snippmate.com/
           - so.muouseo.com/
           - sobrelinux.info/
           - software-testing.com/
@@ -441,6 +477,8 @@ params:
           - solutionschecker.com/
           - solveforum.com/
           - solveforums.msomimaktaba.com/
+          - sozdizimi.com/
+          - spec-zone.ru/
           - sprosi.pro/
           - sqlite.in/
           - stackallflow.com/
@@ -457,6 +495,7 @@ params:
           - stackovergo.com/
           - stackqna.com/
           - stackru.com/
+          - stackubuntu.com/
           - stormcrow.dev/
           - string.quest/
           - studytonight.com/
@@ -470,6 +509,7 @@ params:
           - tech.wayne-chu.com/
           - techarks.ru/
           - techfeed.net/
+          - techinplanet.com/
           - technointeract.com/
           - techtalk7.com/
           - telepon.cyou/
@@ -486,6 +526,7 @@ params:
           - truecodes.net/
           - try2explore.com/
           - tutorialguruji.com/
+          - tutorialink.com/
           - tutorialmeta.com/
           - tutorialmore.com/
           - twblogs.net/
@@ -513,18 +554,23 @@ params:
           - webdevqa.jp.net/
           - webknox.com/
           - webmonkez.com/
+          - while-do.com/
+          - wikifix.dev/
           - wikiroot.ru/
           - wikitechy.com/
           - winmundo.com/
           - wp-qa.com/
+          - wyzant.com/
           - xiu2.net/
           - xsprogram.com/
           - xszz.org/
+          - yeahexp.com/
           - ylhow.com/
           - yocker.com/
           - younggeeks.in/
           - yuanmacha.com/
           - yy123.ink/
+          - zapytay.com/
           - zsharp.org/
       - name: wikipedia-copycats
         description: Hide Wikipedia copycat websites
