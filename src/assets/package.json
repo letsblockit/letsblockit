@@ -25,8 +25,8 @@
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.7.0",
     "@parcel/transformer-sass": "^2.7.0",
-    "@tabler/icons": "^1.92.0",
-    "bootstrap": "^5.2.0",
+    "@tabler/icons": "^1.94.0",
+    "bootstrap": "^5.2.1",
     "htmx.org": "^1.8.0",
     "parcel": "^2.7.0",
     "parcel-namer-rewrite": "^2.0.0-rc.2"
