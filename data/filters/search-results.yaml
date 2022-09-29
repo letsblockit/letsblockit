@@ -88,6 +88,7 @@ params:
           - githubmate.com/
           - githubmemory.com/
           - githubplus.com/
+          - gitmemories.com/
           - gitmemory.cn/
           - gitmemory.com/
           - gitmetadata.com/
@@ -139,6 +140,7 @@ params:
         values:
           - 5axxw.com/
           - 796t.com/
+          - 91r.net/
           - 955yes.com/
           - adoclib.com/
           - aing.railpage.com.au/
@@ -152,8 +154,10 @@ params:
           - ansaurus.com/
           - answacode.com/
           - answer-id.com/
+          - answerbun.com/
           - answeright.com/
           - answerlib.com/
+          - answersfordevelopers.blogspot.com/
           - answerspoint.com/
           - antwortenhier.me/
           - anyabs.com/
@@ -175,6 +179,7 @@ params:
           - athabasca-foto.com/
           - bildiredi.com/
           - bilee.com/
+          - blogmepost.com/
           - boolchr.com/
           - bootpanic.com/
           - brocante.dev/
@@ -194,6 +199,7 @@ params:
           - code-examples.net/
           - code-paper.com/
           - code.i-harness.com/
+          - coded3.com/
           - codefaq.info/
           - codefaq.ru/
           - codeflow.site/
@@ -208,6 +214,7 @@ params:
           - codengineering.ru/
           - codenong.com/
           - coder-solution-jp.com/
+          - coder-solution-ru.com/
           - coder.gay/
           - coder.horje.com/
           - coder.work/
@@ -243,6 +250,8 @@ params:
           - devebee.com/
           - develop-bugs.com/
           - developerfacts.com/
+          - developerinsider.co/
+          - developerload.com/
           - developreference.com/
           - devfaq.fr/
           - devqanda.com/
@@ -268,6 +277,8 @@ params:
           - edureka.co/
           - elfishgene.com/
           - empires-r.us/
+          - encodingcompiler.com/
+          - errors-solved.com/
           - errorsandanswers.com/
           - errorsfixing.com/
           - examplefiles.net/
@@ -298,6 +309,7 @@ params:
           - grokbase.com/
           - gupgallery.com/
           - gushiciku.cn/
+          - heavenlymutex.com/
           - hellojava.com/
           - helpex.vn/
           - howtobuildsoftware.com/
@@ -313,6 +325,7 @@ params:
           - igiftidea.com/
           - im-coder.com/
           - imtqy.com/
+          - ingrom.com/
           - intelligentsystemsmonitoring.com/
           - intellipaat.com/
           - invalidtype.com/
@@ -337,20 +350,24 @@ params:
           - itdaan.com/
           - itecnote.com/
           - itectec.com/
+          - iteramos.com/
           - itnursery.com/
           - itranslater.com/
           - ittone.ma/
           - ittutorialpoint.com/
           - javaer101.com/
+          - javaerrorfix.com/
           - javafixing.com/
           - javascript.tutorialink.com/
           - javawenti.com/
           - jike.in/
+          - johndeerecreditpowerplan.com/
           - jonic.cn/
           - joyk.com/
           - jpcodeqa.com/
           - jpndev.com/
           - jscodetips.com/
+          - jtuto.com/
           - justshowmethecode.com/
           - kausalvikash.in/
           - knews.vip/
@@ -369,6 +386,7 @@ params:
           - lycaeum.dev/
           - madanswer.com/
           - makemeengr.com/
+          - manongdao.com/
           - mars.railpage.com.au/
           - maxinterview.com/
           - mediatagtw.com/
@@ -380,6 +398,7 @@ params:
           - newdevzone.com/
           - nibes.cn/
           - noblenaz.org/
+          - notcrash.com/
           - nuomiphp.com/
           - nxtstage.net/
           - ogeek.cn/
@@ -402,6 +421,7 @@ params:
           - proanswers.org/
           - prog-help.ru/
           - progi.pro/
+          - prograide.com/
           - programmatic.solutions/
           - programmierfrage.com/
           - programming-articles.com/
@@ -458,6 +478,7 @@ params:
           - realerlab.blogspot.com/
           - recalll.co/
           - respuestas.me/
+          - resultfor.dev/
           - ringingliberty.com/
           - rotadev.com/
           - routinepanic.com/
@@ -471,6 +492,7 @@ params:
           - semicolonworld.com/
           - serveanswer.com/
           - server-fault.ru/
+          - sevennet-blog.tumblr.com/
           - shenzhenjia.net/
           - sierrasummit2005.org/
           - siwib.org/
@@ -502,9 +524,11 @@ params:
           - stackqna.com/
           - stackru.com/
           - stackubuntu.com/
+          - stklowf.blogspot.com/
           - stormcrow.dev/
           - string.quest/
           - studytonight.com/
+          - sujeshanto.blogspot.com/
           - sunflowercreations.org/
           - super-unix.com/
           - suttonedfoundation.org/
@@ -519,10 +543,12 @@ params:
           - technointeract.com/
           - techtalk7.com/
           - telepon.cyou/
+          - tfetimes.com/
           - thecodeteacher.com/
           - thelivingtrove.com/
           - theshuggahpies.com/
           - thinbug.com/
+          - thiscodeworks.com/
           - ti-enxame.com/
           - tipsfordev.com/
           - titanwolf.org/
