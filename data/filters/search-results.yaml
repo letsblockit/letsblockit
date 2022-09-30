@@ -61,8 +61,10 @@ params:
           - bestofphp.com/
           - bestofreactjs.com/
           - bestofvue.com/
+          - bestproduct-review.com/
           - bleepcoder.com/
           - bytemeta.vip/
+          - citizendium.org/
           - coder.social/
           - codespots.com/
           - devpick.io/
@@ -110,6 +112,7 @@ params:
           - lightrun.com/
           - macosrepo.com/
           - news24lite.com/
+          - newworldencyclopedia.org/
           - openprojectrepo.com/
           - opensourceagenda.com/
           - opensourcelibs.com/
@@ -126,6 +129,7 @@ params:
           - swiftobc.com/
           - vuejscode.com/
           - wenyanet.com/
+          - wikimili.com/
           - zzun.app/
       - name: npm-copycats
         description: Hide npm copycat websites
@@ -159,6 +163,7 @@ params:
           - answerlib.com/
           - answersfordevelopers.blogspot.com/
           - answerspoint.com/
+          - antworten.top/
           - antwortenhier.me/
           - anyabs.com/
           - anycodings.com/
@@ -179,6 +184,7 @@ params:
           - athabasca-foto.com/
           - bildiredi.com/
           - bilee.com/
+          - bitcoden.com/
           - blogmepost.com/
           - boolchr.com/
           - bootpanic.com/
@@ -230,8 +236,10 @@ params:
           - codingdict.com/
           - configrouter.com/
           - contactform.dev/
+          - copyfuture.com/
           - copyprogramming.com/
           - coredump.biz/
+          - crex24.com/
           - csdn.net/
           - culinarydegree.info/
           - dailydevsblog.com/
@@ -255,6 +263,7 @@ params:
           - developreference.com/
           - devfaq.fr/
           - devqanda.com/
+          - devsfeed.com/
           - devtip.in/
           - dirask.com/
           - dizzycoding.com/
@@ -284,6 +293,7 @@ params:
           - examplefiles.net/
           - exceptionshub.com/
           - exchangetuts.com/
+          - extends.run/
           - extutorial.com/
           - facit.edu.br/
           - faithcov.org/
@@ -359,6 +369,7 @@ params:
           - javaerrorfix.com/
           - javafixing.com/
           - javascript.tutorialink.com/
+          - javascriptcn.com/
           - javawenti.com/
           - jike.in/
           - johndeerecreditpowerplan.com/
@@ -393,7 +404,22 @@ params:
           - microeducate.tech/
           - mlink.in/
           - mlog.club/
+          - narkive.co.il/
+          - narkive.com/
+          - narkive.cz/
+          - narkive.dk/
+          - narkive.ee/
+          - narkive.fi/
+          - narkive.fr/
+          - narkive.hr/
+          - narkive.in/
+          - narkive.info.tr/
+          - narkive.it/
           - narkive.jp/
+          - narkive.kr/
+          - narkive.no/
+          - narkive.pl/
+          - narkive.se/
           - newbedev.com/
           - newdevzone.com/
           - nibes.cn/
@@ -493,6 +519,7 @@ params:
           - serveanswer.com/
           - server-fault.ru/
           - sevennet-blog.tumblr.com/
+          - sharetechnotes.com/
           - shenzhenjia.net/
           - sierrasummit2005.org/
           - siwib.org/
@@ -521,6 +548,7 @@ params:
           - stackoverflood.com/
           - stackoverflowpoint.com/
           - stackovergo.com/
+          - stackoverline.cyou/
           - stackqna.com/
           - stackru.com/
           - stackubuntu.com/
@@ -541,6 +569,7 @@ params:
           - techfeed.net/
           - techinplanet.com/
           - technointeract.com/
+          - technoteshelp.com/
           - techtalk7.com/
           - telepon.cyou/
           - tfetimes.com/
@@ -596,6 +625,7 @@ params:
           - xiu2.net/
           - xsprogram.com/
           - xszz.org/
+          - yakst.com/
           - yeahexp.com/
           - ylhow.com/
           - yocker.com/
