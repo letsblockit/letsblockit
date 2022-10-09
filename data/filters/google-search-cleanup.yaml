@@ -31,14 +31,14 @@ template: |
   {{! Toplevel rich content above columns }}
   www.google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
   {{! Rich content in normal pages }}
-  www.google.*###rso > div:not(:only-child):has(g-more-link,g-section-with-header)
+  www.google.*###rso:has(> div:nth-of-type(6)) > div:has(g-more-link,g-section-with-header)
   {{! "Find results on" carousel }}
-  www.google.*###rso > div:not(:only-child):has(div[role="heading"]+g-scrolling-carousel)
+  www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div[role="heading"]+g-scrolling-carousel)
   {{! New page layout for books / movies / shows, some rich elements are not handled yet }}
   www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   {{/if}}
   {{#if related-questions}}
-  www.google.*###rso > div:not(:only-child):has(div.related-question-pair)
+  www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div.related-question-pair)
   www.google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
   {{/if}}
   {{#if related-searches}}
@@ -61,15 +61,15 @@ tests:
       related-questions: true
       related-searches: true
     output: |
-      www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div.related-question-pair)
+      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div.related-question-pair)
       www.google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
       www.google.*###botstuff #bres
   - params:
       rich-results: true
     output: |
       www.google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel)
-      www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(g-more-link,g-section-with-header)
-      www.google.*###rso:not(:has(#kp-wp-tab-overview)) > div:has(div[role="heading"]+g-scrolling-carousel)
+      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(g-more-link,g-section-with-header)
+      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div[role="heading"]+g-scrolling-carousel)
       www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   - params:
       page-footer: true
