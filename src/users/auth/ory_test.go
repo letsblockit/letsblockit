@@ -303,6 +303,22 @@ func (s *OryBackendSuite) TestStartKratosFlow_Logout() {
 	s.runRequest(req, assertOk)
 }
 
+func (s *OryBackendSuite) TestStartLoginFlow_Register() {
+	req := httptest.NewRequest(http.MethodGet, "/user/action/loginOrRegistration", nil)
+	s.expectP.Redirect(gomock.Any(), 303, s.kratosServer.URL+"/self-service/registration/browser")
+	s.runRequest(req, assertOk)
+}
+
+func (s *OryBackendSuite) TestStartLoginFlow_Login() {
+	req := httptest.NewRequest(http.MethodGet, "/user/action/loginOrRegistration", nil)
+	req.AddCookie(&http.Cookie{
+		Name:  "has_account",
+		Value: "true",
+	})
+	s.expectP.Redirect(gomock.Any(), 303, s.kratosServer.URL+"/self-service/login/browser")
+	s.runRequest(req, assertOk)
+}
+
 func TestOryBackendSuite(t *testing.T) {
 	suite.Run(t, new(OryBackendSuite))
 }
