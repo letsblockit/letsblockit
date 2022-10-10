@@ -135,6 +135,7 @@ func NewOryBackend(rootUrl string, renderer renderer, statsd statsd.ClientInterf
 func (o *OryBackend) RegisterRoutes(group EchoRouter) {
 	group.GET("/user/forms/:type", o.renderKratosForm)
 	group.POST("/user/action/:type", o.startKratosFlow).Name = userActionRouteName
+	group.GET("/user/action/loginOrRegistration", o.startLoginFlow).Name = "simple-login-link"
 }
 
 // BuildMiddleware tries to resolve an Ory Cloud session from the cookies.
@@ -264,6 +265,12 @@ func (o *OryBackend) startKratosFlow(c echo.Context) error {
 		}
 	}
 	return o.renderer.Redirect(c, http.StatusSeeOther, redirect)
+}
+
+func (o *OryBackend) startLoginFlow(c echo.Context) error {
+	c.SetParamNames("type")
+	c.SetParamValues("loginOrRegistration")
+	return o.startKratosFlow(c)
 }
 
 func (o *OryBackend) queryKratos(c echo.Context, typeTag, endpoint string, body interface{}) error {
