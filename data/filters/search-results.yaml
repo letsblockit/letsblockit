@@ -147,6 +147,7 @@ params:
           - 91r.net/
           - 955yes.com/
           - 9to5answer.com/
+          - addcodings.com/
           - adoclib.com/
           - aing.railpage.com.au/
           - ajaxhispano.com/
@@ -155,6 +156,7 @@ params:
           - alwaysemmyhope.com/
           - amuddycup.com/
           - android.bigresource.com/
+          - angularfixing.com/
           - angularquestions.com/
           - ansaurus.com/
           - answacode.com/
@@ -189,6 +191,7 @@ params:
           - blogmepost.com/
           - boolchr.com/
           - bootpanic.com/
+          - boxhoidap.com/
           - brocante.dev/
           - buzzphp.com/
           - cainiaojiaocheng.com/
@@ -306,6 +309,7 @@ params:
           - fixpython.com/
           - fluffyfables.com/
           - flvrclothing.com/
+          - folkstalk.com/
           - fooobar.com/
           - frameboxxindore.com/
           - fullstack.cafe/
@@ -406,6 +410,7 @@ params:
           - microeducate.tech/
           - mlink.in/
           - mlog.club/
+          - mortgagefasr860.weebly.com/
           - narkive.co.il/
           - narkive.com/
           - narkive.cz/
@@ -537,6 +542,7 @@ params:
           - solveforums.msomimaktaba.com/
           - sozdizimi.com/
           - spec-zone.ru/
+          - splunktool.com/
           - sprosi.pro/
           - sqlite.in/
           - stackallflow.com/
@@ -636,6 +642,7 @@ params:
           - yuanmacha.com/
           - yy123.ink/
           - zapytay.com/
+          - zditect.com/
           - zsharp.org/
       - name: wikipedia-copycats
         description: Hide Wikipedia copycat websites
