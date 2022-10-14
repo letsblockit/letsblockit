@@ -12,6 +12,10 @@ params:
     description: Hide video suggestions that obscure the end of the video
     type: checkbox
     default: true
+  - name:  endscreen-content
+    description: Hide the video grid shown after a video ends
+    type: checkbox
+    default: true
 tags:
   - youtube
 attribution:
@@ -25,6 +29,9 @@ template: |
   {{/if}}
   {{#if end-of-video-overlay}}
   www.youtube.com##.ytp-ce-element
+  {{/if}}
+  {{#if endscreen-content}}
+  www.youtube.com##.ytp-endscreen-content
   {{/if}}
 tests:
   - params: {}

@@ -1,6 +1,6 @@
 <style>
-    div.type-hidden, div.type-submit {
-        margin-bottom: 0 !important;
+    div.type-hidden {
+        margin: 0 !important;
     }
 
     div.type-submit + div.row {
@@ -16,76 +16,79 @@
     </div>
 {{/each}}
 
-<div class="card shadow-sm">
-    {{#if settings.Tabs}}
-        <div class="card-header">
-            <ul class="nav nav-tabs card-header-tabs">
-                {{#each settings.Tabs}}
-                    {{#if (eq @root.Data.type Type)}}
-                        <li class="ms-2 nav-item">
-                            <a class="nav-link active" aria-current="true" href="#">{{Title}}</a>
-                        </li>
-                    {{else}}
-                        <li class="ms-2 nav-item">
-                            <form method="POST" action="{{href "start-flow" Type}}">
-                                {{{csrf @root}}}
-                                {{#with @root.Data.return_to}}
-                                    <input type="hidden" name="return_to" value="{{.}}">
-                                {{/with}}
-                                <button type="submit" class="nav-link">{{Title}}</button>
-                            </form>
-                        </li>
-                    {{/if}}
-                {{/each}}
-            </ul>
-        </div>
-    {{else}}
-        <div class="card-header">{{settings.title}}</div>
-    {{/if}}
-    {{#with settings.Intro}}
-        <div class="card-body">{{{.}}}</div>
-    {{/with}}
-    <form class="card-body" method="{{ui.method}}" action="{{ui.action}}">
-        {{#each ui.nodes}}
-            <div class="form-group mb-3 row type-{{attributes.type}}">
-                {{#if meta.label.text}}
-                    <label class="col-lg-3 col-form-label" for="input-{{attributes.name}}">
-                        {{#unless (eq attributes.type "submit")}}
-                            {{#if (eq meta.label.id 1070004)}}E-Mail{{else}}{{meta.label.text}}{{/if}}
-                        {{/unless}}
-                    </label>
-                {{/if}}
-                <div class="col-lg-9">
-                    {{#if (eq attributes.type "submit")}}
-                        <button type="submit" class="btn btn-primary"
-                                id="input-{{attributes.name}}"
-                                name="{{attributes.name}}"
-                                value="{{attributes.value}}">
-                            {{meta.label.text}}
-                        </button>
-                    {{else}}
-                        <input
-                            {{#if attributes.disabled}}disabled{{/if}}
-                            {{#if attributes.required}}required{{/if}}
-                                id="input-{{attributes.name}}"
-                                name="{{attributes.name}}"
-                                type="{{#if (eq meta.label.id 1070004)}}email{{else}}{{attributes.type}}{{/if}}"
-                                value="{{attributes.value}}"
-                                class="form-control {{#each messages}}
-                                    {{#if (eq type "error")}}is-invalid{{else}}is-valid{{/if}}
-                                {{/each}}"/>
-                    {{/if}}
-                    {{#each messages}}
-                        <div class="{{#if (eq type "error")}}invalid-feedback{{else}}valid-feedback{{/if}}">
-                            {{text}}
-                        </div>
+<div class="container m-auto p-4" style="max-width: 50em">
+    <div class="card shadow-sm">
+        {{#if settings.Tabs}}
+            <div class="card-header pt-3 ps-4 pe-4">
+                <ul class="nav nav-tabs card-header-tabs">
+                    {{#each settings.Tabs}}
+                        {{#if (eq @root.Data.type Type)}}
+                            <li class="ms-lg-3 nav-item">
+                                <a class="nav-link active" aria-current="true" href="#">{{Title}}</a>
+                            </li>
+                        {{else}}
+                            <li class="ms-lg-3 nav-item">
+                                <form method="POST" action="{{href "user-action" Type}}">
+                                    {{{csrf @root}}}
+                                    {{#with @root.Data.return_to}}
+                                        <input type="hidden" name="return_to" value="{{.}}">
+                                    {{/with}}
+                                    <button type="submit" class="nav-link">{{Title}}</button>
+                                </form>
+                            </li>
+                        {{/if}}
                     {{/each}}
-                </div>
+                </ul>
             </div>
-        {{/each}}
-    </form>
-    <div class="card-footer text-end">
-        Account management is provided by <a target="_blank" href="https://www.ory.sh/docs">the fine folks at Ory</a> |
-        Read our <a href="{{href "help" "privacy"}}">privacy page</a>.
+        {{else}}
+            <div class="card-header p-4">{{settings.title}}</div>
+        {{/if}}
+        {{#with settings.Intro}}
+            <div class="card-body">{{{.}}}</div>
+        {{/with}}
+        <form class="card-body" method="{{ui.method}}" action="{{ui.action}}">
+            {{#each ui.nodes}}
+                <div class="form-group m-md-4 row type-{{attributes.type}}">
+                    {{#if meta.label.text}}
+                        <label class="col-lg-2 col-form-label" for="input-{{attributes.name}}">
+                            {{#unless (eq attributes.type "submit")}}
+                                {{#if (eq meta.label.id 1070004)}}E-Mail{{else}}{{meta.label.text}}{{/if}}
+                            {{/unless}}
+                        </label>
+                    {{/if}}
+                    <div class="col-lg-10">
+                        {{#if (eq attributes.type "submit")}}
+                            <button type="submit" class="btn btn-primary"
+                                    id="input-{{attributes.name}}"
+                                    name="{{attributes.name}}"
+                                    value="{{attributes.value}}">
+                                {{meta.label.text}}
+                            </button>
+                        {{else}}
+                            <input
+                                {{#if attributes.disabled}}disabled{{/if}}
+                                {{#if attributes.required}}required{{/if}}
+                                    id="input-{{attributes.name}}"
+                                    name="{{attributes.name}}"
+                                    type="{{#if (eq meta.label.id 1070004)}}email{{else}}{{attributes.type}}{{/if}}"
+                                    value="{{attributes.value}}"
+                                    class="form-control {{#each messages}}
+                                        {{#if (eq type "error")}}is-invalid{{else}}is-valid{{/if}}
+                                    {{/each}}"/>
+                        {{/if}}
+                        {{#each messages}}
+                            <div class="{{#if (eq type "error")}}invalid-feedback{{else}}valid-feedback{{/if}}">
+                                {{text}}
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/each}}
+        </form>
+        <div class="card-footer p-3 text-end">
+            Account management is provided by <a target="_blank" href="https://www.ory.sh/docs">the fine folks at
+            Ory</a> |
+            Read our <a href="{{href "help" "privacy"}}">privacy page</a>.
+        </div>
     </div>
 </div>

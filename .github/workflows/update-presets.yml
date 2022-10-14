@@ -1,7 +1,7 @@
 name: Update Presets
 on:
   schedule:
-    - cron:  '0 7 * * *'
+    - cron: '0 7 * * *'
   workflow_dispatch:
 jobs:
   update-dep:
@@ -14,6 +14,8 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
+          token: ${{ secrets.BOT_TOKEN }}
+          push-to-fork: lbi-bot/letsblockit
           commit-message: "search-results: update presets"
           title: "search-results: update presets"
           labels: filter-data

@@ -1,75 +1,96 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/google/uuid"
-	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/labstack/echo/v4"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func (s *ServerTestSuite) TestLoadBannedUsers() {
-	assert.Nil(s.T(), s.server.banned)
-	id1, id2, id3 := uuid.New(), uuid.New(), uuid.New()
-	for {
-		if id1 != id2 && id1 != id3 && id2 != id3 {
-			break
-		}
-		id2, id3 = uuid.New(), uuid.New()
-	}
-	s.expectQ.GetBannedUsers(gomock.Any()).Return([]uuid.UUID{id1, id2, id1}, nil)
-	assert.NoError(s.T(), s.server.loadBannedUsers())
+func (s *ServerTestSuite) TestUserAccount_Ok() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	s.markListDownloaded()
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "one"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "two"}))
 
-	assert.Len(s.T(), s.server.banned, 2)
-	assert.True(s.T(), s.server.isUserBanned(id1))
-	assert.True(s.T(), s.server.isUserBanned(id2))
-	assert.False(s.T(), s.server.isUserBanned(id3))
-}
-
-func (s *ServerTestSuite) TestUserAccount_Verified() {
-	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	req.AddCookie(verifiedCookie)
-	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{
-		Token:         token,
-		Downloaded:    true,
-		InstanceCount: 5,
-	}, nil)
+
 	s.expectRender("user-account", pages.ContextData{
-		"filter_count":    int64(5),
+		"filter_count":    int64(2),
 		"list_token":      token.String(),
 		"list_downloaded": true,
 	})
-	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
-		assert.Equal(t, 200, rec.Code, rec.Body)
-		assert.Len(t, rec.Result().Cookies(), 2)
-		cookie := rec.Result().Cookies()[1]
-		assert.Equal(t, "has_account", cookie.Name)
-		assert.Equal(t, "true", cookie.Value)
-		assert.Equal(t, "/", cookie.Path)
-	})
+	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestUserAccount_CreateList() {
-	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
-	req.AddCookie(verifiedCookie)
-	s.expectQ.GetListForUser(gomock.Any(), s.user).Return(db.GetListForUserRow{}, db.NotFound)
-	s.expectQ.CreateListForUser(gomock.Any(), s.user).Return(token, nil)
+
+	// First query
+	s.expectP.Render(gomock.Any(), "user-account", gomock.Any())
+	s.runRequest(req, assertOk)
+
+	// Check that a list has been created for the user
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	// Second query asserting the token value
 	s.expectRender("user-account", pages.ContextData{
-		"filter_count":    0,
-		"list_token":      token.String(),
+		"filter_count":    int64(0),
 		"list_downloaded": false,
+		"list_token":      list.Token.String(),
 	})
 	s.runRequest(req, assertOk)
 }
 
 func (s *ServerTestSuite) TestUserAccount_Anonymous() {
+	s.user = ""
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 	s.expectRender("user-account", nil)
 	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestRotateListToken_Ok() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	f := make(url.Values)
+	f.Add("one", "blep")
+	f.Add("token", token.String())
+	f.Add("confirm", "on")
+	f.Add(csrfLookup, s.csrf)
+	req := httptest.NewRequest(http.MethodPost, "/user/rotate-token", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+
+	s.expectP.Redirect(gomock.Any(), http.StatusSeeOther, "/user/account")
+	s.runRequest(req, assertOk)
+
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NotEqual(s.T(), token, list.Token)
+}
+
+func (s *ServerTestSuite) TestRotateListToken_MissingCSRF() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	f := make(url.Values)
+	f.Add("one", "blep")
+	f.Add("token", token.String())
+	f.Add("confirm", "on")
+	req := httptest.NewRequest(http.MethodPost, "/user/rotate-token", strings.NewReader(f.Encode()))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationForm)
+	s.runRequest(req, func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		assert.Equal(t, 400, recorder.Result().StatusCode)
+	})
 }

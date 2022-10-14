@@ -1,6 +1,6 @@
-<div class="content ps-lg-5 pe-lg-5 ms-xl-5 me-xl-5">
+<div class="content m-auto p-4" style="max-width: 60em">
     <div class="landing-block row">
-        <div class="col-lg-8 mt-2">
+        <div class="col-lg-8">
             <h2>Let's Block It!</h2>
             <p class="fs-5">
                 Remove low-quality content and useless nags, focus on what matters.
@@ -12,13 +12,13 @@
             </p>
         </div>
         <p class="col-lg-4 d-none d-lg-block container landing-icon">
-            <i class="ti ti-eye-off"></i>
+            {{>icon name="shield-check"}}
         </p>
         <hr class="landing-divider">
     </div>
     <div class="landing-block row">
         <p class="col-lg-4 d-none d-lg-block container landing-icon">
-            <i class="ti ti-adjustments"></i>
+            {{>icon name="adjustments"}}
         </p>
         <div class="col-lg-8">
             <h3>It's all about <strong>you</strong></h3>
@@ -52,16 +52,16 @@
             <p><a class="btn btn-primary me-2" href="{{href "help" "contributing"}}">Learn how to contribute</a></p>
         </div>
         <p class="col-lg-4 d-none d-lg-block container landing-icon">
-            <i class="ti ti-users"></i>
+            {{>icon name="users"}}
         </p>
         <hr class="landing-divider">
     </div>
-    <div class="landing-block row pb-5">
+    <div class="landing-block row">
         <p class="col-lg-4 d-none d-lg-block container landing-icon">
-            <i class="ti ti-devices is15"></i>
+            {{>icon name="devices"}}
         </p>
         <div class="col-lg-8">
-            <h3>It's on all your devices</h3>
+            <h3>It's on <strong>all</strong> your devices</h3>
             <p>
                 Create an account to build your customized filter list, then add it in your browser.
                 Add your <a href="{{href "view-filter" "custom-rules"}}">custom filters</a> for content that is
@@ -70,11 +70,32 @@
             <p>
                 Your filters will update daily on all your browsers, even on your phone with Firefox Mobile.
             </p>
-            <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
+            <form method="POST" action="{{href "user-action" "loginOrRegistration"}}">
                 {{{csrf @root}}}
                 <button class="btn btn-primary" type="submit">Create an account</button>
             </form>
         </div>
+        <hr class="landing-divider">
+    </div>
+    <div class="landing-block row">
+        <div class="col-lg-8">
+            <h3>It's <strong>Open-source</strong></h3>
+            <p>The filter corpus and the server code are licensed under
+                <a href="https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt">
+                    the Apache License 2.0.</a></p>
+            <p>
+                This official instance is the simplest way to get started, but you can also
+                <a href="https://github.com/letsblockit/letsblockit/blob/main/cmd/server/README.md">
+                    self-host the server</a> or use
+                <a href="https://github.com/letsblockit/letsblockit/blob/main/cmd/render/README.md">
+                    the offline render CLI</a> if you prefer.
+            </p>
+            <p><a class="btn btn-primary me-2" href="https://github.com/letsblockit/letsblockit">
+                Check us out on Github</a></p>
+        </div>
+        <p class="col-lg-4 d-none d-lg-block container landing-icon">
+            {{>icon name="brand-open-source"}}
+        </p>
     </div>
 </div>
 
@@ -89,20 +110,25 @@
         color: #DC926E;
     }
 
+    p.landing-icon svg {
+        stroke-width: 1.25;
+    }
+
     div.landing-block:nth-child(even) p.landing-icon {
         text-align: right;
     }
 
     hr.landing-divider {
-        opacity: 1;
-        height: 2rem;
-        margin: 0.5rem -1rem 2.5rem -1rem;
-        background: linear-gradient(#b83e51, white);
-        clip-path: polygon(0 0, 100% 90%, 100% 100%, 0% 10%);
+        border: none !important;
+        opacity: 0.6;
+        height: 0.25rem;
+        margin: 3rem 15%;
+        max-width: 70%;
+        background: linear-gradient(-0.25turn, #b83e51, white);
     }
 
     div.landing-block:nth-child(odd) hr.landing-divider {
-        background: linear-gradient(white, #b83e51);
-        clip-path: polygon(0 90%, 100% 0, 100% 10%, 0% 100%);
+        background: linear-gradient(0.25turn, #b83e51, white);
+
     }
 </style>

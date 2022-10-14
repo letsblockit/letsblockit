@@ -3,11 +3,13 @@ package server
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
+	"github.com/letsblockit/letsblockit/src/users/auth"
 	"gopkg.in/yaml.v2"
 )
 
@@ -21,8 +23,14 @@ const listExportTemplate = `# letsblock.it filter list export
 
 `
 
+const renderListSuffix = ".txt"
+const installPromptFilterTemplate = `
+! Hide the list install prompt for that list
+%s###install-prompt-%s
+`
+
 func (s *Server) renderList(c echo.Context) error {
-	token, err := uuid.Parse(c.Param("token"))
+	token, err := uuid.Parse(strings.TrimSuffix(c.Param("token"), renderListSuffix))
 	if err != nil {
 		return err
 	}
@@ -30,16 +38,17 @@ func (s *Server) renderList(c echo.Context) error {
 	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		storedList, e := q.GetListForToken(ctx, token)
-		if e == db.NotFound {
+		switch {
+		case e == db.NotFound:
 			return echo.ErrNotFound
-		} else if e != nil {
+		case e != nil:
 			return e
-		} else if s.isUserBanned(storedList.UserID) {
+		case s.bans.IsBanned(storedList.UserID):
 			return echo.ErrForbidden
 		}
 
 		if c.Request().Header.Get("Referer") == "" {
-			e = q.MarkListDownloaded(ctx, storedList.ID)
+			e = q.MarkListDownloaded(ctx, token)
 			if e != nil {
 				return e
 			}
@@ -55,7 +64,20 @@ func (s *Server) renderList(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return list.Render(c.Response(), c.Logger(), s.filters)
+	if _, ok := c.QueryParams()["test_mode"]; ok {
+		list.TestMode = true
+	}
+	if err = list.Render(c.Response(), c.Logger(), s.filters); err != nil {
+		return err
+	}
+
+	if s.options.OfficialInstance {
+		_, err = fmt.Fprintf(c.Response(), installPromptFilterTemplate, mainDomain, token)
+	} else {
+		_, err = fmt.Fprintf(c.Response(), installPromptFilterTemplate, c.Request().Host, token)
+	}
+
+	return err
 }
 
 func (s *Server) exportList(c echo.Context) error {
@@ -67,11 +89,12 @@ func (s *Server) exportList(c echo.Context) error {
 	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		storedList, e := q.GetListForToken(ctx, token)
-		if e == db.NotFound {
+		switch {
+		case e == db.NotFound:
 			return echo.ErrNotFound
-		} else if e != nil {
+		case e != nil:
 			return e
-		} else if getUser(c).Id() != storedList.UserID {
+		case auth.GetUserId(c) != storedList.UserID:
 			return echo.ErrForbidden
 		}
 		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
@@ -104,8 +127,9 @@ func convertFilterList(storedInstances []db.GetInstancesForListRow) (*filters.Li
 	var customFilterInstances []*filters.Instance
 	for _, storedInstance := range storedInstances {
 		instance := &filters.Instance{
-			Filter: storedInstance.FilterName,
-			Params: make(map[string]interface{}),
+			Filter:   storedInstance.FilterName,
+			Params:   make(map[string]interface{}),
+			TestMode: storedInstance.TestMode,
 		}
 		err := storedInstance.Params.AssignTo(&instance.Params)
 		if err != nil {

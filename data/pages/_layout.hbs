@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/svg+xml" href="/assets/images/logo-small.svg{{assetHash}}">
-    <link rel="stylesheet" href="/assets/dist/main.css{{assetHash}}">
-    <script defer src="/assets/dist/main.js{{assetHash}}"></script>
+    <link rel="icon" type="image/svg+xml" href="/assets/images/logo-small.svg">
+    <link rel="stylesheet" href="/assets/dist/main.css">
+    <script defer src="/assets/dist/main.js"></script>
     <title>{{ Title }} :: letsblock.it</title>
 
     <meta property="og:title" content="{{ Title }}"/>
     <meta property="og:description"
           content="Remove low-quality content and useless nags, focus on what matters. A community-maintained uBlock Origin filter set."/>
-    <meta property="og:image" content="{{http_root @root}}/assets/images/logo-288.png{{assetHash}}"/>
+    <meta property="og:image" content="{{http_root @root}}/assets/images/logo-288.png"/>
     <meta property="og:image:type" content="image/png"/>
     <meta property="og:image:width" content="288"/>
     <meta property="og:image:height" content="288"/>
@@ -24,8 +24,8 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
     <div class="container-lg">
         <a class="navbar-brand" href="/">
-            <img src="/assets/images/logo.svg{{assetHash}}"
-                 {{#unless MainDomain}}style="filter: grayscale(100%);"{{/unless}}>
+            <img src="/assets/images/logo.svg" {{#if GreyLogo}}
+                 style="filter: grayscale(100%);"{{/if}}>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,24 +40,23 @@
             </div>
             <a class="nav-link{{#if @root.HasNews}} active{{/if}}{{#equal "news" @root.CurrentSection}} active"
                     aria-current="page{{/equal}}" href="{{href "news" ""}}">
-                {{#if @root.HasNews}}<i class="ti ti-bell-ringing"></i>{{/if}}
+                {{#if @root.HasNews}}{{>icon name="bell-ringing" class="me-1"}}{{/if}}
                 News
-                {{#if @root.HasNews}}<i class="ti ti-bell-ringing"></i>{{/if}}
+                {{#if @root.HasNews}}{{>icon name="bell-ringing" class="ms-1"}}{{/if}}
             </a>
             {{#if UserLoggedIn}}
                 <a class="nav-link{{#equal "user" @root.CurrentSection}} active"
                         aria-current="page{{/equal}}" href="{{href "user-account" ""}}">My account</a>
             {{else}}
-                <form method="POST" class="me-2" hx-boost="false" action="{{href "start-flow" "loginOrRegistration"}}">
+                <form method="POST" class="me-2" hx-boost="false" action="{{href "user-action" "loginOrRegistration"}}">
                     {{{csrf @root}}}
                     <button class="btn btn-outline-light {{#equal "user" @root.CurrentSection}} active{{/equal}}"
                             type="submit">Login
                     </button>
                 </form>
             {{/if}}
-            <a class="nav-link pt-0 pb-0" href="https://github.com/letsblockit/letsblockit"
-               title="Visit the project on GitHub">
-                <i class="ti ti-brand-github" style="font-size: 2rem"></i></a>
+            <a class="nav-link pt-0 pb-0 " href="https://github.com/letsblockit/letsblockit">
+                {{>icon name="brand-github" size=2.25 alt="Visit the project on GitHub"}}</a>
         </div>
     </div>
 </nav>

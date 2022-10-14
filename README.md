@@ -12,13 +12,15 @@ and [contributing guidelines](https://letsblock.it/help/contributing).
 
 ## How to use this project
 
-- Go to [letsblock.it](https://letsblock.it), create an account and curate your personal filter list
+There are three ways to use our filter templates:
+
+1. Go to [letsblock.it](https://letsblock.it), create an account and curate your personal filter list
 based on our filter templates. A personal URL will be generated for you to add to your uBlock Origin lists.
-- Alternatively, you can maintain your filter parameters in a YAML file, and use [the local render CLI](cmd/render)
+2. Self-hosting of [the letsblock.it server](cmd/server) is now supported for experienced users, read
+  [the setup doc](cmd/server/README.md) to get started.
+3. Alternatively, you can maintain your filter parameters in a YAML file, and use [the local render CLI](cmd/render)
 to generate your personal filter list. You will still need to host it on a web server for it to be retrievable
 by uBlock Origin.
-- Self-hosting of [the letsblock.it server](cmd/server) is currently not officially supported, as the database schema is
-evolving quickly. Don't hesitate to open an issue to discuss this if you'd be interested.
 
 ## Repository structure
 
@@ -38,3 +40,17 @@ Don't hesitate to open issues on this repository, using the following templates:
 - [Suggest a new filter template](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml)
 - [Report a bug](https://github.com/letsblockit/letsblockit/issues/new?labels=&template=bug-report.yaml)
 - [Other topics](https://github.com/letsblockit/letsblockit/issues/new)
+
+## Thanks to our sponsors
+
+<table>
+  <tr>
+    <td align="center"><a href="https://www.ory.sh/"><img src=".github/logo-ory.svg?raw=true"/></a></td>
+    <td>Thanks to Ory for hosting the official instance's<br/>
+        user database on <a href="https://www.ory.sh/cloud/">Ory Cloud.</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.jetbrains.com/opensource/"><img src=".github/logo-jetbrains.svg?raw=true"/></a></td>
+    <td>Thanks to Jetbrains for providing free GoLand licenses.</td>
+  </tr>
+</table>

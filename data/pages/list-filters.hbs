@@ -1,37 +1,40 @@
 <div class="row">
     <div class="col-12 col-lg-2 order-last pt-5 pt-lg-0">
         <hr class="d-lg-none"/>
-        <div class="card-body">
-            <h5 class="card-title">Filter by tag:</h5>
+        <nav class="navbar navbar-light flex-column align-items-stretch">
             {{#if tag_search}}
-                <p class="card-text">
-                    <a href="{{href "list-filters" ""}}">← Back to all</a>
-                </p>
+                <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
             {{else}}
-                <p class="card-text">
-                    {{#each filter_tags}}<span class="d-block">{{{tag this}}}</span>{{/each}}
-                </p>
+                <a class="navbar-brand">Filter by tag:</a>
+                <nav class="nav nav-pills flex-column">
+                    <span class="nav-link">{{#each filter_tags}}<span class="d-block">{{{tag this}}}</span>{{/each}}
+                    </span>
+                </nav>
             {{/if}}
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Contribute</h5>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml">Suggest a new filter</a>
-            </p>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/">Filter
+            <a class="navbar-brand mt-3">Contribute:</a>
+            <nav class="nav nav-pills flex-column">
+                <a class="nav-link"
+                   href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml">Suggest
+                    a new filter</a>
+                <a class="nav-link" href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/">Filter
                     sources</a>
-            </p>
-        </div>
+            </nav>
+        </nav>
     </div>
     <div class="col col-lg-10">
         {{#if active_filters }}
-            {{#unless list_downloaded }}
+            {{#if list_downloaded }}
+                <div id="install-prompt-{{list_token}}" role="alert" aria-hidden="true"
+                     class="alert alert-secondary has-background-secondary-light">
+                    Your list is not installed on this browser, follow these instructions to
+                    <a href="{{href "help" "use-list"}}">add your list to uBlock Origin</a>.
+                </div>
+            {{else}}
                 <div role="alert" class="alert alert-secondary has-background-secondary-light">
                     Now that you have setup some filters,
-                    <a href="{{href "help" "use-list"}}">add your list to uBlock</a> to use them.
+                    <a href="{{href "help" "use-list"}}">add your list to uBlock Origin</a> to use them.
                 </div>
-            {{/unless}}
+            {{/if}}
             <h2>Active filter templates{{#if tag_search}} with tag <em>{{tag_search}}</em>{{/if}}</h2>
             <div>
                 These filters are active in <a href="{{href "help" "use-list"}}">your personal list</a>.
@@ -42,12 +45,13 @@
             {{/with}}
         {{else if @root.UserLoggedIn}}
             <div role="alert" class="alert alert-secondary has-background-secondary-light">
-                Let's start adding filters to your list! What about <a href="{{href "view-filter" "search-results"}}">
-                hiding pinterest in your search results?</a>
+                Let's start adding filters to your list! What about
+                <a href="{{href "view-filter" "search-results"}}">
+                    hiding pinterest in your search results?</a>
             </div>
         {{else}}
             <div role="alert" class="alert alert-secondary has-background-secondary-light">
-                <form method="POST" class="form-inline" action="{{href "start-flow" "loginOrRegistration"}}">
+                <form method="POST" class="form-inline" action="{{href "user-action" "loginOrRegistration"}}">
                     {{{csrf @root}}}
                     <span class="align-middle">This website is a collaborative repository of uBlock content filters
                         you can customize and sync across your browsers.

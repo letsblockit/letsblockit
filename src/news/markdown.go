@@ -14,14 +14,18 @@ var (
 )
 
 type releaseNoteRenderer struct {
+	officialInstance bool
 	*blackfriday.HTMLRenderer
 }
 
 func (r *releaseNoteRenderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
+	//nolint:exhaustive
 	switch node.Type {
 	case blackfriday.HorizontalRule:
-		// Stop parsing on the first hr, items below are not relevant for end users
-		return blackfriday.Terminate
+		if r.officialInstance {
+			// Stop parsing on the first hr, items below are not relevant on the official instance
+			return blackfriday.Terminate
+		}
 	case blackfriday.Link:
 		// Match github pull/commit links and shorten the anchor text
 		if bytes.HasPrefix(node.LinkData.Destination, githubLinkPrefix) && node.FirstChild != nil {
@@ -47,6 +51,10 @@ func (r *releaseNoteRenderer) RenderNode(w io.Writer, node *blackfriday.Node, en
 					} else {
 						node.FirstChild.Literal = append([]byte(repoName+"@"), []byte(linkedId[0:7])...)
 					}
+				case "compare":
+					if sameRepo {
+						node.FirstChild.Literal = []byte(linkedId)
+					}
 				}
 			}
 		}
@@ -54,9 +62,10 @@ func (r *releaseNoteRenderer) RenderNode(w io.Writer, node *blackfriday.Node, en
 	return r.HTMLRenderer.RenderNode(w, node, entering)
 }
 
-func initRenderer() blackfriday.Option {
+func initRenderer(officialInstance bool) blackfriday.Option {
 	return blackfriday.WithRenderer(
 		&releaseNoteRenderer{
+			officialInstance: officialInstance,
 			HTMLRenderer: blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
 				HeadingLevelOffset: 2,
 			}),

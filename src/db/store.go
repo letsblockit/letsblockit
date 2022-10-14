@@ -24,7 +24,7 @@ type migrateLogger struct {
 }
 
 func (m migrateLogger) Printf(format string, v ...interface{}) {
-	format = fmt.Sprintf("db[%s]: %s", m.db, format)
+	format = fmt.Sprintf("migrate[%s]: %s", m.db, format)
 	fmt.Printf(format, v...)
 }
 
@@ -44,9 +44,9 @@ type pgxStore struct {
 	pool *pgxpool.Pool
 }
 
-func (d *pgxStore) RunTx(e echo.Context, f TxFunc) error {
+func (s *pgxStore) RunTx(e echo.Context, f TxFunc) error {
 	c := e.Request().Context()
-	return d.pool.BeginFunc(c, func(tx pgx.Tx) error {
+	return s.pool.BeginFunc(c, func(tx pgx.Tx) error {
 		return f(c, New(tx))
 	})
 }

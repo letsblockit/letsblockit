@@ -1,22 +1,18 @@
 <div class="row">
     <div class="col-12 col-lg-2 order-last pt-5 pt-lg-0">
         <hr class="d-lg-none"/>
-        <a href="{{href "list-filters" ""}}">← Back to list</a>
-        <div class="card-body">
-            <h5 class="card-title">Tags</h5>
-            <p class="card-text">{{#each filter.tags}}{{{tag this}}}{{/each}}</p>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Contribute</h5>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml
-&what_filter_does_this_issue_target={{filter.name}}">Suggest a change</a>
-            </p>
-            <p class="card-text">
-                <a href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/{{filter.name}}.yaml">Filter
-                    source</a>
-            </p>
-        </div>
+        <nav class="navbar navbar-light flex-column align-items-stretch">
+            <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
+            <a class="navbar-brand mt-3">Filter tags:</a>
+            <nav class="nav nav-pills flex-column">
+                    <span class="nav-link">{{#each filter.tags}}{{{tag this}}}{{/each}}</span>
+            </nav>
+            <a class="navbar-brand mt-3">Contribute:</a>
+            <nav class="nav nav-pills flex-column">
+                <a class="nav-link" href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target={{filter.name}}">Suggest a change</a>
+                <a class="nav-link" href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/{{filter.name}}.yaml">Filter source</a>
+            </nav>
+        </nav>
     </div>
     <div class="col col-lg-10">
         <h2>{{filter.title}}</h2>
@@ -35,38 +31,47 @@
                     {{#each filter.params}}
                         {{~>view-filter-param}}
                     {{/each}}
+
                     <div class="d-flex align-items-center">
                         {{#if @root.UserLoggedIn}}
                             <input type="hidden" name="__logged_in" value="true">
-                            <button type="submit" name="__render" class="btn btn-secondary me-2">
-                                <i class="ti ti-eye me-2"></i>
+                            <noscript><button type="submit" name="__render" class="btn btn-secondary me-2">
                                 Preview
-                            </button>
+                            </button></noscript>
                             <button type="submit" name="__save" class="ms-2 me-2 btn btn-primary"
                                     hx-vals='{"__save": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
                                 {{#if has_instance}}
-                                    <i class="ti ti-edit text-white me-1"></i>
+                                    {{>icon name="edit" class="button-icon"}}
                                     Update filter
                                 {{else}}
-                                    <i class="ti ti-circle-plus text-white me-1"></i>
+                                    {{>icon name="plus" stroke=2.5 class="button-icon"}}
                                     Add filter
                                 {{/if}}
                             </button>
                         {{else}}
-                            <button type="submit" name="__render" class="btn btn-primary">Render</button>
+                            <noscript>
+                                <button type="submit" name="__render" class="btn btn-primary">Render</button>
+                            </noscript>
+                        {{/if}}
+                        {{#if (beta_features @root) }}
+                        <div class="ms-2 form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" id="__test_mode" name="__test_mode"
+                                   {{#equal true @root.data.test_mode}}checked{{/equal}}>
+                            <label class="form-check-label" for="__test_mode">Test</label>
+                        </div>
                         {{/if}}
                         <div class="ms-2 htmx-indicator spinner-border text-secondary" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         {{#if has_instance}}
-                            <button type="submit" name="__disable" class="btn btn-dark ms-auto"
+                            <button type="submit" name="__disable" class="btn btn-outline-dark ms-auto"
                                     hx-confirm="Remove filter and delete its configuration?"
                                     hx-vals='{"__disable": ""}'
                                     hx-post="{{href "view-filter" filter.name}}"
                                     hx-select="#main" hx-target="#main" hx-swap="outerHTML">
-                                <i class="ti ti-trash text-white me-1"></i>
+                                {{>icon name="trash" class="button-icon"}}
                                 Remove filter
                             </button>
                         {{/if}}
@@ -81,32 +86,26 @@
                     {{{csrf @root}}}
                     {{#if has_instance}}
                         <button class="btn btn-primary me-2" disabled>Filter already in your list.</button>
-                        <button type="submit" name="__disable" class="ms-2 btn btn-dark ms-auto"
+                        <button type="submit" name="__disable" class="ms-2 btn btn-outline-dark ms-auto"
                                 hx-confirm="Remove filter and delete its configuration?"
                                 hx-vals='{"__disable": ""}'
                                 hx-post="{{href "view-filter" filter.name}}"
                                 hx-select="#main" hx-target="#main" hx-swap="outerHTML">
-                            <i class="ti ti-trash text-white me-1"></i>
+                            {{>icon name="trash" class="button-icon"}}
                             Remove filter
                         </button>
                     {{else if @root.UserLoggedIn}}
                         <button type="submit" name="__save" class="btn btn-primary">
-                            <i class="ti ti-circle-plus text-white me-1"></i>
+                            {{>icon name="plus" stroke=2.5 class="button-icon"}}
                             Add filter
                         </button>
-                    {{else}}
-                        <div role="alert" class="alert alert-secondary has-background-secondary-light mt-3 ms-3 me-3">
-                            <span class="align-middle">This filter does not have any parameters.</span>
-                            <button type="submit" class="btn btn-link p-0"
-                                    formaction="{{href "start-flow" "loginOrRegistration"}}"
-                                    hx-post="{{href "start-flow" "loginOrRegistration"}}">
-                                {{#if @root.UserHasAccount}}
-                                    Login to save this filter to your list.
-                                {{else}}
-                                    Create an account and start building your list.
-                                {{/if}}
-                            </button>
-                        </div>
+                        {{#if (beta_features @root) }}
+                            <div class="ms-2 form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" id="__test_mode" name="__test_mode"
+                                       {{#equal true @root.data.test_mode}}checked{{/equal}}>
+                                <label class="form-check-label" for="__test_mode">Test</label>
+                            </div>
+                        {{/if}}
                     {{/if}}
                 </form>
             </div>

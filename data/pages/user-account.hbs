@@ -11,7 +11,9 @@
                 from the <a href="{{href "list-filters" ""}}">filter list page</a>.
             </p>
             <ul>
-                <li>To use your filters in you browser, <a href="{{href "help" "use-list"}}">follow these instructions</a>.</li>
+                <li>To use your filters in you browser, <a href="{{href "help" "use-list"}}">follow these
+                    instructions</a>.
+                </li>
                 <li>Alternatively, you can <a href="{{href "export-filterlist" list_token}}">export your list</a>
                     for local use.
                 </li>
@@ -21,20 +23,24 @@
 
     <div class="card mb-3 shadow-sm">
         <div class="card-header">Manage my account</div>
-        <form class="card-body" method="POST">
-            {{{csrf @root}}}
-            <p>
-                Account management is provided by
-                <a target="_blank" href="https://www.ory.sh/docs">the fine folks at Ory</a>.
-                Read more about it in <a href="{{href "help" "privacy"}}">our privacy page</a>.
-            </p>
-            <button type="submit" class="btn btn-primary me-2"
-                    formaction="{{href "start-flow" "settings"}}">Change email or password
-            </button>
-            <button type="submit" class="btn btn-dark"
-                    formaction="{{href "start-flow" "logout"}}">Log out
-            </button>
-        </form>
+        {{#if (href "user-action" "settings")}}
+            <form class="card-body" method="POST">
+                {{{csrf @root}}}
+                <p>
+                    Account management is provided by
+                    <a target="_blank" href="https://www.ory.sh/docs">the fine folks at Ory</a>.
+                    Read more about it in <a href="{{href "help" "privacy"}}">our privacy page</a>.
+                </p>
+                <button type="submit" class="btn btn-primary me-2"
+                        formaction="{{href "user-action" "settings"}}">Change email or password
+                </button>
+                <button type="submit" class="btn btn-dark"
+                        formaction="{{href "user-action" "logout"}}">Log out
+                </button>
+            </form>
+        {{else}}
+            <div class="card-body">Your user ID is <strong>{{@root.UserID}}</strong>.</div>
+        {{/if}}
     </div>
 
     <div class="card mb-3 shadow-sm">
@@ -64,7 +70,7 @@
         <div class="card-header">Account needed</div>
         <div class="card-body">
             <p>You need to create an account or login</p>
-            <form method="POST" action="{{href "start-flow" "loginOrRegistration"}}">
+            <form method="POST" action="{{href "user-action" "loginOrRegistration"}}">
                 {{{csrf @root}}}
                 <button type="submit" class="btn btn-primary">Create an account or login</button>
             </form>

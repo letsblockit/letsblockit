@@ -1,139 +1,180 @@
 package server
 
 import (
+	"context"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
-	"github.com/jackc/pgtype"
-	"github.com/letsblockit/letsblockit/src/db"
+	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func (s *ServerTestSuite) TestRenderList_NotFound() {
 	token := uuid.New()
 	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{}, db.NotFound)
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, 404, rec.Code)
 	})
 }
 
 func (s *ServerTestSuite) TestRenderList_OK() {
-	token := uuid.New()
-	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
-		ID:         int32(10),
-		Downloaded: true,
-	}, nil)
-	s.expectQ.MarkListDownloaded(gomock.Any(), int32(10)).Return(nil)
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
 
-	params := map[string]interface{}{"a": "1", "b": "2"}
-	paramsB := pgtype.JSONB{}
-	s.NoError(paramsB.Set(&params))
-	s.expectQ.GetInstancesForList(gomock.Any(), int32(10)).Return([]db.GetInstancesForListRow{{
-		FilterName: "one",
-	}, {
-		FilterName: "custom-rules",
-	}, {
-		FilterName: "two",
-		Params:     paramsB,
-	}}, nil)
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter:   "filter1",
+		TestMode: true,
+	}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter: "filter2",
+		Params: filter2Custom,
+	}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "custom-rules"}))
+
+	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String(), nil)
 	rec := httptest.NewRecorder()
-	s.expectF.Render(gomock.Any(), "one", nil).
-		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
-			_, err := w.Write([]byte("content1"))
-			return err
-		})
-	s.expectF.Render(gomock.Any(), "two", gomock.Eq(params)).
-		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
-			_, err := w.Write([]byte("content2\nmultiline"))
-			return err
-		})
-	s.expectF.Render(gomock.Any(), "custom-rules", nil).
-		DoAndReturn(func(w io.Writer, _ string, _ map[string]interface{}) error {
-			_, err := w.Write([]byte("custom"))
-			return err
-		})
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
-	s.Equal(rec.Body.String(), `! Title: letsblock.it - My filters
+	s.Equal(`! Title: letsblock.it - My filters
 ! Expires: 12 hours
 ! Homepage: https://letsblock.it
 ! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 
-! one
-content1
-! two
-content2
-multiline
+! filter1
+hello from one:style(border: 2px dashed red !important)
+
+! filter2
+hello one blep
+hello two blep
+
 ! custom-rules
-custom`)
+custom
+
+! Hide the list install prompt for that list
+my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
+
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.True(s.T(), list.Downloaded)
+
+	// Test mode
+	req = httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String()+"?test_mode", nil)
+	rec = httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	s.Equal(`! Title: letsblock.it - My filters
+! Expires: 12 hours
+! Homepage: https://letsblock.it
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
+
+! filter1
+hello from one:style(border: 2px dashed red !important)
+
+! filter2
+hello one blep:style(border: 2px dashed red !important)
+hello two blep:style(border: 2px dashed red !important)
+
+! custom-rules
+custom:style(border: 2px dashed red !important)
+
+! Hide the list install prompt for that list
+my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
+
+	list, err = s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.True(s.T(), list.Downloaded)
 }
 
-func (s *ServerTestSuite) TestRenderList_WithReferer() {
-	token := uuid.New()
-	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
-	req.Header.Set("Referer", "https://letsblock.it/user/account")
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
-		ID:         int32(10),
-		Downloaded: false,
-	}, nil)
-	s.expectQ.GetInstancesForList(gomock.Any(), int32(10)).Return([]db.GetInstancesForListRow{}, nil)
+func (s *ServerTestSuite) TestRenderList_TxtSuffix() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String()+".txt", nil)
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
+	s.Equal(`! Title: letsblock.it - My filters
+! Expires: 12 hours
+! Homepage: https://letsblock.it
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
+
+! Hide the list install prompt for that list
+my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
+}
+
+func (s *ServerTestSuite) TestRenderList_OfficialInstance() {
+	s.server.options.OfficialInstance = true
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String(), nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	s.Equal(`! Title: letsblock.it - My filters
+! Expires: 12 hours
+! Homepage: https://letsblock.it
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
+
+! Hide the list install prompt for that list
+letsblock.it###install-prompt-`+token.String()+"\n", rec.Body.String())
+}
+
+func (s *ServerTestSuite) TestRenderList_WithReferer() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
+	req.Header.Set("Referer", "https://letsblock.it/user/account")
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.False(s.T(), list.Downloaded)
 }
 
 func (s *ServerTestSuite) TestRenderList_BannedUser() {
 	s.setUserBanned()
-	token := uuid.New()
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
 	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String(), nil)
 	req.Header.Set("Referer", "https://letsblock.it/user/account")
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
-		ID:         int32(10),
-		UserID:     s.user,
-		Downloaded: false,
-	}, nil)
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(403, rec.Code)
 }
 
 func (s *ServerTestSuite) TestExportList_OK() {
-	token, err := uuid.Parse("59dc36b7-aca5-46a1-a742-cf46dd2cac10")
-	s.NoError(err)
-	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+"/export", nil)
-	req.AddCookie(verifiedCookie)
+	params := map[string]any{
+		"one":   "blep",
+		"two":   false,
+		"three": []any{"one", "two"},
+	}
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Filter: "filter2",
+		Params: params,
+	}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "custom-rules"}))
 
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
-		ID:         int32(10),
-		UserID:     s.user,
-		Downloaded: true,
-	}, nil)
+	list, err := s.store.GetListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
 
-	params := map[string]interface{}{"a": "1", "b": "2"}
-	paramsB := pgtype.JSONB{}
-	s.NoError(paramsB.Set(&params))
-	s.expectQ.GetInstancesForList(gomock.Any(), int32(10)).Return([]db.GetInstancesForListRow{{
-		FilterName: "one",
-	}, {
-		FilterName: "custom-rules",
-	}, {
-		FilterName: "two",
-		Params:     paramsB,
-	}}, nil)
+	req := httptest.NewRequest(http.MethodGet, "/export/"+list.Token.String(), nil)
+
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(200, rec.Code)
 	fmt.Println(rec.Body.String())
-	s.Equal(rec.Body.String(), `# letsblock.it filter list export
+	s.Equal(fmt.Sprintf(`# letsblock.it filter list export
 #
-# List token: 59dc36b7-aca5-46a1-a742-cf46dd2cac10
+# List token: %s
 # Export date: 2020-06-02
 #
 # You can edit this file and render it locally, check out instructions at:
@@ -141,31 +182,31 @@ func (s *ServerTestSuite) TestExportList_OK() {
 
 title: My filters
 instances:
-- filter: one
-- filter: two
+- filter: filter1
+- filter: filter2
   params:
-    a: "1"
-    b: "2"
+    one: blep
+    three:
+    - one
+    - two
+    two: false
 - filter: custom-rules
-`)
+`, list.Token), rec.Body.String())
 }
 
 func (s *ServerTestSuite) TestExportList_BadUser() {
-	token, otherUser := uuid.New(), uuid.New()
+	otherUser := uuid.New().String()
 	for {
 		if otherUser != s.user {
 			break
 		}
-		otherUser = uuid.New()
+		otherUser = uuid.New().String()
 	}
-	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+"/export", nil)
-	req.AddCookie(verifiedCookie)
 
-	s.expectQ.GetListForToken(gomock.Any(), token).Return(db.GetListForTokenRow{
-		ID:         int32(10),
-		UserID:     otherUser,
-		Downloaded: true,
-	}, nil)
+	token, err := s.store.CreateListForUser(context.Background(), otherUser)
+	require.NoError(s.T(), err)
+	req := httptest.NewRequest(http.MethodGet, "/export/"+token.String(), nil)
+
 	rec := httptest.NewRecorder()
 	s.server.echo.ServeHTTP(rec, req)
 	s.Equal(403, rec.Code)

@@ -12,15 +12,17 @@ import (
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/coreos/go-systemd/activation"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/letsblockit/letsblockit/data"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/news"
 	"github.com/letsblockit/letsblockit/src/pages"
 	"github.com/letsblockit/letsblockit/src/users"
+	"github.com/letsblockit/letsblockit/src/users/auth"
+	"github.com/vearutop/statigz"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -36,15 +38,19 @@ const (
 )
 
 type Options struct {
-	Address          string `default:"127.0.0.1:8765" help:"address to listen to"`
-	UseSystemdSocket bool   `help:"use a systemd socket instead of opening a port"`
-	DatabaseUrl      string `default:"postgresql:///letsblockit" help:"psql database to connect to"`
-	LogLevel         string `default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
-	AuthMethod       string `required:"" enum:"kratos" help:"authentication method to use"`
-	AuthKratosUrl    string `default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
-	StatsdTarget     string `placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
-	HotReload        bool   `help:"reload frontend when the backend restarts"`
-	DryRun           bool   `hidden:""`
+	Address             string `group:"Networking" default:"127.0.0.1:8765" help:"address to listen to"`
+	UseSystemdSocket    bool   `group:"Networking" help:"use a systemd socket instead of opening a port"`
+	DatabaseUrl         string `group:"Database" default:"postgresql:///letsblockit" help:"psql database to connect to"`
+	AuthMethod          string `group:"Authentication" required:"" enum:"kratos,proxy" help:"authentication method to use"`
+	AuthKratosUrl       string `group:"Authentication" default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
+	AuthProxyHeaderName string `group:"Authentication" placeholder:"X-Auth-Request-User" help:"name for the cookie set by the reverse proxy"`
+	LogLevel            string `group:"Development" default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
+	CacheDir            string `group:"Development" placeholder:"/tmp" help:"folder to cache external resources in during local development"`
+	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
+	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
+	StatsdTarget        string `group:"Miscellaneous" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
+	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
+	DryRun              bool   `hidden:""`
 }
 
 var navigationLinks = []struct {
@@ -65,14 +71,14 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
-	assets      *wrappedAssets
-	banned      map[uuid.UUID]struct{}
+	auth        auth.Backend
+	bans        *users.BanManager
 	echo        *echo.Echo
-	filters     FilterRepository
+	filters     *filters.Repository
 	now         func() time.Time
 	options     *Options
 	pages       PageRenderer
-	preferences UserPreferenceManager
+	preferences *users.PreferenceManager
 	releases    ReleaseClient
 	statsd      statsd.ClientInterface
 	store       db.Store
@@ -88,16 +94,15 @@ func NewServer(options *Options) *Server {
 
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
-		func(_ []error) { s.assets = loadAssets() },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
-		func(errs []error) { s.filters, errs[0] = filters.LoadFilters() },
+		func(errs []error) { s.filters, errs[0] = filters.LoadFilters(data.Filters) },
 		func(errs []error) {
 			s.store, errs[0] = db.Connect(s.options.DatabaseUrl)
 			if errs[0] == nil {
 				errs[0] = db.Migrate(s.options.DatabaseUrl)
 			}
 			if errs[0] == nil {
-				errs[0] = s.loadBannedUsers()
+				s.bans, errs[0] = users.LoadUserBans(s.store)
 			}
 			if errs[0] == nil {
 				s.preferences, errs[0] = users.NewPreferenceManager(s.store)
@@ -105,7 +110,7 @@ func (s *Server) Start() error {
 		},
 	})
 
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint)
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance)
 	if s.options.StatsdTarget != "" {
 		dsd, err := statsd.New(s.options.StatsdTarget)
 		if err != nil {
@@ -118,7 +123,23 @@ func (s *Server) Start() error {
 		s.statsd = &statsd.NoOpClient{}
 	}
 
-	s.pages.RegisterHelpers(buildHelpers(s.echo, s.assets.hash))
+	switch s.options.AuthMethod {
+	case "kratos":
+		if s.options.AuthKratosUrl == "" {
+			return fmt.Errorf("missing required parameter auth-kratos-url")
+		}
+		s.auth = auth.NewOryBackend(s.options.AuthKratosUrl, s.pages, s.statsd)
+	case "proxy":
+		if s.options.AuthProxyHeaderName == "" {
+			return fmt.Errorf("missing required parameter auth-proxy-header-name")
+		}
+		s.auth = auth.NewProxy(s.options.AuthProxyHeaderName)
+	default:
+		return fmt.Errorf("unsupported auth method %s", s.options.AuthMethod)
+	}
+
+	s.pages.RegisterHelpers(buildHelpers(s.echo))
+	s.pages.RegisterContextBuilder(s.buildPageContext)
 	s.setupRouter()
 	if s.options.DryRun {
 		return ErrDryRunFinished
@@ -171,28 +192,36 @@ func (s *Server) setupRouter() {
 	}))
 
 	anon := s.echo.Group("")
-	anon.GET("/assets/*", s.assets.serve)
+	anon.GET("/assets/*", echo.WrapHandler(statigz.FileServer(data.Assets)))
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)
 	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
 
 	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
-		return s.redirectToPage(c, "view-filter", "youtube-cleanup")
+		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
 	})
 
-	withAuth := s.echo.Group("")
-	if s.options.AuthKratosUrl != "" {
-		withAuth.Use(s.buildOryMiddleware())
-	}
-	withAuth.Use(middleware.CSRFWithConfig(middleware.CSRFConfig{
-		TokenLookup:    "form:" + csrfLookup,
-		ContextKey:     csrfLookup,
-		CookieName:     csrfLookup,
-		CookiePath:     "/",
-		CookieSameSite: http.SameSiteStrictMode,
-		CookieHTTPOnly: true,
-	}))
+	withAuth := s.echo.Group("",
+		s.auth.BuildMiddleware(),
+		func(next echo.HandlerFunc) echo.HandlerFunc {
+			return func(c echo.Context) error {
+				if s.bans.IsBanned(auth.GetUserId(c)) {
+					return echo.ErrForbidden
+				}
+				return next(c)
+			}
+		},
+		middleware.CSRFWithConfig(middleware.CSRFConfig{
+			TokenLookup:    "form:" + csrfLookup,
+			ContextKey:     csrfLookup,
+			CookieName:     csrfLookup,
+			CookiePath:     "/",
+			CookieSameSite: http.SameSiteStrictMode,
+			CookieHTTPOnly: true,
+		}),
+	)
+	s.auth.RegisterRoutes(withAuth)
 
 	withAuth.GET("/", s.landingPageHandler).Name = "landing"
 	withAuth.GET("/help", s.helpPages).Name = "help-main"
@@ -205,10 +234,8 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/filters/:name", s.viewFilter).Name = "view-filter"
 	withAuth.POST("/filters/:name", s.viewFilter)
 
-	withAuth.GET("/list/:token/export", s.exportList).Name = "export-filterlist"
+	withAuth.GET("/export/:token", s.exportList).Name = "export-filterlist"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
-	withAuth.GET("/user/forms/:type", s.renderKratosForm)
-	withAuth.POST("/user/start/:type", s.startKratosFlow).Name = "start-flow"
 	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 }
 
@@ -240,20 +267,6 @@ func (s *Server) absoluteReverse(c echo.Context, name string, params ...interfac
 	return u.String()
 }
 
-// redirectToPage the user to another page, either via htmx client-side redirect (form submissions)
-// or http 302 redirect (direct access, js disabled)
-func (s *Server) redirectToPage(c echo.Context, name string, params ...interface{}) error {
-	return s.redirect(c, http.StatusFound, s.echo.Reverse(name, params...))
-}
-
-func (s *Server) redirect(c echo.Context, code int, target string) error {
-	if c.Request().Header.Get("HX-Request") == "true" {
-		c.Response().Header().Set("HX-Redirect", target)
-		return c.NoContent(200)
-	}
-	return c.Redirect(code, target)
-}
-
 func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	var section string
 	switch c.Request().URL.Path {
@@ -271,21 +284,20 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 	}
 
 	context := &pages.Context{
-		CurrentSection:  section,
-		NavigationLinks: navigationLinks,
-		Title:           title,
-		MainDomain:      c.Request().Host == mainDomain,
-		HotReload:       s.options.HotReload,
-		RequestInfo:     c,
-	}
-	if _, err := c.Cookie(hasAccountCookieName); err == nil {
-		context.UserHasAccount = true
+		CurrentSection:   section,
+		NavigationLinks:  navigationLinks,
+		Title:            title,
+		OfficialInstance: s.options.OfficialInstance,
+		GreyLogo:         s.options.OfficialInstance && c.Request().Host != mainDomain,
+		HotReload:        s.options.HotReload,
+		RequestInfo:      c,
+		UserHasAccount:   auth.HasAccount(c),
 	}
 	if t, ok := c.Get(csrfLookup).(string); ok {
 		context.CSRFToken = t
 	}
-	if u := getUser(c); u != nil {
-		context.UserID = u.Id()
+	if u := auth.GetUserId(c); u != "" {
+		context.UserID = u
 		context.UserLoggedIn = true
 		context.Preferences, _ = s.preferences.Get(c, context.UserID)
 		if context.Preferences != nil {
@@ -331,7 +343,7 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 			if err := next(c); err != nil {
 				c.Error(err)
 			}
-			loggedTag := fmt.Sprintf("logged:%t", c.Get(hasKratosContextKey) != nil)
+			loggedTag := fmt.Sprintf("logged:%t", auth.HasAuth(c))
 			duration := time.Since(start)
 			_ = dsd.Distribution("letsblockit.request_duration", float64(duration.Nanoseconds()), []string{loggedTag}, 1)
 			_ = dsd.Incr("letsblockit.request_count", []string{loggedTag, fmt.Sprintf("status:%d", c.Response().Status)}, 1)
@@ -358,7 +370,8 @@ func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
 		}
 		for _, i := range instances {
 			tags := []string{"filter_name:" + i.FilterName}
-			_ = dsd.Gauge("letsblockit.instance_count", float64(i.Count), tags, 1)
+			_ = dsd.Gauge("letsblockit.instance_count", float64(i.Total), tags, 1)
+			_ = dsd.Gauge("letsblockit.fresh_instance_count", float64(i.Fresh), tags, 1)
 		}
 	}
 

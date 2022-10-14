@@ -1,93 +1,103 @@
 package users
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/random"
 	"github.com/letsblockit/letsblockit/src/db"
-	"github.com/letsblockit/letsblockit/src/server/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
+const maxTimeSkew = 100 * time.Millisecond
+
+func pastNow(hours int64) time.Time {
+	return time.Now().UTC().Add(time.Duration(-1*hours) * time.Hour).Round(time.Second)
+}
+
 type PreferenceManagerSuite struct {
 	suite.Suite
-	expectQ *mocks.MockQuerierMockRecorder
-	prefs   *PreferenceManager
-	user    uuid.UUID
-	ctx     echo.Context
+	store db.Store
+	prefs *PreferenceManager
+	user  string
+	ctx   echo.Context
 }
 
 func (s *PreferenceManagerSuite) SetupTest() {
-	c := gomock.NewController(s.T())
-	qm := mocks.NewMockQuerier(c)
-	s.expectQ = qm.EXPECT()
-	s.user = uuid.New()
+	s.store = db.NewTestStore(s.T())
+	s.user = random.String(12)
 	s.ctx = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
 
 	var err error
-	s.prefs, err = NewPreferenceManager(mocks.NewMockStore(qm))
+	s.prefs, err = NewPreferenceManager(s.store)
 	require.NoError(s.T(), err)
 }
 
 func (s *PreferenceManagerSuite) TestInitIfNotFound() {
-	expected := db.UserPreference{
-		UserID:     s.user,
-		NewsCursor: time.Now(),
-	}
-	s.expectQ.GetUserPreferences(gomock.Any(), s.user).Return(db.UserPreference{}, db.NotFound)
-	s.expectQ.InitUserPreferences(gomock.Any(), s.user).Return(expected, nil)
-
 	got, err := s.prefs.Get(s.ctx, s.user)
 	assert.NoError(s.T(), err)
-	assert.EqualValues(s.T(), &expected, got)
+	assert.Equal(s.T(), s.user, got.UserID)
+	assert.WithinDuration(s.T(), time.Now(), got.NewsCursor, maxTimeSkew)
 }
 
 func (s *PreferenceManagerSuite) TestGetCached() {
 	expected := db.UserPreference{
 		UserID:     s.user,
-		NewsCursor: time.Now(),
+		NewsCursor: pastNow(10),
 	}
-	s.expectQ.GetUserPreferences(gomock.Any(), s.user).Return(expected, nil).MaxTimes(1)
+	_, err := s.store.InitUserPreferences(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), s.store.UpdateNewsCursor(context.Background(), db.UpdateNewsCursorParams{
+		UserID:     s.user,
+		NewsCursor: expected.NewsCursor,
+	}))
+
 	got, err := s.prefs.Get(s.ctx, s.user)
 	assert.NoError(s.T(), err)
 	assert.EqualValues(s.T(), &expected, got)
 
-	// Second get hits the cache
+	// Out-of-band DB update will be ignored due to the cache
+	require.NoError(s.T(), s.store.UpdateNewsCursor(context.Background(), db.UpdateNewsCursorParams{
+		UserID:     s.user,
+		NewsCursor: time.Now(),
+	}))
+
+	// Second get returns the cached value
 	got, err = s.prefs.Get(s.ctx, s.user)
 	assert.NoError(s.T(), err)
 	assert.EqualValues(s.T(), &expected, got)
 }
 
 func (s *PreferenceManagerSuite) TestUpdateNewsCursor() {
-	expected := db.UserPreference{
+	initial := db.UserPreference{
 		UserID:     s.user,
-		NewsCursor: time.Now(),
+		NewsCursor: pastNow(10),
 	}
 	updated := db.UserPreference{
 		UserID:     s.user,
-		NewsCursor: expected.NewsCursor.Add(time.Hour),
+		NewsCursor: pastNow(1),
 	}
-	s.expectQ.GetUserPreferences(gomock.Any(), s.user).Return(expected, nil).MaxTimes(1)
+	_, err := s.store.InitUserPreferences(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), s.store.UpdateNewsCursor(context.Background(), db.UpdateNewsCursorParams{
+		UserID:     s.user,
+		NewsCursor: initial.NewsCursor,
+	}))
+
 	got, err := s.prefs.Get(s.ctx, s.user)
 	assert.NoError(s.T(), err)
-	assert.EqualValues(s.T(), &expected, got)
+	assert.EqualValues(s.T(), &initial, got)
 
-	// Update the value
-	s.expectQ.UpdateNewsCursor(gomock.Any(), db.UpdateNewsCursorParams{
-		UserID:     s.user,
-		NewsCursor: updated.NewsCursor,
-	})
+	// Update the value through the manager
 	assert.NoError(s.T(), s.prefs.UpdateNewsCursor(s.ctx, s.user, updated.NewsCursor))
 
 	// Cache has been invalidated
-	s.expectQ.GetUserPreferences(gomock.Any(), s.user).Return(updated, nil).MaxTimes(1)
 	got, err = s.prefs.Get(s.ctx, s.user)
 	assert.NoError(s.T(), err)
 	assert.EqualValues(s.T(), &updated, got)

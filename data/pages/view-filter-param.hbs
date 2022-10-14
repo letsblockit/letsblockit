@@ -38,12 +38,12 @@
                     <button class="btn btn-outline-success" type="button"
                             aria-label="Add a row below"
                             title="Add a row below" onclick="addFilterParamRow(this);">
-                        <i class="ti ti-plus"></i>
+                        {{>icon name="plus" stroke=2.5}}
                     </button>
                     <button class="btn btn-outline-primary" type="button"
                             aria-label="Delete this row"
                             title="Delete this row" onclick="deleteFilterParamRow(this);">
-                        <i class="ti ti-trash"></i>
+                        {{>icon name="trash"}}
                     </button>
                 </div>
             {{/each}}
@@ -52,12 +52,12 @@
                 <button class="btn btn-outline-success" type="button"
                         aria-label="Add a row below"
                         title="Add a row below" onclick="addFilterParamRow(this);">
-                    <i class="ti ti-plus"></i>
+                    {{>icon name="plus" stroke=2.5}}
                 </button>
                 <button class="btn btn-outline-primary" type="button"
                         aria-label="Delete this row"
                         title="Delete this row" onclick="deleteFilterParamRow(this);">
-                    <i class="ti ti-trash"></i>
+                    {{>icon name="trash"}}
                 </button>
             </div>
             {{#each presets}}

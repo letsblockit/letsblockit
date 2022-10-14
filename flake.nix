@@ -10,7 +10,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        pinnedGo = pkgs.go_1_17;
+        pinnedGo = pkgs.go_1_18;
 
         # Scripts to wrap, with their dependencies, available via `nix run .#script-name`
         scripts = with pkgs; {
@@ -20,7 +20,8 @@
           run-tests = [ pinnedGo golangci-lint ];
           update-assets = [ nodejs-slim-18_x nodePackages.npm ];
           update-codegen = [ mockgen self.packages.${system}.sqlc ];
-          update-vendorsha = [ pkgs.nix-prefetch ];
+          update-vendorsha = [ nix-prefetch ];
+          upgrade-deps = [ nodejs-slim-18_x nodePackages.npm pinnedGo nix-prefetch git ];
         };
       in
       {
@@ -45,7 +46,7 @@
             name = "ghcr.io/letsblockit/server";
             tag = "latest";
             created = builtins.substring 0 8 self.lastModifiedDate;
-            contents = self.packages.${system}.server;
+            contents = [ pkgs.cacert self.packages.${system}.server ];
             config = {
               Cmd = [ "server" ];
               Env = [ "LETSBLOCKIT_ADDRESS=:8765" ];

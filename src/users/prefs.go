@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
 	lru "github.com/hashicorp/golang-lru"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
@@ -29,7 +28,7 @@ func NewPreferenceManager(store db.Store) (*PreferenceManager, error) {
 }
 
 // Get retrieves the preferences from cache or DB. If no prefs are in DB, create a row with default values.
-func (m *PreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
+func (m *PreferenceManager) Get(c echo.Context, user string) (*db.UserPreference, error) {
 	if entry, ok := m.cache.Get(user); ok {
 		if prefs, ok := entry.(*db.UserPreference); ok {
 			return prefs, nil
@@ -50,7 +49,10 @@ func (m *PreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPrefere
 	return &prefs, nil
 }
 
-func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error {
+func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user string, at time.Time) error {
+	if _, err := m.Get(c, user); err != nil {
+		return err
+	}
 	err := m.store.UpdateNewsCursor(c.Request().Context(), db.UpdateNewsCursorParams{
 		UserID:     user,
 		NewsCursor: at,

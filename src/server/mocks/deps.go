@@ -5,15 +5,11 @@
 package mocks
 
 import (
-	io "io"
 	reflect "reflect"
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
-	uuid "github.com/google/uuid"
 	echo "github.com/labstack/echo/v4"
-	db "github.com/letsblockit/letsblockit/src/db"
-	filters "github.com/letsblockit/letsblockit/src/filters"
 	news "github.com/letsblockit/letsblockit/src/news"
 	pages "github.com/letsblockit/letsblockit/src/pages"
 )
@@ -39,6 +35,65 @@ func NewMockPageRenderer(ctrl *gomock.Controller) *MockPageRenderer {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockPageRenderer) EXPECT() *MockPageRendererMockRecorder {
 	return m.recorder
+}
+
+// BuildPageContext mocks base method.
+func (m *MockPageRenderer) BuildPageContext(c echo.Context, title string) *pages.Context {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BuildPageContext", c, title)
+	ret0, _ := ret[0].(*pages.Context)
+	return ret0
+}
+
+// BuildPageContext indicates an expected call of BuildPageContext.
+func (mr *MockPageRendererMockRecorder) BuildPageContext(c, title interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuildPageContext", reflect.TypeOf((*MockPageRenderer)(nil).BuildPageContext), c, title)
+}
+
+// Redirect mocks base method.
+func (m *MockPageRenderer) Redirect(c echo.Context, code int, target string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Redirect", c, code, target)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Redirect indicates an expected call of Redirect.
+func (mr *MockPageRendererMockRecorder) Redirect(c, code, target interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Redirect", reflect.TypeOf((*MockPageRenderer)(nil).Redirect), c, code, target)
+}
+
+// RedirectToPage mocks base method.
+func (m *MockPageRenderer) RedirectToPage(c echo.Context, name string, params ...interface{}) error {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{c, name}
+	for _, a := range params {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "RedirectToPage", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RedirectToPage indicates an expected call of RedirectToPage.
+func (mr *MockPageRendererMockRecorder) RedirectToPage(c, name interface{}, params ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{c, name}, params...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RedirectToPage", reflect.TypeOf((*MockPageRenderer)(nil).RedirectToPage), varargs...)
+}
+
+// RegisterContextBuilder mocks base method.
+func (m *MockPageRenderer) RegisterContextBuilder(b pages.ContextBuilder) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "RegisterContextBuilder", b)
+}
+
+// RegisterContextBuilder indicates an expected call of RegisterContextBuilder.
+func (mr *MockPageRendererMockRecorder) RegisterContextBuilder(b interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterContextBuilder", reflect.TypeOf((*MockPageRenderer)(nil).RegisterContextBuilder), b)
 }
 
 // RegisterHelpers mocks base method.
@@ -79,86 +134,6 @@ func (m *MockPageRenderer) RenderWithSidebar(c echo.Context, name, sidebar strin
 func (mr *MockPageRendererMockRecorder) RenderWithSidebar(c, name, sidebar, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenderWithSidebar", reflect.TypeOf((*MockPageRenderer)(nil).RenderWithSidebar), c, name, sidebar, data)
-}
-
-// MockFilterRepository is a mock of FilterRepository interface.
-type MockFilterRepository struct {
-	ctrl     *gomock.Controller
-	recorder *MockFilterRepositoryMockRecorder
-}
-
-// MockFilterRepositoryMockRecorder is the mock recorder for MockFilterRepository.
-type MockFilterRepositoryMockRecorder struct {
-	mock *MockFilterRepository
-}
-
-// NewMockFilterRepository creates a new mock instance.
-func NewMockFilterRepository(ctrl *gomock.Controller) *MockFilterRepository {
-	mock := &MockFilterRepository{ctrl: ctrl}
-	mock.recorder = &MockFilterRepositoryMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockFilterRepository) EXPECT() *MockFilterRepositoryMockRecorder {
-	return m.recorder
-}
-
-// GetFilter mocks base method.
-func (m *MockFilterRepository) GetFilter(name string) (*filters.Filter, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilter", name)
-	ret0, _ := ret[0].(*filters.Filter)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetFilter indicates an expected call of GetFilter.
-func (mr *MockFilterRepositoryMockRecorder) GetFilter(name interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilter", reflect.TypeOf((*MockFilterRepository)(nil).GetFilter), name)
-}
-
-// GetFilters mocks base method.
-func (m *MockFilterRepository) GetFilters() []*filters.Filter {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetFilters")
-	ret0, _ := ret[0].([]*filters.Filter)
-	return ret0
-}
-
-// GetFilters indicates an expected call of GetFilters.
-func (mr *MockFilterRepositoryMockRecorder) GetFilters() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilters", reflect.TypeOf((*MockFilterRepository)(nil).GetFilters))
-}
-
-// GetTags mocks base method.
-func (m *MockFilterRepository) GetTags() []string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTags")
-	ret0, _ := ret[0].([]string)
-	return ret0
-}
-
-// GetTags indicates an expected call of GetTags.
-func (mr *MockFilterRepositoryMockRecorder) GetTags() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTags", reflect.TypeOf((*MockFilterRepository)(nil).GetTags))
-}
-
-// Render mocks base method.
-func (m *MockFilterRepository) Render(w io.Writer, name string, data map[string]interface{}) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Render", w, name, data)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Render indicates an expected call of Render.
-func (mr *MockFilterRepositoryMockRecorder) Render(w, name, data interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Render", reflect.TypeOf((*MockFilterRepository)(nil).Render), w, name, data)
 }
 
 // MockReleaseClient is a mock of ReleaseClient interface.
@@ -212,56 +187,4 @@ func (m *MockReleaseClient) GetReleases() ([]*news.Release, error) {
 func (mr *MockReleaseClientMockRecorder) GetReleases() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReleases", reflect.TypeOf((*MockReleaseClient)(nil).GetReleases))
-}
-
-// MockUserPreferenceManager is a mock of UserPreferenceManager interface.
-type MockUserPreferenceManager struct {
-	ctrl     *gomock.Controller
-	recorder *MockUserPreferenceManagerMockRecorder
-}
-
-// MockUserPreferenceManagerMockRecorder is the mock recorder for MockUserPreferenceManager.
-type MockUserPreferenceManagerMockRecorder struct {
-	mock *MockUserPreferenceManager
-}
-
-// NewMockUserPreferenceManager creates a new mock instance.
-func NewMockUserPreferenceManager(ctrl *gomock.Controller) *MockUserPreferenceManager {
-	mock := &MockUserPreferenceManager{ctrl: ctrl}
-	mock.recorder = &MockUserPreferenceManagerMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockUserPreferenceManager) EXPECT() *MockUserPreferenceManagerMockRecorder {
-	return m.recorder
-}
-
-// Get mocks base method.
-func (m *MockUserPreferenceManager) Get(c echo.Context, user uuid.UUID) (*db.UserPreference, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", c, user)
-	ret0, _ := ret[0].(*db.UserPreference)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Get indicates an expected call of Get.
-func (mr *MockUserPreferenceManagerMockRecorder) Get(c, user interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockUserPreferenceManager)(nil).Get), c, user)
-}
-
-// UpdateNewsCursor mocks base method.
-func (m *MockUserPreferenceManager) UpdateNewsCursor(c echo.Context, user uuid.UUID, at time.Time) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateNewsCursor", c, user, at)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateNewsCursor indicates an expected call of UpdateNewsCursor.
-func (mr *MockUserPreferenceManagerMockRecorder) UpdateNewsCursor(c, user, at interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNewsCursor", reflect.TypeOf((*MockUserPreferenceManager)(nil).UpdateNewsCursor), c, user, at)
 }

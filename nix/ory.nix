@@ -1,15 +1,15 @@
-{ buildGoModule, fetchFromGitHub, go_1_17 }:
-buildGoModule.override { go = go_1_17; } rec {
+{ buildGoModule, fetchFromGitHub, go_1_18 }:
+buildGoModule.override { go = go_1_18; } rec {
   pname = "ory";
-  version = "0.1.22";
+  version = "0.1.35";
 
   src = fetchFromGitHub {
     owner = "ory";
     repo = "cli";
     rev = "v${version}";
-    sha256 = "sha256-7wl2fegTGfxhN9DZCmfho5qZCcGT3ssUkm6SlwRSU+M=";
+    sha256 = "sha256-I0STYR2KcRbQ/wv/Rb+vRm8gtWT6YdT8wV88yWCTjPc=";
   };
-  vendorSha256 = "sha256-Ye5lNgWXhInVrJbXjwFIBFdrZsZfIdLIVYXFz4SBJNE=";
+  vendorSha256 = "sha256-ds5SI5WmfW9n6yZ4fQAsFLEP88m1JsVrAJuxH53mcuE=";
 
   doCheck = false;
   installPhase = ''

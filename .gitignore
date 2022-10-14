@@ -1,4 +1,10 @@
-data/assets/dist/*.map
+# Assets: only commit gzipped assets without maps
+data/assets/dist/*
+!data/assets/dist/*.gz
+data/assets/dist/*.map.gz
+
 src/assets/node_modules/
 src/assets/.parcel-cache/
+
+# Nix output
 result

@@ -8,7 +8,7 @@ tags:
   - nebula
 template: |
   {{#each creators}}
-  nebula.app###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/{{ . }}"])
+  nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/{{ . }}"])
   {{/each}}
 tests:
   - params: {}
@@ -16,11 +16,11 @@ tests:
   - params:
       creators: [ "reneritchie", "apple-talk", "thomasfrankexplains" ]
     output: |
-      nebula.app###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/reneritchie"])
-      nebula.app###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/apple-talk"])
-      nebula.app###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/thomasfrankexplains"])
+      nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/reneritchie"])
+      nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/apple-talk"])
+      nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/thomasfrankexplains"])
 ---
 This filter allows you to hide videos in the home page and "all videos" page, based on their creator.
 
 To get the code for a creator, go to their page, and take the last part of the address. For example Mike Boyd's
-page is [https://nebula.app/mikeboyd](https://nebula.app/mikeboyd), so his code is `mikeboyd`.
+page is [https://nebula.tv/mikeboyd](https://nebula.tv/mikeboyd), so his code is `mikeboyd`.

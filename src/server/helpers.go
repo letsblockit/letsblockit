@@ -13,15 +13,10 @@ type echoInterface interface {
 	Reverse(name string, params ...interface{}) string
 }
 
-func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
-	assetHashQuery := "?h=" + assetHash
-
+func buildHelpers(e echoInterface) map[string]interface{} {
 	return map[string]interface{}{
 		"eq": func(a string, b string) bool {
 			return strings.Compare(a, b) == 0
-		},
-		"assetHash": func() string {
-			return assetHashQuery
 		},
 		"tag": func(name string) string {
 			return fmt.Sprintf(
@@ -31,12 +26,9 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 		"href": func(route string, args string) string {
 			return href(e, route, args)
 		},
-		"list_href": func(token string) string {
-			return listDownloadRef(e, token)
-		},
-		"abp_subscribe_href": func(token string) string {
+		"abp_subscribe_href": func(listUrl string) string {
 			return fmt.Sprintf("abp:subscribe?location=%s&title=%s",
-				url.QueryEscape(listDownloadRef(e, token)),
+				url.QueryEscape(listUrl),
 				url.QueryEscape("letsblock.it - My filters"))
 		},
 		"lookup_list": func(obj map[string]interface{}, key string) []string {
@@ -64,11 +56,10 @@ func buildHelpers(e echoInterface, assetHash string) map[string]interface{} {
 		"http_root": func(c *pages.Context) string {
 			return fmt.Sprintf("%s://%s", c.RequestInfo.Scheme(), c.RequestInfo.Request().Host)
 		},
+		"beta_features": func(c *pages.Context) bool {
+			return c.Preferences != nil && c.Preferences.BetaFeatures
+		},
 	}
-}
-
-func listDownloadRef(e echoInterface, token string) string {
-	return "https://get.letsblock.it" + href(e, "render-filterlist", token)
 }
 
 func href(e echoInterface, route string, args string) string {

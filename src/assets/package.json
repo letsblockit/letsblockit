@@ -4,26 +4,31 @@
     "default": {
       "source": [
         "main.js",
-        "main.scss"
+        "main.scss",
+        "node_modules/@tabler/icons/tabler-sprite-nostroke.svg"
       ],
       "context": "browser",
       "distDir": "../../data/assets/dist/"
     }
   },
+  "parcel-namer-rewrite": {
+    "chain": "@parcel/namer-default",
+    "rules": {
+      ".*/(.*).svg": "$1.svg"
+    }
+  },
   "scripts": {
-    "postinstall": "patch-package",
     "clean": "rm -rf ../../data/assets/dist/ .parcel-cache/",
     "build": "parcel build",
     "watch": "parcel watch"
   },
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.4.1",
-    "@tabler/icons": "^1.64.0",
-    "bootstrap": "^5.1.3",
-    "htmx.org": "^1.7.0",
-    "parcel": "^2.4.1",
-    "patch-package": "^6.4.7",
-    "popper.js": "^1.16.1",
-    "postcss": ">=8.4.12"
+    "@parcel/compressor-gzip": "^2.7.0",
+    "@parcel/transformer-sass": "^2.7.0",
+    "@tabler/icons": "^1.101.0",
+    "bootstrap": "^5.2.2",
+    "htmx.org": "^1.8.0",
+    "parcel": "^2.7.0",
+    "parcel-namer-rewrite": "^2.0.0-rc.2"
   }
 }
