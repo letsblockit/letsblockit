@@ -10,29 +10,29 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func parseFilter(name string, reader io.Reader) (*Filter, error) {
-	filter := &Filter{
+func parseTemplate(name string, reader io.Reader) (*Template, error) {
+	tpl := &Template{
 		Name: name,
 	}
-	return filter, parse(reader, filter)
+	return tpl, parse(reader, tpl)
 }
 
-func parseFilterAndTest(name string, reader io.Reader) (*FilterAndTests, error) {
-	filter := &FilterAndTests{
-		Filter: Filter{
+func parseTemplateAndTests(name string, reader io.Reader) (*TemplateAndTests, error) {
+	tpl := &TemplateAndTests{
+		Template: Template{
 			Name: name,
 		},
 	}
-	return filter, parse(reader, filter)
+	return tpl, parse(reader, tpl)
 }
 
-func parse(reader io.Reader, filter filter) error {
+func parse(reader io.Reader, template template) error {
 	// Read the whole input file and parse the YAML block
 	input, err := io.ReadAll(reader)
 	if err != nil {
 		return err
 	}
-	err = yaml.Unmarshal(input, filter)
+	err = yaml.Unmarshal(input, template)
 	if err != nil {
 		return fmt.Errorf("invalid metadata: %w", err)
 	}
@@ -44,6 +44,6 @@ func parse(reader io.Reader, filter filter) error {
 	}
 	pos += len(yamlSeparator)
 	pos += bytes.Index(input[pos:], newLine)
-	filter.finishParsing(string(blackfriday.Run(input[pos:])))
+	template.finishParsing(string(blackfriday.Run(input[pos:])))
 	return nil
 }

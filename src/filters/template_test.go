@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestValidateFilters(t *testing.T) {
-	repo, err := LoadFilters(data.Filters)
+func TestValidateTemplates(t *testing.T) {
+	repo, err := Load(data.Templates, data.Presets)
 	assert.NoError(t, err)
 
 	validate := buildValidator(t)
-	seen := make(map[string]struct{}) // Ensure uniqueness of filter names
+	seen := make(map[string]struct{}) // Ensure uniqueness of template names
 
-	err = data.Walk(data.Filters, filenameSuffix, func(name string, file io.Reader) error {
+	err = data.Walk(data.Templates, filenameSuffix, func(name string, file io.Reader) error {
 		t.Run("Name/"+name, func(t *testing.T) {
 			if name != strings.ToLower(name) {
 				assert.Fail(t, "name can only be lowercase", name)
@@ -29,12 +29,12 @@ func TestValidateFilters(t *testing.T) {
 			seen[name] = struct{}{}
 		})
 
-		var filter *FilterAndTests
+		var filter *TemplateAndTests
 		var e error
 		t.Run("Parse/"+name, func(t *testing.T) {
-			filter, e = parseFilterAndTest(name, file)
-			require.NoError(t, e, "Filter did not parse OK")
-			assert.NoError(t, validate.Struct(&filter.Filter), "Filter did no pass input validation")
+			filter, e = parseTemplateAndTests(name, file)
+			require.NoError(t, e, "Template did not parse OK")
+			assert.NoError(t, validate.Struct(&filter.Template), "Template did no pass input validation")
 		})
 
 		for i, tc := range filter.Tests {
@@ -45,7 +45,7 @@ func TestValidateFilters(t *testing.T) {
 					ctx[k] = v
 				}
 				assert.NoError(t, repo.Render(&buf, &Instance{
-					Filter:   filter.Name,
+					Template: filter.Name,
 					Params:   ctx,
 					TestMode: false,
 				}))

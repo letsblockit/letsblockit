@@ -7,12 +7,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Check that all filter definitions parse OK
-func TestLoadFilters(t *testing.T) {
-	repo, err := LoadFilters(data.Filters)
-	require.NoError(t, err, "Filter parsing error")
-	require.NotNil(t, repo, "Filter repository is empty")
-	require.Greater(t, len(repo.filterMap), 0, "Expected at least one filter")
-	require.Greater(t, len(repo.filterList), 0, "Expected at least one filter")
+// Check that all template definitions parse OK
+func TestLoad(t *testing.T) {
+	repo, err := Load(data.Templates, data.Presets)
+	require.NoError(t, err, "Template parsing error")
+	require.NotNil(t, repo, "Template repository is empty")
+	require.Greater(t, len(repo.templateMap), 0, "Expected at least one template")
+	require.Greater(t, len(repo.templateList), 0, "Expected at least one template")
 	require.Greater(t, len(repo.tagList), 0, "Expected at least one tag")
 }

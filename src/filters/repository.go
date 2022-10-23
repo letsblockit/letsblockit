@@ -13,17 +13,17 @@ import (
 
 const CustomRulesFilterName = "custom-rules"
 
-// Repository holds parsed Filters ready for use
+// Repository holds parsed Templates ready for use
 type Repository struct {
-	main       *mario.Template
-	filterMap  map[string]*Filter
-	filterList []*Filter
-	tagList    []string
+	main         *mario.Template
+	templateMap  map[string]*Template
+	templateList []*Template
+	tagList      []string
 }
 
-// LoadFilters parses all filter definitions in the given filesystem
-func LoadFilters(input fs.FS) (*Repository, error) {
-	main, err := mario.New().Parse("{{>(_filter)}}")
+// Load parses template definitions from the given filesystem
+func Load(templates, presets fs.FS) (*Repository, error) {
+	main, err := mario.New().Parse("{{>(_template)}}")
 	main.WithHelperFunc("string_split", func(args string) []string {
 		return strings.Split(args, " ")
 	})
@@ -31,44 +31,44 @@ func LoadFilters(input fs.FS) (*Repository, error) {
 		return nil, fmt.Errorf("failed to parse toplevel template: %w", err)
 	}
 	repo := &Repository{
-		main:      main,
-		filterMap: make(map[string]*Filter),
+		main:        main,
+		templateMap: make(map[string]*Template),
 	}
 	allTags := make(map[string]struct{})
 
-	err = data.Walk(input, filenameSuffix, func(name string, file io.Reader) error {
-		f, e := parseFilter(name, file)
+	err = data.Walk(templates, filenameSuffix, func(name string, file io.Reader) error {
+		tpl, e := parseTemplate(name, file)
 		if e != nil {
 			return e
 		}
-		partial, e := mario.New().Parse(f.Template)
+		partial, e := mario.New().Parse(tpl.Template)
 		if e != nil {
-			return fmt.Errorf("failed to parse filter template: %w", e)
+			return fmt.Errorf("failed to parse template template: %w", e)
 		}
 		_ = main.WithPartial(name, partial)
-		repo.filterMap[name] = f
-		repo.filterList = append(repo.filterList, f)
-		for _, tag := range f.Tags {
+		repo.templateMap[name] = tpl
+		repo.templateList = append(repo.templateList, tpl)
+		for _, tag := range tpl.Tags {
 			allTags[tag] = struct{}{}
 		}
 		return nil
 	})
-	sortFilters(repo.filterList)
+	sortTemplates(repo.templateList)
 	repo.tagList = flattenTagMap(allTags)
 
 	return repo, err
 }
 
-func (r *Repository) GetFilter(name string) (*Filter, error) {
-	filter, found := r.filterMap[name]
+func (r *Repository) Get(name string) (*Template, error) {
+	tpl, found := r.templateMap[name]
 	if !found {
-		return nil, fmt.Errorf("unknown filter '%s'", name)
+		return nil, fmt.Errorf("unknown template '%s'", name)
 	}
-	return filter, nil
+	return tpl, nil
 }
 
-func (r *Repository) GetFilters() []*Filter {
-	return r.filterList
+func (r *Repository) GetAll() []*Template {
+	return r.templateList
 }
 
 func (r *Repository) GetTags() []string {
@@ -76,12 +76,12 @@ func (r *Repository) GetTags() []string {
 }
 
 func (r *Repository) Render(w io.Writer, instance *Instance) error {
-	filter, found := r.filterMap[instance.Filter]
+	tpl, found := r.templateMap[instance.Template]
 	if !found {
-		return fmt.Errorf("template '%s' not found", instance.Filter)
+		return fmt.Errorf("template '%s' not found", instance.Template)
 	}
 	params := shallowCopy(instance.Params)
-	params["_filter"] = instance.Filter
+	params["_template"] = instance.Template
 
 	if instance.TestMode {
 		w = NewTestModeTransformer(w)
@@ -90,9 +90,9 @@ func (r *Repository) Render(w io.Writer, instance *Instance) error {
 		return err
 	}
 
-	for _, preset := range filter.presets {
+	for _, preset := range tpl.presets {
 		if params[preset.EnableKey] == true {
-			if _, err := fmt.Fprintln(w, "!!", instance.Filter, "with", preset.Name, "preset"); err != nil {
+			if _, err := fmt.Fprintln(w, "!!", instance.Template, "with", preset.Name, "preset"); err != nil {
 				return err
 			}
 			params := shallowCopy(params)
@@ -115,8 +115,8 @@ func flattenTagMap(tags map[string]struct{}) []string {
 	return out
 }
 
-// sortFilters moves custom-rules at the end of the list, keeping the other filters in alphabetical order
-func sortFilters(filters []*Filter) {
+// sortTemplates moves custom-rules at the end of the list, keeping the other filters in alphabetical order
+func sortTemplates(filters []*Template) {
 	sort.Slice(filters, func(i, j int) bool {
 		if filters[i].Name == CustomRulesFilterName {
 			return false

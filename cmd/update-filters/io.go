@@ -11,7 +11,7 @@ import (
 )
 
 type filterAndDescription struct {
-	filter filters.FilterAndTests
+	filter filters.TemplateAndTests
 	desc   []byte
 }
 

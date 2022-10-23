@@ -57,7 +57,7 @@ var navigationLinks = []struct {
 	Name   string
 	Target string
 }{{
-	Name:   "Filter list",
+	Name:   "Template list",
 	Target: "filters",
 }, {
 	Name:   "Help",
@@ -95,7 +95,7 @@ func NewServer(options *Options) *Server {
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
-		func(errs []error) { s.filters, errs[0] = filters.LoadFilters(data.Filters) },
+		func(errs []error) { s.filters, errs[0] = filters.Load(data.Templates, data.Presets) },
 		func(errs []error) {
 			s.store, errs[0] = db.Connect(s.options.DatabaseUrl)
 			if errs[0] == nil {

@@ -45,7 +45,7 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 				return nil
 			}
 		},
-		"preset_name": func(param filters.FilterParam, preset filters.Preset) string {
+		"preset_name": func(param filters.Parameter, preset filters.Preset) string {
 			return param.BuildPresetParamName(preset.Name)
 		},
 		"csrf": func(c *pages.Context) string {

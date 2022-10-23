@@ -26,14 +26,14 @@ func (s *ServerTestSuite) TestRenderList_OK() {
 	require.NoError(s.T(), err)
 
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
-		Filter:   "filter1",
+		Template: "filter1",
 		TestMode: true,
 	}))
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
-		Filter: "filter2",
-		Params: filter2Custom,
+		Template: "filter2",
+		Params:   filter2Custom,
 	}))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "custom-rules"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "custom-rules"}))
 
 	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String(), nil)
 	rec := httptest.NewRecorder()
@@ -157,11 +157,11 @@ func (s *ServerTestSuite) TestExportList_OK() {
 		"three": []any{"one", "two"},
 	}
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
-		Filter: "filter2",
-		Params: params,
+		Template: "filter2",
+		Params:   params,
 	}))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1"}))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "custom-rules"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "filter1"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "custom-rules"}))
 
 	list, err := s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
@@ -182,15 +182,15 @@ func (s *ServerTestSuite) TestExportList_OK() {
 
 title: My filters
 instances:
-- filter: filter1
-- filter: filter2
+- template: filter1
+- template: filter2
   params:
     one: blep
     three:
     - one
     - two
     two: false
-- filter: custom-rules
+- template: custom-rules
 `, list.Token), rec.Body.String())
 }
 

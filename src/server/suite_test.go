@@ -5,7 +5,6 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -29,9 +28,9 @@ import (
 )
 
 var (
-	//go:embed testdata/filters
-	testFilters embed.FS
-	fixedNow    = time.Date(2020, 06, 02, 17, 44, 22, 0, time.UTC)
+	//go:embed testdata/templates
+	testTemplates embed.FS
+	fixedNow      = time.Date(2020, 06, 02, 17, 44, 22, 0, time.UTC)
 )
 
 type pageContextMatcher struct {
@@ -220,15 +219,13 @@ func (s *ServerTestSuite) requireInstanceCount(filter string, expected int64) {
 }
 
 func TestServerTestSuite(t *testing.T) {
-	// Load fixtures
-	filterSources, err := fs.Sub(testFilters, "testdata/filters")
+	var err error
+	filterRepo, err = filters.Load(testTemplates, testTemplates)
 	require.NoError(t, err)
-	filterRepo, err = filters.LoadFilters(filterSources)
-	require.NoError(t, err)
-	require.Len(t, filterRepo.GetFilters(), 3)
-	filter1, _ = filterRepo.GetFilter("filter1")
-	filter2, _ = filterRepo.GetFilter("filter2")
-	filter3, _ = filterRepo.GetFilter("custom-rules")
+	require.Len(t, filterRepo.GetAll(), 3)
+	filter1, _ = filterRepo.Get("filter1")
+	filter2, _ = filterRepo.Get("filter2")
+	filter3, _ = filterRepo.Get("custom-rules")
 
 	// Run test suite
 	suite.Run(t, new(ServerTestSuite))

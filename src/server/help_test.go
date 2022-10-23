@@ -37,7 +37,7 @@ func (s *ServerTestSuite) TestHelpUseList_OK() {
 func (s *ServerTestSuite) TestHelpUseList_DownloadDomainOK() {
 	token, err := s.store.CreateListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "one"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "one"}))
 
 	req := httptest.NewRequest(http.MethodGet, "https://myhost/help/use-list", nil)
 	s.server.options.ListDownloadDomain = "get.letsblock.it"

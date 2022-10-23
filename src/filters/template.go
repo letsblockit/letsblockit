@@ -1,13 +1,13 @@
 package filters
 
 var (
-	PresetNameSeparator = "---preset---"
+	presetNameSeparator = "---preset---"
 	filenameSuffix      = ".yaml"
 	yamlSeparator       = []byte("\n---")
 	newLine             = []byte("\n")
 )
 
-type filter interface {
+type template interface {
 	finishParsing(string)
 }
 
@@ -19,10 +19,10 @@ type Preset struct {
 	Default     bool     `yaml:",omitempty"`
 }
 
-type Filter struct {
+type Template struct {
 	Name        string        `validate:"required" yaml:"-"`
 	Title       string        `validate:"required"`
-	Params      []FilterParam `validate:"dive" yaml:",omitempty"`
+	Params      []Parameter   `validate:"dive" yaml:",omitempty"`
 	Tags        []string      `validate:"dive,alphaunicode" yaml:",omitempty"`
 	Template    string        `validate:"required"`
 	Description string        `validate:"required" yaml:"-"`
@@ -36,12 +36,12 @@ type presetEntry struct {
 	Value     interface{}
 }
 
-type FilterAndTests struct {
-	Filter `yaml:"a,inline"`
-	Tests  []testCase
+type TemplateAndTests struct {
+	Template `yaml:"a,inline"`
+	Tests    []testCase
 }
 
-type FilterParam struct {
+type Parameter struct {
 	Name        string      `validate:"required"`
 	Description string      `validate:"required"`
 	Link        string      `validate:"omitempty,url" yaml:",omitempty"`
@@ -65,11 +65,11 @@ type testCase struct {
 	Output string                 `validate:"required"`
 }
 
-func (f *FilterAndTests) finishParsing(desc string) {
-	f.Filter.finishParsing(desc)
+func (f *TemplateAndTests) finishParsing(desc string) {
+	f.Template.finishParsing(desc)
 }
 
-func (f *Filter) finishParsing(desc string) {
+func (f *Template) finishParsing(desc string) {
 	f.Description = desc
 	for _, param := range f.Params {
 		if param.Type != StringListParam {
@@ -86,7 +86,7 @@ func (f *Filter) finishParsing(desc string) {
 	}
 }
 
-func (f *Filter) HasTag(tag string) bool {
+func (f *Template) HasTag(tag string) bool {
 	for _, t := range f.Tags {
 		if t == tag {
 			return true
@@ -95,6 +95,6 @@ func (f *Filter) HasTag(tag string) bool {
 	return false
 }
 
-func (p *FilterParam) BuildPresetParamName(preset string) string {
-	return p.Name + PresetNameSeparator + preset
+func (p *Parameter) BuildPresetParamName(preset string) string {
+	return p.Name + presetNameSeparator + preset
 }
