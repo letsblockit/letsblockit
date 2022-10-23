@@ -9,49 +9,48 @@ import (
 	"strings"
 
 	"github.com/alecthomas/kong"
+	"github.com/letsblockit/letsblockit/data"
+	"github.com/letsblockit/letsblockit/src/filters"
 )
 
 const (
+	templateFilePattern string = "data/filters/targets/%s.yaml"
+	presetFilePattern   string = "data/filters/presets/%s/%s.txt"
+
 	uodfSourcePrefix string = "https://github.com/quenhus/uBlock-Origin-dev-filter/blob/"
 	uodfRawPrefix    string = "https://raw.githubusercontent.com/quenhus/uBlock-Origin-dev-filter/"
 )
 
-var templates = map[string]func(file *filterAndDescription) error{
+var targets = map[string]func(file *filters.Template) error{
 	"search-results": updateSearchResults,
 }
 
 type PresetsCmd struct{}
 
 func (c *PresetsCmd) Run(k *kong.Context) error {
-	for name, f := range templates {
+	repo, err := filters.Load(data.Templates, data.Presets)
+	k.FatalIfErrorf(err)
+	for name, f := range targets {
 		k.Printf("Updating %s...", name)
-		filename := filterFolder + name + filterExtension
-		file, err := os.Open(filename)
-		k.FatalIfErrorf(err, "cannot open target file for reading")
-		filter, err := read(file)
-		k.FatalIfErrorf(err, "cannot decode target file")
-		k.FatalIfErrorf(file.Close())
-
-		k.FatalIfErrorf(f(filter), "cannot update presets")
-
-		file, err = os.OpenFile(filename, os.O_WRONLY|os.O_TRUNC, 0)
-		k.FatalIfErrorf(err, "cannot open target file for writing")
-		k.FatalIfErrorf(filter.write(file), "cannot write result")
-		k.FatalIfErrorf(file.Close())
+		template, err := repo.Get(name)
+		k.FatalIfErrorf(err, "unknown template")
+		k.FatalIfErrorf(f(template), "cannot update presets")
 		k.Printf("OK")
 	}
 	return nil
 }
 
-func updateSearchResults(filter *filterAndDescription) error {
-	for i, param := range filter.filter.Params {
-		for j, preset := range param.Presets {
+func updateSearchResults(template *filters.Template) error {
+	for _, param := range template.Params {
+		for _, preset := range param.Presets {
 			if strings.HasPrefix(preset.Source, uodfSourcePrefix) {
 				values, err := fetchUodf(preset.Source)
 				if err != nil {
 					return fmt.Errorf("error fetching %s: %w", preset.Name, err)
 				}
-				filter.filter.Params[i].Presets[j].Values = values
+				if err = savePreset(template.Name, preset.Name, values); err != nil {
+					return err
+				}
 			}
 		}
 	}
@@ -84,4 +83,19 @@ func fetchUodf(url string) ([]string, error) {
 		return strings.Compare(values[i], values[j]) < 0
 	})
 	return values, scanner.Err()
+}
+
+func savePreset(template, preset string, values []string) error {
+	fileName := fmt.Sprintf(presetFilePattern, template, preset)
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	fmt.Println("writing", fileName)
+	for _, v := range values {
+		if _, err = fmt.Fprintln(file, v); err != nil {
+			return err
+		}
+	}
+	return nil
 }
