@@ -1,0 +1,10 @@
+title: "Test list"
+instances:
+  - template: hello
+  - template: hello
+  - template: unknown
+  - template: simple
+    params:
+      string_list:
+        - one
+        - two
