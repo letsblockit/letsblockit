@@ -4,6 +4,6 @@ buildGoModule.override { go = go_1_18; } {
   pname = "letsblockit";
   src = ./..;
   subPackages = "cmd/" + cmd;
-  vendorSha256 = "sha256-65VkF2nVja+pY7gJlsS117HTWLuvh+PWMEjOzszsZRw=";
+  vendorSha256 = "sha256-CFzXsDveqMk765jaFk5AY8AyYJLPbGXbiv67SM8Oa+Q=";
   version = "1.0";
 }

@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.1.1
-	github.com/alecthomas/kong v0.6.1
+	github.com/alecthomas/kong v0.7.0
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.11.1
 	github.com/golang-migrate/migrate/v4 v4.15.2
@@ -19,7 +19,7 @@ require (
 	github.com/labstack/echo/v4 v4.9.1
 	github.com/labstack/gommon v0.4.0
 	github.com/russross/blackfriday/v2 v2.1.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/vearutop/statigz v1.1.8
 	golang.org/x/tools v0.2.0
 	gopkg.in/yaml.v2 v2.4.0
