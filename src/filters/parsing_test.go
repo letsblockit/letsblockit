@@ -9,40 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var expectedTemplate = Template{
-	Name:  "simple",
-	Title: "Template title",
-	Params: []Parameter{
-		{
-			Name:        "boolean_param",
-			Description: "A boolean parameter",
-			Type:        BooleanParam,
-			Default:     true,
-		},
-		{
-			Name:        "another_boolean",
-			Description: "A disabled boolean parameter",
-			Type:        BooleanParam,
-			Default:     false,
-		},
-		{
-			Name:        "string_param",
-			Description: "A string parameter",
-			Type:        StringParam,
-			Default:     "René Coty",
-		},
-		{
-			Name:        "string_list",
-			Description: "A list of strings",
-			Type:        StringListParam,
-			Default:     []interface{}{"abc", "123"},
-		},
-	},
-	Tags:        []string{"tag1", "tag2"},
-	Template:    "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
-	Description: "<h2>Test description title</h2>\n",
-}
-
 func buildValidator(t *testing.T) *validator.Validate {
 	var validate = validator.New()
 	err := validate.RegisterValidation("valid_default", func(fl validator.FieldLevel) bool {
@@ -90,19 +56,37 @@ func TestParseTemplate(t *testing.T) {
 	filter, err := parseTemplate("simple", file)
 	require.NoError(t, err)
 
-	assert.EqualValues(t, &expectedTemplate, filter)
-}
-
-func TestParseTemplateAndTests(t *testing.T) {
-	file, err := os.Open("testdata/templates/simple.yaml")
-	require.NoError(t, err)
-	defer file.Close()
-
-	filter, err := parseTemplateAndTests("simple", file)
-	require.NoError(t, err)
-
-	assert.EqualValues(t, &TemplateAndTests{
-		Template: expectedTemplate,
+	expectedTemplate := Template{
+		Name:  "simple",
+		Title: "Template title",
+		Params: []Parameter{
+			{
+				Name:        "boolean_param",
+				Description: "A boolean parameter",
+				Type:        BooleanParam,
+				Default:     true,
+			},
+			{
+				Name:        "another_boolean",
+				Description: "A disabled boolean parameter",
+				Type:        BooleanParam,
+				Default:     false,
+			},
+			{
+				Name:        "string_param",
+				Description: "A string parameter",
+				Type:        StringParam,
+				Default:     "René Coty",
+			},
+			{
+				Name:        "string_list",
+				Description: "A list of strings",
+				Type:        StringListParam,
+				Default:     []interface{}{"abc", "123"},
+			},
+		},
+		Tags:     []string{"tag1", "tag2"},
+		Template: "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
 		Tests: []testCase{{
 			Params: map[string]interface{}{
 				"boolean_param": true,
@@ -111,14 +95,16 @@ func TestParseTemplateAndTests(t *testing.T) {
 			},
 			Output: "one\ntwo\nthree\n",
 		}},
-	}, filter)
+		Description: "<h2>Test description title</h2>\n",
+	}
+	assert.EqualValues(t, &expectedTemplate, filter)
 }
 
 type vErrs map[string]string
 
 func TestValidateTemplate(t *testing.T) {
 	tests := map[string]struct {
-		input template
+		input *Template
 		err   vErrs
 	}{
 		"simple_ok": {

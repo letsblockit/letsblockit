@@ -13,11 +13,6 @@ var (
 	newLine             = []byte("\n")
 )
 
-type template interface {
-	parsePresets(presets fs.FS) error
-	finishParsing(string)
-}
-
 type Preset struct {
 	Name        string   `validate:"required"`
 	Description string   `validate:"required"`
@@ -27,11 +22,12 @@ type Preset struct {
 }
 
 type Template struct {
-	Name        string        `validate:"required" yaml:"-"`
-	Title       string        `validate:"required"`
-	Params      []Parameter   `validate:"dive" yaml:",omitempty"`
-	Tags        []string      `validate:"dive,alphaunicode" yaml:",omitempty"`
-	Template    string        `validate:"required"`
+	Name        string      `validate:"required" yaml:"-"`
+	Title       string      `validate:"required"`
+	Params      []Parameter `validate:"dive" yaml:",omitempty"`
+	Tags        []string    `validate:"dive,alphaunicode" yaml:",omitempty"`
+	Template    string      `validate:"required"`
+	Tests       []testCase
 	Description string        `validate:"required" yaml:"-"`
 	presets     []presetEntry `yaml:"-"` // Generated on parse from params and presets
 }
@@ -41,11 +37,6 @@ type presetEntry struct {
 	Name      string
 	TargetKey string
 	Value     interface{}
-}
-
-type TemplateAndTests struct {
-	Template `yaml:"a,inline"`
-	Tests    []testCase
 }
 
 type Parameter struct {
@@ -72,10 +63,6 @@ type testCase struct {
 	Output string                 `validate:"required"`
 }
 
-func (f *TemplateAndTests) finishParsing(desc string) {
-	f.Template.finishParsing(desc)
-}
-
 func (f *Template) finishParsing(desc string) {
 	f.Description = desc
 	for _, param := range f.Params {
@@ -91,10 +78,6 @@ func (f *Template) finishParsing(desc string) {
 			})
 		}
 	}
-}
-
-func (f *TemplateAndTests) parsePresets(presets fs.FS) error {
-	return f.Template.parsePresets(presets)
 }
 
 func (f *Template) parsePresets(presets fs.FS) error {
@@ -120,7 +103,6 @@ func (f *Template) parsePresets(presets fs.FS) error {
 			if len(values) == 0 {
 				return fmt.Errorf("preset file %s is empty", filename)
 			}
-			fmt.Println(values)
 			f.Params[i].Presets[j].Values = values
 		}
 	}

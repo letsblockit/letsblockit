@@ -29,13 +29,13 @@ func TestValidateTemplates(t *testing.T) {
 			seen[name] = struct{}{}
 		})
 
-		var filter *TemplateAndTests
+		var filter *Template
 		var e error
 		t.Run("Parse/"+name, func(t *testing.T) {
-			filter, e = parseTemplateAndTests(name, file)
+			filter, e = parseTemplate(name, file)
 			require.NoError(t, e, "Template did not parse OK")
 			require.NoError(t, filter.parsePresets(data.Presets))
-			assert.NoError(t, validate.Struct(&filter.Template), "Template did no pass input validation")
+			assert.NoError(t, validate.Struct(filter), "Template did no pass input validation")
 		})
 
 		for i, tc := range filter.Tests {

@@ -19,16 +19,7 @@ func parseTemplate(name string, reader io.Reader) (*Template, error) {
 	return tpl, parse(reader, tpl)
 }
 
-func parseTemplateAndTests(name string, reader io.Reader) (*TemplateAndTests, error) {
-	tpl := &TemplateAndTests{
-		Template: Template{
-			Name: name,
-		},
-	}
-	return tpl, parse(reader, tpl)
-}
-
-func parse(reader io.Reader, template template) error {
+func parse(reader io.Reader, template *Template) error {
 	// Read the whole input file and parse the YAML block
 	input, err := io.ReadAll(reader)
 	if err != nil {
