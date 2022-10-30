@@ -44,7 +44,6 @@ func Load(templates, presets fs.FS) (*Repository, error) {
 		if e = tpl.parsePresets(presets); err != nil {
 			return e
 		}
-		tpl.finishParsing(tpl.Description)
 		partial, e := mario.New().Parse(tpl.Template)
 		if e != nil {
 			return fmt.Errorf("failed to parse template template: %w", e)

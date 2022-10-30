@@ -63,23 +63,6 @@ type testCase struct {
 	Output string                 `validate:"required"`
 }
 
-func (f *Template) finishParsing(desc string) {
-	f.Description = desc
-	for _, param := range f.Params {
-		if param.Type != StringListParam {
-			continue
-		}
-		for _, preset := range param.Presets {
-			f.presets = append(f.presets, presetEntry{
-				EnableKey: param.BuildPresetParamName(preset.Name),
-				Name:      preset.Name,
-				TargetKey: param.Name,
-				Value:     preset.Values,
-			})
-		}
-	}
-}
-
 func (f *Template) parsePresets(presets fs.FS) error {
 	for i, param := range f.Params {
 		if param.Type != StringListParam {
@@ -104,6 +87,20 @@ func (f *Template) parsePresets(presets fs.FS) error {
 				return fmt.Errorf("preset file %s is empty", filename)
 			}
 			f.Params[i].Presets[j].Values = values
+		}
+	}
+
+	for _, param := range f.Params {
+		if param.Type != StringListParam {
+			continue
+		}
+		for _, preset := range param.Presets {
+			f.presets = append(f.presets, presetEntry{
+				EnableKey: param.BuildPresetParamName(preset.Name),
+				Name:      preset.Name,
+				TargetKey: param.Name,
+				Value:     preset.Values,
+			})
 		}
 	}
 	return nil
