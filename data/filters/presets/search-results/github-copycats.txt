@@ -68,6 +68,7 @@ pythonawesome.com/
 pythonissues.com/
 pythonlang.dev/
 pythonrepo.com/
+pythontechworld.com/
 readintrend.com/
 reposhub.com/
 rpkg.in/

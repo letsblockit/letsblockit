@@ -2,6 +2,7 @@
 algebra.com/
 buildwiki.ru/
 datewiki.ru/
+dewiki.de/
 encyclopaedia.bid/
 encyclopedia.kz/
 encyclopedia.thefreedictionary.com/
