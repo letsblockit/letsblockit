@@ -14,11 +14,9 @@ import (
 )
 
 const (
-	templateFilePattern string = "data/filters/templates/%s.yaml"
-	presetFilePattern   string = "data/filters/presets/%s/%s.txt"
-
-	uodfSourcePrefix string = "https://github.com/quenhus/uBlock-Origin-dev-filter/blob/"
-	uodfRawPrefix    string = "https://raw.githubusercontent.com/quenhus/uBlock-Origin-dev-filter/"
+	presetFilePattern string = "data/filters/presets/%s/%s.txt"
+	uodfSourcePrefix  string = "https://github.com/quenhus/uBlock-Origin-dev-filter/blob/"
+	uodfRawPrefix     string = "https://raw.githubusercontent.com/quenhus/uBlock-Origin-dev-filter/"
 )
 
 var targets = map[string]func(file *filters.Template) error{
