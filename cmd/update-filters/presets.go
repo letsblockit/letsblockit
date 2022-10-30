@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	templateFilePattern string = "data/filters/targets/%s.yaml"
+	templateFilePattern string = "data/filters/templates/%s.yaml"
 	presetFilePattern   string = "data/filters/presets/%s/%s.txt"
 
 	uodfSourcePrefix string = "https://github.com/quenhus/uBlock-Origin-dev-filter/blob/"

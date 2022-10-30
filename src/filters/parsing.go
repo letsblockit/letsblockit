@@ -10,6 +10,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const presetFilePattern string = "filters/presets/%s/%s.txt"
+
 func parseTemplate(name string, reader io.Reader) (*Template, error) {
 	tpl := &Template{
 		Name: name,

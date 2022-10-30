@@ -1,5 +1,11 @@
 package filters
 
+import (
+	"bufio"
+	"fmt"
+	"io/fs"
+)
+
 var (
 	presetNameSeparator = "---preset---"
 	filenameSuffix      = ".yaml"
@@ -8,6 +14,7 @@ var (
 )
 
 type template interface {
+	parsePresets(presets fs.FS) error
 	finishParsing(string)
 }
 
@@ -84,6 +91,40 @@ func (f *Template) finishParsing(desc string) {
 			})
 		}
 	}
+}
+
+func (f *TemplateAndTests) parsePresets(presets fs.FS) error {
+	return f.Template.parsePresets(presets)
+}
+
+func (f *Template) parsePresets(presets fs.FS) error {
+	for i, param := range f.Params {
+		if param.Type != StringListParam {
+			continue
+		}
+		for j, preset := range param.Presets {
+			if len(preset.Values) > 0 {
+				continue
+			}
+			filename := fmt.Sprintf(presetFilePattern, f.Name, preset.Name)
+			file, err := presets.Open(filename)
+			if err != nil {
+				return fmt.Errorf("preset has no value and no preset file found at %s: %w", filename, err)
+			}
+			lines := bufio.NewScanner(file)
+			lines.Split(bufio.ScanLines)
+			var values []string
+			for lines.Scan() {
+				values = append(values, lines.Text())
+			}
+			if len(values) == 0 {
+				return fmt.Errorf("preset file %s is empty", filename)
+			}
+			fmt.Println(values)
+			f.Params[i].Presets[j].Values = values
+		}
+	}
+	return nil
 }
 
 func (f *Template) HasTag(tag string) bool {
