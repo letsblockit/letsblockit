@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/alecthomas/kong"
+	"github.com/labstack/gommon/log"
 	"github.com/letsblockit/letsblockit/data"
 	"github.com/letsblockit/letsblockit/src/filters"
 )
@@ -23,19 +23,21 @@ var targets = map[string]func(file *filters.Template) error{
 	"search-results": updateSearchResults,
 }
 
-type PresetsCmd struct{}
-
-func (c *PresetsCmd) Run(k *kong.Context) error {
+func main() {
 	repo, err := filters.Load(data.Templates, data.Presets)
-	k.FatalIfErrorf(err)
-	for name, f := range targets {
-		k.Printf("Updating %s...", name)
-		template, err := repo.Get(name)
-		k.FatalIfErrorf(err, "unknown template")
-		k.FatalIfErrorf(f(template), "cannot update presets")
-		k.Printf("OK")
+	if err != nil {
+		log.Fatal(err)
 	}
-	return nil
+	for name, f := range targets {
+		log.Printf("Updating %s...", name)
+		template, err := repo.Get(name)
+		if err != nil {
+			log.Fatalf("unknown template %s: %w", name, err)
+		}
+		if err = f(template); err != nil {
+			log.Fatalf("failed to process %s: %w", name, err)
+		}
+	}
 }
 
 func updateSearchResults(template *filters.Template) error {
