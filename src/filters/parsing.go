@@ -46,6 +46,8 @@ func parsePresets(f *Template, presets fs.FS) error {
 		if param.Type != StringListParam {
 			continue
 		}
+
+		// Load preset values from file if needed
 		for j, preset := range param.Presets {
 			if len(preset.Values) > 0 {
 				continue
@@ -68,6 +70,7 @@ func parsePresets(f *Template, presets fs.FS) error {
 		}
 	}
 
+	// Prepare presets slice used in rendering logic
 	for _, param := range f.Params {
 		if param.Type != StringListParam {
 			continue

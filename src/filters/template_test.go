@@ -1,8 +1,10 @@
 package filters
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"strings"
 	"testing"
 
@@ -34,7 +36,8 @@ func TestValidateTemplates(t *testing.T) {
 		t.Run("Parse/"+name, func(t *testing.T) {
 			filter, e = parseTemplate(name, file)
 			require.NoError(t, e, "Template did not parse OK")
-			require.NoError(t, parsePresets(filter, data.Presets))
+			require.NoError(t, checkRedundantPresetValues(filter, data.Presets), "Found redundant preset values")
+			require.NoError(t, parsePresets(filter, data.Presets), "Preset values did not parse OK")
 			assert.NoError(t, validate.Struct(filter), "Template did no pass input validation")
 		})
 
@@ -57,4 +60,24 @@ func TestValidateTemplates(t *testing.T) {
 		return nil
 	})
 	assert.NoError(t, err)
+}
+
+func checkRedundantPresetValues(f *Template, presets fs.FS) error {
+	for _, param := range f.Params {
+		for _, preset := range param.Presets {
+			if len(preset.Values) == 0 {
+				continue
+			}
+
+			filename := fmt.Sprintf(presetFilePattern, f.Name, preset.Name)
+			file, err := presets.Open(filename)
+			if err == nil {
+				_ = file.Close()
+				return fmt.Errorf("preset %s has values in both a preset file and the YAML, remove one", preset.Name)
+			} else if !errors.Is(err, fs.ErrNotExist) {
+				return fmt.Errorf("unexpected error opening %s: %w", filename, err)
+			}
+		}
+	}
+	return nil
 }
