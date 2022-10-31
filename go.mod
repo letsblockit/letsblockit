@@ -22,7 +22,6 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/vearutop/statigz v1.1.8
 	golang.org/x/tools v0.2.0
-	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 	zgo.at/zcache/v2 v2.1.0
 )

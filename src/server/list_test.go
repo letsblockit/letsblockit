@@ -182,15 +182,15 @@ func (s *ServerTestSuite) TestExportList_OK() {
 
 title: My filters
 instances:
-- template: filter1
-- template: filter2
-  params:
-    one: blep
-    three:
-    - one
-    - two
-    two: false
-- template: custom-rules
+    - template: filter1
+    - template: filter2
+      params:
+        one: blep
+        three:
+            - one
+            - two
+        two: false
+    - template: custom-rules
 `, list.Token), rec.Body.String())
 }
 

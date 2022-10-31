@@ -48,7 +48,7 @@ func updateSearchResults(template *filters.Template) error {
 				if err != nil {
 					return fmt.Errorf("error fetching %s: %w", preset.Name, err)
 				}
-				if err = savePreset(template.Name, preset.Name, values); err != nil {
+				if err = saveValues(template.Name, preset.Name, values); err != nil {
 					return err
 				}
 			}
@@ -85,7 +85,7 @@ func fetchUodf(url string) ([]string, error) {
 	return values, scanner.Err()
 }
 
-func savePreset(template, preset string, values []string) error {
+func saveValues(template, preset string, values []string) error {
 	fileName := fmt.Sprintf(presetFilePattern, template, preset)
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
