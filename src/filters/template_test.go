@@ -34,7 +34,7 @@ func TestValidateTemplates(t *testing.T) {
 		t.Run("Parse/"+name, func(t *testing.T) {
 			filter, e = parseTemplate(name, file)
 			require.NoError(t, e, "Template did not parse OK")
-			require.NoError(t, filter.parsePresets(data.Presets))
+			require.NoError(t, parsePresets(filter, data.Presets))
 			assert.NoError(t, validate.Struct(filter), "Template did no pass input validation")
 		})
 

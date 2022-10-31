@@ -41,7 +41,7 @@ func Load(templates, presets fs.FS) (*Repository, error) {
 		if e != nil {
 			return e
 		}
-		if e = tpl.parsePresets(presets); err != nil {
+		if e = parsePresets(tpl, presets); err != nil {
 			return e
 		}
 		partial, e := mario.New().Parse(tpl.Template)
