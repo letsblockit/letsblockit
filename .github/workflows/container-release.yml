@@ -1,13 +1,12 @@
 name: "Release container images"
 on:
   push:
-#    branches:
-#      - main
     tags:
       - '*'
 jobs:
   container-release:
     runs-on: ubuntu-latest
+    if: github.repository == 'letsblockit/letsblockit'
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v18
