@@ -54,7 +54,6 @@ Youtube shorts are more and more prevalent, and I don't care one bit about that 
 This filter hides the navigation bar icon and shorts videos on all lists (homepage, subscriptions, search and sidebar), with the two designs currently observed:
 
 - videos with the Shorts icon instead of a duration (new design)
-- videos shorter than 70 seconds (old design, currently phasing out). This rule can have false-positives, but also catches videos intended to be shorts by the creator, but too long to be classified as such.
 
 If you are concerned about false-positives, an alternative is to use the [Hide Youtube videos by title](/filters/youtube-video-title)
 filter, set to match on the `#shorts` and `#short` words.
