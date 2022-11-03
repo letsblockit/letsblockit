@@ -92,7 +92,7 @@ tests:
     output: |
       www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
       www.youtube.com##[class*="video-secondary-info-renderer"] > #items:has(.ytd-video-description-music-section-renderer)
-      www.youtube.com###description-and-actions #always-shown + #collapsible
+      www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
   - params:
       remove-stream-chat: true
     output: |
