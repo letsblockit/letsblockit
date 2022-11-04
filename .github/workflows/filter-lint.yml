@@ -13,34 +13,21 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
       - name: Run linting and save output
-        run: |
-          cat <<EOF >>output.txt
-          Thanks for your contribution!
-          
-          Unfortunately, the automated tests failed. Please check the output below and
-          [the syntax documentation](https://github.com/letsblockit/letsblockit/blob/main/data/filters/README.md)
-          to fix these. Don't hesitate to comment if you need help making sense of the errors!
-            
-          ### Test output:
-          ${CODEBLOCK_FENCE}
-          EOF
-          go test ./src/filters/ >> output.txt
+        run: go test ./src/filters/ >> output.txt
       - name: Comment on success
         if: ${{ success() }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: filter-lint
-          message: |
-            Thanks for your contribution! The automated tests passed, we will review your PR shortly!
-      - name: Failure report footer
+          path: .github/filter-lint-ok.md
+      - name: Failure report generation
         if: ${{ failure() }}
         run: |
-          cat <<EOF >>output.txt
-          ${CODEBLOCK_FENCE}
-          EOF
+          output=`cat output.txt`
+          cat .github/filter-lint-failed.md | envsubst > report.md
       - name: Comment on failure
         if: ${{ failure() }}
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: filter-lint
-          path: output.txt
+          path: report.md
