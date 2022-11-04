@@ -25,7 +25,7 @@ tests:
       test
       < with & special ~ chars
 ---
-
+plop
 This template allows you to keep custom rules in your list, to sync between browsers. Just write them as you would in the `My filters` page of uBlock Origin settings.
 
 Have a look at the following pages to learn about the syntax:
