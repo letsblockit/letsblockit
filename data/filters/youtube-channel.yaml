@@ -25,7 +25,7 @@ tests:
       www.youtube.com##ytd-search ytd-video-renderer:has([href*="ChannelName" i])
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer:has([href*="ChannelName" i]):upward(ytd-item-section-renderer)
 ---
-Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. With this filter, you can remove videos with a given word in their title.
+Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. With this filter, you can remove videos from a given channel.
 
 <div class="alert alert-warning" role="alert">
 In order to make things easier it does a case-insentive match  (`ChannelName` will also match `channelname`).
