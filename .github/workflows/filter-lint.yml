@@ -13,7 +13,13 @@ jobs:
       - name: Run linting and save output
         run: |
           cat <<EOF >>output.txt
-            Tests failed:
+            Thanks for your contribution!
+          
+            Unfortunately, the automated tests failed. Please check the output below and
+            [the syntax documentation](https://github.com/letsblockit/letsblockit/blob/main/data/filters/README.md)
+            to fix these. Don't hesitate to comment if you need help making sense of the errors!
+            
+            ### Test output:
             ```
           EOF
           go test ./src/filters/ >> output.txt
@@ -26,7 +32,7 @@ jobs:
         with:
           header: filter-lint
           message: |
-            Tests OK
+            Thanks for your contribution! The automated tests passed, we will review your PR shortly!
       - name: Comment on failure
         if: ${{ failure() }}
         uses: marocchino/sticky-pull-request-comment@v2
