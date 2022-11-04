@@ -1,0 +1,31 @@
+name: "Filter linting"
+on:
+  pull_request:
+    paths:
+      - 'data/filters/**'
+jobs:
+  filter-lint:
+    runs-on: ubuntu-latest
+    if: github.repository == 'letsblockit/letsblockit'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+      - name: Run linting and save output
+        run: |
+          cat <<EOF >>output.txt
+            Tests failed:
+          EOF
+          go test ./src/filters/ >> output.txt
+      - name: Comment on success
+        if: ${{ success() }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: filter-lint
+          message: |
+            Tests OK
+      - name: Comment on failure
+        if: ${{ failure() }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: filter-lint
+          path: output.txt
