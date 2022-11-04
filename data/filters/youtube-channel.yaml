@@ -27,7 +27,3 @@ tests:
       www.youtube.com##ytd-watch-next-secondary-results-renderer #channel-name:has-text(ChannelURL):upward(ytd-compact-video-renderer)
 ---
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. With this filter, you can remove videos from a given channel using its URL without youtube or name for watch-next.
-
-<div class="alert alert-warning" role="alert">
-In order to make things easier it does a case-insentive match  (`ChannelURL` will also match `channelurl`).
-</div>
