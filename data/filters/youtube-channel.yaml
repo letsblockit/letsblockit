@@ -28,5 +28,5 @@ tests:
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. With this filter, you can remove videos with a given word in their title.
 
 <div class="alert alert-warning" role="alert">
-In order to make thing easier it does a case-insentive match  (`ChannelName` will also match `channelname`).
+In order to make things easier it does a case-insentive match  (`ChannelName` will also match `channelname`).
 </div>
