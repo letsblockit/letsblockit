@@ -15,14 +15,14 @@ jobs:
       - name: Run linting and save output
         run: |
           cat <<EOF >>output.txt
-            Thanks for your contribution!
+          Thanks for your contribution!
           
-            Unfortunately, the automated tests failed. Please check the output below and
-            [the syntax documentation](https://github.com/letsblockit/letsblockit/blob/main/data/filters/README.md)
-            to fix these. Don't hesitate to comment if you need help making sense of the errors!
+          Unfortunately, the automated tests failed. Please check the output below and
+          [the syntax documentation](https://github.com/letsblockit/letsblockit/blob/main/data/filters/README.md)
+          to fix these. Don't hesitate to comment if you need help making sense of the errors!
             
-            ### Test output:
-            ${CODEBLOCK_FENCE}
+          ### Test output:
+          ${CODEBLOCK_FENCE}
           EOF
           go test ./src/filters/ >> output.txt
       - name: Comment on success
@@ -36,7 +36,7 @@ jobs:
         if: ${{ failure() }}
         run: |
           cat <<EOF >>output.txt
-            ${CODEBLOCK_FENCE}
+          ${CODEBLOCK_FENCE}
           EOF
       - name: Comment on failure
         if: ${{ failure() }}
