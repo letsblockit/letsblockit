@@ -11,6 +11,8 @@ template: |
   www.youtube.com##ytd-browse ytd-grid-video-renderer:has([href*="{{ . }}" i])
   www.youtube.com##ytd-browse ytd-rich-item-renderer:has([href*="{{ . }}" i])
   www.youtube.com##ytd-search ytd-video-renderer:has([href*="{{ . }}" i])
+  www.youtube.com##ytd-search ytd-channel-renderer:has([href*="{{ . }}" i])
+  www.youtube.com##ytd-search #channel-name:has-text(/{{ . }}/i):upward(ytd-secondary-search-container-renderer)
   www.youtube.com##ytd-watch-next-secondary-results-renderer #channel-name:has-text(/{{ . }}/i):upward(ytd-compact-video-renderer)
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer:has([href*="{{ . }}" i]):upward(ytd-item-section-renderer)
@@ -24,6 +26,8 @@ tests:
       www.youtube.com##ytd-browse ytd-grid-video-renderer:has([href*="ChannelURL" i])
       www.youtube.com##ytd-browse ytd-rich-item-renderer:has([href*="ChannelURL" i])
       www.youtube.com##ytd-search ytd-video-renderer:has([href*="ChannelURL" i])
+      www.youtube.com##ytd-search ytd-channel-renderer:has([href*="ChannelURL" i])
+      www.youtube.com##ytd-search #channel-name:has-text(/ChannelURL/i):upward(ytd-secondary-search-container-renderer)
       www.youtube.com##ytd-watch-next-secondary-results-renderer #channel-name:has-text(/ChannelURL/i):upward(ytd-compact-video-renderer)
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer:has([href*="ChannelURL" i]):upward(ytd-item-section-renderer)
 ---
