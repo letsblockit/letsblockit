@@ -1,3 +1,5 @@
+Should not trigger linting
+
 [<img width="70%" src=".github/logo.svg?raw=true"/>](https://letsblock.it)
 
 ## Remove low-quality content and useless nags, focus on what matters.
