@@ -14,8 +14,12 @@ jobs:
         run: |
           cat <<EOF >>output.txt
             Tests failed:
+            ```
           EOF
           go test ./src/filters/ >> output.txt
+          cat <<EOF >>output.txt
+            ```
+          EOF
       - name: Comment on success
         if: ${{ success() }}
         uses: marocchino/sticky-pull-request-comment@v2
