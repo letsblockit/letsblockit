@@ -12,6 +12,7 @@ jobs:
       - uses: actions/setup-go@v3
       - name: Run linting and save output
         run: |
+          fence='```'
           cat <<EOF >>output.txt
             Thanks for your contribution!
           
@@ -20,11 +21,11 @@ jobs:
             to fix these. Don't hesitate to comment if you need help making sense of the errors!
             
             ### Test output:
-            ```
+            ${fence}
           EOF
           go test ./src/filters/ >> output.txt
           cat <<EOF >>output.txt
-            ```
+            ${fence}
           EOF
       - name: Comment on success
         if: ${{ success() }}
