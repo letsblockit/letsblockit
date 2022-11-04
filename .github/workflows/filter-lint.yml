@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'data/filters/**'
+env:
+  CODEBLOCK_FENCE: "```"
 jobs:
   filter-lint:
     runs-on: ubuntu-latest
@@ -12,7 +14,6 @@ jobs:
       - uses: actions/setup-go@v3
       - name: Run linting and save output
         run: |
-          fence='```'
           cat <<EOF >>output.txt
             Thanks for your contribution!
           
@@ -21,12 +22,9 @@ jobs:
             to fix these. Don't hesitate to comment if you need help making sense of the errors!
             
             ### Test output:
-            ${fence}
+            ${CODEBLOCK_FENCE}
           EOF
           go test ./src/filters/ >> output.txt
-          cat <<EOF >>output.txt
-            ${fence}
-          EOF
       - name: Comment on success
         if: ${{ success() }}
         uses: marocchino/sticky-pull-request-comment@v2
@@ -34,6 +32,12 @@ jobs:
           header: filter-lint
           message: |
             Thanks for your contribution! The automated tests passed, we will review your PR shortly!
+      - name: Failure report footer
+        if: ${{ failure() }}
+        run: |
+          cat <<EOF >>output.txt
+            ${CODEBLOCK_FENCE}
+          EOF
       - name: Comment on failure
         if: ${{ failure() }}
         uses: marocchino/sticky-pull-request-comment@v2
