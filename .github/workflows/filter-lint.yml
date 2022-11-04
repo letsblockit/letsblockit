@@ -23,7 +23,10 @@ jobs:
       - name: Failure report generation
         if: ${{ failure() }}
         run: |
-          OUTPUT=$(cat output.txt) cat .github/filter-lint-failed.md | envsubst > report.md
+          OUTPUT=$(cat output.txt)
+          echo $OUTPUT
+          cat .github/filter-lint-failed.md | envsubst > report.md
+          cat report.md
       - name: Comment on failure
         if: ${{ failure() }}
         uses: marocchino/sticky-pull-request-comment@v2
