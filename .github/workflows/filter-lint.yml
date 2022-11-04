@@ -1,8 +1,6 @@
 name: "Filter linting"
 on:
   pull_request:
-    paths:
-      - 'data/filters/**'
 jobs:
   filter-lint:
     runs-on: ubuntu-latest
