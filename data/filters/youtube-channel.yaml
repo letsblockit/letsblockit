@@ -18,7 +18,7 @@ tests:
   - params: {}
     output: ""
   - params:
-      keywords: [ "ChannelURL" ]
+      channels: [ "ChannelURL" ]
     output: |
       www.youtube.com##ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has([href*="ChannelURL"])
       www.youtube.com##ytd-search ytd-video-renderer:has([href*="ChannelURL"])
