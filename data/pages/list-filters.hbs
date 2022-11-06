@@ -5,13 +5,13 @@
             {{#if tag_search}}
                 <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
             {{else}}
-                <a class="navbar-brand">Filter by tag:</a>
+                <span class="navbar-brand">Filter by tag:</span>
                 <nav class="nav nav-pills flex-column">
                     <span class="nav-link">{{#each filter_tags}}<span class="d-block">{{{tag this}}}</span>{{/each}}
                     </span>
                 </nav>
             {{/if}}
-            <a class="navbar-brand mt-3">Contribute:</a>
+            <span class="navbar-brand mt-3">Contribute:</span>
             <nav class="nav nav-pills flex-column">
                 <a class="nav-link"
                    href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml">Suggest

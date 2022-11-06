@@ -6,7 +6,7 @@
 
 <nav class="navbar navbar-light flex-column align-items-stretch">
     {{#each menu_sections}}
-        <a class="navbar-brand">{{this.Title}}</a>
+        <span class="navbar-brand">{{this.Title}}</span>
         <nav class="nav nav-pills flex-column">
             {{#each this.Pages}}
                 <a class="nav-link {{#equal this.Code @root.Data.page.Code}}active{{/equal}}"
