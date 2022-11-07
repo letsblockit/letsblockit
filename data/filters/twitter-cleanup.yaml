@@ -1,0 +1,189 @@
+title: Cleanup the Twitter interface
+params:
+  - name: my-timeline
+    description: No inserted sections (Who to follow/Topics to follow, etc.) in My Timeline
+    type: checkbox
+    default: false
+  - name: other-timelines
+    description: No inserted sections (Who to follow/Topics to follow, etc.)
+    type: checkbox
+    default: false
+  - name: user-liked
+    description: [User] liked
+    type: checkbox
+    default: false
+  - name: user-retweeted
+    description: [User] retweeted
+    type: checkbox
+    default: false
+  - name: user-follows
+    description: [User] follows
+    type: checkbox
+    default: false
+  - name: user-received-reply
+    description: [User received a reply
+    type: checkbox
+    default: false
+  - name: user-received-replies
+    description: [User] received replies
+    type: checkbox
+    default: false
+  - name: user-replied
+    description: [User] replied
+    type: checkbox
+    default: false
+  - name: follow-recommended-topic
+    description: Follow/recommended topic
+    type: checkbox
+    default: false
+  - name: like-retweet-counts
+    description: Like annd retweet counts will get hidden
+    type: checkbox
+    default: false
+  - name: more-tweets
+    description: More tweets
+    type: checkbox
+    default: false
+  - name: sidebar-topics-to-follow
+    description: Removes recommended topics block in the sidebar
+    type: checkbox
+    default: false
+  - name: sidebar-trending-now
+    description: Removes the block with trending stuff in the sidebar
+    type: checkbox
+    default: false
+  - name: sidebar-who-to-follow
+    description: Removes block with suggestion who to follow in the sidebar
+    type: checkbox
+    default: false
+  - name: login-popup
+    description: When not logged in into Twitter in will not show the popup anymore requesting to login
+    type: checkbox
+    default: false
+tags:
+  - twitter
+template: |
+  {{#if my-timeline}}
+  www.twitter.com##[aria-label="Timeline: Your Home Timeline"] div[style^="transform: translateY"][style*="position: absolute;"]:not(:first-child:has-text(/^Show \d\d? Tweets?$/)):not(:has(article, [href^="/i/status/"], [role="progressbar"])):style(border:red dotted 4px !important)
+  {{/if}}
+  {{#if other-timelines}}
+  www.twitter.com##[aria-label$="’s Tweets"] div[style^="transform: translateY"][style*="position: absolute;"]:not(:has(article, [href^="/i/status/"], [role="progressbar"])):style(border:red dotted 4px !important)
+  {{/if}}
+  {{#if user-liked}}
+  www.twitter.com##article :not([role="button"]>div>div>svg>g>path)[d$="4.17-.514 6.67z"]:upward(article):style(border:blue 5px dotted !important)
+  {{/if}}
+  {{#if user-retweeted}}
+  www.twitter.com##:is([aria-label="Timeline: Your Home Timeline"], [aria-label$="’s Tweets"]) article :not([data-testid="unretweet"]>div>div>svg>g>path)[d^="M4.75 3.79l4.603"]:upward(article):not(:has([data-testid="socialContext"]:has-text(/^You/))):style(border: yellow dotted 5px !important)
+  {{/if}}
+  {{#if user-follows}}
+  www.twitter.com##article div>svg>g>[d^="M17.863 13.44c1.477"]:upward(article):style(border: cyan dotted 5px !important)
+  {{/if}}
+  {{#if user-received-reply}}
+  www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/reply$/)):style(border: lightgreen 5px dotted !important)
+  www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/reply$/))+div:style(border: lightgreen 5px dotted !important)
+  {{/if}}
+  {{#if user-received-replies}}
+  www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/replies$/)):style(border: green 5px dotted !important)
+  www.twitter.com##article>div:first-child:not(:last-child):upward([style*="position: absolute"]):style(border: 5px dotted orange !important)
+  {{/if}}
+  {{#if user-replied}}
+  www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/replied$/)):style(border: violet 5px dotted !important)
+  www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/replied$/))+div:style(border: violet 5px dotted !important)
+  {{/if}}
+  {{#if follow-recommended-topic}}
+  www.twitter.com##article [aria-label^="Follow Topic"], article [aria-label^="Recommended Topic"]:upward(article):style(border: white 5px dotted !important)
+  {{/if}}
+  {{#if like-retweet-counts}}
+  www.twitter.com##[data-testid="retweet"] [data-testid="app-text-transition-container"], [data-testid="like"] [data-testid="app-text-transition-container"]
+  {{/if}}
+  {{#if more-tweets}}
+  www.twitter.com##[aria-label="Timeline: Conversation"] h2>div>span:has-text(/^More Tweets$/):upward([style^="transform"])
+  www.twitter.com##[aria-label="Timeline: Conversation"] h2>div>span:has-text(/^More Tweets$/):upward([style^="transform"])~div
+  {{/if}}
+  {{#if sidebar-topics-to-follow}}
+  www.twitter.com##[data-testid="sidebarColumn"] [href="/i/topics/picker/home"]:upward(section)
+  {{/if}}
+  {{#if sidebar-trending-now}}
+  www.twitter.com##[aria-label$="trending now" i]
+  {{/if}}
+  {{#if sidebar-who-to-follow}}
+  www.twitter.com##[aria-label="who to follow" i]:upward(1)
+  {{/if}}
+  {{#if login-popup}}
+  www.twitter.com##div#layers div[data-testid="sheetDialog"]:upward(div[role="group"][tabindex="0"])
+  www.twitter.com##html:style(overflow: auto !important;)
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      my-timeline: true
+    output: |
+      www.twitter.com##[aria-label="Timeline: Your Home Timeline"] div[style^="transform: translateY"][style*="position: absolute;"]:not(:first-child:has-text(/^Show \d\d? Tweets?$/)):not(:has(article, [href^="/i/status/"], [role="progressbar"])):style(border:red dotted 4px !important)
+  - params:
+      other-timelines: true
+    output: |
+      www.twitter.com##[aria-label$="’s Tweets"] div[style^="transform: translateY"][style*="position: absolute;"]:not(:has(article, [href^="/i/status/"], [role="progressbar"])):style(border:red dotted 4px !important)
+  - params
+      user-liked: true
+    output: |
+      www.twitter.com##article :not([role="button"]>div>div>svg>g>path)[d$="4.17-.514 6.67z"]:upward(article):style(border:blue 5px dotted !important)
+  - params:
+      user-retweeted: true
+    output: |
+      www.twitter.com##:is([aria-label="Timeline: Your Home Timeline"], [aria-label$="’s Tweets"]) article :not([data-testid="unretweet"]>div>div>svg>g>path)[d^="M4.75 3.79l4.603"]:upward(article):not(:has([data-testid="socialContext"]:has-text(/^You/))):style(border: yellow dotted 5px !important)
+  - params:
+      user-follows: true
+    output: |
+      www.twitter.com##article div>svg>g>[d^="M17.863 13.44c1.477"]:upward(article):style(border: cyan dotted 5px !important)
+  - params:
+      user-received-reply: true
+    output: |
+      www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/reply$/)):style(border: lightgreen 5px dotted !important)
+      www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/reply$/))+div:style(border: lightgreen 5px dotted !important)
+  - params:
+      user-received-replies: true
+    output: |
+      www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/replies$/)):style(border: green 5px dotted !important)
+      www.twitter.com##article>div:first-child:not(:last-child):upward([style*="position: absolute"]):style(border: 5px dotted orange !important)
+  - params:
+      user-replied: true
+    output: |
+      www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/replied$/)):style(border: violet 5px dotted !important)
+      www.twitter.com##article [d$="183-3.51-8.183-8.01z"]:upward([style*="position: absolute"]):has([data-testid="socialContext"]:has-text(/replied$/))+div:style(border: violet 5px dotted !important)
+  - params:
+      follow-recommended-topic: true
+    output: |
+      www.twitter.com##article [aria-label^="Follow Topic"], article [aria-label^="Recommended Topic"]:upward(article):style(border: white 5px dotted !important)
+  - params:
+      like-retweet-counts: true
+    output: |
+      www.twitter.com##[data-testid="retweet"] [data-testid="app-text-transition-container"], [data-testid="like"] [data-testid="app-text-transition-container"]
+  - params:
+      more-tweets: true
+    output: |
+      www.twitter.com##[aria-label="Timeline: Conversation"] h2>div>span:has-text(/^More Tweets$/):upward([style^="transform"])
+      www.twitter.com##[aria-label="Timeline: Conversation"] h2>div>span:has-text(/^More Tweets$/):upward([style^="transform"])~div
+  - params:
+      sidebar-topics-to-follow: true
+    output: |
+      www.twitter.com##[data-testid="sidebarColumn"] [href="/i/topics/picker/home"]:upward(section)
+  - params:
+      sidebar-trending-now: true
+    output: |
+      www.twitter.com##[aria-label$="trending now" i]
+  - params:
+      sidebar-who-to-follow: true
+    output: |
+      www.twitter.com##[aria-label="who to follow" i]:upward(1)
+  - params:
+      login-popup: true
+    output: |
+      www.twitter.com##div#layers div[data-testid="sheetDialog"]:upward(div[role="group"][tabindex="0"])
+      www.twitter.com##html:style(overflow: auto !important;)
+---
+
+This filter template allows you to remove parts of the Twitter interface, for a cleaner experience.
+
+Check out the [other Twitter filters](/filters/tag/twitter) too, and don't hesitate to suggest additions or fixes
+via the _Suggest a change_ link in the sidebar.
