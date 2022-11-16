@@ -4,8 +4,9 @@ on:
     paths:
       - 'data/filters/**'
 permissions:
-  contents: read  # for actions/checkout to fetch code
+  contents: write  # for actions/checkout to fetch code
   pull-requests: write  # for marocchino/sticky-pull-request-comment to create or update PR comment
+  packages: write
 
 jobs:
   filter-lint:
