@@ -1,5 +1,5 @@
-{ buildGoModule, go_1_18, cmd ? "server" }:
-buildGoModule.override { go = go_1_18; } {
+{ buildGoModule, go_1_19, cmd ? "server" }:
+buildGoModule.override { go = go_1_19; } {
   doCheck = false;
   pname = "letsblockit";
   src = ./..;

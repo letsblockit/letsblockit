@@ -1,5 +1,5 @@
-{ buildGoModule, fetchFromGitHub, go_1_18 }:
-buildGoModule.override { go = go_1_18; } rec {
+{ buildGoModule, fetchFromGitHub, go_1_19 }:
+buildGoModule.override { go = go_1_19; } rec {
   pname = "migrate";
   version = "4.15.2";
 
