@@ -2,7 +2,7 @@
   description = "letsblock.it server and helpers";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -10,7 +10,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        pinnedGo = pkgs.go_1_18;
+        pinnedGo = pkgs.go_1_19;
 
         # Scripts to wrap, with their dependencies, available via `nix run .#script-name`
         scripts = with pkgs; {
