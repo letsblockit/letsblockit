@@ -52,7 +52,8 @@ tests:
     output: |
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer #progress[style="width: 100%;"])
 ---
-This filter hides videos you already watched from the homepage, to allow to focus on new content only.
+
+This filter hides videos you already watched from the homepage, to allow to focus only on new content.
 
 You can select below which pages to filter videos on, and whether you'd want to keep partially-viewed videos, or hide
 them as well (the default behaviour).

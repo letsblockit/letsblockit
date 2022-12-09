@@ -14,4 +14,5 @@ tests:
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
       www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
 ---
+
 This template removes the mixes / radios showing up in search results and recommendations.

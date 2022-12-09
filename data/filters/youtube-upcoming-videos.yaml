@@ -13,6 +13,7 @@ tests:
       www.youtube.com##ytd-browse ytd-rich-item-renderer:has(ytd-thumbnail-overlay-time-status-renderer[overlay-style="UPCOMING"])
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail-overlay-time-status-renderer[overlay-style="UPCOMING"]:upward(ytd-item-section-renderer)
 ---
+
 Youtube gives enhanced visiblity to live streams, and many channels are abusing this by releasing regular videos as streams.
 
 Tired of seeing these "Upcoming" videos in your subscription list? Try this filter to hide them, until they are actually released.
