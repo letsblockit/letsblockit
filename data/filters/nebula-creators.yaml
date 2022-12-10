@@ -20,7 +20,8 @@ tests:
       nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/apple-talk"])
       nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/thomasfrankexplains"])
 ---
+
 This filter allows you to hide videos in the home page and "all videos" page, based on their creator.
 
-To get the code for a creator, go to their page, and take the last part of the address. For example Mike Boyd's
+To get the code for a creator, go to their page, and take the last part of the address. For example, Mike Boyd's
 page is [https://nebula.tv/mikeboyd](https://nebula.tv/mikeboyd), so his code is `mikeboyd`.
