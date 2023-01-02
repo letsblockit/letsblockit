@@ -3,7 +3,7 @@ module github.com/letsblockit/letsblockit
 go 1.18
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.1.1
+	github.com/DataDog/datadog-go/v5 v5.2.0
 	github.com/alecthomas/kong v0.7.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.11.1
@@ -16,7 +16,7 @@ require (
 	github.com/jackc/pgconn v1.13.0
 	github.com/jackc/pgtype v1.13.0
 	github.com/jackc/pgx/v4 v4.17.2
-	github.com/labstack/echo/v4 v4.9.1
+	github.com/labstack/echo/v4 v4.10.0
 	github.com/labstack/gommon v0.4.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.8.1
@@ -41,11 +41,11 @@ require (
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.1 // indirect
-	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
