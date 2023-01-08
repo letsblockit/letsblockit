@@ -44,14 +44,10 @@ template: |
   www.youtube.com##.super-title
   {{/if}}
   {{#if remove-text-after-buttons-below-video}}
-  www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
-  www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
   www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
   www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
   {{/if}}
   {{#if remove-copyright-notice}}
-  www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
-  www.youtube.com##[class*="video-secondary-info-renderer"] > #items:has(.ytd-video-description-music-section-renderer)
   www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
   {{/if}}
   {{#if remove-stream-chat}}
@@ -83,15 +79,11 @@ tests:
   - params:
       remove-text-after-buttons-below-video: true
     output: |
-      www.youtube.com###info > * [id^="top-level-buttons"] [class*="button-renderer"] [id="text"]:not(:has-text(/\d/))
-      www.youtube.com##.ytd-watch-metadata > .top-level-buttons #text:not(:has-text(/[\d]/))
       www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
       www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
   - params:
       remove-copyright-notice: true
     output: |
-      www.youtube.com##[class*="video-secondary-info-renderer"] #always-shown + #collapsible
-      www.youtube.com##[class*="video-secondary-info-renderer"] > #items:has(.ytd-video-description-music-section-renderer)
       www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
   - params:
       remove-stream-chat: true
