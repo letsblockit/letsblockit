@@ -23,12 +23,12 @@
     "watch": "parcel watch"
   },
   "devDependencies": {
-    "@parcel/compressor-gzip": "^2.8.1",
-    "@parcel/transformer-sass": "^2.8.1",
-    "@tabler/icons": "^1.116.1",
+    "@parcel/compressor-gzip": "^2.8.2",
+    "@parcel/transformer-sass": "^2.8.2",
+    "@tabler/icons": "^1.119.0",
     "bootstrap": "^5.2.3",
     "htmx.org": "^1.8.4",
-    "parcel": "^2.8.1",
+    "parcel": "^2.8.2",
     "parcel-namer-rewrite": "^2.0.0-rc.2"
   }
 }
