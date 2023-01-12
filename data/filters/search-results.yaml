@@ -42,6 +42,10 @@ params:
     description: Generate rules for Startpage.com
     type: checkbox
     default: false
+  - name: brave
+    description: Generate rules for Search.Brave.com
+    type: checkbox
+    default: false
   - name: sites
     description: Sites to hide
     type: list
@@ -708,6 +712,7 @@ tags:
   - kagi
   - searx
   - startpage
+  - brave
 template: |
   {{#each sites as |site siteId|}}
   {{#if ../bing}}
@@ -739,6 +744,11 @@ template: |
   startpage.com##.w-gl__result:has(a[href*="{{site}}"])
   startpage.com##.image-container:has(div.image-quick-details span:has-text({{site}}))
   {{/if}}
+  {{#if ../brave}}
+  search.brave.com###results a[href*="{{site}}"]:upward(.snippet)
+  search.brave.com###img-results a[href*="{{site}}"]:upward([id^="img"])
+  search.brave.com###results a[href*="{{site}}"]:upward(.card)
+  {{/if}}
   {{#if ../searx-enable}}
   {{#each searx-instances}}
   {{this}}###main_results .result:has(a[href*="{{site}}"])
@@ -756,6 +766,7 @@ tests:
         - .pinterest.
         - snapcraft.io/install
       startpage: true
+      brave: true
     output: |
       bing.com###b_content a[href*=".pinterest."]:upward(li)
       www.google.*##.g:has(a[href*=".pinterest."])
@@ -764,6 +775,9 @@ tests:
       duckduckgo.com##.tile-wrap a[href*=".pinterest."]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*=".pinterest."])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(.pinterest.))
+      search.brave.com###results a[href*=".pinterest."]:upward(.snippet)
+      search.brave.com###img-results a[href*=".pinterest."]:upward([id^="img"])
+      search.brave.com###results a[href*=".pinterest."]:upward(.card)
       bing.com###b_content a[href*="snapcraft.io/install"]:upward(li)
       www.google.*##.g:has(a[href*="snapcraft.io/install"])
       www.google.*##a[href*="snapcraft.io/install"]:upward(1)
@@ -771,6 +785,9 @@ tests:
       duckduckgo.com##.tile-wrap a[href*="snapcraft.io/install"]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))
+      search.brave.com###results a[href*="snapcraft.io/install"]:upward(.snippet)
+      search.brave.com###img-results a[href*="snapcraft.io/install"]:upward([id^="img"])
+      search.brave.com###results a[href*="snapcraft.io/install"]:upward(.card)
   - params:
       kagi: true
       searx-enable: true
