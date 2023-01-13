@@ -758,6 +758,7 @@ template: |
 tests:
   - params:
       bing: true
+      brave: true
       duckduckgo: true
       google: true
       searx-instances:
@@ -766,7 +767,6 @@ tests:
         - .pinterest.
         - snapcraft.io/install
       startpage: true
-      brave: true
     output: |
       bing.com###b_content a[href*=".pinterest."]:upward(li)
       www.google.*##.g:has(a[href*=".pinterest."])
