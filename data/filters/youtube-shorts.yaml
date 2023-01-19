@@ -17,6 +17,8 @@ template: |
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer .ytd-thumbnail[href^="/shorts/"]:upward(ytd-item-section-renderer)
   {{! Channels homepage }}
   www.youtube.com##ytd-browse[page-subtype="channels"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
+  {{! Search results }}
+  www.youtube.com##ytd-search #contents ytd-reel-shelf-renderer
   {{! Mobile homepage shorts shelf }}
   m.youtube.com##ytm-reel-shelf-renderer
   {{! Mobile navbar item }}
@@ -41,6 +43,7 @@ tests:
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-shelf-renderer:has(.ytd-thumbnail[href^="/shorts/"])
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer .ytd-thumbnail[href^="/shorts/"]:upward(ytd-item-section-renderer)
       www.youtube.com##ytd-browse[page-subtype="channels"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
+      www.youtube.com##ytd-search #contents ytd-reel-shelf-renderer
       m.youtube.com##ytm-reel-shelf-renderer
       m.youtube.com##ytm-pivot-bar-renderer div.pivot-shorts:upward(ytm-pivot-bar-item-renderer)
       m.youtube.com##ytm-browse ytm-item-section-renderer ytm-video-with-context-renderer:has(ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"])
