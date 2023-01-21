@@ -24,8 +24,8 @@ type BannedUser struct {
 type FilterInstance struct {
 	ID           int32
 	UserID       string
-	FilterListID int32
-	FilterName   string
+	ListID       int32
+	TemplateName string
 	Params       pgtype.JSONB
 	CreatedAt    time.Time
 	UpdatedAt    sql.NullTime

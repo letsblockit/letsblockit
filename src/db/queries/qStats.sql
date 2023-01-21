@@ -6,7 +6,7 @@ SELECT (SELECT COUNT(*) FROM filter_lists)                                      
 -- name: GetInstanceStats :many
 SELECT COUNT(*) as total,
        SUM(case when l.downloaded_at >= NOW() - INTERVAL '7 DAYS' then 1 else 0 end) as fresh,
-       filter_name
+       template_name
 FROM filter_instances
-         JOIN filter_lists AS l ON (filter_list_id = l.id)
-GROUP BY filter_name;
+         JOIN filter_lists AS l ON (list_id = l.id)
+GROUP BY template_name;
