@@ -1,0 +1,204 @@
+title: Hide websites from search results
+params:
+  - name: bing
+    description: Generate rules for Bing
+    type: checkbox
+    default: false
+  - name: duckduckgo
+    description: Generate rules for DuckDuckGo
+    type: checkbox
+    default: false
+  - name: duckduckgo-html
+    description: Also support DuckDuckGo's html-only interface
+    link: https://html.duckduckgo.com/html/
+    type: checkbox
+    onlyif: duckduckgo
+    default: false
+  - name: duckduckgo-lite
+    description: Also support DuckDuckGo's lite interface
+    link: https://lite.duckduckgo.com/lite/
+    type: checkbox
+    onlyif: duckduckgo
+    default: false
+  - name: google
+    description: Generate rules for Google Search
+    type: checkbox
+    default: true
+  - name: kagi
+    description: Generate rules for Kagi
+    type: checkbox
+    default: false
+  - name: searx-enable
+    description: Generate rules for SearX
+    type: checkbox
+    default: false
+  - name: searx-instances
+    description: SearX instances
+    type: list
+    onlyif: searx-enable
+    default:
+      - searx.thegpm.org
+  - name: startpage
+    description: Generate rules for Startpage.com
+    type: checkbox
+    default: false
+  - name: brave
+    description: Generate rules for Search.Brave.com
+    type: checkbox
+    default: false
+  - name: sites
+    description: Sites to hide
+    type: list
+    default:
+      - .pinterest.
+    presets:
+      - name: github-copycats
+        description: Hide Github copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/github_copycats.txt
+      - name: npm-copycats
+        description: Hide npm copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/npm_copycats.txt
+      - name: stackoverflow-copycats
+        description: Hide Stackoverflow copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/stackoverflow_copycats.txt
+      - name: wikipedia-copycats
+        description: Hide Wikipedia copycat websites
+        source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
+tags:
+  - bing
+  - duckduckgo
+  - google
+  - kagi
+  - searx
+  - startpage
+  - brave
+template: |
+  {{#each sites as |site siteId|}}
+  {{#if ../bing}}
+  bing.com###b_content a[href*="{{site}}"]:upward(li)
+  {{/if}}
+  {{#if ../google}}
+  www.google.*##.g:has(a[href*="{{site}}"])
+  www.google.*##a[href*="{{site}}"]:upward(1)
+  {{/if}}
+  {{#if ../duckduckgo}}
+  duckduckgo.com##a[data-testid="result-title-a"][href*="{{site}}"]:upward(.nrn-react-div)
+  duckduckgo.com##.tile-wrap a[href*="{{site}}"]:upward(.tile)
+  {{/if}}
+  {{#if ../duckduckgo-html}}
+  html.duckduckgo.com##.results a.result__a[href*="{{site}}"]:upward(.result)
+  {{/if}}
+  {{#if ../duckduckgo-lite}}
+  lite.duckduckgo.com##.result-link[href*="{{site}}"]:upward(tr)
+  lite.duckduckgo.com##.result-link[href*="{{site}}"]:upward(tr) + tr
+  lite.duckduckgo.com##.result-link[href*="{{site}}"]:upward(tr) + tr + tr
+  lite.duckduckgo.com##.result-link[href*="{{site}}"]:upward(tr) + tr + tr + tr
+  {{/if}}
+  {{#if ../kagi}}
+  kagi.com##.search-result:has(a.__sri-url[href*="{{site}}"])
+  kagi.com##.sri-group:has(a.__sri-url[href*="{{site}}"])
+  kagi.com##._0_image_item[data-host_url*="{{site}}"]
+  {{/if}}
+  {{#if ../startpage}}
+  startpage.com##.w-gl__result:has(a[href*="{{site}}"])
+  startpage.com##.image-container:has(div.image-quick-details span:has-text({{site}}))
+  {{/if}}
+  {{#if ../brave}}
+  search.brave.com###results a[href*="{{site}}"]:upward(.snippet)
+  search.brave.com###img-results a[href*="{{site}}"]:upward([id^="img"])
+  search.brave.com###results a[href*="{{site}}"]:upward(.card)
+  {{/if}}
+  {{#if ../searx-enable}}
+  {{#each searx-instances}}
+  {{this}}###main_results .result:has(a[href*="{{site}}"])
+  {{/each}}
+  {{/if}}
+  {{/each}}
+tests:
+  - params:
+      bing: true
+      brave: true
+      duckduckgo: true
+      google: true
+      searx-instances:
+        - searx.thegpm.org
+      sites:
+        - .pinterest.
+        - snapcraft.io/install
+      startpage: true
+    output: |
+      bing.com###b_content a[href*=".pinterest."]:upward(li)
+      www.google.*##.g:has(a[href*=".pinterest."])
+      www.google.*##a[href*=".pinterest."]:upward(1)
+      duckduckgo.com##a[data-testid="result-title-a"][href*=".pinterest."]:upward(.nrn-react-div)
+      duckduckgo.com##.tile-wrap a[href*=".pinterest."]:upward(.tile)
+      startpage.com##.w-gl__result:has(a[href*=".pinterest."])
+      startpage.com##.image-container:has(div.image-quick-details span:has-text(.pinterest.))
+      search.brave.com###results a[href*=".pinterest."]:upward(.snippet)
+      search.brave.com###img-results a[href*=".pinterest."]:upward([id^="img"])
+      search.brave.com###results a[href*=".pinterest."]:upward(.card)
+      bing.com###b_content a[href*="snapcraft.io/install"]:upward(li)
+      www.google.*##.g:has(a[href*="snapcraft.io/install"])
+      www.google.*##a[href*="snapcraft.io/install"]:upward(1)
+      duckduckgo.com##a[data-testid="result-title-a"][href*="snapcraft.io/install"]:upward(.nrn-react-div)
+      duckduckgo.com##.tile-wrap a[href*="snapcraft.io/install"]:upward(.tile)
+      startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
+      startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))
+      search.brave.com###results a[href*="snapcraft.io/install"]:upward(.snippet)
+      search.brave.com###img-results a[href*="snapcraft.io/install"]:upward([id^="img"])
+      search.brave.com###results a[href*="snapcraft.io/install"]:upward(.card)
+  - params:
+      kagi: true
+      searx-enable: true
+      searx-instances:
+        - searx.thegpm.org
+        - search.disroot.org
+      sites:
+        - .pinterest.
+        - snapcraft.io/install
+    output: |
+      kagi.com##.search-result:has(a.__sri-url[href*=".pinterest."])
+      kagi.com##.sri-group:has(a.__sri-url[href*=".pinterest."])
+      kagi.com##._0_image_item[data-host_url*=".pinterest."]
+      searx.thegpm.org###main_results .result:has(a[href*=".pinterest."])
+      search.disroot.org###main_results .result:has(a[href*=".pinterest."])
+      kagi.com##.search-result:has(a.__sri-url[href*="snapcraft.io/install"])
+      kagi.com##.sri-group:has(a.__sri-url[href*="snapcraft.io/install"])
+      kagi.com##._0_image_item[data-host_url*="snapcraft.io/install"]
+      searx.thegpm.org###main_results .result:has(a[href*="snapcraft.io/install"])
+      search.disroot.org###main_results .result:has(a[href*="snapcraft.io/install"])
+  - params:
+      duckduckgo-html: true
+      sites:
+        - .pinterest.
+    output: |
+      html.duckduckgo.com##.results a.result__a[href*=".pinterest."]:upward(.result)
+  - params:
+      duckduckgo-lite: true
+      sites:
+        - .pinterest.
+    output: |
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr)
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr + tr
+      lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr + tr + tr
+  - output: ""
+---
+
+Some websites are famous for being better at [Search Engine Optimization](https://news.ycombinator.com/item?id=25538586)
+than providing useful content. While there is not much we can do ourselves to avoid SEO abuse, we can clean up the search
+results returned to us by search engines.
+
+This template allows you to remove search results based on their URL for **both text and image searches**.
+It supports several search engines (and [contributions]
+(https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=search-results)
+are welcome to add suport for more!).
+Results will be hidden if their link destination contains one of the values you pass. For example:
+
+- Pinterest publishes content on an army of subdomains and country-specific domains; using `.pinterest.` allows you to block them all
+- snapcraft.io's SEO efforts focus on `snapcraft.io/install/X/Y` pages; using `snapcraft.io/install` limits the blocking to these pages
+
+
+The [uBlock-Origin-dev-filter](https://github.com/quenhus/uBlock-Origin-dev-filter) project maintains a list
+if copycat websites for Github and Stackoverflow. You can use their list by ticking the boxes at the bottom
+of the form. Rules to block these websites will be added at the bottom of the filter.

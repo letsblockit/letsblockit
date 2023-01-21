@@ -1,14 +1,22 @@
 package filters
 
 import (
-	"os"
+	"embed"
 	"strings"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/letsblockit/letsblockit/src/filters/mocks"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/yaml.v3"
 )
+
+//go:embed testdata/templates
+var testTemplates embed.FS
+
+//go:embed testdata/list.yaml
+var testList []byte
 
 type ListTestSuite struct {
 	suite.Suite
@@ -23,7 +31,7 @@ func (s *ListTestSuite) SetupTest() {
 	s.expectL = s.logger.EXPECT()
 
 	var err error
-	s.repository, err = LoadFilters(os.DirFS("testdata"))
+	s.repository, err = Load(testTemplates, testTemplates)
 	s.NoError(err)
 }
 
@@ -39,22 +47,11 @@ func (s *ListTestSuite) TestRenderEmpty() {
 }
 
 func (s *ListTestSuite) TestRenderOK() {
+	var list List
+	require.NoError(s.T(), yaml.Unmarshal(testList, &list))
+
 	buf := &strings.Builder{}
-	list := &List{
-		Title: "Test list",
-		Instances: []*Instance{{
-			Filter: "hello",
-		}, {
-			Filter: "hello",
-		}, {
-			Filter: "unknown",
-		}, {
-			Filter: "simple",
-			Params: map[string]interface{}{
-				"string_list": []string{"one", "two"},
-			},
-		}},
-	}
+
 	s.expectL.Warnf(gomock.Any(), "unknown", gomock.Any())
 	s.NoError(list.Render(buf, s.logger, s.repository))
 	s.Equal(`! Title: letsblock.it - Test list
@@ -78,9 +75,9 @@ func (s *ListTestSuite) TestValidateOK() {
 	list := &List{
 		Title: "Test list",
 		Instances: []*Instance{{
-			Filter: "hello",
+			Template: "hello",
 		}, {
-			Filter: "simple",
+			Template: "simple",
 			Params: map[string]interface{}{
 				"string_list": []string{"one", "two"},
 			},

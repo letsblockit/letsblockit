@@ -63,12 +63,12 @@ func (s *Server) listFilters(c echo.Context) error {
 		}
 	}
 
-	// Filter and group filters, or quick return on homepage
+	// Template and group filters, or quick return on homepage
 	if len(activeNames) == 0 && len(tag) == 0 {
-		hc.Add("available_filters", s.filters.GetFilters())
+		hc.Add("available_filters", s.filters.GetAll())
 	} else {
-		var active, available []*filters.Filter
-		for _, f := range s.filters.GetFilters() {
+		var active, available []*filters.Template
+		for _, f := range s.filters.GetAll() {
 			if tag != "" {
 				if !f.HasTag(tag) {
 					continue
@@ -87,7 +87,7 @@ func (s *Server) listFilters(c echo.Context) error {
 }
 
 func (s *Server) viewFilter(c echo.Context) error {
-	filter, err := s.filters.GetFilter(c.Param("name"))
+	filter, err := s.filters.Get(c.Param("name"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
@@ -184,7 +184,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 }
 
 func (s *Server) viewFilterRender(c echo.Context) error {
-	filter, err := s.filters.GetFilter(c.Param("name"))
+	filter, err := s.filters.Get(c.Param("name"))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
@@ -235,7 +235,7 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filte
 	return s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		count, err := q.CountInstanceForUserAndFilter(ctx, db.CountInstanceForUserAndFilterParams{
 			UserID:     user,
-			FilterName: instance.Filter,
+			FilterName: instance.Template,
 		})
 		if err != nil {
 			return err
@@ -248,14 +248,14 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filte
 			}
 			return q.CreateInstanceForUserAndFilter(ctx, db.CreateInstanceForUserAndFilterParams{
 				UserID:     user,
-				FilterName: instance.Filter,
+				FilterName: instance.Template,
 				Params:     out,
 				TestMode:   instance.TestMode,
 			})
 		} else {
 			return q.UpdateInstanceForUserAndFilter(ctx, db.UpdateInstanceForUserAndFilterParams{
 				UserID:     user,
-				FilterName: instance.Filter,
+				FilterName: instance.Template,
 				Params:     out,
 				TestMode:   instance.TestMode,
 			})
@@ -263,14 +263,14 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filte
 	})
 }
 
-func parseFilterParams(c echo.Context, filter *filters.Filter) (*filters.Instance, filterAction, error) {
+func parseFilterParams(c echo.Context, filter *filters.Template) (*filters.Instance, filterAction, error) {
 	formParams, err := c.FormParams()
 	if err != nil {
 		return nil, actionRender, err
 	}
 	if len(formParams) == 0 {
 		return &filters.Instance{
-			Filter: filter.Name,
+			Template: filter.Name,
 		}, actionRender, nil
 	}
 
@@ -282,7 +282,7 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (*filters.Instanc
 	}
 
 	instance := &filters.Instance{
-		Filter:   filter.Name,
+		Template: filter.Name,
 		Params:   make(map[string]interface{}),
 		TestMode: formParams.Get("__test_mode") == "on",
 	}
@@ -315,7 +315,7 @@ func parseFilterParams(c echo.Context, filter *filters.Filter) (*filters.Instanc
 }
 
 func (s *Server) hasMissingParams(instance db.GetActiveFiltersForUserRow) bool {
-	filter, err := s.filters.GetFilter(instance.FilterName)
+	filter, err := s.filters.Get(instance.FilterName)
 	if err != nil || len(filter.Params) == 0 {
 		return false
 	}

@@ -1,15 +1,11 @@
 package filters
 
 var (
-	PresetNameSeparator = "---preset---"
+	presetNameSeparator = "---preset---"
 	filenameSuffix      = ".yaml"
 	yamlSeparator       = []byte("\n---")
 	newLine             = []byte("\n")
 )
-
-type filter interface {
-	finishParsing(string)
-}
 
 type Preset struct {
 	Name        string   `validate:"required"`
@@ -19,12 +15,13 @@ type Preset struct {
 	Default     bool     `yaml:",omitempty"`
 }
 
-type Filter struct {
-	Name        string        `validate:"required" yaml:"-"`
-	Title       string        `validate:"required"`
-	Params      []FilterParam `validate:"dive" yaml:",omitempty"`
-	Tags        []string      `validate:"dive,alphaunicode" yaml:",omitempty"`
-	Template    string        `validate:"required"`
+type Template struct {
+	Name        string      `validate:"required" yaml:"-"`
+	Title       string      `validate:"required"`
+	Params      []Parameter `validate:"dive" yaml:",omitempty"`
+	Tags        []string    `validate:"dive,alphaunicode" yaml:",omitempty"`
+	Template    string      `validate:"required"`
+	Tests       []testCase
 	Description string        `validate:"required" yaml:"-"`
 	presets     []presetEntry `yaml:"-"` // Generated on parse from params and presets
 }
@@ -36,12 +33,7 @@ type presetEntry struct {
 	Value     interface{}
 }
 
-type FilterAndTests struct {
-	Filter `yaml:"a,inline"`
-	Tests  []testCase
-}
-
-type FilterParam struct {
+type Parameter struct {
 	Name        string      `validate:"required"`
 	Description string      `validate:"required"`
 	Link        string      `validate:"omitempty,url" yaml:",omitempty"`
@@ -65,28 +57,7 @@ type testCase struct {
 	Output string                 `validate:"required"`
 }
 
-func (f *FilterAndTests) finishParsing(desc string) {
-	f.Filter.finishParsing(desc)
-}
-
-func (f *Filter) finishParsing(desc string) {
-	f.Description = desc
-	for _, param := range f.Params {
-		if param.Type != StringListParam {
-			continue
-		}
-		for _, preset := range param.Presets {
-			f.presets = append(f.presets, presetEntry{
-				EnableKey: param.BuildPresetParamName(preset.Name),
-				Name:      preset.Name,
-				TargetKey: param.Name,
-				Value:     preset.Values,
-			})
-		}
-	}
-}
-
-func (f *Filter) HasTag(tag string) bool {
+func (f *Template) HasTag(tag string) bool {
 	for _, t := range f.Tags {
 		if t == tag {
 			return true
@@ -95,6 +66,6 @@ func (f *Filter) HasTag(tag string) bool {
 	return false
 }
 
-func (p *FilterParam) BuildPresetParamName(preset string) string {
-	return p.Name + PresetNameSeparator + preset
+func (p *Parameter) BuildPresetParamName(preset string) string {
+	return p.Name + presetNameSeparator + preset
 }

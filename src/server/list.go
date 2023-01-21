@@ -10,7 +10,7 @@ import (
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/users/auth"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 const listExportTemplate = `# letsblock.it filter list export
@@ -127,7 +127,7 @@ func convertFilterList(storedInstances []db.GetInstancesForListRow) (*filters.Li
 	var customFilterInstances []*filters.Instance
 	for _, storedInstance := range storedInstances {
 		instance := &filters.Instance{
-			Filter:   storedInstance.FilterName,
+			Template: storedInstance.FilterName,
 			Params:   make(map[string]interface{}),
 			TestMode: storedInstance.TestMode,
 		}
@@ -135,7 +135,7 @@ func convertFilterList(storedInstances []db.GetInstancesForListRow) (*filters.Li
 		if err != nil {
 			return nil, err
 		}
-		if instance.Filter == filters.CustomRulesFilterName {
+		if instance.Template == filters.CustomRulesFilterName {
 			customFilterInstances = append(customFilterInstances, instance)
 		} else {
 			list.Instances = append(list.Instances, instance)

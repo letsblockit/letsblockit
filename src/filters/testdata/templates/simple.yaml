@@ -1,4 +1,4 @@
-title: Filter title
+title: Template title
 params:
   - name: boolean_param
     description: A boolean parameter

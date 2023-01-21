@@ -13,13 +13,13 @@ const (
 ! Homepage: https://letsblock.it
 ! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 `
-	filterHeaderTemplate = `
+	instanceHeaderTemplate = `
 ! %s
 `
 )
 
 type Instance struct {
-	Filter   string                 `yaml:"filter" validate:"required"`
+	Template string                 `yaml:"template" validate:"required"`
 	Params   map[string]interface{} `yaml:"params,omitempty"`
 	TestMode bool                   `yaml:"test_mode,omitempty"`
 }
@@ -31,12 +31,12 @@ type List struct {
 }
 
 type repository interface {
-	GetFilter(name string) (*Filter, error)
+	Get(name string) (*Template, error)
 	Render(w io.Writer, instance *Instance) error
 }
 
 func (i *Instance) Render(out io.Writer, repo repository) error {
-	_, e := fmt.Fprintf(out, filterHeaderTemplate, i.Filter)
+	_, e := fmt.Fprintf(out, instanceHeaderTemplate, i.Template)
 	if e != nil {
 		return e
 	}
@@ -54,7 +54,7 @@ func (l *List) Render(out io.Writer, logger logger, repo repository) error {
 			i.TestMode = true
 		}
 		if err := i.Render(out, repo); err != nil {
-			logger.Warnf("skipping filter %s: %s", i.Filter, err)
+			logger.Warnf("skipping %s: %s", i.Template, err)
 		}
 	}
 	return nil

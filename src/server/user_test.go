@@ -20,8 +20,8 @@ func (s *ServerTestSuite) TestUserAccount_Ok() {
 	token, err := s.store.CreateListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
 	s.markListDownloaded()
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "one"}))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "two"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "one"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "two"}))
 
 	req := httptest.NewRequest(http.MethodGet, "/user/account", nil)
 

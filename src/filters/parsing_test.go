@@ -9,40 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var expectedFilter = Filter{
-	Name:  "simple",
-	Title: "Filter title",
-	Params: []FilterParam{
-		{
-			Name:        "boolean_param",
-			Description: "A boolean parameter",
-			Type:        BooleanParam,
-			Default:     true,
-		},
-		{
-			Name:        "another_boolean",
-			Description: "A disabled boolean parameter",
-			Type:        BooleanParam,
-			Default:     false,
-		},
-		{
-			Name:        "string_param",
-			Description: "A string parameter",
-			Type:        StringParam,
-			Default:     "René Coty",
-		},
-		{
-			Name:        "string_list",
-			Description: "A list of strings",
-			Type:        StringListParam,
-			Default:     []interface{}{"abc", "123"},
-		},
-	},
-	Tags:        []string{"tag1", "tag2"},
-	Template:    "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
-	Description: "<h2>Test description title</h2>\n",
-}
-
 func buildValidator(t *testing.T) *validator.Validate {
 	var validate = validator.New()
 	err := validate.RegisterValidation("valid_default", func(fl validator.FieldLevel) bool {
@@ -69,7 +35,7 @@ func buildValidator(t *testing.T) *validator.Validate {
 		if fl.Parent().FieldByName("Name").String() == target {
 			return false // Referencing itself
 		}
-		if filter, ok := (fl.Top().Interface()).(*Filter); ok {
+		if filter, ok := (fl.Top().Interface()).(*Template); ok {
 			for _, p := range filter.Params {
 				if p.Name == target && p.Type == BooleanParam {
 					return true
@@ -82,27 +48,45 @@ func buildValidator(t *testing.T) *validator.Validate {
 	return validate
 }
 
-func TestParseFilter(t *testing.T) {
-	file, err := os.Open("testdata/simple.yaml")
+func TestParseTemplate(t *testing.T) {
+	file, err := os.Open("testdata/templates/simple.yaml")
 	require.NoError(t, err)
 	defer file.Close()
 
-	filter, err := parseFilter("simple", file)
+	filter, err := parseTemplate("simple", file)
 	require.NoError(t, err)
 
-	assert.EqualValues(t, &expectedFilter, filter)
-}
-
-func TestParseFilterAndTest(t *testing.T) {
-	file, err := os.Open("testdata/simple.yaml")
-	require.NoError(t, err)
-	defer file.Close()
-
-	filter, err := parseFilterAndTest("simple", file)
-	require.NoError(t, err)
-
-	assert.EqualValues(t, &FilterAndTests{
-		Filter: expectedFilter,
+	expectedTemplate := Template{
+		Name:  "simple",
+		Title: "Template title",
+		Params: []Parameter{
+			{
+				Name:        "boolean_param",
+				Description: "A boolean parameter",
+				Type:        BooleanParam,
+				Default:     true,
+			},
+			{
+				Name:        "another_boolean",
+				Description: "A disabled boolean parameter",
+				Type:        BooleanParam,
+				Default:     false,
+			},
+			{
+				Name:        "string_param",
+				Description: "A string parameter",
+				Type:        StringParam,
+				Default:     "René Coty",
+			},
+			{
+				Name:        "string_list",
+				Description: "A list of strings",
+				Type:        StringListParam,
+				Default:     []interface{}{"abc", "123"},
+			},
+		},
+		Tags:     []string{"tag1", "tag2"},
+		Template: "{{#each string_list}}\n{{ . }}\n{{/each}}\n",
 		Tests: []testCase{{
 			Params: map[string]interface{}{
 				"boolean_param": true,
@@ -111,18 +95,20 @@ func TestParseFilterAndTest(t *testing.T) {
 			},
 			Output: "one\ntwo\nthree\n",
 		}},
-	}, filter)
+		Description: "<h2>Test description title</h2>\n",
+	}
+	assert.EqualValues(t, &expectedTemplate, filter)
 }
 
 type vErrs map[string]string
 
-func TestValidateFilter(t *testing.T) {
+func TestValidateTemplate(t *testing.T) {
 	tests := map[string]struct {
-		input filter
+		input *Template
 		err   vErrs
 	}{
 		"simple_ok": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
@@ -131,21 +117,21 @@ func TestValidateFilter(t *testing.T) {
 			err: nil,
 		},
 		"all_missing": {
-			input: &Filter{},
+			input: &Template{},
 			err: vErrs{
-				"Filter.Name":        "required",
-				"Filter.Title":       "required",
-				"Filter.Template":    "required",
-				"Filter.Description": "required",
+				"Template.Name":        "required",
+				"Template.Title":       "required",
+				"Template.Template":    "required",
+				"Template.Description": "required",
 			},
 		},
 		"param_ok": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
-				Params: []FilterParam{
+				Params: []Parameter{
 					{
 						Name:        "param1",
 						Description: "desc",
@@ -169,12 +155,12 @@ func TestValidateFilter(t *testing.T) {
 			},
 		},
 		"param_bad_type": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
-				Params: []FilterParam{
+				Params: []Parameter{
 					{
 						Name:        "param",
 						Description: "desc",
@@ -184,34 +170,34 @@ func TestValidateFilter(t *testing.T) {
 				},
 			},
 			err: vErrs{
-				"Filter.Params[0].Type":    "oneof",
-				"Filter.Params[0].Default": "valid_default",
+				"Template.Params[0].Type":    "oneof",
+				"Template.Params[0].Default": "valid_default",
 			},
 		},
 		"param_empty": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
-				Params: []FilterParam{
+				Params: []Parameter{
 					{},
 				},
 			},
 			err: vErrs{
-				"Filter.Params[0].Name":        "required",
-				"Filter.Params[0].Description": "required",
-				"Filter.Params[0].Type":        "required",
-				"Filter.Params[0].Default":     "valid_default",
+				"Template.Params[0].Name":        "required",
+				"Template.Params[0].Description": "required",
+				"Template.Params[0].Type":        "required",
+				"Template.Params[0].Default":     "valid_default",
 			},
 		},
 		"onlyif_bad_type": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
-				Params: []FilterParam{
+				Params: []Parameter{
 					{
 						Name:        "param1",
 						Description: "desc",
@@ -228,16 +214,16 @@ func TestValidateFilter(t *testing.T) {
 				},
 			},
 			err: vErrs{
-				"Filter.Params[1].OnlyIf": "valid_only_if",
+				"Template.Params[1].OnlyIf": "valid_only_if",
 			},
 		},
 		"onlyif_unknown": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
-				Params: []FilterParam{
+				Params: []Parameter{
 					{
 						Name:        "param3",
 						Description: "desc",
@@ -248,16 +234,16 @@ func TestValidateFilter(t *testing.T) {
 				},
 			},
 			err: vErrs{
-				"Filter.Params[0].OnlyIf": "valid_only_if",
+				"Template.Params[0].OnlyIf": "valid_only_if",
 			},
 		},
 		"onlyif_self": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
 				Description: "desc",
-				Params: []FilterParam{
+				Params: []Parameter{
 					{
 						Name:        "param3",
 						Description: "desc",
@@ -268,11 +254,11 @@ func TestValidateFilter(t *testing.T) {
 				},
 			},
 			err: vErrs{
-				"Filter.Params[0].OnlyIf": "valid_only_if",
+				"Template.Params[0].OnlyIf": "valid_only_if",
 			},
 		},
 		"invalid_tags": {
-			input: &Filter{
+			input: &Template{
 				Name:        "name",
 				Title:       "title",
 				Template:    "template",
@@ -280,7 +266,7 @@ func TestValidateFilter(t *testing.T) {
 				Tags:        []string{"abc", "%%"},
 			},
 			err: vErrs{
-				"Filter.Tags[1]": "alphaunicode",
+				"Template.Tags[1]": "alphaunicode",
 			},
 		},
 	}

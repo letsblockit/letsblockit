@@ -19,7 +19,7 @@ func (s *ServerTestSuite) TestLanding_LoggedIn() {
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       filterTags,
-		"available_filters": []*filters.Filter{filter1, filter2, filter3},
+		"available_filters": []*filters.Template{filter1, filter2, filter3},
 	})
 	s.runRequest(req, assertOk)
 }

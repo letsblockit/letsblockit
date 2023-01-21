@@ -11,8 +11,11 @@ import (
 //go:embed assets
 var Assets embed.FS
 
-//go:embed filters
-var Filters embed.FS
+//go:embed filters/templates
+var Templates embed.FS
+
+//go:embed filters/presets
+var Presets embed.FS
 
 //go:embed pages/*
 var Pages embed.FS

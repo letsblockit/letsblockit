@@ -20,9 +20,9 @@ import (
 
 var (
 	filterRepo *filters.Repository
-	filter1    *filters.Filter
-	filter2    *filters.Filter
-	filter3    *filters.Filter
+	filter1    *filters.Template
+	filter2    *filters.Template
+	filter3    *filters.Template
 
 	filter2Defaults = map[string]any{
 		"one":                    "default",
@@ -60,14 +60,14 @@ hello presetB blep:style(border: 2px dashed red !important)
 func (s *ServerTestSuite) TestListFilters_OK() {
 	req := httptest.NewRequest(http.MethodGet, "/filters", nil)
 
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1", TestMode: true}))
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "filter1", TestMode: true}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "filter2"}))
 	token := s.markListDownloaded()
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       filterTags,
-		"active_filters":    []*filters.Filter{filter1, filter2},
-		"available_filters": []*filters.Filter{filter3},
+		"active_filters":    []*filters.Template{filter1, filter2},
+		"available_filters": []*filters.Template{filter3},
 		"testing_filters":   map[string]bool{"filter1": true},
 		"list_downloaded":   true,
 		"list_token":        token,
@@ -79,15 +79,15 @@ func (s *ServerTestSuite) TestListFilters_OK() {
 func (s *ServerTestSuite) TestListFilters_ByTag() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/tag/tag2", nil)
 
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter1"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "filter1"}))
 	list, err := s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
 
 	s.expectRender("list-filters", pages.ContextData{
 		"filter_tags":       filterTags,
 		"tag_search":        "tag2",
-		"active_filters":    []*filters.Filter{filter1},
-		"available_filters": []*filters.Filter{filter2},
+		"active_filters":    []*filters.Template{filter1},
+		"available_filters": []*filters.Template{filter2},
 		"list_downloaded":   false,
 		"list_token":        list.Token.String(),
 	})
@@ -124,8 +124,8 @@ func (s *ServerTestSuite) TestViewFilter_HasInstance() {
 		"three": []any{"one", "two"},
 	}
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
-		Filter: "filter2",
-		Params: params,
+		Template: "filter2",
+		Params:   params,
 	}))
 	s.expectRender("view-filter", pages.ContextData{
 		"filter":       filter2,
@@ -146,7 +146,7 @@ func (s *ServerTestSuite) TestViewFilter_HasTestInstance() {
 		"three": []any{"one", "two"},
 	}
 	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
-		Filter:   "filter2",
+		Template: "filter2",
 		Params:   params,
 		TestMode: true,
 	}))
@@ -233,7 +233,7 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 }
 
 func (s *ServerTestSuite) TestViewFilter_Update() {
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "filter2"}))
 	s.requireInstanceCount("filter2", 1)
 
 	f := buildFilter2PresetBody()
@@ -264,7 +264,7 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 }
 
 func (s *ServerTestSuite) TestViewFilter_Disable() {
-	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Filter: "filter2"}))
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "filter2"}))
 	s.requireInstanceCount("filter2", 1)
 
 	f := make(url.Values)

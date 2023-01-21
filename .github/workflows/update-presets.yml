@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
       - name: Download updated presets
-        run: go run ./cmd/update-filters/ presets
+        run: go run ./cmd/update-presets/
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:

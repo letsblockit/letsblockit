@@ -8,7 +8,7 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/letsblockit/letsblockit/data"
 	"github.com/letsblockit/letsblockit/src/filters"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Alias outputs to allow capturing them in tests
@@ -42,7 +42,7 @@ func (c *renderCmd) Run() error {
 		}
 	}
 
-	repo, err := filters.LoadFilters(data.Filters)
+	repo, err := filters.Load(data.Templates, data.Presets)
 	if err != nil {
 		return fmt.Errorf("cannot load filter templates: %w", err)
 	}
