@@ -1,6 +1,17 @@
 -- Rename columns to better match template/filter semantics
-alter table filter_instances rename column filter_list_id to list_id;
-alter table filter_instances rename column filter_name to template_name;
+ALTER TABLE filter_instances RENAME COLUMN filter_list_id TO list_id;
+ALTER TABLE filter_instances RENAME COLUMN filter_name TO template_name;
 
 -- Use downloaded_at IS NOT NULL instead
-alter table filter_lists drop column downloaded;
+ALTER TABLE filter_lists DROP COLUMN downloaded;
+
+-- Use timestampz everywhere
+-- PG will convert existing values using the connection's TZ
+ALTER TABLE banned_users ALTER created_at TYPE timestamptz;
+ALTER TABLE banned_users ALTER lifted_at TYPE timestamptz;
+ALTER TABLE filter_instances ALTER created_at TYPE timestamptz;
+ALTER TABLE filter_instances ALTER updated_at TYPE timestamptz;
+ALTER TABLE filter_lists ALTER created_at TYPE timestamptz;
+ALTER TABLE filter_lists ALTER downloaded_at TYPE timestamptz;
+ALTER TABLE user_preferences ALTER news_cursor TYPE timestamptz;
+ALTER TABLE user_preferences ALTER news_cursor SET DEFAULT NOW();

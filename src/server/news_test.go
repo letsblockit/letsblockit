@@ -53,7 +53,7 @@ func (s *ServerTestSuite) TestNews_LoggedIn() {
 	// Test news cursor has been updated
 	pref, err := s.server.preferences.Get(s.c, s.user)
 	require.NoError(s.T(), err)
-	require.EqualValues(s.T(), exampleReleases[0].CreatedAt, pref.NewsCursor)
+	require.True(s.T(), exampleReleases[0].CreatedAt.Equal(pref.NewsCursor))
 }
 
 func (s *ServerTestSuite) TestNews_NoNews() {

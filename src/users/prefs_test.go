@@ -18,7 +18,7 @@ import (
 const maxTimeSkew = 100 * time.Millisecond
 
 func pastNow(hours int64) time.Time {
-	return time.Now().UTC().Add(time.Duration(-1*hours) * time.Hour).Round(time.Second)
+	return time.Now().Add(time.Duration(-1*hours) * time.Hour).Round(time.Second)
 }
 
 type PreferenceManagerSuite struct {
