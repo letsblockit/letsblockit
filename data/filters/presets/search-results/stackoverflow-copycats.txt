@@ -3,6 +3,7 @@
 91r.net/
 955yes.com/
 9to5answer.com/
+9to5science.com/
 addcodings.com/
 adoclib.com/
 aing.railpage.com.au/
@@ -16,6 +17,7 @@ angularfixing.com/
 angularquestions.com/
 ansaurus.com/
 answacode.com/
+answall.com/
 answer-id.com/
 answerbun.com/
 answeright.com/
@@ -48,6 +50,7 @@ blogmepost.com/
 boolchr.com/
 bootpanic.com/
 boxhoidap.com/
+breadybready.blogspot.com/
 brocante.dev/
 buzzphp.com/
 cainiaojiaocheng.com/
@@ -96,9 +99,11 @@ codewdw.com/
 codingdict.com/
 configrouter.com/
 contactform.dev/
+coolfire25.com/
 copyfuture.com/
 copyprogramming.com/
 coredump.biz/
+cplusplusbug.info/
 crex24.com/
 csdn.net/
 culinarydegree.info/
@@ -161,6 +166,7 @@ faithcov.org/
 faqcode4u.com/
 faqcodes.com/
 farath.com/
+find-error.com/
 fitforlearning.org/
 fixes.pub/
 fixpython.com/
@@ -201,6 +207,7 @@ imtqy.com/
 ingrom.com/
 intelligentsystemsmonitoring.com/
 intellipaat.com/
+interface.pub/
 invalidtype.com/
 isolution.pro/
 issuecloser.com/
@@ -220,6 +227,7 @@ it-swarm.net/
 it-swarm.xyz/
 it1352.com/
 itbaoku.cn/
+itcodar.com/
 itdaan.com/
 itecnote.com/
 itecnotes.com/
@@ -257,7 +265,9 @@ libsea.com/
 likecs.com/
 linuxfixes.com/
 living-sun.com/
+lmlphp.com/
 localcoder.org/
+lokasi.live/
 lowongan.live/
 lycaeum.dev/
 madanswer.com/
@@ -267,6 +277,7 @@ mars.railpage.com.au/
 maxinterview.com/
 mediatagtw.com/
 microeducate.tech/
+minggu.live/
 mlink.in/
 mlog.club/
 mortgagefasr860.weebly.com/
@@ -310,6 +321,7 @@ pakostnici.com/
 panaindustrial.com/
 pcbconline.org/
 peaku.co/
+pnpsummit.com/
 poweruser.guru/
 pretagteam.com/
 proanswers.org/
@@ -321,6 +333,7 @@ programmierfrage.com/
 programming-articles.com/
 projectbackpack.org/
 proubuntu.ru/
+pullrequest.ru/
 py4u.net/
 py4u.org/
 pyquestions.com/
@@ -360,6 +373,7 @@ qastack.net.bd/
 qastack.ru/
 qastack.vn/
 qi-u.com/
+qiniu.com/
 quabr.com/
 quares.ru/
 querythreads.com/
@@ -384,6 +398,7 @@ saca.aussievitamin.com/
 safehavenpetrescue.org/
 sargon24.com/
 sch22.org/
+segmentfault.com/
 semicolonworld.com/
 serveanswer.com/
 server-fault.ru/
@@ -419,6 +434,7 @@ stackoverflood.com/
 stackoverflowpoint.com/
 stackovergo.com/
 stackoverline.cyou/
+stackprinter.com/
 stackqna.com/
 stackru.com/
 stackubuntu.com/
@@ -434,6 +450,7 @@ switch-case.com/
 switch-case.ru/
 syntaxfix.com/
 sysadminde.com/
+tagmerge.com/
 tech.wayne-chu.com/
 techarks.ru/
 techfeed.net/
@@ -474,6 +491,7 @@ voidcc.com/
 vuejscode.com/
 w3coded.com/
 w3codelab.com/
+w3guides.com/
 w3programmers.org/
 w3toppers.com/
 waymanamechurch.org/
@@ -485,6 +503,7 @@ webdevdesigner.com/
 webdevqa.jp.net/
 webknox.com/
 webmonkez.com/
+whereismyanswer.com/
 while-do.com/
 wikifix.dev/
 wikiroot.ru/

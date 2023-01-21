@@ -3,7 +3,6 @@ andywarholpopartillustration.blogspot.com/
 awesomeopensource.com/
 bestofcpp.com/
 bestofflutter.com/
-bestofjava.com/
 bestofphp.com/
 bestofreactjs.com/
 bestofvue.com/
@@ -31,7 +30,6 @@ github.astrophel.org/
 github.innominds.com/
 github.phala.one/
 githubhelp.com/
-githubhot.com/
 githubja.com/
 githublab.com/
 githubmate.com/
@@ -39,7 +37,6 @@ githubmemory.com/
 githubplus.com/
 gitmemories.com/
 gitmemory.cn/
-gitmemory.com/
 gitmetadata.com/
 gitmotion.com/
 golangexample.com/
@@ -55,12 +52,10 @@ issuemode.com/
 javarepos.com/
 jsrepos.com/
 libhunt.com/
-lifesaver.codes/
-lightrun.com/
+lightrun.com/answers/
 macosrepo.com/
 news24lite.com/
 newworldencyclopedia.org/
-openprojectrepo.com/
 opensourceagenda.com/
 opensourcelibs.com/
 pullanswer.com/
@@ -69,13 +64,12 @@ pythonissues.com/
 pythonlang.dev/
 pythonrepo.com/
 pythontechworld.com/
-readintrend.com/
 reposhub.com/
 rpkg.in/
 rustrepo.com/
 softbranchdevelopers.com/
 swiftobc.com/
-vuejscode.com/
+web.bluecomtech.com/
 wenyanet.com/
 wikimili.com/
 zzun.app/
