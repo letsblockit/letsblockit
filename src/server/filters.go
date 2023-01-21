@@ -52,7 +52,7 @@ func (s *Server) listFilters(c echo.Context) error {
 		if len(instances) > 0 {
 			if info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID); err == nil {
 				hc.Add("list_token", info.Token.String())
-				hc.Add("list_downloaded", info.Downloaded)
+				hc.Add("list_downloaded", info.DownloadedAt.Valid)
 			}
 		}
 		if len(updatedFilters) > 0 {

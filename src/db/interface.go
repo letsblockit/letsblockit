@@ -26,7 +26,6 @@ type Querier interface {
 	GetListForUser(ctx context.Context, userID string) (GetListForUserRow, error)
 	GetStats(ctx context.Context) (GetStatsRow, error)
 	GetUserPreferences(ctx context.Context, userID string) (UserPreference, error)
-	HasUserDownloadedList(ctx context.Context, userID string) (bool, error)
 	InitUserPreferences(ctx context.Context, userID string) (UserPreference, error)
 	LiftUserBan(ctx context.Context, arg LiftUserBanParams) error
 	MarkListDownloaded(ctx context.Context, token uuid.UUID) error

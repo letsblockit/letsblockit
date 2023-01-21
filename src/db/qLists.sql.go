@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -38,28 +39,28 @@ func (q *Queries) CreateListForUser(ctx context.Context, userID string) (uuid.UU
 }
 
 const getListForToken = `-- name: GetListForToken :one
-SELECT id, user_id, downloaded
+SELECT id, user_id, downloaded_at
 FROM filter_lists
 WHERE token = $1
 LIMIT 1
 `
 
 type GetListForTokenRow struct {
-	ID         int32
-	UserID     string
-	Downloaded bool
+	ID           int32
+	UserID       string
+	DownloadedAt sql.NullTime
 }
 
 func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error) {
 	row := q.db.QueryRow(ctx, getListForToken, token)
 	var i GetListForTokenRow
-	err := row.Scan(&i.ID, &i.UserID, &i.Downloaded)
+	err := row.Scan(&i.ID, &i.UserID, &i.DownloadedAt)
 	return i, err
 }
 
 const getListForUser = `-- name: GetListForUser :one
 SELECT token,
-       downloaded,
+       downloaded_at,
        (SELECT COUNT(*) FROM filter_instances WHERE filter_instances.user_id = $1) AS instance_count
 FROM filter_lists
 WHERE filter_lists.user_id = $1
@@ -68,35 +69,20 @@ LIMIT 1
 
 type GetListForUserRow struct {
 	Token         uuid.UUID
-	Downloaded    bool
+	DownloadedAt  sql.NullTime
 	InstanceCount int64
 }
 
 func (q *Queries) GetListForUser(ctx context.Context, userID string) (GetListForUserRow, error) {
 	row := q.db.QueryRow(ctx, getListForUser, userID)
 	var i GetListForUserRow
-	err := row.Scan(&i.Token, &i.Downloaded, &i.InstanceCount)
+	err := row.Scan(&i.Token, &i.DownloadedAt, &i.InstanceCount)
 	return i, err
-}
-
-const hasUserDownloadedList = `-- name: HasUserDownloadedList :one
-SELECT downloaded
-FROM filter_lists
-WHERE filter_lists.user_id = $1
-LIMIT 1
-`
-
-func (q *Queries) HasUserDownloadedList(ctx context.Context, userID string) (bool, error) {
-	row := q.db.QueryRow(ctx, hasUserDownloadedList, userID)
-	var downloaded bool
-	err := row.Scan(&downloaded)
-	return downloaded, err
 }
 
 const markListDownloaded = `-- name: MarkListDownloaded :exec
 UPDATE filter_lists
-SET downloaded    = true,
-    downloaded_at = NOW()
+SET downloaded_at = NOW()
 WHERE token = $1
 `
 
@@ -108,7 +94,7 @@ func (q *Queries) MarkListDownloaded(ctx context.Context, token uuid.UUID) error
 const rotateListToken = `-- name: RotateListToken :exec
 UPDATE filter_lists
 SET token      = gen_random_uuid(),
-    downloaded = false
+    downloaded_at = NULL
 WHERE user_id = $1
   AND token = $2
 `

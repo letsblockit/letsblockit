@@ -37,7 +37,6 @@ type FilterList struct {
 	UserID       string
 	Token        uuid.UUID
 	CreatedAt    time.Time
-	Downloaded   bool
 	DownloadedAt sql.NullTime
 }
 

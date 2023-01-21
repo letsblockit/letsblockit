@@ -20,7 +20,7 @@ func (s *Server) userAccount(c echo.Context) error {
 			switch err {
 			case nil:
 				hc.Add("filter_count", info.InstanceCount)
-				hc.Add("list_downloaded", info.Downloaded)
+				hc.Add("list_downloaded", info.DownloadedAt.Valid)
 				hc.Add("list_token", info.Token.String())
 				return nil
 			case db.NotFound:
