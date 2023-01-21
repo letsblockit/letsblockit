@@ -1,6 +1,6 @@
 module github.com/letsblockit/letsblockit
 
-go 1.18
+go 1.19
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.2.0
