@@ -1,7 +1,7 @@
 { buildGoModule, fetchFromGitHub, go_1_19 }:
 buildGoModule.override { go = go_1_19; } rec {
   pname = "sqlc";
-  version = "1.14.0";
+  version = "1.16.0";
 
   src = fetchFromGitHub {
     owner = "kyleconroy";
