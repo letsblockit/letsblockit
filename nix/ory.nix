@@ -1,7 +1,7 @@
 { buildGoModule, fetchFromGitHub, go_1_19 }:
 buildGoModule.override { go = go_1_19; } rec {
   pname = "ory";
-  version = "0.1.35";
+  version = "0.2.1";
 
   src = fetchFromGitHub {
     owner = "ory";
