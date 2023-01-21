@@ -44,7 +44,7 @@ Instead of simple word matching, this template uses Regular Expressions to reduc
 You should [read this documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
 to learn the syntax, but the following examples should help you get started:
 
-- You can specify any sequence of characters, that will be searched in the product title. For example:
+- You can specify any sequence of characters that will be searched in the product title. For example:
     - `/Echo Show/` will match the `Echo Show 8` product, but not the `Echo Dot`
     - `/Cat/` will match `Cat Hammock`, but also `Catapult`
 - For a case-insensitive search, simply add `i` at the end of your expression. For example:

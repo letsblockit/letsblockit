@@ -87,7 +87,7 @@ tests:
 ---
 
 Google has dramatically decreased the information density of their search results, by mixing in more and more "Rich
-content" and contextual suggestions. This filter template helps reducing that noise, to focus on web pages only:
+content" and contextual suggestions. This filter template helps reducing that noise, to focus only on web pages:
 
 - The first option removes most "Rich content" blocks (videos, images, maps, news...). You can still access these
   results by going to the specific search pages

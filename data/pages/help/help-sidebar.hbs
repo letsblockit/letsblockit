@@ -2,7 +2,7 @@
     <a class="nav-link mb-2" href="{{href "help-main" ""}}">← Back to help center</a>
 
     {{#each menu_sections}}
-        <a class="navbar-brand">{{this.Title}}</a>
+        <span class="navbar-brand">{{this.Title}}</span>
         <nav class="nav nav-pills flex-column">
             {{#each this.Pages}}
                 <a class="nav-link {{#equal this.Code @root.Data.page.Code}}active{{/equal}}" href="{{href "help" this.Code}}">{{this.Title}}</a>

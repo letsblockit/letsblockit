@@ -1,5 +1,5 @@
-{ buildGoModule, fetchFromGitHub, go_1_18 }:
-buildGoModule.override { go = go_1_18; } rec {
+{ buildGoModule, fetchFromGitHub, go_1_19 }:
+buildGoModule.override { go = go_1_19; } rec {
   pname = "sqlc";
   version = "1.14.0";
 
@@ -10,7 +10,7 @@ buildGoModule.override { go = go_1_18; } rec {
     sha256 = "sha256-+JkNuN5Hv1g1+UpJEBZpf7QV/3A85IVzMa5cfeRSQRo=";
   };
 
-  vendorSha256 = "sha256-eMghAqOiyX/EbXg/Q3Bxb3Xx8N5ekFGBwn1AMIGY+hw=";
+  vendorSha256 = "sha256-QG/pIsK8krBaO5IDgln10jpCnlw3XC8sIYyzuwYjTs0=";
   proxyVendor = true; # pg_query_go ships the C headers in its module
   doCheck = false;
 }

@@ -6,6 +6,7 @@ on:
 jobs:
   upgrade-deps:
     runs-on: ubuntu-latest
+    if: github.repository == 'letsblockit/letsblockit'
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v18

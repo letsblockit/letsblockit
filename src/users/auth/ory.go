@@ -67,7 +67,7 @@ var (
 		"recovery": {
 			Title: "Recover your account",
 			Tabs:  loginTabs,
-			Intro: `Enter your e-mail below, we will send you a recovery link from <code>no-reply@oryapis.com</code> to login and set a new password.`,
+			Intro: `Enter your e-mail below to receive a recovery code from <code>no-reply@oryapis.com</code>. Input that code to login and set a new password.`,
 		},
 		"registration": {
 			Title: "Create a new account",

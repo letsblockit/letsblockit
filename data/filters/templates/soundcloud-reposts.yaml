@@ -76,6 +76,6 @@ Soundcloud allows artists to post original music, but also to share ("repost") o
 interested in original music by the artists you follow, this filter template is for you.
 
 It will hide reposts in the stream page and the user page. By default, reposts from all users are hidden, but you
-can chose to only hide them from a specific list of users. To specify users, you need to give the last part of the
-address of their profile page. For example Levi Patel's page is [https://soundcloud.com/levipatel](https://soundcloud.com/levipatel),
+can choose to only hide them from a specific list of users. To specify users, you need to give the last part of the
+address of their profile page. For example, Levi Patel's page is [https://soundcloud.com/levipatel](https://soundcloud.com/levipatel),
 so you should input `levipatel`.

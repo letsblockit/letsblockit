@@ -1,13 +1,14 @@
 name: "Release container images"
 on:
   push:
-#    branches:
-#      - main
+    branches:
+      - main
     tags:
       - '*'
 jobs:
   container-release:
     runs-on: ubuntu-latest
+    if: github.repository == 'letsblockit/letsblockit'
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v18
@@ -21,14 +22,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push tagged
-        run: |
-          docker tag ghcr.io/letsblockit/render:latest ghcr.io/letsblockit/render:$GITHUB_REF_NAME
-          docker push ghcr.io/letsblockit/render:$GITHUB_REF_NAME
-          docker tag ghcr.io/letsblockit/server:latest ghcr.io/letsblockit/server:$GITHUB_REF_NAME
-          docker push ghcr.io/letsblockit/server:$GITHUB_REF_NAME
-      - name: Push latest
+      - name: Push releases from tag
         if: ${{ github.ref_type == 'tag' }}
         run: |
-          docker push ghcr.io/letsblockit/render:latest
-          docker push ghcr.io/letsblockit/server:latest
+          ./scripts/push-container.sh render:latest render:$GITHUB_REF_NAME
+          ./scripts/push-container.sh render:latest
+          ./scripts/push-container.sh server:latest server:$GITHUB_REF_NAME
+          ./scripts/push-container.sh server:latest
+      - name: Push dev images from branch
+        if: ${{ github.ref_type == 'branch' }}
+        run: |
+          ./scripts/push-container.sh server:latest server-dev:${GITHUB_SHA::7}
+          ./scripts/push-container.sh server:latest server-dev:$GITHUB_REF_NAME

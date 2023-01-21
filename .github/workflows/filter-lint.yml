@@ -1,0 +1,36 @@
+name: "Filter linting"
+on:
+  pull_request_target:
+    paths:
+      - 'data/filters/**'
+permissions:
+  contents: read  # for actions/checkout to fetch code
+  pull-requests: write  # for marocchino/sticky-pull-request-comment to create or update PR comment
+
+jobs:
+  filter-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-go@v3
+      - name: Run linting and save output
+        run: go test ./src/filters/ > output.txt
+      - name: Comment on success
+        if: ${{ success() }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: filter-lint
+          path: .github/filter-lint-ok.md
+      - name: Failure report generation
+        if: ${{ failure() }}
+        run: |
+          export OUTPUT=$(cat output.txt)
+          cat .github/filter-lint-failed.md | envsubst > report.md
+      - name: Comment on failure
+        if: ${{ failure() }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: filter-lint
+          path: report.md

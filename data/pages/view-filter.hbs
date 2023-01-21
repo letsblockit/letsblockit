@@ -3,11 +3,11 @@
         <hr class="d-lg-none"/>
         <nav class="navbar navbar-light flex-column align-items-stretch">
             <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
-            <a class="navbar-brand mt-3">Filter tags:</a>
+            <span class="navbar-brand mt-3">Filter tags:</span>
             <nav class="nav nav-pills flex-column">
                     <span class="nav-link">{{#each filter.tags}}{{{tag this}}}{{/each}}</span>
             </nav>
-            <a class="navbar-brand mt-3">Contribute:</a>
+            <span class="navbar-brand mt-3">Contribute:</span>
             <nav class="nav nav-pills flex-column">
                 <a class="nav-link" href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target={{filter.name}}">Suggest a change</a>
                 <a class="nav-link" href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/{{filter.name}}.yaml">Filter source</a>
