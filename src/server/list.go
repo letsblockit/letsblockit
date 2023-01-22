@@ -127,7 +127,7 @@ func convertFilterList(storedInstances []db.GetInstancesForListRow) (*filters.Li
 	var customFilterInstances []*filters.Instance
 	for _, storedInstance := range storedInstances {
 		instance := &filters.Instance{
-			Template: storedInstance.FilterName,
+			Template: storedInstance.TemplateName,
 			Params:   make(map[string]interface{}),
 			TestMode: storedInstance.TestMode,
 		}

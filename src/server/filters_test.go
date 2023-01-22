@@ -194,9 +194,9 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 	})
 	s.runRequest(req, assertOk)
 
-	stored, err := s.store.GetInstanceForUserAndFilter(context.Background(), db.GetInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
+	stored, err := s.store.GetInstance(context.Background(), db.GetInstanceParams{
+		UserID:       s.user,
+		TemplateName: "filter2",
 	})
 	require.NoError(s.T(), err)
 	s.requireJSONEq(filter2Custom, stored.Params)
@@ -223,9 +223,9 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 	})
 	s.runRequest(req, assertOk)
 
-	stored, err := s.store.GetInstanceForUserAndFilter(context.Background(), db.GetInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter1",
+	stored, err := s.store.GetInstance(context.Background(), db.GetInstanceParams{
+		UserID:       s.user,
+		TemplateName: "filter1",
 	})
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), pgtype.Null, stored.Params.Status)
@@ -253,9 +253,9 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 	})
 	s.runRequest(req, assertOk)
 
-	stored, err := s.store.GetInstanceForUserAndFilter(context.Background(), db.GetInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: "filter2",
+	stored, err := s.store.GetInstance(context.Background(), db.GetInstanceParams{
+		UserID:       s.user,
+		TemplateName: "filter2",
 	})
 	require.NoError(s.T(), err)
 	s.True(stored.TestMode)

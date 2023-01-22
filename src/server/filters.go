@@ -33,26 +33,26 @@ func (s *Server) listFilters(c echo.Context) error {
 		var updatedFilters map[string]bool
 		var testingFilters map[string]bool
 		activeNames = make(map[string]struct{})
-		instances, _ := s.store.GetActiveFiltersForUser(c.Request().Context(), hc.UserID)
+		instances, _ := s.store.GetInstancesForUser(c.Request().Context(), hc.UserID)
 		for _, instance := range instances {
-			activeNames[instance.FilterName] = struct{}{}
+			activeNames[instance.TemplateName] = struct{}{}
 			if s.hasMissingParams(instance) {
 				if updatedFilters == nil {
 					updatedFilters = make(map[string]bool)
 				}
-				updatedFilters[instance.FilterName] = true
+				updatedFilters[instance.TemplateName] = true
 			}
 			if instance.TestMode {
 				if testingFilters == nil {
 					testingFilters = make(map[string]bool)
 				}
-				testingFilters[instance.FilterName] = true
+				testingFilters[instance.TemplateName] = true
 			}
 		}
 		if len(instances) > 0 {
 			if info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID); err == nil {
 				hc.Add("list_token", info.Token.String())
-				hc.Add("list_downloaded", info.Downloaded)
+				hc.Add("list_downloaded", info.DownloadedAt.Valid)
 			}
 		}
 		if len(updatedFilters) > 0 {
@@ -114,18 +114,18 @@ func (s *Server) viewFilter(c echo.Context) error {
 		hc.Add("has_instance", true)
 	case hc.UserLoggedIn && action == actionDelete:
 		// Handle deletion if requested, remove all instances matching a given name
-		if err = s.store.DeleteInstanceForUserAndFilter(c.Request().Context(), db.DeleteInstanceForUserAndFilterParams{
-			UserID:     hc.UserID,
-			FilterName: filter.Name,
+		if err = s.store.DeleteInstance(c.Request().Context(), db.DeleteInstanceParams{
+			UserID:       hc.UserID,
+			TemplateName: filter.Name,
 		}); err != nil {
 			return err
 		}
 		return s.pages.RedirectToPage(c, "list-filters")
 	case hc.UserLoggedIn:
 		// If no params are passed, source from the user's filters
-		stored, err := s.store.GetInstanceForUserAndFilter(c.Request().Context(), db.GetInstanceForUserAndFilterParams{
-			UserID:     hc.UserID,
-			FilterName: filter.Name,
+		stored, err := s.store.GetInstance(c.Request().Context(), db.GetInstanceParams{
+			UserID:       hc.UserID,
+			TemplateName: filter.Name,
 		})
 		switch err {
 		case nil:
@@ -233,9 +233,9 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filte
 		}
 	}
 	return s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
-		count, err := q.CountInstanceForUserAndFilter(ctx, db.CountInstanceForUserAndFilterParams{
-			UserID:     user,
-			FilterName: instance.Template,
+		count, err := q.CountInstances(ctx, db.CountInstancesParams{
+			UserID:       user,
+			TemplateName: instance.Template,
 		})
 		if err != nil {
 			return err
@@ -246,18 +246,18 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filte
 					return err
 				}
 			}
-			return q.CreateInstanceForUserAndFilter(ctx, db.CreateInstanceForUserAndFilterParams{
-				UserID:     user,
-				FilterName: instance.Template,
-				Params:     out,
-				TestMode:   instance.TestMode,
+			return q.CreateInstance(ctx, db.CreateInstanceParams{
+				UserID:       user,
+				TemplateName: instance.Template,
+				Params:       out,
+				TestMode:     instance.TestMode,
 			})
 		} else {
-			return q.UpdateInstanceForUserAndFilter(ctx, db.UpdateInstanceForUserAndFilterParams{
-				UserID:     user,
-				FilterName: instance.Template,
-				Params:     out,
-				TestMode:   instance.TestMode,
+			return q.UpdateInstance(ctx, db.UpdateInstanceParams{
+				UserID:       user,
+				TemplateName: instance.Template,
+				Params:       out,
+				TestMode:     instance.TestMode,
 			})
 		}
 	})
@@ -314,8 +314,8 @@ func parseFilterParams(c echo.Context, filter *filters.Template) (*filters.Insta
 	return instance, action, err
 }
 
-func (s *Server) hasMissingParams(instance db.GetActiveFiltersForUserRow) bool {
-	filter, err := s.filters.Get(instance.FilterName)
+func (s *Server) hasMissingParams(instance db.GetInstancesForUserRow) bool {
+	filter, err := s.filters.Get(instance.TemplateName)
 	if err != nil || len(filter.Params) == 0 {
 		return false
 	}

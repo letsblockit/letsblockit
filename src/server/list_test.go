@@ -59,7 +59,7 @@ my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
 
 	list, err := s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
-	require.True(s.T(), list.Downloaded)
+	require.True(s.T(), list.DownloadedAt.Valid)
 
 	// Test mode
 	req = httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String()+"?test_mode", nil)
@@ -86,7 +86,7 @@ my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
 
 	list, err = s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
-	require.True(s.T(), list.Downloaded)
+	require.True(s.T(), list.DownloadedAt.Valid)
 }
 
 func (s *ServerTestSuite) TestRenderList_TxtSuffix() {
@@ -135,7 +135,7 @@ func (s *ServerTestSuite) TestRenderList_WithReferer() {
 
 	list, err := s.store.GetListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)
-	require.False(s.T(), list.Downloaded)
+	require.False(s.T(), list.DownloadedAt.Valid)
 }
 
 func (s *ServerTestSuite) TestRenderList_BannedUser() {

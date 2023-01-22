@@ -5,7 +5,7 @@ RETURNING token;
 
 -- name: GetListForUser :one
 SELECT token,
-       downloaded,
+       downloaded_at,
        (SELECT COUNT(*) FROM filter_instances WHERE filter_instances.user_id = $1) AS instance_count
 FROM filter_lists
 WHERE filter_lists.user_id = $1
@@ -19,24 +19,17 @@ WHERE user_id = $1;
 -- name: RotateListToken :exec
 UPDATE filter_lists
 SET token      = gen_random_uuid(),
-    downloaded = false
+    downloaded_at = NULL
 WHERE user_id = $1
   AND token = $2;
 
--- name: HasUserDownloadedList :one
-SELECT downloaded
-FROM filter_lists
-WHERE filter_lists.user_id = $1
-LIMIT 1;
-
 -- name: GetListForToken :one
-SELECT id, user_id, downloaded
+SELECT id, user_id, downloaded_at
 FROM filter_lists
 WHERE token = $1
 LIMIT 1;
 
 -- name: MarkListDownloaded :exec
 UPDATE filter_lists
-SET downloaded    = true,
-    downloaded_at = NOW()
+SET downloaded_at = NOW()
 WHERE token = $1;

@@ -12,16 +12,16 @@ import (
 const getInstanceStats = `-- name: GetInstanceStats :many
 SELECT COUNT(*) as total,
        SUM(case when l.downloaded_at >= NOW() - INTERVAL '7 DAYS' then 1 else 0 end) as fresh,
-       filter_name
+       template_name
 FROM filter_instances
-         JOIN filter_lists AS l ON (filter_list_id = l.id)
-GROUP BY filter_name
+         JOIN filter_lists AS l ON (list_id = l.id)
+GROUP BY template_name
 `
 
 type GetInstanceStatsRow struct {
-	Total      int64
-	Fresh      int64
-	FilterName string
+	Total        int64
+	Fresh        int64
+	TemplateName string
 }
 
 func (q *Queries) GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, error) {
@@ -33,7 +33,7 @@ func (q *Queries) GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, 
 	var items []GetInstanceStatsRow
 	for rows.Next() {
 		var i GetInstanceStatsRow
-		if err := rows.Scan(&i.Total, &i.Fresh, &i.FilterName); err != nil {
+		if err := rows.Scan(&i.Total, &i.Fresh, &i.TemplateName); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -46,7 +46,7 @@ func (q *Queries) GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, 
 
 const getStats = `-- name: GetStats :one
 SELECT (SELECT COUNT(*) FROM filter_lists)                                                  as lists_total,
-       (SELECT COUNT(*) FROM filter_lists WHERE downloaded IS TRUE)                         as lists_active,
+       (SELECT COUNT(*) FROM filter_lists WHERE downloaded_at IS NOT NULL)                  as lists_active,
        (SELECT COUNT(*) FROM filter_lists WHERE downloaded_at >= NOW() - INTERVAL '7 DAYS') as lists_fresh
 `
 

@@ -210,9 +210,9 @@ func (s *ServerTestSuite) requireJSONEq(expected, actual any) {
 
 func (s *ServerTestSuite) requireInstanceCount(filter string, expected int64) {
 	s.T().Helper()
-	count, err := s.store.CountInstanceForUserAndFilter(context.Background(), db.CountInstanceForUserAndFilterParams{
-		UserID:     s.user,
-		FilterName: filter,
+	count, err := s.store.CountInstances(context.Background(), db.CountInstancesParams{
+		UserID:       s.user,
+		TemplateName: filter,
 	})
 	require.NoError(s.T(), err)
 	require.EqualValues(s.T(), expected, count)

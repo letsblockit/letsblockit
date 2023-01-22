@@ -369,7 +369,7 @@ func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
 			return
 		}
 		for _, i := range instances {
-			tags := []string{"filter_name:" + i.FilterName}
+			tags := []string{"filter_name:" + i.TemplateName}
 			_ = dsd.Gauge("letsblockit.instance_count", float64(i.Total), tags, 1)
 			_ = dsd.Gauge("letsblockit.fresh_instance_count", float64(i.Fresh), tags, 1)
 		}
