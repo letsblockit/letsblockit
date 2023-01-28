@@ -8,7 +8,7 @@ tags:
   - nebula
 template: |
   {{#each creators}}
-  nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/{{ . }}"])
+  nebula.tv###NebulaApp [role="list"] a[href="/{{ . }}"]:upward([role="listitem"])
   {{/each}}
 tests:
   - params: {}
@@ -16,9 +16,9 @@ tests:
   - params:
       creators: [ "reneritchie", "apple-talk", "thomasfrankexplains" ]
     output: |
-      nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/reneritchie"])
-      nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/apple-talk"])
-      nebula.tv###NebulaApp div:has(:scope>a[href^="/videos"]+div>a[href="/thomasfrankexplains"])
+      nebula.tv###NebulaApp [role="list"] a[href="/reneritchie"]:upward([role="listitem"])
+      nebula.tv###NebulaApp [role="list"] a[href="/apple-talk"]:upward([role="listitem"])
+      nebula.tv###NebulaApp [role="list"] a[href="/thomasfrankexplains"]:upward([role="listitem"])
 ---
 
 This filter allows you to hide videos in the home page and "all videos" page, based on their creator.
