@@ -1,3 +1,2 @@
 cnpmjs.org/
-npm.io/
 npmmirror.com/
