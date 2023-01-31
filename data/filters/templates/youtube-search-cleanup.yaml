@@ -10,3 +10,7 @@ template: |
 
 These rules remove related searches and related results from the YouTube search results, only leaving organic
 matches for your search.
+
+The results page is also modified by several other [of our YouTube templates](/filters/tag/youtube),
+removing items such as [shorts](youtube-shorts) and [radios](youtube-mixes), or results from
+[specific channels](youtube-channel) or with [specific keywords](youtube-video-title).
