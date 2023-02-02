@@ -110,7 +110,7 @@ func (s *Server) Start() error {
 		},
 	})
 
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance)
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
 	if s.options.StatsdTarget != "" {
 		dsd, err := statsd.New(s.options.StatsdTarget)
 		if err != nil {

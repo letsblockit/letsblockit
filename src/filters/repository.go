@@ -78,6 +78,11 @@ func (r *Repository) GetTags() []string {
 	return r.tagList
 }
 
+func (r *Repository) Has(name string) bool {
+	_, found := r.templateMap[name]
+	return found
+}
+
 func (r *Repository) Render(w io.Writer, instance *Instance) error {
 	tpl, found := r.templateMap[instance.Template]
 	if !found {

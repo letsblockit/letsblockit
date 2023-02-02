@@ -25,6 +25,10 @@ var (
 	githubUserLink  = `$1[**@$2**](https://github.com/$2)$3`
 )
 
+type templateProvider interface {
+	Has(name string) bool
+}
+
 type githubRelease struct {
 	HtmlUrl     string    `json:"html_url"`
 	Id          int       `json:"id"`
@@ -57,15 +61,17 @@ type ReleaseClient struct {
 	url              string
 	cacheDir         string
 	officialInstance bool
+	templateProvider templateProvider
 	latestAt         time.Time
 	releases         []*Release
 }
 
-func NewReleaseClient(url string, cacheDir string, officialInstance bool) *ReleaseClient {
+func NewReleaseClient(url string, cacheDir string, officialInstance bool, tp templateProvider) *ReleaseClient {
 	return &ReleaseClient{
 		url:              url,
 		cacheDir:         cacheDir,
 		officialInstance: officialInstance,
+		templateProvider: tp,
 	}
 }
 
@@ -107,7 +113,7 @@ func (c *ReleaseClient) populate() error {
 		return err
 	}
 
-	renderer := initRenderer(c.officialInstance)
+	renderer := initRenderer(c.officialInstance, c.templateProvider)
 	c.releases = make([]*Release, 0, len(githubReleases))
 	for _, r := range githubReleases {
 		if r.Prerelease || r.Draft {
