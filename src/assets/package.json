@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.8.3",
+    "@parcel/reporter-bundle-analyzer": "^2.8.3",
     "@parcel/transformer-sass": "^2.8.3",
     "@tabler/icons": "^2.1.2",
     "bootstrap": "github:twbs/bootstrap#main",
