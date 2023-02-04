@@ -44,7 +44,6 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 		},
 		CSRFToken:    s.csrf,
 		UserLoggedIn: false,
-		ColorMode:    db.ColorModeAuto,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -64,7 +63,6 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 		UserID:       s.user,
 		UserLoggedIn: true,
 		Preferences:  pref,
-		ColorMode:    db.ColorModeAuto,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -88,7 +86,6 @@ func (s *ServerTestSuite) TestAbout_HasNews() {
 		UserLoggedIn: true,
 		Preferences:  pref,
 		HasNews:      true,
-		ColorMode:    db.ColorModeAuto,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -113,7 +110,6 @@ func (s *ServerTestSuite) TestAbout_DarkMode() {
 		UserID:       s.user,
 		UserLoggedIn: true,
 		Preferences:  pref,
-		ColorMode:    db.ColorModeDark,
 	})
 	s.runRequest(req, assertOk)
 }

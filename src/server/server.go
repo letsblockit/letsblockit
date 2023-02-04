@@ -296,7 +296,6 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		HotReload:        s.options.HotReload,
 		RequestInfo:      c,
 		UserHasAccount:   auth.HasAccount(c),
-		ColorMode:        db.ColorModeAuto,
 	}
 	if t, ok := c.Get(csrfLookup).(string); ok {
 		context.CSRFToken = t
@@ -308,7 +307,6 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		if context.Preferences != nil {
 			latest, _ := s.releases.GetLatestAt()
 			context.HasNews = latest.After(context.Preferences.NewsCursor)
-			context.ColorMode = context.Preferences.ColorMode
 		}
 	}
 	return context

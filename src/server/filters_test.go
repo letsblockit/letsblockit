@@ -354,7 +354,6 @@ func (s *ServerTestSuite) TestViewFilterRender_LoggedIn() {
 		CurrentSection:  "filters",
 		NavigationLinks: navigationLinks,
 		UserLoggedIn:    true,
-		ColorMode:       db.ColorModeAuto,
 		Data: pages.ContextData{
 			"rendered": filter2CustomOutput,
 		},
