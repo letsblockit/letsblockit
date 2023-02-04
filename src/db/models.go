@@ -6,11 +6,32 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 )
+
+type ColorMode string
+
+const (
+	ColorModeAuto  ColorMode = "auto"
+	ColorModeDark  ColorMode = "dark"
+	ColorModeLight ColorMode = "light"
+)
+
+func (e *ColorMode) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ColorMode(s)
+	case string:
+		*e = ColorMode(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ColorMode: %T", src)
+	}
+	return nil
+}
 
 type BannedUser struct {
 	ID         int32
@@ -44,4 +65,5 @@ type UserPreference struct {
 	UserID       string
 	NewsCursor   time.Time
 	BetaFeatures bool
+	ColorMode    ColorMode
 }

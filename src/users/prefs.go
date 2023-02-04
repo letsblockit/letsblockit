@@ -60,3 +60,12 @@ func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user string, at tim
 	m.cache.Remove(user)
 	return err
 }
+
+func (m *PreferenceManager) UpdatePreferences(c echo.Context, params db.UpdateUserPreferencesParams) error {
+	if _, err := m.Get(c, params.UserID); err != nil {
+		return err
+	}
+	err := m.store.UpdateUserPreferences(c.Request().Context(), params)
+	m.cache.Remove(params.UserID)
+	return err
+}

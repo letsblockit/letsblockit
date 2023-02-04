@@ -26,7 +26,7 @@
     "@parcel/compressor-gzip": "^2.8.3",
     "@parcel/transformer-sass": "^2.8.3",
     "@tabler/icons": "^2.1.2",
-    "bootstrap": "^5.2.3",
+    "bootstrap": "github:twbs/bootstrap#main",
     "htmx.org": "^1.8.5",
     "parcel": "^2.8.3",
     "parcel-namer-rewrite": "^2.0.0-rc.2"

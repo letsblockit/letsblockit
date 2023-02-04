@@ -39,6 +39,29 @@ func (s *Server) userAccount(c echo.Context) error {
 	return s.pages.Render(c, "user-account", hc)
 }
 
+func (s *Server) updatePreferences(c echo.Context) error {
+	if c.Request().Method != http.MethodPost {
+		return nil
+	}
+	user := auth.GetUserId(c)
+	if user == "" {
+		return errors.New("invalid user session")
+	}
+	formParams, err := c.FormParams()
+	if err != nil {
+		return err
+	}
+	if err := s.preferences.UpdatePreferences(c, db.UpdateUserPreferencesParams{
+		UserID:       user,
+		ColorMode:    db.ColorMode(formParams.Get("color_mode")),
+		BetaFeatures: formParams.Get("beta_features") == "on",
+	}); err != nil {
+		return err
+	}
+
+	return s.pages.Redirect(c, http.StatusSeeOther, s.echo.Reverse("user-account"))
+}
+
 func (s *Server) rotateListToken(c echo.Context) error {
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		if c.Request().Method != http.MethodPost {

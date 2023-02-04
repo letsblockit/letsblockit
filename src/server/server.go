@@ -239,6 +239,7 @@ func (s *Server) setupRouter() {
 
 	withAuth.GET("/export/:token", s.exportList).Name = "export-filterlist"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
+	withAuth.POST("/user/preferences", s.updatePreferences).Name = "update-preferences"
 	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 }
 
@@ -295,6 +296,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		HotReload:        s.options.HotReload,
 		RequestInfo:      c,
 		UserHasAccount:   auth.HasAccount(c),
+		ColorMode:        db.ColorModeAuto,
 	}
 	if t, ok := c.Get(csrfLookup).(string); ok {
 		context.CSRFToken = t
@@ -306,6 +308,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		if context.Preferences != nil {
 			latest, _ := s.releases.GetLatestAt()
 			context.HasNews = latest.After(context.Preferences.NewsCursor)
+			context.ColorMode = context.Preferences.ColorMode
 		}
 	}
 	return context

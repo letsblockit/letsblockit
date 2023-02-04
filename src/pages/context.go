@@ -34,6 +34,7 @@ type Context struct {
 	UserLoggedIn   bool
 	UserHasAccount bool
 	HasNews        bool
+	ColorMode      db.ColorMode
 	Preferences    *db.UserPreference
 	CSRFToken      string
 

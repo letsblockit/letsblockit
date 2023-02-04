@@ -50,6 +50,7 @@ func (s *PreferenceManagerSuite) TestGetCached() {
 	expected := db.UserPreference{
 		UserID:     s.user,
 		NewsCursor: pastNow(10),
+		ColorMode:  db.ColorModeAuto,
 	}
 	_, err := s.store.InitUserPreferences(context.Background(), s.user)
 	require.NoError(s.T(), err)
@@ -78,10 +79,12 @@ func (s *PreferenceManagerSuite) TestUpdateNewsCursor() {
 	initial := db.UserPreference{
 		UserID:     s.user,
 		NewsCursor: pastNow(10),
+		ColorMode:  db.ColorModeAuto,
 	}
 	updated := db.UserPreference{
 		UserID:     s.user,
 		NewsCursor: pastNow(1),
+		ColorMode:  db.ColorModeAuto,
 	}
 	_, err := s.store.InitUserPreferences(context.Background(), s.user)
 	require.NoError(s.T(), err)

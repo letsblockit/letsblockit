@@ -27,3 +27,9 @@ WHERE user_id = $1;
 UPDATE user_preferences
 SET news_cursor = $2
 WHERE user_id = $1;
+
+-- name: UpdateUserPreferences :exec
+UPDATE user_preferences
+SET color_mode    = $2,
+    beta_features = $3
+WHERE user_id = $1;
