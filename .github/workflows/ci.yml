@@ -11,6 +11,11 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Start PostgreSQL
         run: sudo service postgresql start
       - uses: actions/checkout@v3
@@ -23,6 +28,11 @@ jobs:
   check-vendorsha:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v18
       - run: nix run .#update-vendorsha -- ./nix/letsblockit.nix --check
