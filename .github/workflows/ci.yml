@@ -10,21 +10,31 @@ permissions:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: lbi
+          POSTGRES_PASSWORD: insecure
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
-
-      - name: Start PostgreSQL
-        run: sudo service postgresql start
       - uses: actions/checkout@v3
-      - name: Create PostgreSQL user and tables
-        run: |
-          sudo -u postgres psql -c "CREATE USER ${USER}"
-          sudo -u postgres psql -c "CREATE DATABASE lbitests OWNER ${USER}"
       - uses: cachix/install-nix-action@v18
-      - run: nix run .#run-tests
+      - name: Run unit tests
+        env:
+          TEST_DATABASE_URL: "postgresql://lbi:insecure@localhost/lbi"
+        run: nix run .#run-tests
+
   check-vendorsha:
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +42,6 @@ jobs:
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
-
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v18
       - run: nix run .#update-vendorsha -- ./nix/letsblockit.nix --check

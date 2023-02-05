@@ -13,6 +13,6 @@ go test ./src/filters
 golangci-lint run --timeout 5m
 
 # Run unit and integration tests on the lbitests DB after purging it
-psql --quiet "$TEST_DATABASE_URL" -c "DROP owned BY $(whoami)"
+psql --quiet "$TEST_DATABASE_URL" -c "DROP owned BY current_user"
 go test -v -race ./...
 echo "OK"
