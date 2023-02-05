@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'letsblockit/letsblockit'
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v18
       - name: Build container images
