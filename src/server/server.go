@@ -71,6 +71,7 @@ var navigationLinks = []struct {
 }}
 
 type Server struct {
+	assets      http.Handler
 	auth        auth.Backend
 	bans        *users.BanManager
 	echo        *echo.Echo
@@ -94,6 +95,7 @@ func NewServer(options *Options) *Server {
 
 func (s *Server) Start() error {
 	concurrentRunOrPanic([]func([]error){
+		func(errs []error) { s.assets = statigz.FileServer(data.Assets) },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.Load(data.Templates, data.Presets) },
 		func(errs []error) {
@@ -192,7 +194,8 @@ func (s *Server) setupRouter() {
 	}))
 
 	anon := s.echo.Group("")
-	anon.GET("/assets/*", echo.WrapHandler(statigz.FileServer(data.Assets)))
+	anon.GET("/assets/*", echo.WrapHandler(s.assets))
+	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)
