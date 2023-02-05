@@ -4,8 +4,13 @@ on:
     branches:
       - main
   workflow_dispatch:
+permissions:
+  contents: read
+
 jobs:
   reset:
+    permissions:
+      contents: write  # for Git to git push
     runs-on: ubuntu-latest
     if: github.repository == 'letsblockit/letsblockit'
     steps:

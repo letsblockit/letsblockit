@@ -5,6 +5,9 @@ on:
       - main
     tags:
       - '*'
+permissions:
+  contents: read
+
 jobs:
   container-release:
     runs-on: ubuntu-latest
