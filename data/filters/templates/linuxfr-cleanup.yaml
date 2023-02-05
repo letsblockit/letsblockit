@@ -2,8 +2,8 @@ title: Cleanup the LinuxFr interface
 params:
   - name: homepage-pinned
     description: Hide the pinned article at the top of the homepage
-    type: checkboxA
-    default: true
+    type: checkbox
+    default: false
   - name: homepage-banner
     description: Hide the advertising banner on the homepage
     type: checkbox
