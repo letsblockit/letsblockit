@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/alecthomas/kong"
 	"github.com/labstack/gommon/log"
 	"github.com/letsblockit/letsblockit/data"
 	"github.com/letsblockit/letsblockit/src/filters"
@@ -23,21 +24,20 @@ var targets = map[string]func(file *filters.Template) error{
 	"search-results": updateSearchResults,
 }
 
-func main() {
+type updatePresetsCmd struct{}
+
+func (c *updatePresetsCmd) Run(k *kong.Context) error {
 	repo, err := filters.Load(data.Templates, data.Presets)
 	if err != nil {
 		log.Fatal(err)
 	}
 	for name, f := range targets {
-		log.Printf("Updating %s...", name)
+		k.Printf("Updating presets for %s...", name)
 		template, err := repo.Get(name)
-		if err != nil {
-			log.Fatalf("unknown template %s: %w", name, err)
-		}
-		if err = f(template); err != nil {
-			log.Fatalf("failed to process %s: %w", name, err)
-		}
+		k.FatalIfErrorf(err, "unknown template %s", name)
+		k.FatalIfErrorf(f(template), "failed to process %s", name)
 	}
+	return nil
 }
 
 func updateSearchResults(template *filters.Template) error {
@@ -59,7 +59,7 @@ func updateSearchResults(template *filters.Template) error {
 
 func fetchUodf(url string) ([]string, error) {
 	file := uodfRawPrefix + strings.TrimPrefix(url, uodfSourcePrefix)
-	fmt.Println("downloading", file)
+	fmt.Println("  downloading", file)
 	res, err := http.Get(file)
 	if err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ func saveValues(template, preset string, values []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("writing", fileName)
+	fmt.Println("  writing", fileName)
 	for _, v := range values {
 		if _, err = fmt.Fprintln(file, v); err != nil {
 			return err
