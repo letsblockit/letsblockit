@@ -94,6 +94,11 @@ func (r *Repository) Render(w io.Writer, instance *Instance) error {
 	}
 	params := shallowCopy(instance.Params)
 	params["_template"] = instance.Template
+	for _, param := range tpl.Params {
+		if param.Variant == WordOrRegexVariant {
+			params[param.Name] = buildRegexForWords(params[param.Name])
+		}
+	}
 
 	if instance.TestMode {
 		w = NewTestModeTransformer(w)
@@ -108,7 +113,7 @@ func (r *Repository) Render(w io.Writer, instance *Instance) error {
 				return err
 			}
 			params := shallowCopy(params)
-			params[preset.TargetKey] = preset.Value
+			params[preset.TargetKey] = preset.Value // WordOrRegexVariant processing was done at parsing
 			if err := r.main.Execute(w, params); err != nil {
 				return err
 			}

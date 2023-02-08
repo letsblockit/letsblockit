@@ -76,12 +76,16 @@ func parsePresets(f *Template, presets fs.FS) error {
 			continue
 		}
 		for _, preset := range param.Presets {
-			f.presets = append(f.presets, presetEntry{
+			entry := presetEntry{
 				EnableKey: param.BuildPresetParamName(preset.Name),
 				Name:      preset.Name,
 				TargetKey: param.Name,
 				Value:     preset.Values,
-			})
+			}
+			if param.Variant == WordOrRegexVariant {
+				entry.Value = buildRegexForWords(preset.Values)
+			}
+			f.presets = append(f.presets, entry)
 		}
 	}
 	return nil

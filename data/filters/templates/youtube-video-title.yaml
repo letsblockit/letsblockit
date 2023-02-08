@@ -3,17 +3,18 @@ params:
   - name: keywords
     description: Words to search for
     type: list
+    variant: wordOrRegex
     default: [ "lofi", "#shorts" ]
 tags:
   - youtube
 template: |
   {{#each keywords}}
-  www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title]:has-text(/\b{{this}}\b/i))
-  www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title]:has-text(/\b{{this}}\b/i))
-  www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title]:has-text(/\b{{this}}\b/i))
-  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title]:has-text(/\b{{this}}\b/i))
+  www.youtube.com##ytd-browse ytd-grid-video-renderer:has(#video-title[title]:has-text({{this}}))
+  www.youtube.com##ytd-browse ytd-rich-item-renderer:has(#video-title-link[title]:has-text({{this}}))
+  www.youtube.com##ytd-search ytd-video-renderer:has(#video-title[title]:has-text({{this}}))
+  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(#video-title[title]:has-text({{this}}))
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
-  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer #video-title[title]:has-text(/\b{{this}}\b/i):upward(ytd-item-section-renderer)
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer #video-title[title]:has-text({{this}}):upward(ytd-item-section-renderer)
   {{/each}}
 tests:
   - params: {}
