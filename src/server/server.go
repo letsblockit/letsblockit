@@ -41,6 +41,7 @@ type Options struct {
 	Address             string `group:"Networking" default:"127.0.0.1:8765" help:"address to listen to"`
 	UseSystemdSocket    bool   `group:"Networking" help:"use a systemd socket instead of opening a port"`
 	DatabaseUrl         string `group:"Database" default:"postgresql:///letsblockit" help:"psql database to connect to"`
+	DatabasePoolOptions string `group:"Database" default:"" help:"pgxpool additional options"`
 	AuthMethod          string `group:"Authentication" required:"" enum:"kratos,proxy" help:"authentication method to use"`
 	AuthKratosUrl       string `group:"Authentication" default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
 	AuthProxyHeaderName string `group:"Authentication" placeholder:"X-Auth-Request-User" help:"name for the cookie set by the reverse proxy"`
@@ -99,7 +100,7 @@ func (s *Server) Start() error {
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.Load(data.Templates, data.Presets) },
 		func(errs []error) {
-			s.store, errs[0] = db.Connect(s.options.DatabaseUrl)
+			s.store, errs[0] = db.Connect(s.options.DatabaseUrl, s.options.DatabasePoolOptions)
 			if errs[0] == nil {
 				errs[0] = db.Migrate(s.options.DatabaseUrl)
 			}
