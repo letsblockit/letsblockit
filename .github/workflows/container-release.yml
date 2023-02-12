@@ -24,6 +24,7 @@ jobs:
         run: |
           nix build .#render-container && ./result | docker load
           nix build .#server-container && ./result | docker load
+      - run: docker image list
       - name: Login to GHCR
         uses: docker/login-action@v2
         with:
