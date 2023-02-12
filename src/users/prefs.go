@@ -4,25 +4,20 @@ import (
 	"context"
 	"time"
 
-	lru "github.com/hashicorp/golang-lru"
+	"zgo.at/zcache/v2"
+
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 )
 
-const prefCacheSize = 2048
-
 type PreferenceManager struct {
-	cache *lru.Cache
+	cache *zcache.Cache[string, *db.UserPreference]
 	store db.Store
 }
 
 func NewPreferenceManager(store db.Store) (*PreferenceManager, error) {
-	cache, err := lru.New(prefCacheSize)
-	if err != nil {
-		return nil, err
-	}
 	return &PreferenceManager{
-		cache: cache,
+		cache: zcache.New[string, *db.UserPreference](30*time.Minute, 10*time.Minute),
 		store: store,
 	}, nil
 }
@@ -30,9 +25,7 @@ func NewPreferenceManager(store db.Store) (*PreferenceManager, error) {
 // Get retrieves the preferences from cache or DB. If no prefs are in DB, create a row with default values.
 func (m *PreferenceManager) Get(c echo.Context, user string) (*db.UserPreference, error) {
 	if entry, ok := m.cache.Get(user); ok {
-		if prefs, ok := entry.(*db.UserPreference); ok {
-			return prefs, nil
-		}
+		return entry, nil
 	}
 	var prefs db.UserPreference
 	if err := m.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
@@ -45,7 +38,7 @@ func (m *PreferenceManager) Get(c echo.Context, user string) (*db.UserPreference
 	}); err != nil {
 		return nil, err
 	}
-	m.cache.Add(user, &prefs)
+	m.cache.Set(user, &prefs)
 	return &prefs, nil
 }
 
@@ -57,6 +50,6 @@ func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user string, at tim
 		UserID:     user,
 		NewsCursor: at,
 	})
-	m.cache.Remove(user)
+	m.cache.Delete(user)
 	return err
 }

@@ -20,7 +20,7 @@
           run-tests = [ pinnedGo golangci-lint ];
           update-assets = [ nodejs-slim-18_x nodePackages.npm ];
           update-codegen = [ mockgen self.packages.${system}.sqlc ];
-          update-vendorsha = [ nix-prefetch ];
+          update-vendorsha = [ nix-prefetch gnused ];
           upgrade-deps = [ nodejs-slim-18_x nodePackages.npm pinnedGo nix-prefetch git ];
         };
       in
