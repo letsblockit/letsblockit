@@ -51,8 +51,8 @@ func (s *pgxStore) RunTx(e echo.Context, f TxFunc) error {
 	})
 }
 
-func Connect(databaseUrl string) (Store, error) {
-	pool, err := pgxpool.Connect(context.Background(), databaseUrl)
+func Connect(databaseUrl, poolOptions string) (Store, error) {
+	pool, err := pgxpool.Connect(context.Background(), databaseUrl+poolOptions)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect: %w", err)
 	}
