@@ -23,18 +23,6 @@
           update-vendorsha = [ nix-prefetch gnused ];
           upgrade-deps = [ nodejs-slim-18_x nodePackages.npm pinnedGo nix-prefetch git ];
         };
-
-        vector-light = pkgs.vector.override {
-          enableKafka = false;
-          features = [
-            "enterprise"
-            "sources-exec"
-            "sources-stdin"
-            "sources-statsd"
-            "sinks-datadog_logs"
-            "sinks-datadog_metrics"
-          ];
-        };
       in
       {
         defaultPackage = self.packages.${system}.run-server;
@@ -44,6 +32,7 @@
           migrate = pkgs.callPackage ./nix/migrate.nix { };
           ory = pkgs.callPackage ./nix/ory.nix { };
           sqlc = pkgs.callPackage ./nix/sqlc.nix { };
+          vector = pkgs.callPackage ./nix/vector.nix { };
 
           render-container = pkgs.dockerTools.streamLayeredImage {
             name = "ghcr.io/letsblockit/render";
@@ -58,7 +47,7 @@
             name = "ghcr.io/letsblockit/server";
             tag = "latest";
             created = builtins.substring 0 8 self.lastModifiedDate;
-            contents = [ self.packages.${system}.server pkgs.cacert vector-light ];
+            contents = [ pkgs.cacert self.packages.${system}.vector self.packages.${system}.server ];
             config = {
               Cmd = [ "server" ];
               Env = [ "LETSBLOCKIT_ADDRESS=:8765" ];
