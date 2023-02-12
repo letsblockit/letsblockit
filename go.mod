@@ -11,7 +11,6 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-retryablehttp v0.7.2
-	github.com/hashicorp/golang-lru v0.5.4
 	github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9
 	github.com/jackc/pgconn v1.14.0
 	github.com/jackc/pgtype v1.14.0
