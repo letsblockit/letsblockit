@@ -23,6 +23,18 @@
           update-vendorsha = [ nix-prefetch gnused ];
           upgrade-deps = [ nodejs-slim-18_x nodePackages.npm pinnedGo nix-prefetch git ];
         };
+
+        vector-light = pkgs.vector.override {
+          enableKafka = false;
+          features = [
+            "enterprise"
+            "sources-exec"
+            "sources-stdin"
+            "sources-statsd"
+            "sinks-datadog_logs"
+            "sinks-datadog_metrics"
+          ];
+        };
       in
       {
         defaultPackage = self.packages.${system}.run-server;
@@ -46,11 +58,11 @@
             name = "ghcr.io/letsblockit/server";
             tag = "latest";
             created = builtins.substring 0 8 self.lastModifiedDate;
-            contents = [ pkgs.cacert self.packages.${system}.server ];
+            contents = [ self.packages.${system}.server pkgs.cacert vector-light ];
             config = {
               Cmd = [ "server" ];
               Env = [ "LETSBLOCKIT_ADDRESS=:8765" ];
-              ExposedPorts."8765/tcp" = {};
+              ExposedPorts."8765/tcp" = { };
             };
           };
         } // (builtins.mapAttrs
