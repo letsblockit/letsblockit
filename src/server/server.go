@@ -35,6 +35,7 @@ const (
 		`"bytes_in":${bytes_in},"bytes_out":${bytes_out}}}` + "\n"
 	mainDomain = "letsblock.it"
 	csrfLookup = "_csrf"
+	healthPath = "/_health"
 )
 
 type Options struct {
@@ -178,7 +179,12 @@ func (s *Server) setupRouter() {
 	}
 	s.echo.Use(
 		middleware.Recover(),
-		middleware.LoggerWithConfig(middleware.LoggerConfig{Format: loggerFormat}),
+		middleware.LoggerWithConfig(middleware.LoggerConfig{
+			Format: loggerFormat,
+			Skipper: func(c echo.Context) bool {
+				return c.Request().URL.Path == healthPath
+			},
+		}),
 	)
 
 	s.echo.HideBanner = true
@@ -195,6 +201,7 @@ func (s *Server) setupRouter() {
 	}))
 
 	anon := s.echo.Group("")
+	anon.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
 	anon.GET("/assets/*", echo.WrapHandler(s.assets))
 	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
