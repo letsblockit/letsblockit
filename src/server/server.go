@@ -6,8 +6,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
+	"os/exec"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
@@ -49,8 +53,9 @@ type Options struct {
 	LogLevel            string `group:"Development" default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
 	CacheDir            string `group:"Development" placeholder:"/tmp" help:"folder to cache external resources in during local development"`
 	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
+	StatsdTarget        string `group:"Monitoring" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
+	VectorConfig        string `group:"Monitoring" help:"start the vector monitoring agent with a given JSON config"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
-	StatsdTarget        string `group:"Miscellaneous" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
 	DryRun              bool   `hidden:""`
 }
@@ -112,6 +117,7 @@ func (s *Server) Start() error {
 				s.preferences, errs[0] = users.NewPreferenceManager(s.store)
 			}
 		},
+		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
 	})
 
 	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
@@ -388,4 +394,48 @@ func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
 	for range time.Tick(5 * time.Minute) {
 		collect()
 	}
+}
+
+func runVector(config string) error {
+	if config == "" {
+		return nil
+	}
+
+	cleanupConfigFile := true
+	f, err := os.CreateTemp("", "vector-*.json")
+	if err != nil {
+		return fmt.Errorf("failed to create vector config file: %w", err)
+	}
+	defer func() {
+		if cleanupConfigFile {
+			_ = os.Remove(f.Name())
+		}
+	}()
+
+	if _, err = f.WriteString(config); err != nil {
+		return fmt.Errorf("failed to write to vector config file: %w", err)
+	}
+	if err = f.Close(); err != nil {
+		return fmt.Errorf("failed to close vector config file: %w", err)
+	}
+
+	vector := exec.Command("vector", "--config", f.Name())
+	vector.Stderr = os.Stderr
+
+	if err := vector.Start(); err != nil {
+		return fmt.Errorf("vector process failed: %w", err)
+	}
+
+	cleanupConfigFile = false
+	// TODO: move to common logic and support several SIGINT hooks
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		for sig := range sigs {
+			_ = vector.Process.Signal(sig)
+			_ = os.Remove(f.Name())
+		}
+	}()
+
+	return nil
 }

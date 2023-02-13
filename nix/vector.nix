@@ -44,11 +44,13 @@ rustPlatform.buildRustPackage {
   buildNoDefaultFeatures = true;
   buildFeatures = [
     "enterprise"
-    "sources-exec"
-    "sources-stdin"
-    "sources-statsd"
+    "sinks-blackhole"
     "sinks-datadog_logs"
     "sinks-datadog_metrics"
+    "sources-demo_logs"
+    "sources-exec"
+    "sources-statsd"
+    "sources-stdin"
   ];
 
   doCheck = false;
