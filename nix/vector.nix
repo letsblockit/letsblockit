@@ -52,6 +52,7 @@ rustPlatform.buildRustPackage {
     "sources-exec"
     "sources-statsd"
     "sources-stdin"
+    "transforms"
   ];
 
   doCheck = false;
