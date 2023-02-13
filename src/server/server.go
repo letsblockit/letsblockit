@@ -54,7 +54,7 @@ type Options struct {
 	CacheDir            string `group:"Development" placeholder:"/tmp" help:"folder to cache external resources in during local development"`
 	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
 	StatsdTarget        string `group:"Monitoring" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
-	VectorConfig        string `group:"Monitoring" help:"start the vector monitoring agent with a given JSON config"`
+	VectorConfig        string `group:"Monitoring" help:"start the vector monitoring agent with a given yaml config"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
 	DryRun              bool   `hidden:""`
@@ -402,7 +402,7 @@ func runVector(config string) error {
 	}
 
 	cleanupConfigFile := true
-	f, err := os.CreateTemp("", "vector-*.json")
+	f, err := os.CreateTemp("", "vector-*.yaml")
 	if err != nil {
 		return fmt.Errorf("failed to create vector config file: %w", err)
 	}

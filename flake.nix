@@ -49,8 +49,8 @@
             created = builtins.substring 0 8 self.lastModifiedDate;
             contents = [ pkgs.cacert self.packages.${system}.vector self.packages.${system}.server ];
             config = {
-              Cmd = [ "server" ];
-              Env = [ "LETSBLOCKIT_ADDRESS=:8765" ];
+              Cmd = [ "/bin/server" ];
+              Env = [ "LETSBLOCKIT_ADDRESS=:8765" "PATH=/bin" ];
               ExposedPorts."8765/tcp" = { };
             };
           };
