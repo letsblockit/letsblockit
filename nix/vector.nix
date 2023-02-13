@@ -48,6 +48,7 @@ rustPlatform.buildRustPackage {
     "sinks-datadog_logs"
     "sinks-datadog_metrics"
     "sources-demo_logs"
+    "sources-host_metrics"
     "sources-exec"
     "sources-statsd"
     "sources-stdin"
