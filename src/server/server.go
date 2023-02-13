@@ -353,6 +353,10 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			if c.Request().URL.Path == healthPath {
+				return next(c)
+			}
+
 			start := time.Now()
 			if err := next(c); err != nil {
 				c.Error(err)
