@@ -203,14 +203,13 @@ func (s *Server) setupRouter() {
 		"/about":       "/help/about",
 	}))
 
-	s.echo.GET("/assets/*", echo.WrapHandler(s.assets))
-	s.echo.HEAD("/assets/*", echo.WrapHandler(s.assets))
-	s.echo.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
-	s.echo.GET("/should-reload", shouldReload)
-
 	anon := s.echo.Group("")
+	anon.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
+	anon.GET("/assets/*", echo.WrapHandler(s.assets))
+	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
 	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
+	anon.GET("/should-reload", shouldReload)
 	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
 
 	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
@@ -252,14 +251,6 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/export/:token", s.exportList).Name = "export-filterlist"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
 	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
-
-	if s.options.OfficialInstance {
-		gzip := middleware.GzipWithConfig(middleware.GzipConfig{
-			Level: 6,
-		})
-		anon.Use(gzip)
-		withAuth.Use(gzip)
-	}
 }
 
 func shouldReload(c echo.Context) error {
