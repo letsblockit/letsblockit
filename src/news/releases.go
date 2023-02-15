@@ -3,10 +3,12 @@ package news
 import (
 	"encoding/json"
 	"fmt"
+	"hash/fnv"
 	"io"
 	"os"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -64,6 +66,7 @@ type ReleaseClient struct {
 	templateProvider templateProvider
 	latestAt         time.Time
 	releases         []*Release
+	etag             string
 }
 
 func NewReleaseClient(url string, cacheDir string, officialInstance bool, tp templateProvider) *ReleaseClient {
@@ -75,17 +78,17 @@ func NewReleaseClient(url string, cacheDir string, officialInstance bool, tp tem
 	}
 }
 
-func (c *ReleaseClient) GetReleases() ([]*Release, error) {
+func (c *ReleaseClient) GetReleases() ([]*Release, string, error) {
 	c.Lock()
 	defer c.Unlock()
 	if c.releases != nil {
-		return c.releases, nil
+		return c.releases, c.etag, nil
 	}
 
 	if err := c.populate(); err != nil {
-		return nil, err
+		return nil, "", err
 	}
-	return c.releases, nil
+	return c.releases, c.etag, nil
 }
 
 func (c *ReleaseClient) GetLatestAt() (time.Time, error) {
@@ -113,12 +116,14 @@ func (c *ReleaseClient) populate() error {
 		return err
 	}
 
+	etagHasher := fnv.New64()
 	renderer := initRenderer(c.officialInstance, c.templateProvider)
 	c.releases = make([]*Release, 0, len(githubReleases))
 	for _, r := range githubReleases {
 		if r.Prerelease || r.Draft {
 			continue
 		}
+		etagHasher.Sum([]byte(r.Body))
 		// Cleanup \r that mess up with blackfriday parsing
 		body := strings.ReplaceAll(r.Body, "\r\n", "\n")
 		// Insert links for github users
@@ -137,6 +142,7 @@ func (c *ReleaseClient) populate() error {
 			c.latestAt = r.CreatedAt
 		}
 	}
+	c.etag = strconv.FormatUint(etagHasher.Sum64(), 36)
 	return nil
 }
 

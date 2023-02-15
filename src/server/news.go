@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 )
 
 func (s *Server) newsHandler(c echo.Context) error {
-	releases, err := s.releases.GetReleases()
+	releases, _, err := s.releases.GetReleases()
 	if err != nil {
 		return err
 	}
@@ -47,9 +48,13 @@ func (s *Server) newsHandler(c echo.Context) error {
 }
 
 func (s *Server) newsAtomHandler(c echo.Context) error {
-	releases, err := s.releases.GetReleases()
+	releases, etag, err := s.releases.GetReleases()
 	if err != nil {
 		return err
+	}
+
+	if m := c.Request().Header.Get("If-None-Match"); m != "" && m == etag {
+		return c.NoContent(http.StatusNotModified)
 	}
 
 	feed := atom.Feed{
@@ -98,5 +103,9 @@ func (s *Server) newsAtomHandler(c echo.Context) error {
 
 	feed.Updated = atom.Time(latestUpdate)
 	c.Response().Header().Set(echo.HeaderContentType, "application/atom+xml")
+	if etag != "" {
+		c.Response().Header().Set("Etag", etag)
+	}
+
 	return c.XMLPretty(200, &feed, "\t")
 }
