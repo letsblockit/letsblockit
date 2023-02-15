@@ -203,21 +203,16 @@ func (s *Server) setupRouter() {
 		"/about":       "/help/about",
 	}))
 
-	rawRoutes := s.echo.Group("")
-	rawRoutes.GET("/assets/*", echo.WrapHandler(s.assets))
-	rawRoutes.HEAD("/assets/*", echo.WrapHandler(s.assets))
-	rawRoutes.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
+	anon := s.echo.Group("")
+	anon.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
+	anon.GET("/assets/*", echo.WrapHandler(s.assets))
+	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
+	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
+	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
+	anon.GET("/should-reload", shouldReload)
+	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
 
-	if s.options.HotReload {
-		rawRoutes.GET("/should-reload", shouldReload)
-	}
-
-	noAuth := s.echo.Group("")
-	noAuth.GET("/list/:token", s.renderList).Name = "render-filterlist"
-	noAuth.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
-	noAuth.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
-
-	noAuth.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
+	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
 		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
 	})
 
@@ -256,12 +251,6 @@ func (s *Server) setupRouter() {
 	withAuth.GET("/export/:token", s.exportList).Name = "export-filterlist"
 	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
 	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
-
-	if s.options.OfficialInstance {
-		gzipMiddleware := middleware.GzipWithConfig(middleware.GzipConfig{Level: 6})
-		noAuth.Use(gzipMiddleware)
-		withAuth.Use(gzipMiddleware)
-	}
 }
 
 func shouldReload(c echo.Context) error {
