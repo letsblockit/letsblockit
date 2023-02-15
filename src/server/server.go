@@ -126,8 +126,10 @@ func (s *Server) Start() error {
 		if err := os.MkdirAll(s.options.LogsFolder, 0750); err != nil {
 			return err
 		}
+		target := fmt.Sprintf("%s/lbi-%d.log", s.options.LogsFolder, os.Getpid())
+		fmt.Println("Writing access logs to", target)
 		s.echo.Logger.SetOutput(&lumberjack.Logger{
-			Filename:   fmt.Sprintf("%s/lbi-%d.log", s.options.LogsFolder, os.Getpid()),
+			Filename:   target,
 			MaxSize:    100, // megabytes
 			MaxBackups: 3,
 		})
@@ -440,6 +442,7 @@ func runVector(config string) error {
 		return fmt.Errorf("failed to close vector config file: %w", err)
 	}
 
+	fmt.Println("Starting vector with config in", f.Name())
 	vector := exec.Command("vector", "--config", f.Name())
 	vector.Stderr = os.Stderr
 
