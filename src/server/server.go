@@ -27,6 +27,7 @@ import (
 	"github.com/letsblockit/letsblockit/src/users"
 	"github.com/letsblockit/letsblockit/src/users/auth"
 	"github.com/vearutop/statigz"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -55,6 +56,7 @@ type Options struct {
 	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
 	StatsdTarget        string `group:"Monitoring" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	VectorConfig        string `group:"Monitoring" help:"start the vector monitoring agent with a given yaml config"`
+	LogsFolder          string `group:"Monitoring" help:"output access logs to files instead of stdout"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
 	DryRun              bool   `hidden:""`
@@ -119,6 +121,17 @@ func (s *Server) Start() error {
 		},
 		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
 	})
+
+	if s.options.LogsFolder != "" {
+		if err := os.MkdirAll(s.options.LogsFolder, 0750); err != nil {
+			return err
+		}
+		s.echo.Logger.SetOutput(&lumberjack.Logger{
+			Filename:   fmt.Sprintf("%s/lbi-%d.log", s.options.LogsFolder, os.Getpid()),
+			MaxSize:    100, // megabytes
+			MaxBackups: 3,
+		})
+	}
 
 	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
 	if s.options.StatsdTarget != "" {
@@ -405,9 +418,12 @@ func runVector(config string) error {
 	if config == "" {
 		return nil
 	}
+	if err := os.MkdirAll(os.TempDir(), 0750); err != nil {
+		return err
+	}
 
 	cleanupConfigFile := true
-	f, err := os.CreateTemp("", "vector-*.yaml")
+	f, err := os.CreateTemp(os.TempDir(), "vector-*.yaml")
 	if err != nil {
 		return fmt.Errorf("failed to create vector config file: %w", err)
 	}
