@@ -27,6 +27,7 @@ import (
 	"github.com/letsblockit/letsblockit/src/users"
 	"github.com/letsblockit/letsblockit/src/users/auth"
 	"github.com/vearutop/statigz"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -55,6 +56,7 @@ type Options struct {
 	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
 	StatsdTarget        string `group:"Monitoring" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	VectorConfig        string `group:"Monitoring" help:"start the vector monitoring agent with a given yaml config"`
+	LogsFolder          string `group:"Monitoring" help:"output access logs to files instead of stdout"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
 	DryRun              bool   `hidden:""`
@@ -101,12 +103,23 @@ func NewServer(options *Options) *Server {
 }
 
 func (s *Server) Start() error {
+	if s.options.StatsdTarget != "" {
+		dsd, err := statsd.New(s.options.StatsdTarget)
+		if err != nil {
+			return err
+		}
+		s.statsd = dsd
+		s.echo.Use(buildDogstatsMiddleware(dsd))
+	} else {
+		s.statsd = &statsd.NoOpClient{}
+	}
+
 	concurrentRunOrPanic([]func([]error){
 		func(errs []error) { s.assets = statigz.FileServer(data.Assets) },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.Load(data.Templates, data.Presets) },
 		func(errs []error) {
-			s.store, errs[0] = db.Connect(s.options.DatabaseUrl, s.options.DatabasePoolOptions)
+			s.store, errs[0] = db.Connect(s.options.DatabaseUrl, s.options.DatabasePoolOptions, s.statsd)
 			if errs[0] == nil {
 				errs[0] = db.Migrate(s.options.DatabaseUrl)
 			}
@@ -120,18 +133,20 @@ func (s *Server) Start() error {
 		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
 	})
 
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
-	if s.options.StatsdTarget != "" {
-		dsd, err := statsd.New(s.options.StatsdTarget)
-		if err != nil {
+	if s.options.LogsFolder != "" {
+		if err := os.MkdirAll(s.options.LogsFolder, 0750); err != nil {
 			return err
 		}
-		s.statsd = dsd
-		s.echo.Use(buildDogstatsMiddleware(dsd))
-		go collectStats(s.echo.Logger, s.store, dsd)
-	} else {
-		s.statsd = &statsd.NoOpClient{}
+		target := fmt.Sprintf("%s/lbi-%d.log", s.options.LogsFolder, os.Getpid())
+		fmt.Println("Writing access logs to", target)
+		s.echo.Logger.SetOutput(&lumberjack.Logger{
+			Filename:   target,
+			MaxSize:    100, // megabytes
+			MaxBackups: 3,
+		})
 	}
+
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
 
 	switch s.options.AuthMethod {
 	case "kratos":
@@ -155,6 +170,9 @@ func (s *Server) Start() error {
 		return ErrDryRunFinished
 	}
 
+	if s.options.StatsdTarget != "" {
+		go collectStats(s.echo.Logger, s.store, s.statsd)
+	}
 	if s.options.UseSystemdSocket {
 		listeners, err := activation.Listeners()
 		if err != nil {
@@ -194,7 +212,18 @@ func (s *Server) setupRouter() {
 	)
 
 	s.echo.HideBanner = true
-	s.echo.IPExtractor = echo.ExtractIPFromXFFHeader()
+
+	if s.options.OfficialInstance {
+		xffExtractor := echo.ExtractIPFromXFFHeader()
+		s.echo.IPExtractor = func(request *http.Request) string {
+			if ip := request.Header.Get("Fly-Client-IP"); ip != "" {
+				return ip
+			}
+			return xffExtractor(request)
+		}
+	} else {
+		s.echo.IPExtractor = echo.ExtractIPFromXFFHeader()
+	}
 
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
@@ -371,7 +400,7 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 	}
 }
 
-func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
+func collectStats(log echo.Logger, store db.Store, dsd statsd.ClientInterface) {
 	collect := func() {
 		stats, err := store.GetStats(context.Background())
 		if err != nil {
@@ -405,9 +434,12 @@ func runVector(config string) error {
 	if config == "" {
 		return nil
 	}
+	if err := os.MkdirAll(os.TempDir(), 0750); err != nil {
+		return err
+	}
 
 	cleanupConfigFile := true
-	f, err := os.CreateTemp("", "vector-*.yaml")
+	f, err := os.CreateTemp(os.TempDir(), "vector-*.yaml")
 	if err != nil {
 		return fmt.Errorf("failed to create vector config file: %w", err)
 	}
@@ -424,6 +456,7 @@ func runVector(config string) error {
 		return fmt.Errorf("failed to close vector config file: %w", err)
 	}
 
+	fmt.Println("Starting vector with config in", f.Name())
 	vector := exec.Command("vector", "--config", f.Name())
 	vector.Stderr = os.Stderr
 
