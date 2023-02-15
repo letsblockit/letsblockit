@@ -203,14 +203,15 @@ func (s *Server) setupRouter() {
 		"/about":       "/help/about",
 	}))
 
+	gzipMiddleware := middleware.GzipWithConfig(middleware.GzipConfig{Level: 6})
 	anon := s.echo.Group("")
 	anon.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
 	anon.GET("/assets/*", echo.WrapHandler(s.assets))
 	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
-	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
+	anon.GET("/list/:token", s.renderList, gzipMiddleware).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
 	anon.GET("/should-reload", shouldReload)
-	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
+	anon.GET("/news.atom", s.newsAtomHandler, gzipMiddleware).Name = "news-atom"
 
 	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
 		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
