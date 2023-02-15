@@ -39,22 +39,28 @@ func (q *Queries) CreateListForUser(ctx context.Context, userID string) (uuid.UU
 }
 
 const getListForToken = `-- name: GetListForToken :one
-SELECT id, user_id, downloaded_at
+SELECT id, user_id, downloaded_at, refresh_period_hours
 FROM filter_lists
 WHERE token = $1
 LIMIT 1
 `
 
 type GetListForTokenRow struct {
-	ID           int32
-	UserID       string
-	DownloadedAt sql.NullTime
+	ID                 int32
+	UserID             string
+	DownloadedAt       sql.NullTime
+	RefreshPeriodHours sql.NullInt32
 }
 
 func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error) {
 	row := q.db.QueryRow(ctx, getListForToken, token)
 	var i GetListForTokenRow
-	err := row.Scan(&i.ID, &i.UserID, &i.DownloadedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.DownloadedAt,
+		&i.RefreshPeriodHours,
+	)
 	return i, err
 }
 
@@ -106,5 +112,21 @@ type RotateListTokenParams struct {
 
 func (q *Queries) RotateListToken(ctx context.Context, arg RotateListTokenParams) error {
 	_, err := q.db.Exec(ctx, rotateListToken, arg.UserID, arg.Token)
+	return err
+}
+
+const updateListRefreshPeriod = `-- name: UpdateListRefreshPeriod :exec
+UPDATE filter_lists
+SET refresh_period_hours = $2
+WHERE token = $1
+`
+
+type UpdateListRefreshPeriodParams struct {
+	Token              uuid.UUID
+	RefreshPeriodHours sql.NullInt32
+}
+
+func (q *Queries) UpdateListRefreshPeriod(ctx context.Context, arg UpdateListRefreshPeriodParams) error {
+	_, err := q.db.Exec(ctx, updateListRefreshPeriod, arg.Token, arg.RefreshPeriodHours)
 	return err
 }

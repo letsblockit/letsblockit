@@ -24,7 +24,7 @@ WHERE user_id = $1
   AND token = $2;
 
 -- name: GetListForToken :one
-SELECT id, user_id, downloaded_at
+SELECT id, user_id, downloaded_at, refresh_period_hours
 FROM filter_lists
 WHERE token = $1
 LIMIT 1;
@@ -33,3 +33,9 @@ LIMIT 1;
 UPDATE filter_lists
 SET downloaded_at = NOW()
 WHERE token = $1;
+
+-- name: UpdateListRefreshPeriod :exec
+UPDATE filter_lists
+SET refresh_period_hours = $2
+WHERE token = $1;
+

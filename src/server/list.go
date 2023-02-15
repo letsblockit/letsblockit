@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"math/rand"
 	"strings"
 
 	"github.com/google/uuid"
@@ -36,6 +38,7 @@ func (s *Server) renderList(c echo.Context) error {
 	}
 
 	var storedInstances []db.GetInstancesForListRow
+	var refreshPeriodHours sql.NullInt32
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		storedList, e := q.GetListForToken(ctx, token)
 		switch {
@@ -54,6 +57,7 @@ func (s *Server) renderList(c echo.Context) error {
 			}
 		}
 
+		refreshPeriodHours = storedList.RefreshPeriodHours
 		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
 		return e
 	}); err != nil {
@@ -66,6 +70,10 @@ func (s *Server) renderList(c echo.Context) error {
 	}
 	if _, ok := c.QueryParams()["test_mode"]; ok {
 		list.TestMode = true
+	}
+	if refreshPeriodHours.Valid {
+		factor := rand.Float64()/5 + 0.9 // Range [0.9; 1.1) to introduce some jitter between browsers
+		list.Expires = int(float64(refreshPeriodHours.Int32) * factor)
 	}
 	if err = list.Render(c.Response(), c.Logger(), s.filters); err != nil {
 		return err

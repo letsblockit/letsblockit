@@ -9,7 +9,7 @@ import (
 
 const (
 	listHeaderTemplate = `! Title: letsblock.it - %s
-! Expires: 12 hours
+! Expires: %d hours
 ! Homepage: https://letsblock.it
 ! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
 `
@@ -28,6 +28,7 @@ type List struct {
 	Title     string      `yaml:"title" validate:"required"`
 	Instances []*Instance `yaml:"instances" validate:"dive,required"`
 	TestMode  bool        `yaml:"test_mode,omitempty"`
+	Expires   int         `yaml:"-"`
 }
 
 type repository interface {
@@ -44,7 +45,11 @@ func (i *Instance) Render(out io.Writer, repo repository) error {
 }
 
 func (l *List) Render(out io.Writer, logger logger, repo repository) error {
-	_, err := fmt.Fprintf(out, listHeaderTemplate, l.Title)
+	if l.Expires < 12 {
+		l.Expires = 12 // Minimal (and default) value of 12 hours
+	}
+
+	_, err := fmt.Fprintf(out, listHeaderTemplate, l.Title, l.Expires)
 	if err != nil {
 		return err
 	}

@@ -33,11 +33,12 @@ type FilterInstance struct {
 }
 
 type FilterList struct {
-	ID           int32
-	UserID       string
-	Token        uuid.UUID
-	CreatedAt    time.Time
-	DownloadedAt sql.NullTime
+	ID                 int32
+	UserID             string
+	Token              uuid.UUID
+	CreatedAt          time.Time
+	DownloadedAt       sql.NullTime
+	RefreshPeriodHours sql.NullInt32
 }
 
 type UserPreference struct {

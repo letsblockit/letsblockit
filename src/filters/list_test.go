@@ -46,6 +46,19 @@ func (s *ListTestSuite) TestRenderEmpty() {
 `, buf.String())
 }
 
+func (s *ListTestSuite) TestRenderSlowRefresh() {
+	buf := &strings.Builder{}
+	list := &List{
+		Expires: 40,
+	}
+	s.NoError(list.Render(buf, s.logger, s.repository))
+	s.Equal(`! Title: letsblock.it - 
+! Expires: 40 hours
+! Homepage: https://letsblock.it
+! License: https://github.com/letsblockit/letsblockit/blob/main/LICENSE.txt
+`, buf.String())
+}
+
 func (s *ListTestSuite) TestRenderOK() {
 	var list List
 	require.NoError(s.T(), yaml.Unmarshal(testList, &list))

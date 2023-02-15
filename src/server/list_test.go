@@ -2,12 +2,16 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
+	"strconv"
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -104,6 +108,30 @@ func (s *ServerTestSuite) TestRenderList_TxtSuffix() {
 
 ! Hide the list install prompt for that list
 my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
+}
+
+func (s *ServerTestSuite) TestRenderList_RefreshPeriod() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), s.store.UpdateListRefreshPeriod(context.Background(), db.UpdateListRefreshPeriodParams{
+		Token: token,
+		RefreshPeriodHours: sql.NullInt32{
+			Int32: 70,
+			Valid: true,
+		},
+	}))
+
+	req := httptest.NewRequest(http.MethodGet, "http://my.do.main/list/"+token.String()+".txt", nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+
+	expires := regexp.MustCompile(`\! Expires\: (\d+) hours`).FindSubmatch(rec.Body.Bytes())
+	s.Len(expires, 2)
+	expiresValue, err := strconv.Atoi(string(expires[1]))
+	s.NoError(err)
+	s.True(expiresValue >= 63)
+	s.True(expiresValue <= 77)
 }
 
 func (s *ServerTestSuite) TestRenderList_OfficialInstance() {

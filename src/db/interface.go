@@ -31,6 +31,7 @@ type Querier interface {
 	MarkListDownloaded(ctx context.Context, token uuid.UUID) error
 	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstance(ctx context.Context, arg UpdateInstanceParams) error
+	UpdateListRefreshPeriod(ctx context.Context, arg UpdateListRefreshPeriodParams) error
 	UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error
 }
 
