@@ -103,12 +103,23 @@ func NewServer(options *Options) *Server {
 }
 
 func (s *Server) Start() error {
+	if s.options.StatsdTarget != "" {
+		dsd, err := statsd.New(s.options.StatsdTarget)
+		if err != nil {
+			return err
+		}
+		s.statsd = dsd
+		s.echo.Use(buildDogstatsMiddleware(dsd))
+	} else {
+		s.statsd = &statsd.NoOpClient{}
+	}
+
 	concurrentRunOrPanic([]func([]error){
 		func(errs []error) { s.assets = statigz.FileServer(data.Assets) },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.Load(data.Templates, data.Presets) },
 		func(errs []error) {
-			s.store, errs[0] = db.Connect(s.options.DatabaseUrl, s.options.DatabasePoolOptions)
+			s.store, errs[0] = db.Connect(s.options.DatabaseUrl, s.options.DatabasePoolOptions, s.statsd)
 			if errs[0] == nil {
 				errs[0] = db.Migrate(s.options.DatabaseUrl)
 			}
@@ -136,17 +147,6 @@ func (s *Server) Start() error {
 	}
 
 	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
-	if s.options.StatsdTarget != "" {
-		dsd, err := statsd.New(s.options.StatsdTarget)
-		if err != nil {
-			return err
-		}
-		s.statsd = dsd
-		s.echo.Use(buildDogstatsMiddleware(dsd))
-		go collectStats(s.echo.Logger, s.store, dsd)
-	} else {
-		s.statsd = &statsd.NoOpClient{}
-	}
 
 	switch s.options.AuthMethod {
 	case "kratos":
@@ -170,6 +170,9 @@ func (s *Server) Start() error {
 		return ErrDryRunFinished
 	}
 
+	if s.options.StatsdTarget != "" {
+		go collectStats(s.echo.Logger, s.store, s.statsd)
+	}
 	if s.options.UseSystemdSocket {
 		listeners, err := activation.Listeners()
 		if err != nil {
@@ -397,7 +400,7 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 	}
 }
 
-func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
+func collectStats(log echo.Logger, store db.Store, dsd statsd.ClientInterface) {
 	collect := func() {
 		stats, err := store.GetStats(context.Background())
 		if err != nil {
