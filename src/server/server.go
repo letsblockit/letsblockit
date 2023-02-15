@@ -209,7 +209,18 @@ func (s *Server) setupRouter() {
 	)
 
 	s.echo.HideBanner = true
-	s.echo.IPExtractor = echo.ExtractIPFromXFFHeader()
+
+	if s.options.OfficialInstance {
+		xffExtractor := echo.ExtractIPFromXFFHeader()
+		s.echo.IPExtractor = func(request *http.Request) string {
+			if ip := request.Header.Get("Fly-Client-IP"); ip != "" {
+				return ip
+			}
+			return xffExtractor(request)
+		}
+	} else {
+		s.echo.IPExtractor = echo.ExtractIPFromXFFHeader()
+	}
 
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
