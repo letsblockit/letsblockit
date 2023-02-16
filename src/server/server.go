@@ -238,7 +238,7 @@ func (s *Server) setupRouter() {
 	anon.GET("/assets/*", echo.WrapHandler(s.assets))
 	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
 	anon.GET("/list/:token", s.renderList, gzipMiddleware).Name = "render-filterlist"
-	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
+	anon.POST("/filters/:name/render", s.viewFilterRender, gzipMiddleware).Name = "view-filter-render"
 	anon.GET("/news.atom", s.newsAtomHandler, gzipMiddleware).Name = "news-atom"
 
 	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
