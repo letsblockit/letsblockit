@@ -46,6 +46,7 @@ const (
 type Options struct {
 	Address             string `group:"Networking" default:"127.0.0.1:8765" help:"address to listen to"`
 	UseSystemdSocket    bool   `group:"Networking" help:"use a systemd socket instead of opening a port"`
+	GzipResponses       bool   `group:"Networking" help:"compress most responses with gzip"`
 	DatabaseUrl         string `group:"Database" default:"postgresql:///letsblockit" help:"psql database to connect to"`
 	DatabasePoolOptions string `group:"Database" default:"" help:"pgxpool additional options"`
 	AuthMethod          string `group:"Authentication" required:"" enum:"kratos,proxy" help:"authentication method to use"`
@@ -232,24 +233,27 @@ func (s *Server) setupRouter() {
 		"/about":       "/help/about",
 	}))
 
-	gzipMiddleware := middleware.GzipWithConfig(middleware.GzipConfig{Level: 6})
-	anon := s.echo.Group("")
-	anon.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
-	anon.GET("/assets/*", echo.WrapHandler(s.assets))
-	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
-	anon.GET("/list/:token", s.renderList, gzipMiddleware).Name = "render-filterlist"
-	anon.POST("/filters/:name/render", s.viewFilterRender, gzipMiddleware).Name = "view-filter-render"
-	anon.GET("/news.atom", s.newsAtomHandler, gzipMiddleware).Name = "news-atom"
-
-	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
+	// Raw routes
+	s.echo.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
+	s.echo.GET("/assets/*", echo.WrapHandler(s.assets))
+	s.echo.HEAD("/assets/*", echo.WrapHandler(s.assets))
+	s.echo.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
 		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
 	})
-
 	if s.options.HotReload {
-		anon.GET("/should-reload", shouldReload)
+		s.echo.GET("/should-reload", shouldReload)
 	}
 
-	withAuth := s.echo.Group("",
+	var middlewares []echo.MiddlewareFunc
+	if s.options.GzipResponses {
+		middlewares = append(middlewares, middleware.GzipWithConfig(middleware.GzipConfig{Level: 6}))
+	}
+	zippedRoutes := s.echo.Group("", middlewares...)
+	zippedRoutes.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
+	zippedRoutes.GET("/list/:token", s.renderList).Name = "render-filterlist"
+	zippedRoutes.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
+
+	authedRoutes := zippedRoutes.Group("",
 		s.auth.BuildMiddleware(),
 		func(next echo.HandlerFunc) echo.HandlerFunc {
 			return func(c echo.Context) error {
@@ -268,22 +272,22 @@ func (s *Server) setupRouter() {
 			CookieHTTPOnly: true,
 		}),
 	)
-	s.auth.RegisterRoutes(withAuth)
+	s.auth.RegisterRoutes(authedRoutes)
 
-	withAuth.GET("/", s.landingPageHandler).Name = "landing"
-	withAuth.GET("/help", s.helpPages).Name = "help-main"
-	withAuth.GET("/help/:page", s.helpPages).Name = "help"
-	withAuth.GET("/news", s.newsHandler).Name = "news"
+	authedRoutes.GET("/", s.landingPageHandler).Name = "landing"
+	authedRoutes.GET("/help", s.helpPages).Name = "help-main"
+	authedRoutes.GET("/help/:page", s.helpPages).Name = "help"
+	authedRoutes.GET("/news", s.newsHandler).Name = "news"
 
-	withAuth.GET("/filters", s.listFilters).Name = "list-filters"
-	withAuth.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
+	authedRoutes.GET("/filters", s.listFilters).Name = "list-filters"
+	authedRoutes.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"
 
-	withAuth.GET("/filters/:name", s.viewFilter).Name = "view-filter"
-	withAuth.POST("/filters/:name", s.viewFilter)
+	authedRoutes.GET("/filters/:name", s.viewFilter).Name = "view-filter"
+	authedRoutes.POST("/filters/:name", s.viewFilter)
 
-	withAuth.GET("/export/:token", s.exportList).Name = "export-filterlist"
-	withAuth.GET("/user/account", s.userAccount).Name = "user-account"
-	withAuth.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
+	authedRoutes.GET("/export/:token", s.exportList).Name = "export-filterlist"
+	authedRoutes.GET("/user/account", s.userAccount).Name = "user-account"
+	authedRoutes.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 }
 
 func shouldReload(c echo.Context) error {
