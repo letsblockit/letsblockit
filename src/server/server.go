@@ -239,12 +239,15 @@ func (s *Server) setupRouter() {
 	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
 	anon.GET("/list/:token", s.renderList, gzipMiddleware).Name = "render-filterlist"
 	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
-	anon.GET("/should-reload", shouldReload)
 	anon.GET("/news.atom", s.newsAtomHandler, gzipMiddleware).Name = "news-atom"
 
 	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
 		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
 	})
+
+	if s.options.HotReload {
+		anon.GET("/should-reload", shouldReload)
+	}
 
 	withAuth := s.echo.Group("",
 		s.auth.BuildMiddleware(),
