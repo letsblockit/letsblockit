@@ -20,11 +20,14 @@ they don't know or care about what pages you see, or how you interact with them.
 
 ### Main database and servers
 
-The website is hosted on [Hetzner Cloud](https://www.hetzner.com/cloud), in their Nuremberg (Germany) datacenter.
+The main database is hosted on [Hetzner Cloud](https://www.hetzner.com/cloud), in their Nuremberg (Germany) datacenter.
 Servers are secured to the best of my knowledge and abilities, and the source of this website is
 [available on GitHub](https://github.com/letsblockit/letsblockit), under the Apache License version 2.0.
 
-Thanks to delegating the authentication to Ory, the servers don't know or store your e-mail, just
+The applicative servers are running on the [Fly.io platform](https://fly.io/), both in Europe and the USA.
+Their CDN will redirect your requests to the closest server.
+
+Thanks to delegating the authentication to Ory, the servers don't know or store your e-mail or password, just
 [a random unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier). This means that
 a leak of the database would not compromise your credentials.
 

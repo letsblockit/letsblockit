@@ -53,4 +53,8 @@ Don't hesitate to open issues on this repository, using the following templates:
     <td align="center"><a href="https://www.jetbrains.com/opensource/"><img src=".github/logo-jetbrains.svg?raw=true"/></a></td>
     <td>Thanks to Jetbrains for providing free GoLand licenses.</td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://www.fly.io/"><img src=".github/logo-flyio.svg?raw=true"/></a></td>
+    <td>Thanks to Fly.io for providing free hosting of the official instance's servers.</td>
+  </tr>
 </table>
