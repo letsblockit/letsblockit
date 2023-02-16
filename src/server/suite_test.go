@@ -113,7 +113,8 @@ func (s *ServerTestSuite) SetupTest() {
 		filters: filterRepo,
 		now:     func() time.Time { return fixedNow },
 		options: &Options{
-			LogLevel: "off",
+			HotReload: true,
+			LogLevel:  "off",
 		},
 		pages:       pm,
 		preferences: pref,

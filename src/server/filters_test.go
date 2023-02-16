@@ -357,6 +357,7 @@ func (s *ServerTestSuite) TestViewFilterRender_LoggedIn() {
 		Data: pages.ContextData{
 			"rendered": filter2CustomOutput,
 		},
+		HotReload: true,
 	})
 	s.runRequest(req, assertOk)
 }
