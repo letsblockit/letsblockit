@@ -31,6 +31,7 @@ var (
 	//go:embed testdata/templates
 	testTemplates embed.FS
 	fixedNow      = time.Date(2020, 06, 02, 17, 44, 22, 0, time.UTC)
+	newsETag      = "14cnlxzftsboq"
 )
 
 type pageContextMatcher struct {
@@ -112,7 +113,8 @@ func (s *ServerTestSuite) SetupTest() {
 		filters: filterRepo,
 		now:     func() time.Time { return fixedNow },
 		options: &Options{
-			LogLevel: "off",
+			HotReload: true,
+			LogLevel:  "off",
 		},
 		pages:       pm,
 		preferences: pref,
@@ -133,8 +135,8 @@ func (s *ServerTestSuite) SetupTest() {
 			return fixedNow, nil
 		}
 	}).MinTimes(0)
-	s.expectR.GetReleases().DoAndReturn(func() ([]*news.Release, error) {
-		return s.releases, nil
+	s.expectR.GetReleases().DoAndReturn(func() ([]*news.Release, string, error) {
+		return s.releases, newsETag, nil
 	}).MinTimes(0)
 }
 

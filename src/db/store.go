@@ -4,10 +4,13 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"time"
 
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/golang-migrate/migrate/v4"
 	mpgx "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/labstack/echo/v4"
@@ -51,13 +54,13 @@ func (s *pgxStore) RunTx(e echo.Context, f TxFunc) error {
 	})
 }
 
-func Connect(databaseUrl string) (Store, error) {
-	pool, err := pgxpool.Connect(context.Background(), databaseUrl)
+func Connect(databaseUrl, poolOptions string, dsd statsd.ClientInterface) (Store, error) {
+	pool, err := pgxpool.Connect(context.Background(), databaseUrl+poolOptions)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect: %w", err)
 	}
 	return &pgxStore{
-		Queries: New(pool),
+		Queries: New(&instrumentedDB{pool, dsd}),
 		pool:    pool,
 	}, nil
 }
@@ -91,4 +94,33 @@ func Migrate(databaseUrl string) error {
 		return fmt.Errorf("cannot close migration source: %w", err)
 	}
 	return db.Close()
+}
+
+type instrumentedDB struct {
+	db  DBTX
+	dsd statsd.ClientInterface
+}
+
+func (i instrumentedDB) Exec(ctx context.Context, q string, args ...interface{}) (pgconn.CommandTag, error) {
+	start := time.Now()
+	tag, err := i.db.Exec(ctx, q, args...)
+	_ = i.dsd.Distribution("letsblockit.pg_request_duration", float64(time.Since(start).Nanoseconds()),
+		[]string{"type:exec"}, 1)
+	return tag, err
+}
+
+func (i instrumentedDB) Query(ctx context.Context, q string, args ...interface{}) (pgx.Rows, error) {
+	start := time.Now()
+	rows, err := i.db.Query(ctx, q, args...)
+	_ = i.dsd.Distribution("letsblockit.pg_request_duration", float64(time.Since(start).Nanoseconds()),
+		[]string{"type:query"}, 1)
+	return rows, err
+}
+
+func (i instrumentedDB) QueryRow(ctx context.Context, q string, args ...interface{}) pgx.Row {
+	start := time.Now()
+	row := i.db.QueryRow(ctx, q, args...)
+	_ = i.dsd.Distribution("letsblockit.pg_request_duration", float64(time.Since(start).Nanoseconds()),
+		[]string{"type:query_row"}, 1)
+	return row
 }

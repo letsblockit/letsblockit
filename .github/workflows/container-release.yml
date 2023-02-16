@@ -16,10 +16,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v19
+      - uses: cachix/cachix-action@v12
+        with:
+          name: letsblockit
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Build container images
         run: |
           nix build .#render-container && ./result | docker load
           nix build .#server-container && ./result | docker load
+      - run: docker image list
       - name: Login to GHCR
         uses: docker/login-action@v2
         with:
@@ -38,3 +43,15 @@ jobs:
         run: |
           ./scripts/push-container.sh server:latest server-dev:${GITHUB_SHA::7}
           ./scripts/push-container.sh server:latest server-dev:$GITHUB_REF_NAME
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: ${{ github.ref_type == 'branch' }}
+      - name: Deploy official instance with new code
+        if: ${{ github.ref_type == 'branch' }}
+        run: flyctl deploy -a lbi-prod -i ghcr.io/letsblockit/server-dev:${GITHUB_SHA::7}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Restart official instance on new releases
+        if: ${{ github.ref_type == 'tag' }}
+        run: flyctl apps restart lbi-prod
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

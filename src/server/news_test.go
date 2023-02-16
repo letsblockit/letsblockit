@@ -73,9 +73,21 @@ func (s *ServerTestSuite) TestNewsAtom() {
 	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
 		assert.Equal(t, http.StatusOK, rec.Code, rec.Body)
 		assert.Equal(t, "application/atom+xml", rec.Header().Get("Content-Type"))
+		assert.Equal(t, newsETag, rec.Header().Get("ETag"))
+
 		var feed atom.Feed
 		assert.NoError(t, xml.Unmarshal(rec.Body.Bytes(), &feed))
 		assert.Len(t, feed.Entry, 4)
 		assert.Equal(t, atom.Time(fixedNow.Add(2*time.Hour)), feed.Updated)
+	})
+}
+
+func (s *ServerTestSuite) TestNewsAtom_NotModified() {
+	req := httptest.NewRequest(http.MethodGet, "/news.atom", nil)
+	req.Header.Set("If-None-Match", newsETag)
+	s.releases = exampleReleases
+	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, http.StatusNotModified, rec.Code)
+		assert.Empty(t, rec.Body)
 	})
 }

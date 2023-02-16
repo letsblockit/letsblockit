@@ -19,6 +19,6 @@ type PageRenderer interface {
 }
 
 type ReleaseClient interface {
-	GetReleases() ([]*news.Release, error)
+	GetReleases() ([]*news.Release, string, error)
 	GetLatestAt() (time.Time, error)
 }

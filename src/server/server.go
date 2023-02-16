@@ -6,8 +6,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
+	"os/exec"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
@@ -23,6 +27,7 @@ import (
 	"github.com/letsblockit/letsblockit/src/users"
 	"github.com/letsblockit/letsblockit/src/users/auth"
 	"github.com/vearutop/statigz"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var ErrDryRunFinished = errors.New("dry run finished")
@@ -35,20 +40,24 @@ const (
 		`"bytes_in":${bytes_in},"bytes_out":${bytes_out}}}` + "\n"
 	mainDomain = "letsblock.it"
 	csrfLookup = "_csrf"
+	healthPath = "/_health"
 )
 
 type Options struct {
 	Address             string `group:"Networking" default:"127.0.0.1:8765" help:"address to listen to"`
 	UseSystemdSocket    bool   `group:"Networking" help:"use a systemd socket instead of opening a port"`
 	DatabaseUrl         string `group:"Database" default:"postgresql:///letsblockit" help:"psql database to connect to"`
+	DatabasePoolOptions string `group:"Database" default:"" help:"pgxpool additional options"`
 	AuthMethod          string `group:"Authentication" required:"" enum:"kratos,proxy" help:"authentication method to use"`
 	AuthKratosUrl       string `group:"Authentication" default:"http://localhost:4000/.ory" help:"url of the kratos API, defaults to using local ory proxy"`
 	AuthProxyHeaderName string `group:"Authentication" placeholder:"X-Auth-Request-User" help:"name for the cookie set by the reverse proxy"`
 	LogLevel            string `group:"Development" default:"info" enum:"debug,info,warn,error,off" help:"http log level"`
 	CacheDir            string `group:"Development" placeholder:"/tmp" help:"folder to cache external resources in during local development"`
 	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
+	StatsdTarget        string `group:"Monitoring" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
+	VectorConfig        string `group:"Monitoring" help:"start the vector monitoring agent with a given yaml config"`
+	LogsFolder          string `group:"Monitoring" help:"output access logs to files instead of stdout"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
-	StatsdTarget        string `group:"Miscellaneous" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
 	DryRun              bool   `hidden:""`
 }
@@ -94,12 +103,23 @@ func NewServer(options *Options) *Server {
 }
 
 func (s *Server) Start() error {
+	if s.options.StatsdTarget != "" {
+		dsd, err := statsd.New(s.options.StatsdTarget)
+		if err != nil {
+			return err
+		}
+		s.statsd = dsd
+		s.echo.Use(buildDogstatsMiddleware(dsd))
+	} else {
+		s.statsd = &statsd.NoOpClient{}
+	}
+
 	concurrentRunOrPanic([]func([]error){
 		func(errs []error) { s.assets = statigz.FileServer(data.Assets) },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
 		func(errs []error) { s.filters, errs[0] = filters.Load(data.Templates, data.Presets) },
 		func(errs []error) {
-			s.store, errs[0] = db.Connect(s.options.DatabaseUrl)
+			s.store, errs[0] = db.Connect(s.options.DatabaseUrl, s.options.DatabasePoolOptions, s.statsd)
 			if errs[0] == nil {
 				errs[0] = db.Migrate(s.options.DatabaseUrl)
 			}
@@ -110,20 +130,23 @@ func (s *Server) Start() error {
 				s.preferences, errs[0] = users.NewPreferenceManager(s.store)
 			}
 		},
+		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
 	})
 
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
-	if s.options.StatsdTarget != "" {
-		dsd, err := statsd.New(s.options.StatsdTarget)
-		if err != nil {
+	if s.options.LogsFolder != "" {
+		if err := os.MkdirAll(s.options.LogsFolder, 0750); err != nil {
 			return err
 		}
-		s.statsd = dsd
-		s.echo.Use(buildDogstatsMiddleware(dsd))
-		go collectStats(s.echo.Logger, s.store, dsd)
-	} else {
-		s.statsd = &statsd.NoOpClient{}
+		target := fmt.Sprintf("%s/lbi-%d.log", s.options.LogsFolder, os.Getpid())
+		fmt.Println("Writing access logs to", target)
+		s.echo.Logger.SetOutput(&lumberjack.Logger{
+			Filename:   target,
+			MaxSize:    100, // megabytes
+			MaxBackups: 3,
+		})
 	}
+
+	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
 
 	switch s.options.AuthMethod {
 	case "kratos":
@@ -147,6 +170,9 @@ func (s *Server) Start() error {
 		return ErrDryRunFinished
 	}
 
+	if s.options.StatsdTarget != "" {
+		go collectStats(s.echo.Logger, s.store, s.statsd)
+	}
 	if s.options.UseSystemdSocket {
 		listeners, err := activation.Listeners()
 		if err != nil {
@@ -177,14 +203,27 @@ func (s *Server) setupRouter() {
 	}
 	s.echo.Use(
 		middleware.Recover(),
-		middleware.LoggerWithConfig(middleware.LoggerConfig{Format: loggerFormat}),
+		middleware.LoggerWithConfig(middleware.LoggerConfig{
+			Format: loggerFormat,
+			Skipper: func(c echo.Context) bool {
+				return c.Request().URL.Path == healthPath
+			},
+		}),
 	)
 
 	s.echo.HideBanner = true
-	s.echo.IPExtractor = echo.ExtractIPFromXFFHeader(
-		echo.TrustLoopback(true),
-		echo.TrustLinkLocal(false),
-		echo.TrustPrivateNet(false)) // upstream proxy sets the X-Forwarded-For header
+
+	if s.options.OfficialInstance {
+		xffExtractor := echo.ExtractIPFromXFFHeader()
+		s.echo.IPExtractor = func(request *http.Request) string {
+			if ip := request.Header.Get("Fly-Client-IP"); ip != "" {
+				return ip
+			}
+			return xffExtractor(request)
+		}
+	} else {
+		s.echo.IPExtractor = echo.ExtractIPFromXFFHeader()
+	}
 
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
@@ -193,17 +232,22 @@ func (s *Server) setupRouter() {
 		"/about":       "/help/about",
 	}))
 
+	gzipMiddleware := middleware.GzipWithConfig(middleware.GzipConfig{Level: 6})
 	anon := s.echo.Group("")
+	anon.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
 	anon.GET("/assets/*", echo.WrapHandler(s.assets))
 	anon.HEAD("/assets/*", echo.WrapHandler(s.assets))
-	anon.GET("/list/:token", s.renderList).Name = "render-filterlist"
-	anon.POST("/filters/:name/render", s.viewFilterRender).Name = "view-filter-render"
-	anon.GET("/should-reload", shouldReload)
-	anon.GET("/news.atom", s.newsAtomHandler).Name = "news-atom"
+	anon.GET("/list/:token", s.renderList, gzipMiddleware).Name = "render-filterlist"
+	anon.POST("/filters/:name/render", s.viewFilterRender, gzipMiddleware).Name = "view-filter-render"
+	anon.GET("/news.atom", s.newsAtomHandler, gzipMiddleware).Name = "news-atom"
 
 	anon.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
 		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
 	})
+
+	if s.options.HotReload {
+		anon.GET("/should-reload", shouldReload)
+	}
 
 	withAuth := s.echo.Group("",
 		s.auth.BuildMiddleware(),
@@ -343,6 +387,10 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			if c.Request().URL.Path == healthPath {
+				return next(c)
+			}
+
 			start := time.Now()
 			if err := next(c); err != nil {
 				c.Error(err)
@@ -356,7 +404,7 @@ func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
 	}
 }
 
-func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
+func collectStats(log echo.Logger, store db.Store, dsd statsd.ClientInterface) {
 	collect := func() {
 		stats, err := store.GetStats(context.Background())
 		if err != nil {
@@ -384,4 +432,52 @@ func collectStats(log echo.Logger, store db.Store, dsd *statsd.Client) {
 	for range time.Tick(5 * time.Minute) {
 		collect()
 	}
+}
+
+func runVector(config string) error {
+	if config == "" {
+		return nil
+	}
+	if err := os.MkdirAll(os.TempDir(), 0750); err != nil {
+		return err
+	}
+
+	cleanupConfigFile := true
+	f, err := os.CreateTemp(os.TempDir(), "vector-*.yaml")
+	if err != nil {
+		return fmt.Errorf("failed to create vector config file: %w", err)
+	}
+	defer func() {
+		if cleanupConfigFile {
+			_ = os.Remove(f.Name())
+		}
+	}()
+
+	if _, err = f.WriteString(config); err != nil {
+		return fmt.Errorf("failed to write to vector config file: %w", err)
+	}
+	if err = f.Close(); err != nil {
+		return fmt.Errorf("failed to close vector config file: %w", err)
+	}
+
+	fmt.Println("Starting vector with config in", f.Name())
+	vector := exec.Command("vector", "--config", f.Name())
+	vector.Stderr = os.Stderr
+
+	if err := vector.Start(); err != nil {
+		return fmt.Errorf("vector process failed: %w", err)
+	}
+
+	cleanupConfigFile = false
+	// TODO: move to common logic and support several SIGINT hooks
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		for sig := range sigs {
+			_ = vector.Process.Signal(sig)
+			_ = os.Remove(f.Name())
+		}
+	}()
+
+	return nil
 }

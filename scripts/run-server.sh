@@ -3,7 +3,7 @@
 ## Run it with `nix run .#run-server`, or install the dependencies manually.
 
 export ORY_PROJECT_SLUG=${ORY_PROJECT_SLUG:-inspiring-gates-6gd6xqshnz}
-ory proxy --port 4000 http://localhost:8765/ --no-jwt &
+ory proxy --port 4000 http://localhost:8765/ --no-jwt --quiet &
 
 export LETSBLOCKIT_AUTH_METHOD=kratos
 export LETSBLOCKIT_AUTH_KRATOS_URL="http://localhost:4000/.ory"

@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/jackc/pgx/v4"
 	"github.com/labstack/gommon/random"
 	"github.com/stretchr/testify/require"
@@ -72,7 +73,7 @@ func NewTestStore(t *testing.T) Store {
 	for i := 0; i < 30; i++ { // Retry schema fork to be resilient to name collision
 		clonedSchema := schemaNamePrefix + random.String(16, random.Alphabetic)
 		if _, err = conn.Exec(ctx, forkSchemaQuery, templateSchemaName, clonedSchema); err == nil {
-			store, err := Connect(buildConnString(clonedSchema))
+			store, err := Connect(buildConnString(clonedSchema), "", &statsd.NoOpClient{})
 			require.NoError(t, err)
 			t.Cleanup(func() {
 				store.(*pgxStore).cleanup(t, clonedSchema)

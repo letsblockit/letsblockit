@@ -44,6 +44,7 @@ func (s *ServerTestSuite) TestAbout_Anonymous() {
 		},
 		CSRFToken:    s.csrf,
 		UserLoggedIn: false,
+		HotReload:    true,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -63,6 +64,7 @@ func (s *ServerTestSuite) TestAbout_Logged() {
 		UserID:       s.user,
 		UserLoggedIn: true,
 		Preferences:  pref,
+		HotReload:    true,
 	})
 	s.runRequest(req, assertOk)
 }
@@ -86,6 +88,7 @@ func (s *ServerTestSuite) TestAbout_HasNews() {
 		UserLoggedIn: true,
 		Preferences:  pref,
 		HasNews:      true,
+		HotReload:    true,
 	})
 	s.runRequest(req, assertOk)
 }
