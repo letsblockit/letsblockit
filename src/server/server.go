@@ -86,6 +86,7 @@ type Server struct {
 	bans        *users.BanManager
 	echo        *echo.Echo
 	filters     *filters.Repository
+	filterHash  string
 	now         func() time.Time
 	options     *Options
 	pages       PageRenderer
@@ -132,6 +133,9 @@ func (s *Server) Start() error {
 			}
 		},
 		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
+		func(errs []error) {
+			s.filterHash, errs[0] = data.HashFiles(data.Templates, data.Presets)
+		},
 	})
 
 	if s.options.LogsFolder != "" {

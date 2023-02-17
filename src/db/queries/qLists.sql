@@ -24,8 +24,13 @@ WHERE user_id = $1
   AND token = $2;
 
 -- name: GetListForToken :one
-SELECT id, user_id, downloaded_at
-FROM filter_lists
+SELECT fl.id,
+       fl.user_id,
+       fl.downloaded_at,
+       (SELECT max(coalesce(fi.updated_at, fi.created_at))
+        from filter_instances fi
+        where fi.list_id = fl.id) as last_updated
+FROM filter_lists fl
 WHERE token = $1
 LIMIT 1;
 

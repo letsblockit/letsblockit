@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -36,9 +37,11 @@ func (s *Server) renderList(c echo.Context) error {
 		return err
 	}
 
+	var storedList db.GetListForTokenRow
 	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
-		storedList, e := q.GetListForToken(ctx, token)
+		var e error
+		storedList, e = q.GetListForToken(ctx, token)
 		switch {
 		case e == db.NotFound:
 			return echo.ErrNotFound
@@ -61,18 +64,37 @@ func (s *Server) renderList(c echo.Context) error {
 		return err
 	}
 
+	// In other to reduce resource consumption, we compute an etag based on:
+	//   - a hash of the filter templates and parameters
+	//   - the latest change to any parameter in the list
+	// This should hopefully reduce the network and CPU usage of serving most lists.
+	var etagPresent, etagMatch bool
+	listETag := s.filterHash
+	if ts, ok := storedList.LastUpdated.(time.Time); ok {
+		listETag += ts.Format("Z0715040520060102")
+	}
+	if requestETag := getEtag(c); requestETag != "" {
+		etagPresent = true
+		if listETag == requestETag {
+			etagMatch = true
+		}
+	}
+	_ = s.statsd.Incr("letsblockit.list_download", []string{
+		fmt.Sprintf("etag_present:%t", etagPresent),
+		fmt.Sprintf("etag_match:%t", etagMatch),
+	}, 1)
+	if etagMatch {
+		return c.NoContent(http.StatusNotModified)
+	}
+
+	c.Response().Header().Set("Etag", listETag)
+
 	list, err := convertFilterList(storedInstances)
 	if err != nil {
 		return err
 	}
 	if _, ok := c.QueryParams()["test_mode"]; ok {
 		list.TestMode = true
-	}
-
-	// Test out whether returning an etag would be useful
-	c.Response().Header().Set("Etag", time.Now().Format(time.RFC3339))
-	if getEtag(c) != "" {
-		_ = s.statsd.Incr("letsblockit.list_download_has_etag", nil, 1)
 	}
 
 	if err = list.Render(c.Response(), c.Logger(), s.filters); err != nil {

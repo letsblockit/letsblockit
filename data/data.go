@@ -3,8 +3,10 @@ package data
 import (
 	"embed"
 	"fmt"
+	"hash/fnv"
 	"io"
 	"io/fs"
+	"strconv"
 	"strings"
 )
 
@@ -40,4 +42,18 @@ func Walk(input fs.FS, suffix string, fn func(string, io.Reader) error) error {
 		}
 		return nil
 	})
+}
+
+// HashFiles computes a fnv hash of the given filesystems, for cache invalidation purposes
+func HashFiles(input ...fs.FS) (string, error) {
+	hasher := fnv.New64()
+	for _, i := range input {
+		if err := Walk(i, "", func(s string, reader io.Reader) error {
+			_, err := io.Copy(hasher, reader)
+			return err
+		}); err != nil {
+			return "", err
+		}
+	}
+	return strconv.FormatUint(hasher.Sum64(), 36), nil
 }
