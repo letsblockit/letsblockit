@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -67,6 +68,13 @@ func (s *Server) renderList(c echo.Context) error {
 	if _, ok := c.QueryParams()["test_mode"]; ok {
 		list.TestMode = true
 	}
+
+	// Test out whether returning an etag would be useful
+	c.Response().Header().Set("Etag", time.Now().Format(time.RFC3339))
+	if getEtag(c) != "" {
+		_ = s.statsd.Incr("letsblockit.list_download_has_etag", nil, 1)
+	}
+
 	if err = list.Render(c.Response(), c.Logger(), s.filters); err != nil {
 		return err
 	}

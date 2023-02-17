@@ -484,3 +484,7 @@ func runVector(config string) error {
 
 	return nil
 }
+
+func getEtag(c echo.Context) string {
+	return c.Request().Header.Get("If-None-Match")
+}
