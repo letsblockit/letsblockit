@@ -123,7 +123,7 @@ func (c *ReleaseClient) populate() error {
 		if r.Prerelease || r.Draft {
 			continue
 		}
-		etagHasher.Sum([]byte(r.Body))
+		_, _ = etagHasher.Write([]byte(r.Body))
 		// Cleanup \r that mess up with blackfriday parsing
 		body := strings.ReplaceAll(r.Body, "\r\n", "\n")
 		// Insert links for github users
