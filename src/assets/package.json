@@ -4,17 +4,10 @@
     "default": {
       "source": [
         "main.js",
-        "main.scss",
-        "node_modules/@tabler/icons/tabler-sprite-nostroke.svg"
+        "main.scss"
       ],
       "context": "browser",
       "distDir": "../../data/assets/dist/"
-    }
-  },
-  "parcel-namer-rewrite": {
-    "chain": "@parcel/namer-default",
-    "rules": {
-      ".*/(.*).svg": "$1.svg"
     }
   },
   "scripts": {
@@ -28,7 +21,6 @@
     "@tabler/icons": "^2.4.0",
     "bootstrap": "^5.2.3",
     "htmx.org": "^1.8.5",
-    "parcel": "^2.8.3",
-    "parcel-namer-rewrite": "^2.0.0-rc.2"
+    "parcel": "^2.8.3"
   }
 }
