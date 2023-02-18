@@ -71,7 +71,7 @@ func (s *Server) renderList(c echo.Context) error {
 	var etagPresent, etagMatch bool
 	listETag := s.filterHash
 	if ts, ok := storedList.LastUpdated.(time.Time); ok {
-		listETag += ts.Format("Z0715040520060102")
+		listETag += ts.UTC().Format("15040520060102")
 	}
 	if requestETag := getEtag(c); requestETag != "" {
 		etagPresent = true

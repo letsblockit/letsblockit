@@ -132,7 +132,7 @@ func (s *ServerTestSuite) TestRenderList_ETag() {
 	s.Equal(200, rec.Code)
 	etag2 := rec.Header().Get("etag")
 	s.NotEqual(etag1, etag2)
-	s.Len(etag2, 30)
+	s.Len(etag2, 27)
 	s.True(strings.HasPrefix(etag2, s.server.filterHash))
 
 	// A change to the template hash changes the etag too
@@ -143,7 +143,7 @@ func (s *ServerTestSuite) TestRenderList_ETag() {
 	s.Equal(200, rec.Code)
 	etag3 := rec.Header().Get("etag")
 	s.NotEqual(etag3, etag2)
-	s.Len(etag3, 30)
+	s.Len(etag3, 27)
 	s.True(strings.HasPrefix(etag3, s.server.filterHash))
 }
 
