@@ -20,7 +20,7 @@ const (
 
 var (
 	iconRegex   = regexp.MustCompile(`{{\s?>icon\s+name="(.+?)"`)
-	symbolRegex = regexp.MustCompile(`<symbol id="tabler-(.+?)".+?>(.+?)</symbol>`)
+	symbolRegex = regexp.MustCompile(`<symbol id="tabler-(.+?)".+?>(<path stroke="none" d="M0 0h24v24H0z" fill="none"/>)?(.+?)</symbol>`)
 )
 
 type extractIconsCmd struct {
@@ -69,7 +69,7 @@ func (c *extractIconsCmd) Run(k *kong.Context) error {
 			}
 			neededIcons[name] = true
 		}
-		_, err := fmt.Fprintf(outputFile, "%s: %s\n", match[1], match[2])
+		_, err := fmt.Fprintf(outputFile, "%s: %s\n", match[1], match[3])
 		k.FatalIfErrorf(err)
 	}
 
