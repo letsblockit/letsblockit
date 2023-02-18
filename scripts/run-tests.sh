@@ -14,5 +14,5 @@ golangci-lint run --timeout 5m
 
 # Run unit and integration tests on the lbitests DB after purging it
 psql --quiet "$TEST_DATABASE_URL" -c "DROP owned BY $(whoami)"
-go test -v -race ./...
+go test -race ./...
 echo "OK"
