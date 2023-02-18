@@ -22,6 +22,9 @@ var Presets embed.FS
 //go:embed pages/*
 var Pages embed.FS
 
+//go:embed tabler-icons.yaml
+var Icons []byte
+
 // Walk warps fs.WalkDir with simpler invocation pattern:
 //   - only files with a given suffix are passed opened
 //   - the file is automatically opened and closed

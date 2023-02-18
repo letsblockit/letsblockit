@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/data"
 	"github.com/russross/blackfriday/v2"
+	"gopkg.in/yaml.v3"
 )
 
 type page struct {
@@ -104,6 +105,19 @@ func LoadPages() (*Pages, error) {
 		pp.pages[name] = &page{Contents: string(rawContents)}
 		return e
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Load svg icons
+	icons := make(map[string]string)
+	err = yaml.Unmarshal(data.Icons, &icons)
+	if err != nil {
+		return nil, err
+	}
+	iconContentHelper := func(name string) string { return icons[name] }
+	pp.main.WithHelperFunc("__icon_contents", iconContentHelper)
+	pp.naked.WithHelperFunc("__icon_contents", iconContentHelper)
 
 	return &pp, err
 }
