@@ -1,4 +1,4 @@
-title: Cleanup the YouTube video playing interface
+title: "YouTube: video playback interface cleanups"
 params:
   - name: channel-clarification
     description: Hide the channel description box under videos and shorts

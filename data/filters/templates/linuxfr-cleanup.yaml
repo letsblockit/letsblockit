@@ -1,4 +1,4 @@
-title: Cleanup the LinuxFr interface
+title: "LinuxFr: interface cleanups"
 params:
   - name: homepage-pinned
     description: Hide the pinned article at the top of the homepage

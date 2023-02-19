@@ -1,4 +1,4 @@
-title: Hide Youtube videos by title
+title: "YouTube: filter out videos by title"
 params:
   - name: keywords
     description: Words to search for

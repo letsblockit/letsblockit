@@ -1,4 +1,4 @@
-title: Cleanup Google search result pages
+title: "Google Search: interface cleanups"
 params:
   - name: rich-results
     description: Hide most rich-content results (images, stories, businesses...) in the web search

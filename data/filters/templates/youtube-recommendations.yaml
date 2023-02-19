@@ -1,4 +1,4 @@
-title: Hide Youtube recommended videos
+title: "YouTube: hide video recommendations"
 params:
   - name: related-videos
     description: Hide the related videos sidebar when watching a video

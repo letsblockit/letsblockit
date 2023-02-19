@@ -1,11 +1,11 @@
-title: Remove tracking URL parameters from links
+title: "Remove tracking URL parameters from links"
 params:
   - name: url-params
     description: Parameters to remove from links
     type: list
     default: [ "utm_source", "utm_medium", "utm_campaign", "utm_content" ]
 tags:
-  - privacy
+  - custom
 template: |
   {{#each url-params}}
   *$removeparam={{this}}

@@ -9,9 +9,13 @@ import (
 
 	"github.com/imantung/mario"
 	"github.com/letsblockit/letsblockit/data"
+	"github.com/samber/lo"
 )
 
-const CustomRulesFilterName = "custom-rules"
+const (
+	CustomRulesFilterName = "custom-rules"
+	CustomTagName         = "custom"
+)
 
 // Repository holds parsed Templates ready for use
 type Repository struct {
@@ -123,16 +127,15 @@ func flattenTagMap(tags map[string]struct{}) []string {
 	return out
 }
 
-// sortTemplates moves custom-rules at the end of the list, keeping the other filters in alphabetical order
+// sortTemplates moves custom templates at the end of the list, keeping the other templates in alphabetical order
 func sortTemplates(filters []*Template) {
 	sort.Slice(filters, func(i, j int) bool {
-		if filters[i].Name == CustomRulesFilterName {
-			return false
+		iCustom := lo.Contains(filters[i].Tags, CustomTagName)
+		jCustom := lo.Contains(filters[j].Tags, CustomTagName)
+		if iCustom == jCustom {
+			return strings.Compare(filters[i].Title, filters[j].Title) < 0
 		}
-		if filters[j].Name == CustomRulesFilterName {
-			return true
-		}
-		return strings.Compare(filters[i].Name, filters[j].Name) < 0
+		return jCustom
 	})
 }
 

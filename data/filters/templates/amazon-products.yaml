@@ -1,4 +1,4 @@
-title: Hide products on Amazon
+title: "Amazon: filter out products by name"
 params:
   - name: rules
     description: Rules to hide products

@@ -1,4 +1,4 @@
-title: Hide tweets by user handle
+title: "Twitter/Nitter: filter out tweets by user handle"
 params:
   - name: twitter-enable
     description: Generate rules for twitter.com
@@ -19,6 +19,7 @@ params:
     type: list
     default: [ userA ]
 tags:
+  - nitter
   - twitter
 template: |
   {{#each users as |user id|}}

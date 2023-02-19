@@ -1,4 +1,4 @@
-title: Hide Nebula videos from some creators
+title: "Nebula: filter out videos by creator"
 params:
   - name: creators
     description: Creators to filter out
