@@ -1,11 +1,10 @@
-name: "Restart official instance on releases"
+name: "Restart official instance"
 on:
+  workflow_dispatch:
   release:
-permissions:
-  contents: read
 
 jobs:
-  restart-on-release:
+  restart:
     runs-on: ubuntu-latest
     if: github.repository == 'letsblockit/letsblockit'
     steps:
