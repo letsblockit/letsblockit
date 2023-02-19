@@ -54,7 +54,7 @@ hello presetB blep
 hello presetA blep:style(border: 2px dashed red !important)
 hello presetB blep:style(border: 2px dashed red !important)
 `
-	filterTags = []string{"tag1", "tag2", "tag3"}
+	filterTags = []string{"custom", "tag1", "tag2", "tag3"}
 )
 
 func (s *ServerTestSuite) TestListFilters_OK() {
