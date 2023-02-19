@@ -4,16 +4,15 @@
             <div class="me-auto">
                 <div class="fw-bold">
                     <a class="stretched-link" href="{{href "view-filter" name}}">{{title}}</a>
-                    {{#if (lookup @root.data.testing_filters name)}}
-                        <span class="ms-1 text-secondary">{{>icon name="test-pipe" stroke=2 alt="Test mode enabled"}}</span>
-                    {{/if}}
                 </div>
             </div>
             <div class="text-end" style="z-index: 2000;">
+                {{#if (lookup @root.data.testing_filters name)}}
+                    <span class="ms-1 text-secondary">{{>icon name="test-pipe" stroke=2 alt="Test mode enabled"}}</span>
+                {{/if}}
                 {{#if (lookup @root.data.updated_filters name)}}
                     <span class="badge bg-success ms-1" title="Filter has new parameters">updated</span>
                 {{/if}}
-                {{#each tags}}{{{tag this}}}{{/each}}
             </div>
         </li>
     {{/each}}
