@@ -22,6 +22,13 @@ func (s *ServerTestSuite) TestRenderList_NotFound() {
 	})
 }
 
+func (s *ServerTestSuite) TestRenderList_NotUUID() {
+	req := httptest.NewRequest(http.MethodGet, "/list/invalid", nil)
+	s.runRequest(req, func(t *testing.T, rec *httptest.ResponseRecorder) {
+		assert.Equal(t, 404, rec.Code)
+	})
+}
+
 func (s *ServerTestSuite) TestRenderList_OK() {
 	token, err := s.store.CreateListForUser(context.Background(), s.user)
 	require.NoError(s.T(), err)

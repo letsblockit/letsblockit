@@ -34,7 +34,7 @@ const installPromptFilterTemplate = `
 func (s *Server) renderList(c echo.Context) error {
 	token, err := uuid.Parse(strings.TrimSuffix(c.Param("token"), renderListSuffix))
 	if err != nil {
-		return err
+		return echo.ErrNotFound
 	}
 
 	var storedList db.GetListForTokenRow
@@ -113,7 +113,7 @@ func (s *Server) renderList(c echo.Context) error {
 func (s *Server) exportList(c echo.Context) error {
 	token, err := uuid.Parse(c.Param("token"))
 	if err != nil {
-		return err
+		return echo.ErrNotFound
 	}
 
 	var storedInstances []db.GetInstancesForListRow
