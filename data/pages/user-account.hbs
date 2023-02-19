@@ -25,7 +25,15 @@
         <div class="card-header">Interface preferences</div>
         <form class="card-body" method="POST" action="{{href "update-preferences" ""}}">
             {{{csrf @root}}}
-            <div class="form-check mb-2">
+            <div class="form-check form-switch mb-3">
+                <input type="checkbox" role="switch" class="form-check-input"
+                    {{#if (beta_features @root)}} checked{{/if}}
+                       name="beta_features" id="betaFeaturesCheck">
+                <label class="form-check-label" for="betaFeaturesCheck">
+                    Show unfinished beta features
+                </label>
+            </div>
+            <div class="form-check mb-2{{#unless (beta_features @root) }} d-none{{/unless}}">
                 <label for="color-modes">Color mode:</label>
                 <div class="btn-group ms-2" role="group" id="color-modes" aria-label="Color mode choice">
                     <input type="radio" class="btn-check" name="color_mode" value="light" id="light-color-mode"
@@ -38,14 +46,6 @@
                         {{#equal "dark" @root.Preferences.ColorMode}} checked{{/equal}}>
                     <label class="btn btn-outline-info" for="dark-color-mode">Dark</label>
                 </div>
-            </div>
-            <div class="form-check form-switch mb-3">
-                <input type="checkbox" role="switch" class="form-check-input"
-                    {{#if (beta_features @root)}} checked{{/if}}
-                       name="beta_features" id="betaFeaturesCheck">
-                <label class="form-check-label" for="betaFeaturesCheck">
-                    Show unfinished beta features
-                </label>
             </div>
             <button type="submit" class="btn btn-primary">Save preferences</button>
         </form>
