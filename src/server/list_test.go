@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -104,6 +105,46 @@ func (s *ServerTestSuite) TestRenderList_TxtSuffix() {
 
 ! Hide the list install prompt for that list
 my.do.main###install-prompt-`+token.String()+"\n", rec.Body.String())
+}
+
+func (s *ServerTestSuite) TestRenderList_ETag() {
+	token, err := s.store.CreateListForUser(context.Background(), s.user)
+	require.NoError(s.T(), err)
+
+	// Get initial etag value from first request
+	req := httptest.NewRequest(http.MethodGet, "/list/"+token.String()+".txt", nil)
+	rec := httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	etag1 := rec.Header().Get("etag")
+	s.Equal(etag1, s.server.filterHash)
+
+	// Repeat request should get a 304
+	req.Header.Set("If-None-Match", etag1)
+	rec = httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(http.StatusNotModified, rec.Code)
+
+	// Adding a filter instance changes the etag
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{Template: "custom-rules"}))
+	rec = httptest.NewRecorder()
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	etag2 := rec.Header().Get("etag")
+	s.NotEqual(etag1, etag2)
+	s.Len(etag2, 27)
+	s.True(strings.HasPrefix(etag2, s.server.filterHash))
+
+	// A change to the template hash changes the etag too
+	req.Header.Set("If-None-Match", etag2)
+	rec = httptest.NewRecorder()
+	s.server.filterHash = "differenthash"
+	s.server.echo.ServeHTTP(rec, req)
+	s.Equal(200, rec.Code)
+	etag3 := rec.Header().Get("etag")
+	s.NotEqual(etag3, etag2)
+	s.Len(etag3, 27)
+	s.True(strings.HasPrefix(etag3, s.server.filterHash))
 }
 
 func (s *ServerTestSuite) TestRenderList_OfficialInstance() {

@@ -53,7 +53,7 @@ func (s *Server) newsAtomHandler(c echo.Context) error {
 		return err
 	}
 
-	if m := c.Request().Header.Get("If-None-Match"); m != "" && m == etag {
+	if m := getEtag(c); m != "" && m == etag {
 		return c.NoContent(http.StatusNotModified)
 	}
 

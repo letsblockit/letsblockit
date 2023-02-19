@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"time"
 
@@ -31,6 +32,29 @@ func (e *ColorMode) Scan(src interface{}) error {
 		return fmt.Errorf("unsupported scan type for ColorMode: %T", src)
 	}
 	return nil
+}
+
+type NullColorMode struct {
+	ColorMode ColorMode
+	Valid     bool // Valid is true if ColorMode is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullColorMode) Scan(value interface{}) error {
+	if value == nil {
+		ns.ColorMode, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ColorMode.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullColorMode) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ColorMode), nil
 }
 
 type BannedUser struct {

@@ -1,5 +1,6 @@
-<svg class="icon {{class}}" {{#if alt}}alt="{{alt}}"{{else}}aria-hidden="true"{{/if}}
+<svg class="icon{{#with class}} {{.}}{{/with}}"
+     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
      style="{{#with size}}width:{{.}}em; height:{{.}}em;{{/with}}{{#with stroke}}stroke-width:{{.}};{{/with}}">
-    {{#with alt}}<title>{{.}}</title>{{/with}}
-    <use xlink:href="/assets/dist/tabler-sprite-nostroke.svg#tabler-{{name}}"/>
+     {{#with alt}}<title>{{.}}</title>{{/with}}
+     {{{__icon_contents name}}}
 </svg>

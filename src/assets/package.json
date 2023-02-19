@@ -4,17 +4,10 @@
     "default": {
       "source": [
         "main.js",
-        "main.scss",
-        "node_modules/@tabler/icons/tabler-sprite-nostroke.svg"
+        "main.scss"
       ],
       "context": "browser",
       "distDir": "../../data/assets/dist/"
-    }
-  },
-  "parcel-namer-rewrite": {
-    "chain": "@parcel/namer-default",
-    "rules": {
-      ".*/(.*).svg": "$1.svg"
     }
   },
   "scripts": {
@@ -24,12 +17,10 @@
   },
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.8.3",
-    "@parcel/reporter-bundle-analyzer": "^2.8.3",
     "@parcel/transformer-sass": "^2.8.3",
-    "@tabler/icons": "^2.3.0",
+    "@tabler/icons": "^2.4.0",
     "bootstrap": "github:twbs/bootstrap#main",
     "htmx.org": "^1.8.5",
-    "parcel": "^2.8.3",
-    "parcel-namer-rewrite": "^2.0.0-rc.2"
+    "parcel": "^2.8.3"
   }
 }

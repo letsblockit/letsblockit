@@ -39,8 +39,13 @@ func (q *Queries) CreateListForUser(ctx context.Context, userID string) (uuid.UU
 }
 
 const getListForToken = `-- name: GetListForToken :one
-SELECT id, user_id, downloaded_at
-FROM filter_lists
+SELECT fl.id,
+       fl.user_id,
+       fl.downloaded_at,
+       (SELECT max(coalesce(fi.updated_at, fi.created_at))
+        from filter_instances fi
+        where fi.list_id = fl.id) as last_updated
+FROM filter_lists fl
 WHERE token = $1
 LIMIT 1
 `
@@ -49,12 +54,18 @@ type GetListForTokenRow struct {
 	ID           int32
 	UserID       string
 	DownloadedAt sql.NullTime
+	LastUpdated  interface{}
 }
 
 func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error) {
 	row := q.db.QueryRow(ctx, getListForToken, token)
 	var i GetListForTokenRow
-	err := row.Scan(&i.ID, &i.UserID, &i.DownloadedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.DownloadedAt,
+		&i.LastUpdated,
+	)
 	return i, err
 }
 
