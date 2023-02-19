@@ -29,22 +29,23 @@
                 <input type="checkbox" role="switch" class="form-check-input"
                     {{#if (beta_features @root)}} checked{{/if}}
                        name="beta_features" id="betaFeaturesCheck">
-                <label class="form-check-label" for="betaFeaturesCheck">
-                    Show unfinished beta features
+                <label title="Access unfinished features such as dark mode and filter testing mode."
+                        class="form-check-label" for="betaFeaturesCheck">
+                    Enable beta features (here be dragons!)
                 </label>
             </div>
-            <div class="form-check mb-2{{#unless (beta_features @root) }} d-none{{/unless}}">
+            <div class="form-check mb-3{{#unless (beta_features @root) }} d-none" aria-hidden="true{{/unless}}">
                 <label for="color-modes">Color mode:</label>
                 <div class="btn-group ms-2" role="group" id="color-modes" aria-label="Color mode choice">
                     <input type="radio" class="btn-check" name="color_mode" value="light" id="light-color-mode"
                         {{#equal "light" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-outline-info" for="light-color-mode">Light</label>
+                    <label class="btn btn-dark" for="light-color-mode">Light</label>
                     <input type="radio" class="btn-check" name="color_mode" value="auto" id="auto-color-mode"
                         {{#equal "auto" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-outline-info" for="auto-color-mode">Auto</label>
+                    <label class="btn btn-dark" for="auto-color-mode">Auto</label>
                     <input type="radio" class="btn-check" name="color_mode" value="dark" id="dark-color-mode"
                         {{#equal "dark" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-outline-info" for="dark-color-mode">Dark</label>
+                    <label class="btn btn-dark" for="dark-color-mode">Dark</label>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Save preferences</button>
