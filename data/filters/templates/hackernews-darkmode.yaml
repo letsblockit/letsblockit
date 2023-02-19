@@ -1,0 +1,15 @@
+title: "Hacker News: unofficial dark mode"
+tags:
+  - hackernews
+template: |
+  news.ycombinator.com##html:style(filter:invert(100%) hue-rotate(180deg))
+  news.ycombinator.com##body:style(background: white)
+  news.ycombinator.com##div.toptext:style(color: black)
+  news.ycombinator.com###hnmain td[bgcolor="#000000"]
+---
+
+Hacker News does not have a dark mode (yet). This template injects CSS rules to create an unofficial dark mode.
+
+While it is not perfect, it works fine on desktop and mobile. Because the CSS rules are injected during the
+page load, you might experience a flash of white background when loading the pages. This is unfortunately not
+fixable.
