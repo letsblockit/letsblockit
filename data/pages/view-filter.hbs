@@ -59,7 +59,8 @@
                         <div class="ms-2 form-check form-check-inline">
                             <input type="checkbox" class="form-check-input" id="__test_mode" name="__test_mode"
                                    {{#equal true @root.data.test_mode}}checked{{/equal}}>
-                            <label class="form-check-label" for="__test_mode">Test</label>
+                            <label title="Matching elements will be given a red border instead of being hidden"
+                                   class="form-check-label" for="__test_mode">Test mode</label>
                         </div>
                         {{/if}}
                         <div class="ms-2 htmx-indicator spinner-border text-secondary" role="status">
@@ -103,7 +104,8 @@
                             <div class="ms-2 form-check form-check-inline">
                                 <input type="checkbox" class="form-check-input" id="__test_mode" name="__test_mode"
                                        {{#equal true @root.data.test_mode}}checked{{/equal}}>
-                                <label class="form-check-label" for="__test_mode">Test</label>
+                                <label title="Matching elements will be given a red border instead of being hidden"
+                                       class="form-check-label" for="__test_mode">Test mode</label>
                             </div>
                         {{/if}}
                     {{/if}}

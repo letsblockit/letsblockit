@@ -25,12 +25,12 @@
         {{#if active_filters }}
             {{#if list_downloaded }}
                 <div id="install-prompt-{{list_token}}" role="alert" aria-hidden="true"
-                     class="alert alert-secondary has-background-secondary-light">
+                     class="alert alert-secondary bg-secondary-subtle">
                     Your list is not installed on this browser, follow these instructions to
                     <a href="{{href "help" "use-list"}}">add your list to uBlock Origin</a>.
                 </div>
             {{else}}
-                <div role="alert" class="alert alert-secondary has-background-secondary-light">
+                <div role="alert" class="alert alert-secondary bg-secondary-subtle">
                     Now that you have setup some filters,
                     <a href="{{href "help" "use-list"}}">add your list to uBlock Origin</a> to use them.
                 </div>
@@ -44,13 +44,13 @@
                 {{>list-filters-table}}
             {{/with}}
         {{else if @root.UserLoggedIn}}
-            <div role="alert" class="alert alert-secondary has-background-secondary-light">
+            <div role="alert" class="alert alert-secondary bg-secondary-subtle">
                 Let's start adding filters to your list! What about
                 <a href="{{href "view-filter" "search-results"}}">
                     hiding pinterest in your search results?</a>
             </div>
         {{else}}
-            <div role="alert" class="alert alert-secondary has-background-secondary-light">
+            <div role="alert" class="alert alert-secondary bg-secondary-subtle">
                 <form method="POST" class="form-inline" action="{{href "user-action" "loginOrRegistration"}}">
                     {{{csrf @root}}}
                     <span class="align-middle">This website is a collaborative repository of uBlock content filters

@@ -1,5 +1,7 @@
 @charset "utf-8";
 
+$color-mode-type: data; // Make the default behaviour explicit
+
 $primary: #b83e51;
 $secondary: #DC926E;
 $success: #81a65e;
@@ -51,4 +53,8 @@ main li:not(.nav-item) {
 // Injected by htmx.js, but adding for noscript users
 .htmx-indicator {
   opacity: 0;
+}
+
+form label[title] {
+  text-decoration: underline dashed !important;
 }

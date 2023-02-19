@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="{{#if (is_color_mode @root "dark")}}dark{{else}}light{{/if}}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,9 +18,19 @@
     <meta property="og:image:height" content="288"/>
     <meta property="og:site_name" content="Let's Block It"/>
     <meta name="twitter:card" content="summary"/>
-    <meta name="twitter:site" content="@LetsBlockIt"/>
-    <link rel="alternate" type="application/atom+xml" title="Release notes from letsblock.it" href="{{href "news-atom" ""}}" />
+    <link rel="alternate" type="application/atom+xml" title="Release notes" href="{{href "news-atom" ""}}"/>
 </head>
+
+{{#if (beta_features @root) }}
+{{#if (is_color_mode @root "auto") }}
+    <script>
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-bs-theme', 'dark')
+        }
+    </script>
+{{/if}}
+{{/if}}
+
 <body hx-boost="true"{{#if HotReload}} data-hot-reload{{/if}}>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary" aria-label="Main navigation">
     <div class="container-lg">

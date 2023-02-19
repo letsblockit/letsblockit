@@ -6,11 +6,56 @@ package db
 
 import (
 	"database/sql"
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgtype"
 )
+
+type ColorMode string
+
+const (
+	ColorModeAuto  ColorMode = "auto"
+	ColorModeDark  ColorMode = "dark"
+	ColorModeLight ColorMode = "light"
+)
+
+func (e *ColorMode) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ColorMode(s)
+	case string:
+		*e = ColorMode(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ColorMode: %T", src)
+	}
+	return nil
+}
+
+type NullColorMode struct {
+	ColorMode ColorMode
+	Valid     bool // Valid is true if ColorMode is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullColorMode) Scan(value interface{}) error {
+	if value == nil {
+		ns.ColorMode, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ColorMode.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullColorMode) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ColorMode), nil
+}
 
 type BannedUser struct {
 	ID         int32
@@ -44,4 +89,5 @@ type UserPreference struct {
 	UserID       string
 	NewsCursor   time.Time
 	BetaFeatures bool
+	ColorMode    ColorMode
 }

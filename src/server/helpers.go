@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/pages"
 )
@@ -58,6 +59,12 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 		},
 		"beta_features": func(c *pages.Context) bool {
 			return c.Preferences != nil && c.Preferences.BetaFeatures
+		},
+		"is_color_mode": func(c *pages.Context, mode string) bool {
+			if c.Preferences == nil {
+				return mode == string(db.ColorModeAuto)
+			}
+			return mode == string(c.Preferences.ColorMode)
 		},
 	}
 }

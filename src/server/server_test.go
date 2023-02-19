@@ -93,6 +93,31 @@ func (s *ServerTestSuite) TestAbout_HasNews() {
 	s.runRequest(req, assertOk)
 }
 
+func (s *ServerTestSuite) TestAbout_DarkMode() {
+	s.NoError(s.server.preferences.UpdatePreferences(s.c, db.UpdateUserPreferencesParams{
+		UserID:       s.user,
+		ColorMode:    db.ColorModeDark,
+		BetaFeatures: false,
+	}))
+	pref, _ := s.server.preferences.Get(s.c, s.user)
+	req := httptest.NewRequest(http.MethodGet, "/about", nil)
+	s.expectRenderWithSidebarAndContext("help-about", "help-sidebar", &pages.Context{
+		CurrentSection:  "help/about",
+		NavigationLinks: navigationLinks,
+		Title:           "About this project",
+		Data: pages.ContextData{
+			"page":          helpMenu[1].Pages[0],
+			"menu_sections": helpMenu,
+		},
+		CSRFToken:    s.csrf,
+		UserID:       s.user,
+		UserLoggedIn: true,
+		HotReload:    true,
+		Preferences:  pref,
+	})
+	s.runRequest(req, assertOk)
+}
+
 func (s *ServerTestSuite) TestAbout_BannedUser() {
 	s.setUserBanned()
 	req := httptest.NewRequest(http.MethodGet, "/about", nil)

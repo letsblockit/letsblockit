@@ -32,6 +32,7 @@ type Querier interface {
 	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstance(ctx context.Context, arg UpdateInstanceParams) error
 	UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error
+	UpdateUserPreferences(ctx context.Context, arg UpdateUserPreferencesParams) error
 }
 
 var _ Querier = (*Queries)(nil)

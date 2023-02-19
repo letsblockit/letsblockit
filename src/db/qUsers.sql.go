@@ -53,7 +53,7 @@ func (q *Queries) GetBannedUsers(ctx context.Context) ([]string, error) {
 }
 
 const getUserPreferences = `-- name: GetUserPreferences :one
-SELECT user_id, news_cursor, beta_features
+SELECT user_id, news_cursor, beta_features, color_mode
 FROM user_preferences
 WHERE user_id = $1
 `
@@ -61,20 +61,30 @@ WHERE user_id = $1
 func (q *Queries) GetUserPreferences(ctx context.Context, userID string) (UserPreference, error) {
 	row := q.db.QueryRow(ctx, getUserPreferences, userID)
 	var i UserPreference
-	err := row.Scan(&i.UserID, &i.NewsCursor, &i.BetaFeatures)
+	err := row.Scan(
+		&i.UserID,
+		&i.NewsCursor,
+		&i.BetaFeatures,
+		&i.ColorMode,
+	)
 	return i, err
 }
 
 const initUserPreferences = `-- name: InitUserPreferences :one
 INSERT INTO user_preferences (user_id)
 VALUES ($1)
-RETURNING user_id, news_cursor, beta_features
+RETURNING user_id, news_cursor, beta_features, color_mode
 `
 
 func (q *Queries) InitUserPreferences(ctx context.Context, userID string) (UserPreference, error) {
 	row := q.db.QueryRow(ctx, initUserPreferences, userID)
 	var i UserPreference
-	err := row.Scan(&i.UserID, &i.NewsCursor, &i.BetaFeatures)
+	err := row.Scan(
+		&i.UserID,
+		&i.NewsCursor,
+		&i.BetaFeatures,
+		&i.ColorMode,
+	)
 	return i, err
 }
 
@@ -108,5 +118,23 @@ type UpdateNewsCursorParams struct {
 
 func (q *Queries) UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error {
 	_, err := q.db.Exec(ctx, updateNewsCursor, arg.UserID, arg.NewsCursor)
+	return err
+}
+
+const updateUserPreferences = `-- name: UpdateUserPreferences :exec
+UPDATE user_preferences
+SET color_mode    = $2,
+    beta_features = $3
+WHERE user_id = $1
+`
+
+type UpdateUserPreferencesParams struct {
+	UserID       string
+	ColorMode    ColorMode
+	BetaFeatures bool
+}
+
+func (q *Queries) UpdateUserPreferences(ctx context.Context, arg UpdateUserPreferencesParams) error {
+	_, err := q.db.Exec(ctx, updateUserPreferences, arg.UserID, arg.ColorMode, arg.BetaFeatures)
 	return err
 }

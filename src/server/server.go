@@ -292,6 +292,7 @@ func (s *Server) setupRouter() {
 	authedRoutes.GET("/export/:token", s.exportList).Name = "export-filterlist"
 	authedRoutes.GET("/user/account", s.userAccount).Name = "user-account"
 	authedRoutes.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
+	authedRoutes.POST("/user/preferences", s.updatePreferences).Name = "update-preferences"
 }
 
 func shouldReload(c echo.Context) error {
