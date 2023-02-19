@@ -133,7 +133,7 @@ func sortTemplates(filters []*Template) {
 		iCustom := lo.Contains(filters[i].Tags, CustomTagName)
 		jCustom := lo.Contains(filters[j].Tags, CustomTagName)
 		if iCustom == jCustom {
-			return strings.Compare(filters[i].Name, filters[j].Name) < 0
+			return strings.Compare(filters[i].Title, filters[j].Title) < 0
 		}
 		return jCustom
 	})
