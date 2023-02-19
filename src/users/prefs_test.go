@@ -106,6 +106,62 @@ func (s *PreferenceManagerSuite) TestUpdateNewsCursor() {
 	assert.EqualValues(s.T(), &updated, got)
 }
 
+func (s *PreferenceManagerSuite) TestUpdatePreferences() {
+	initial := db.UserPreference{
+		UserID:       s.user,
+		NewsCursor:   pastNow(10),
+		BetaFeatures: false,
+		ColorMode:    db.ColorModeAuto,
+	}
+	withBeta := db.UserPreference{
+		UserID:       s.user,
+		NewsCursor:   pastNow(10),
+		BetaFeatures: true,
+		ColorMode:    db.ColorModeAuto,
+	}
+	withDark := db.UserPreference{
+		UserID:       s.user,
+		NewsCursor:   pastNow(10),
+		BetaFeatures: false,
+		ColorMode:    db.ColorModeDark,
+	}
+
+	_, err := s.store.InitUserPreferences(context.Background(), s.user)
+	require.NoError(s.T(), err)
+	require.NoError(s.T(), s.store.UpdateNewsCursor(context.Background(), db.UpdateNewsCursorParams{
+		UserID:     s.user,
+		NewsCursor: initial.NewsCursor,
+	}))
+
+	got, err := s.prefs.Get(s.ctx, s.user)
+	assert.NoError(s.T(), err)
+	assert.EqualValues(s.T(), &initial, got)
+
+	// Update the value through the manager
+	assert.NoError(s.T(), s.prefs.UpdatePreferences(s.ctx, db.UpdateUserPreferencesParams{
+		UserID:       s.user,
+		ColorMode:    "auto",
+		BetaFeatures: true,
+	}))
+
+	// Cache has been invalidated
+	got, err = s.prefs.Get(s.ctx, s.user)
+	assert.NoError(s.T(), err)
+	assert.EqualValues(s.T(), &withBeta, got)
+
+	// Update the value through the manager
+	assert.NoError(s.T(), s.prefs.UpdatePreferences(s.ctx, db.UpdateUserPreferencesParams{
+		UserID:       s.user,
+		ColorMode:    "dark",
+		BetaFeatures: false,
+	}))
+
+	// Cache has been invalidated
+	got, err = s.prefs.Get(s.ctx, s.user)
+	assert.NoError(s.T(), err)
+	assert.EqualValues(s.T(), &withDark, got)
+}
+
 func TestPreferenceManagerSuite(t *testing.T) {
 	suite.Run(t, new(PreferenceManagerSuite))
 }
