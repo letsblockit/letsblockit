@@ -59,6 +59,6 @@ func (m *PreferenceManager) UpdatePreferences(c echo.Context, params db.UpdateUs
 		return err
 	}
 	err := m.store.UpdateUserPreferences(c.Request().Context(), params)
-	m.cache.Remove(params.UserID)
+	m.cache.Delete(params.UserID)
 	return err
 }

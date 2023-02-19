@@ -112,6 +112,7 @@ func (s *ServerTestSuite) TestAbout_DarkMode() {
 		CSRFToken:    s.csrf,
 		UserID:       s.user,
 		UserLoggedIn: true,
+		HotReload:    true,
 		Preferences:  pref,
 	})
 	s.runRequest(req, assertOk)
