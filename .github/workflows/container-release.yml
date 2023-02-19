@@ -53,6 +53,6 @@ jobs:
         if: ${{ github.ref_type == 'branch' }}
       - name: Deploy official instance with new code
         if: ${{ github.ref_type == 'branch' }}
-        run: flyctl deploy -a lbi-prod -i ghcr.io/letsblockit/server-dev:${GITHUB_SHA::7} --detach
+        run: flyctl deploy -a lbi-prod -i ghcr.io/letsblockit/server-dev:${GITHUB_SHA::7} || true
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
