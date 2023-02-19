@@ -41,7 +41,7 @@ func (s *Server) userAccount(c echo.Context) error {
 
 func (s *Server) updatePreferences(c echo.Context) error {
 	if c.Request().Method != http.MethodPost {
-		return nil
+		return c.NoContent(http.StatusMethodNotAllowed)
 	}
 	user := auth.GetUserId(c)
 	if user == "" {
@@ -65,7 +65,7 @@ func (s *Server) updatePreferences(c echo.Context) error {
 func (s *Server) rotateListToken(c echo.Context) error {
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
 		if c.Request().Method != http.MethodPost {
-			return nil
+			return c.NoContent(http.StatusMethodNotAllowed)
 		}
 		formParams, err := c.FormParams()
 		if err != nil {

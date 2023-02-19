@@ -22,37 +22,6 @@
     </div>
 
     <div class="card mb-3 shadow-sm">
-        <div class="card-header">Interface preferences</div>
-        <form class="card-body" method="POST" action="{{href "update-preferences" ""}}">
-            {{{csrf @root}}}
-            <div class="form-check form-switch mb-3">
-                <input type="checkbox" role="switch" class="form-check-input"
-                    {{#if (beta_features @root)}} checked{{/if}}
-                       name="beta_features" id="betaFeaturesCheck">
-                <label title="Access unfinished features such as dark mode and filter testing mode."
-                        class="form-check-label" for="betaFeaturesCheck">
-                    Enable beta features (here be dragons!)
-                </label>
-            </div>
-            <div class="form-check mb-3{{#unless (beta_features @root) }} d-none" aria-hidden="true{{/unless}}">
-                <label for="color-modes">Color mode:</label>
-                <div class="btn-group ms-2" role="group" id="color-modes" aria-label="Color mode choice">
-                    <input type="radio" class="btn-check" name="color_mode" value="light" id="light-color-mode"
-                        {{#equal "light" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-dark" for="light-color-mode">Light</label>
-                    <input type="radio" class="btn-check" name="color_mode" value="auto" id="auto-color-mode"
-                        {{#equal "auto" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-dark" for="auto-color-mode">Auto</label>
-                    <input type="radio" class="btn-check" name="color_mode" value="dark" id="dark-color-mode"
-                        {{#equal "dark" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-dark" for="dark-color-mode">Dark</label>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary">Save preferences</button>
-        </form>
-    </div>
-
-    <div class="card mb-3 shadow-sm">
         <div class="card-header">Manage my account</div>
         {{#if (href "user-action" "settings")}}
             <form class="card-body" method="POST">
@@ -72,6 +41,37 @@
         {{else}}
             <div class="card-body">Your user ID is <strong>{{@root.UserID}}</strong>.</div>
         {{/if}}
+    </div>
+
+    <div class="card mb-3 shadow-sm">
+        <div class="card-header">Interface preferences</div>
+        <form class="card-body" method="POST" action="{{href "update-preferences" ""}}">
+            {{{csrf @root}}}
+            <div class="form-check form-switch mb-3">
+                <input type="checkbox" role="switch" class="form-check-input"
+                    {{#if (beta_features @root)}} checked{{/if}}
+                       name="beta_features" id="betaFeaturesCheck">
+                <label title="Access unfinished features such as dark mode and filter testing mode."
+                       class="form-check-label" for="betaFeaturesCheck">
+                    Enable beta features (here be dragons!)
+                </label>
+            </div>
+            <div class="form-check mb-3{{#unless (beta_features @root) }} d-none" aria-hidden="true{{/unless}}">
+                <label for="color-modes">Color mode:</label>
+                <div class="btn-group ms-2" role="group" id="color-modes" aria-label="Color mode choice">
+                    <input type="radio" class="btn-check" name="color_mode" value="light" id="light-color-mode"
+                        {{#equal "light" @root.Preferences.ColorMode}} checked{{/equal}}>
+                    <label class="btn btn-dark" for="light-color-mode">Light</label>
+                    <input type="radio" class="btn-check" name="color_mode" value="auto" id="auto-color-mode"
+                        {{#equal "auto" @root.Preferences.ColorMode}} checked{{/equal}}>
+                    <label class="btn btn-dark" for="auto-color-mode">Auto</label>
+                    <input type="radio" class="btn-check" name="color_mode" value="dark" id="dark-color-mode"
+                        {{#equal "dark" @root.Preferences.ColorMode}} checked{{/equal}}>
+                    <label class="btn btn-dark" for="dark-color-mode">Dark</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save preferences</button>
+        </form>
     </div>
 
     <div class="card mb-3 shadow-sm">

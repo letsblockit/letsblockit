@@ -5,7 +5,6 @@ data/assets/dist/*.map.gz
 
 src/assets/node_modules/
 src/assets/.parcel-cache/
-src/assets/parcel-bundle-reports/
 
 # Nix output
 result
