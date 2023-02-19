@@ -1,4 +1,4 @@
-title: Hide Linkedin posts by link target
+title: "Linkedin: filter out posts by link target"
 params:
   - name: sites
     description: Sites to hide

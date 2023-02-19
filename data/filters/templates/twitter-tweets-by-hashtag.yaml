@@ -1,4 +1,4 @@
-title: Hide tweets by hashtag
+title: "Twitter/Nitter: filter out tweets by hashtag"
 params:
   - name: twitter-enable
     description: Generate rules for twitter.com
@@ -19,6 +19,7 @@ params:
     type: list
     default: [ hashtagA ]
 tags:
+  - nitter
   - twitter
 template: |
   {{#each hashtags as |tag id|}}

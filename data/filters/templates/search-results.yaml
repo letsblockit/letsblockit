@@ -1,4 +1,4 @@
-title: Hide websites from search results
+title: "Search engines: filter out results by website"
 params:
   - name: bing
     description: Generate rules for Bing
