@@ -233,6 +233,9 @@ func (s *Server) setupRouter() {
 		"/robots.txt":  "/assets/robots.txt",
 		"/about":       "/help/about",
 	}))
+	if s.options.OfficialInstance {
+		s.echo.Pre(middleware.NonWWWRedirect())
+	}
 
 	// Raw routes
 	s.echo.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
