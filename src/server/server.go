@@ -1,17 +1,13 @@
 package server
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
-	"os/signal"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
@@ -106,7 +102,7 @@ func NewServer(options *Options) *Server {
 
 func (s *Server) Start() error {
 	if s.options.StatsdTarget != "" {
-		dsd, err := statsd.New(s.options.StatsdTarget)
+		dsd, err := statsd.New(s.options.StatsdTarget, statsd.WithoutTelemetry())
 		if err != nil {
 			return err
 		}
@@ -176,7 +172,8 @@ func (s *Server) Start() error {
 	}
 
 	if s.options.StatsdTarget != "" {
-		go collectStats(s.echo.Logger, s.store, s.statsd)
+		go collectBusinessStats(s.echo.Logger, s.store, s.statsd)
+		go collectMemStats(s.statsd)
 	}
 	if s.options.UseSystemdSocket {
 		listeners, err := activation.Listeners()
@@ -390,104 +387,6 @@ func concurrentRunOrPanic(tasks []func([]error)) {
 		output.WriteString(fmt.Sprintf(" %d: %s |", i, d))
 	}
 	fmt.Println(output.String())
-}
-
-func buildDogstatsMiddleware(dsd statsd.ClientInterface) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			if c.Request().URL.Path == healthPath {
-				return next(c)
-			}
-
-			start := time.Now()
-			if err := next(c); err != nil {
-				c.Error(err)
-			}
-			loggedTag := fmt.Sprintf("logged:%t", auth.HasAuth(c))
-			duration := time.Since(start)
-			_ = dsd.Distribution("letsblockit.request_duration", float64(duration.Nanoseconds()), []string{loggedTag}, 1)
-			_ = dsd.Incr("letsblockit.request_count", []string{loggedTag, fmt.Sprintf("status:%d", c.Response().Status)}, 1)
-			return nil
-		}
-	}
-}
-
-func collectStats(log echo.Logger, store db.Store, dsd statsd.ClientInterface) {
-	collect := func() {
-		stats, err := store.GetStats(context.Background())
-		if err != nil {
-			log.Error("cannot collect db stats: " + err.Error())
-			return
-		}
-		_ = dsd.Gauge("letsblockit.total_list_count", float64(stats.ListsTotal), nil, 1)
-		_ = dsd.Gauge("letsblockit.active_list_count", float64(stats.ListsActive), nil, 1)
-		_ = dsd.Gauge("letsblockit.fresh_list_count", float64(stats.ListsFresh), nil, 1)
-
-		instances, err := store.GetInstanceStats(context.Background())
-		if err != nil {
-			log.Error("cannot collect db stats: " + err.Error())
-			return
-		}
-		for _, i := range instances {
-			tags := []string{"filter_name:" + i.TemplateName}
-			_ = dsd.Gauge("letsblockit.instance_count", float64(i.Total), tags, 1)
-			_ = dsd.Gauge("letsblockit.fresh_instance_count", float64(i.Fresh), tags, 1)
-		}
-	}
-
-	_ = dsd.Incr("letsblockit.startup", nil, 1)
-	collect()
-	for range time.Tick(5 * time.Minute) {
-		collect()
-	}
-}
-
-func runVector(config string) error {
-	if config == "" {
-		return nil
-	}
-	if err := os.MkdirAll(os.TempDir(), 0750); err != nil {
-		return err
-	}
-
-	cleanupConfigFile := true
-	f, err := os.CreateTemp(os.TempDir(), "vector-*.yaml")
-	if err != nil {
-		return fmt.Errorf("failed to create vector config file: %w", err)
-	}
-	defer func() {
-		if cleanupConfigFile {
-			_ = os.Remove(f.Name())
-		}
-	}()
-
-	if _, err = f.WriteString(config); err != nil {
-		return fmt.Errorf("failed to write to vector config file: %w", err)
-	}
-	if err = f.Close(); err != nil {
-		return fmt.Errorf("failed to close vector config file: %w", err)
-	}
-
-	fmt.Println("Starting vector with config in", f.Name())
-	vector := exec.Command("vector", "--config", f.Name())
-	vector.Stderr = os.Stderr
-
-	if err := vector.Start(); err != nil {
-		return fmt.Errorf("vector process failed: %w", err)
-	}
-
-	cleanupConfigFile = false
-	// TODO: move to common logic and support several SIGINT hooks
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		for sig := range sigs {
-			_ = vector.Process.Signal(sig)
-			_ = os.Remove(f.Name())
-		}
-	}()
-
-	return nil
 }
 
 func getEtag(c echo.Context) string {
