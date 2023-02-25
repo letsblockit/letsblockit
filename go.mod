@@ -15,7 +15,7 @@ require (
 	github.com/jackc/pgconn v1.14.0
 	github.com/jackc/pgtype v1.14.0
 	github.com/jackc/pgx/v4 v4.18.0
-	github.com/labstack/echo/v4 v4.10.0
+	github.com/labstack/echo/v4 v4.10.2
 	github.com/labstack/gommon v0.4.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/samber/lo v1.37.0
@@ -51,7 +51,7 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
-	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb // indirect
+	golang.org/x/exp v0.0.0-20230224173230-c95f2b4c22f2 // indirect
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
