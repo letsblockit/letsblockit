@@ -132,6 +132,9 @@ func (s *Server) Start() error {
 		func(errs []error) {
 			s.filterHash, errs[0] = data.HashFiles(data.Templates, data.Presets)
 		},
+		func(errs []error) {
+			s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
+		},
 	})
 
 	if s.options.LogsFolder != "" {
@@ -146,8 +149,6 @@ func (s *Server) Start() error {
 			MaxBackups: 3,
 		})
 	}
-
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
 
 	switch s.options.AuthMethod {
 	case "kratos":
