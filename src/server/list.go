@@ -37,6 +37,12 @@ func (s *Server) renderList(c echo.Context) error {
 		return echo.ErrNotFound
 	}
 
+	// In order to reduce resource consumption, we compute an etag based on:
+	//   - a hash of the filter templates
+	//   - the latest change to any parameter in the list
+	requestETag, listETag := getEtag(c), s.filterHash
+	etagPresent, etagMatch := requestETag != "", false
+
 	var storedList db.GetListForTokenRow
 	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
@@ -58,27 +64,20 @@ func (s *Server) renderList(c echo.Context) error {
 			}
 		}
 
+		if ts, ok := storedList.LastUpdated.(time.Time); ok {
+			listETag += ts.UTC().Format("15040520060102")
+		}
+		etagMatch = listETag == requestETag
+		if etagMatch {
+			return nil
+		}
+
 		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
 		return e
 	}); err != nil {
 		return err
 	}
 
-	// In other to reduce resource consumption, we compute an etag based on:
-	//   - a hash of the filter templates and parameters
-	//   - the latest change to any parameter in the list
-	// This should hopefully reduce the network and CPU usage of serving most lists.
-	var etagPresent, etagMatch bool
-	listETag := s.filterHash
-	if ts, ok := storedList.LastUpdated.(time.Time); ok {
-		listETag += ts.UTC().Format("15040520060102")
-	}
-	if requestETag := getEtag(c); requestETag != "" {
-		etagPresent = true
-		if listETag == requestETag {
-			etagMatch = true
-		}
-	}
 	_ = s.statsd.Incr("letsblockit.list_download", []string{
 		fmt.Sprintf("etag_present:%t", etagPresent),
 		fmt.Sprintf("etag_match:%t", etagMatch),
