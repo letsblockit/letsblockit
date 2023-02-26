@@ -52,7 +52,7 @@ func (s *Server) renderList(c echo.Context) error {
 		case e == db.NotFound:
 			return echo.ErrNotFound
 		case e != nil:
-			return e
+			return fmt.Errorf("failed to get list: %w", e)
 		case s.bans.IsBanned(storedList.UserID):
 			return echo.ErrForbidden
 		}
@@ -60,7 +60,7 @@ func (s *Server) renderList(c echo.Context) error {
 		if c.Request().Header.Get("Referer") == "" {
 			e = q.MarkListDownloaded(ctx, token)
 			if e != nil {
-				return e
+				return fmt.Errorf("failed to mark list download: %w", e)
 			}
 		}
 
@@ -73,7 +73,10 @@ func (s *Server) renderList(c echo.Context) error {
 		}
 
 		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
-		return e
+		if e != nil {
+			return fmt.Errorf("failed to get instances: %w", e)
+		}
+		return nil
 	}); err != nil {
 		return err
 	}
@@ -90,14 +93,14 @@ func (s *Server) renderList(c echo.Context) error {
 
 	list, err := convertFilterList(storedInstances)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to convert list: %w", err)
 	}
 	if _, ok := c.QueryParams()["test_mode"]; ok {
 		list.TestMode = true
 	}
 
 	if err = list.Render(c.Response(), c.Logger(), s.filters); err != nil {
-		return err
+		return fmt.Errorf("failed to render list: %w", err)
 	}
 
 	if s.options.OfficialInstance {
