@@ -70,16 +70,12 @@ type ReleaseClient struct {
 }
 
 func NewReleaseClient(url string, cacheDir string, officialInstance bool, tp templateProvider) *ReleaseClient {
-	client := &ReleaseClient{
+	return &ReleaseClient{
 		url:              url,
 		cacheDir:         cacheDir,
 		officialInstance: officialInstance,
 		templateProvider: tp,
 	}
-	if officialInstance {
-		_ = client.populate()
-	}
-	return client
 }
 
 func (c *ReleaseClient) GetReleases() ([]*Release, string, error) {
