@@ -218,18 +218,7 @@ func (s *Server) setupRouter() {
 	)
 
 	s.echo.HideBanner = true
-
-	if s.options.OfficialInstance {
-		xffExtractor := echo.ExtractIPFromXFFHeader()
-		s.echo.IPExtractor = func(request *http.Request) string {
-			if ip := request.Header.Get("Fly-Client-IP"); ip != "" {
-				return ip
-			}
-			return xffExtractor(request)
-		}
-	} else {
-		s.echo.IPExtractor = echo.ExtractIPFromXFFHeader()
-	}
+	s.echo.IPExtractor = echo.ExtractIPFromXFFHeader()
 
 	s.echo.Pre(middleware.RemoveTrailingSlash())
 	s.echo.Pre(middleware.Rewrite(map[string]string{
@@ -237,9 +226,6 @@ func (s *Server) setupRouter() {
 		"/robots.txt":  "/assets/robots.txt",
 		"/about":       "/help/about",
 	}))
-	if s.options.OfficialInstance {
-		s.echo.Pre(middleware.NonWWWRedirect())
-	}
 
 	// Raw routes
 	s.echo.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
