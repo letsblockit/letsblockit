@@ -18,11 +18,11 @@ jobs:
         run: |
           sudo -u postgres psql -c "CREATE USER ${USER}"
           sudo -u postgres psql -c "CREATE DATABASE lbitests OWNER ${USER}"
-      - uses: cachix/install-nix-action@v19
+      - uses: cachix/install-nix-action@v20
       - run: nix run .#run-tests
   check-vendorsha:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v19
+      - uses: cachix/install-nix-action@v20
       - run: nix run .#update-vendorsha -- ./nix/letsblockit.nix --check
