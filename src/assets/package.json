@@ -18,9 +18,9 @@
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.8.3",
     "@parcel/transformer-sass": "^2.8.3",
-    "@tabler/icons": "^2.5.0",
+    "@tabler/icons": "^2.7.0",
     "bootstrap": "github:twbs/bootstrap#main",
-    "htmx.org": "^1.8.5",
+    "htmx.org": "^1.8.6",
     "parcel": "^2.8.3"
   }
 }
