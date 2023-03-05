@@ -5,6 +5,8 @@
 set -euox pipefail
 
 npm install --prefix ./src/assets/
+npm run lint --prefix ./src/assets/
+
 npm run clean --prefix ./src/assets/
 
 if [ "$*" == "watch" ]; then

@@ -13,13 +13,15 @@
   "scripts": {
     "clean": "rm -rf ../../data/assets/dist/ .parcel-cache/",
     "build": "parcel build",
-    "watch": "parcel watch"
+    "watch": "parcel watch",
+    "lint": "eslint --fix ."
   },
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.8.3",
     "@parcel/transformer-sass": "^2.8.3",
     "@tabler/icons": "^2.7.0",
     "bootstrap": "github:twbs/bootstrap#main",
+    "eslint": "^8.35.0",
     "htmx.org": "^1.8.6",
     "parcel": "^2.8.3"
   }
