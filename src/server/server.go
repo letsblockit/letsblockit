@@ -294,6 +294,7 @@ func shouldReload(c echo.Context) error {
 	c.Response().Header().Set("Cache-Control", "no-cache")
 	c.Response().Header().Set("Connection", "keep-alive")
 	c.Response().Header().Set("Transfer-Encoding", "chunked")
+	c.Response().Header().Set("Access-Control-Allow-Origin", "*")
 	if _, err := fmt.Fprintln(c.Response(), "retry:1000"); err != nil {
 		return nil
 	}
