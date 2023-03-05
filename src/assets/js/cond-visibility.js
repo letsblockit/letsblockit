@@ -5,6 +5,8 @@
  * add or remove the hidden attribute based on the target checkbox state.
  */
 
+import * as htmx from "htmx.org";
+
 function toggleConditionalVisibility(checkbox, target) {
     if (checkbox.checked){
         target.removeAttribute("hidden")

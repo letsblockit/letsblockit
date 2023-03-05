@@ -4,6 +4,8 @@
  * Helper functions for the view-filter page form.
  */
 
+import * as htmx from "htmx.org";
+
 function resetFilterParamRow(row) {
     row.getElementsByTagName('input')[0].value = ""
 }
