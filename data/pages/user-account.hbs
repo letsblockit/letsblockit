@@ -61,13 +61,13 @@
                 <div class="btn-group ms-2" role="group" id="color-modes" aria-label="Color mode choice">
                     <input type="radio" class="btn-check" name="color_mode" value="light" id="light-color-mode"
                         {{#equal "light" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-dark" for="light-color-mode">Light</label>
+                    <label class="btn btn-outline-dark" for="light-color-mode">Light</label>
                     <input type="radio" class="btn-check" name="color_mode" value="auto" id="auto-color-mode"
                         {{#equal "auto" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-dark" for="auto-color-mode">Auto</label>
+                    <label class="btn btn-outline-dark" for="auto-color-mode">Auto</label>
                     <input type="radio" class="btn-check" name="color_mode" value="dark" id="dark-color-mode"
                         {{#equal "dark" @root.Preferences.ColorMode}} checked{{/equal}}>
-                    <label class="btn btn-dark" for="dark-color-mode">Dark</label>
+                    <label class="btn btn-outline-dark" for="dark-color-mode">Dark</label>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Save preferences</button>
