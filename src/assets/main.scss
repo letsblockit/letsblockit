@@ -58,3 +58,8 @@ main li:not(.nav-item) {
 form label[title] {
   text-decoration: underline dashed !important;
 }
+
+// Hack until we rework the color palette
+html[data-bs-theme="dark"] .btn-dark,.btn-outline-dark {
+  filter: invert(90%) !important;
+}
