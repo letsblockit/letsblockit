@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	GithubReleasesEndpoint string = "https://api.github.com/repos/xvello/letsblockit/releases?per_page=25"
+	GithubReleasesEndpoint string = "https://api.github.com/repos/xvello/letsblockit/releases?per_page=20"
 	cacheFileName          string = "lbi-releases.json"
 )
 
