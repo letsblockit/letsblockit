@@ -3,12 +3,14 @@ on:
   push:
     branches:
       - main
+      - staging
     paths:
       - 'cmd/**'
       - 'data/**'
       - 'nix/**'
       - 'src/**'
       - 'flake.*'
+      - '.github/workflows/*'
     tags: # Will run on all tags regardless of the paths filter
       - '*'
 permissions:
@@ -49,4 +51,3 @@ jobs:
         run: |
           ./scripts/push-container.sh server:latest server-dev:${GITHUB_SHA::7}
           ./scripts/push-container.sh server:latest server-dev:$GITHUB_REF_NAME
-
