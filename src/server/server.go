@@ -148,10 +148,6 @@ func (s *Server) Start() error {
 	}
 
 	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
-	if s.options.OfficialInstance {
-		// Preload releases on official instance servers, ignore errors
-		go func() { _, _ = s.releases.GetLatestAt() }()
-	}
 
 	switch s.options.AuthMethod {
 	case "kratos":
