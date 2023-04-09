@@ -3,9 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -37,12 +35,6 @@ func (s *Server) renderList(c echo.Context) error {
 		return echo.ErrNotFound
 	}
 
-	// In order to reduce resource consumption, we compute an etag based on:
-	//   - a hash of the filter templates
-	//   - the latest change to any parameter in the list
-	requestETag, listETag := getEtag(c), s.filterHash
-	etagPresent, etagMatch := requestETag != "", false
-
 	var storedList db.GetListForTokenRow
 	var storedInstances []db.GetInstancesForListRow
 	if err := s.store.RunTx(c, func(ctx context.Context, q db.Querier) error {
@@ -64,14 +56,6 @@ func (s *Server) renderList(c echo.Context) error {
 			}
 		}
 
-		if ts, ok := storedList.LastUpdated.(time.Time); ok {
-			listETag += ts.UTC().Format("15040520060102")
-		}
-		etagMatch = listETag == requestETag
-		if etagMatch {
-			return nil
-		}
-
 		storedInstances, e = q.GetInstancesForList(ctx, storedList.ID)
 		if e != nil {
 			return fmt.Errorf("failed to get instances: %w", e)
@@ -80,16 +64,6 @@ func (s *Server) renderList(c echo.Context) error {
 	}); err != nil {
 		return err
 	}
-
-	_ = s.statsd.Incr("letsblockit.list_download", []string{
-		fmt.Sprintf("etag_present:%t", etagPresent),
-		fmt.Sprintf("etag_match:%t", etagMatch),
-	}, 1)
-	if etagMatch {
-		return c.NoContent(http.StatusNotModified)
-	}
-
-	c.Response().Header().Set("Etag", listETag)
 
 	list, err := convertFilterList(storedInstances)
 	if err != nil {
