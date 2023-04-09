@@ -121,7 +121,6 @@ func (s *ServerTestSuite) SetupTest() {
 		releases:    rm,
 		statsd:      &statsd.NoOpClient{},
 		store:       s.store,
-		filterHash:  "2rjz7ztfqaebl",
 	}
 	s.server.setupRouter()
 
