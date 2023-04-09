@@ -4,6 +4,12 @@ Thanks for your interest in moving this project forward! If you have any questio
 [open an issue on GitHub](https://github.com/letsblockit/letsblockit/issues) for any question or bug, or send us an email
 at `hello@<this-domain>.it`.
 
+### Financial contributions
+
+To help keep the official instance running, you can sponsor the project on
+[OpenCollective](https://opencollective.com/letsblockit) or
+[Github Sponsors](https://github.com/sponsors/letsblockit).
+
 ### Contributing filters {#filters}
 
 The best way you can help the project is by contributing new filters or improving existing ones:
