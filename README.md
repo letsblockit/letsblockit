@@ -41,6 +41,40 @@ Don't hesitate to open issues on this repository, using the following templates:
 - [Report a bug](https://github.com/letsblockit/letsblockit/issues/new?labels=&template=bug-report.yaml)
 - [Other topics](https://github.com/letsblockit/letsblockit/issues/new)
 
+## Thanks to our contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/xvello"><img src="https://avatars.githubusercontent.com/u/6241083?v=4?s=100" width="100px;" alt="Xavier Vello"/><br /><sub><b>Xavier Vello</b></sub></a><br /><a href="#maintenance-xvello" title="Maintenance">🚧</a> <a href="#data-xvello" title="Data">🔣</a> <a href="https://github.com/letsblockit/letsblockit/commits?author=xvello" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JohnyP36"><img src="https://avatars.githubusercontent.com/u/81161435?v=4?s=100" width="100px;" alt="JohnyP36"/><br /><sub><b>JohnyP36</b></sub></a><br /><a href="#maintenance-JohnyP36" title="Maintenance">🚧</a> <a href="#data-JohnyP36" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/BPower0036"><img src="https://avatars.githubusercontent.com/u/80090789?v=4?s=100" width="100px;" alt="BPower0036"/><br /><sub><b>BPower0036</b></sub></a><br /><a href="#maintenance-BPower0036" title="Maintenance">🚧</a> <a href="#data-BPower0036" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/quenhus"><img src="https://avatars.githubusercontent.com/u/8274288?v=4?s=100" width="100px;" alt="quenhus"/><br /><sub><b>quenhus</b></sub></a><br /><a href="#data-quenhus" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/androidkotlindev"><img src="https://avatars.githubusercontent.com/u/67307199?v=4?s=100" width="100px;" alt="neonItem"/><br /><sub><b>neonItem</b></sub></a><br /><a href="#data-androidkotlindev" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/xbc5"><img src="https://avatars.githubusercontent.com/u/87829033?v=4?s=100" width="100px;" alt="xbc5"/><br /><sub><b>xbc5</b></sub></a><br /><a href="#data-xbc5" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Markussss"><img src="https://avatars.githubusercontent.com/u/43534?v=4?s=100" width="100px;" alt="Markus Igeland"/><br /><sub><b>Markus Igeland</b></sub></a><br /><a href="#data-Markussss" title="Data">🔣</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kiriya-aoi"><img src="https://avatars.githubusercontent.com/u/34067059?v=4?s=100" width="100px;" alt="kiriya-aoi"/><br /><sub><b>kiriya-aoi</b></sub></a><br /><a href="#data-kiriya-aoi" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/krisu5"><img src="https://avatars.githubusercontent.com/u/3540275?v=4?s=100" width="100px;" alt="Kristian Salonen"/><br /><sub><b>Kristian Salonen</b></sub></a><br /><a href="#data-krisu5" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mailyspamy"><img src="https://avatars.githubusercontent.com/u/25592998?v=4?s=100" width="100px;" alt="mailyspamy"/><br /><sub><b>mailyspamy</b></sub></a><br /><a href="#data-mailyspamy" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/santilococo"><img src="https://avatars.githubusercontent.com/u/27114158?v=4?s=100" width="100px;" alt="Santiago Lo Coco"/><br /><sub><b>Santiago Lo Coco</b></sub></a><br /><a href="#data-santilococo" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://opencollective.com/letsblockit#section-contributors"><img src="https://images.opencollective.com/guest-1bcb213b/avatar.png?s=100" width="100px;" alt="Webswonder"/><br /><sub><b>Webswonder</b></sub></a><br /><a href="#financial-Webswonder" title="Financial">💵</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/SiggyPony"><img src="https://avatars.githubusercontent.com/u/11322269?v=4?s=100" width="100px;" alt="Sigourney Juneau"/><br /><sub><b>Sigourney Juneau</b></sub></a><br /><a href="#data-SiggyPony" title="Data">🔣</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ## Thanks to our sponsors
 
 <table>
