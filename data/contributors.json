@@ -1,0 +1,137 @@
+{
+  "projectName": "letsblockit",
+  "projectOwner": "letsblockit",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "xvello",
+      "name": "Xavier Vello",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6241083?v=4",
+      "profile": "https://github.com/xvello",
+      "contributions": [
+        "maintenance",
+        "data",
+        "code"
+      ]
+    },
+    {
+      "login": "JohnyP36",
+      "name": "JohnyP36",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81161435?v=4",
+      "profile": "https://github.com/JohnyP36",
+      "contributions": [
+        "maintenance",
+        "data"
+      ]
+    },
+    {
+      "login": "BPower0036",
+      "name": "BPower0036",
+      "avatar_url": "https://avatars.githubusercontent.com/u/80090789?v=4",
+      "profile": "https://github.com/BPower0036",
+      "contributions": [
+        "maintenance",
+        "data"
+      ]
+    },
+    {
+      "login": "quenhus",
+      "name": "quenhus",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8274288?v=4",
+      "profile": "https://github.com/quenhus",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "androidkotlindev",
+      "name": "neonItem",
+      "avatar_url": "https://avatars.githubusercontent.com/u/67307199?v=4",
+      "profile": "https://github.com/androidkotlindev",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "xbc5",
+      "name": "xbc5",
+      "avatar_url": "https://avatars.githubusercontent.com/u/87829033?v=4",
+      "profile": "https://github.com/xbc5",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "Markussss",
+      "name": "Markus Igeland",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43534?v=4",
+      "profile": "https://github.com/Markussss",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "kiriya-aoi",
+      "name": "kiriya-aoi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34067059?v=4",
+      "profile": "https://github.com/kiriya-aoi",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "krisu5",
+      "name": "Kristian Salonen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3540275?v=4",
+      "profile": "https://github.com/krisu5",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "mailyspamy",
+      "name": "mailyspamy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25592998?v=4",
+      "profile": "https://github.com/mailyspamy",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "santilococo",
+      "name": "Santiago Lo Coco",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27114158?v=4",
+      "profile": "https://github.com/santilococo",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "Webswonder",
+      "name": "Webswonder",
+      "avatar_url": "https://images.opencollective.com/guest-1bcb213b/avatar.png",
+      "profile": "https://opencollective.com/letsblockit#section-contributors",
+      "contributions": [
+        "financial"
+      ]
+    },
+    {
+      "login": "SiggyPony",
+      "name": "Sigourney Juneau",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11322269?v=4",
+      "profile": "https://github.com/SiggyPony",
+      "contributions": [
+        "data"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": false
+}
