@@ -63,11 +63,11 @@ template: |
   www.google.*###footcnt > #fbarcnt
   {{/if}}
   {{#if question-answer-box}}
-  www.google.*###rhs #kp-wp-tab-overview div[data-attrid*="qa"]
+  www.google.*###rhs #kp-wp-tab-overview div[data-attrid$=" qa"]
   {{/if}}
   {{#if review-pane}}
-  www.google.*###rhs #kp-wp-tab-overview div[data-attrid*="review"]
-  www.google.*###rhs #kp-wp-tab-overview div[data-attrid*="third_party_aggregator_ratings"]
+  www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="review_summary"]
+  www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
   {{/if}}
 tests:
   - params: {}
@@ -101,12 +101,12 @@ tests:
   - params:
       question-answer-box: true
     output: |
-      www.google.*###rhs #kp-wp-tab-overview div[data-attrid*="qa"]
+      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$=" qa"]
   - params:
       review-pane: true
     output: |
-      www.google.*###rhs #kp-wp-tab-overview div[data-attrid*="review"]
-      www.google.*###rhs #kp-wp-tab-overview div[data-attrid*="third_party_aggregator_ratings"]
+      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="review_summary"]
+      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
   - params: {}
 ---
 
