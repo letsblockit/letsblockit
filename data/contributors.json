@@ -139,6 +139,15 @@
       "contributions": [
         "promotion"
       ]
+    },
+    {
+      "login": "3DWORX-SA",
+      "name": "3DWORX-SA",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32925097?v=4",
+      "profile": "https://github.com/3DWORX-SA",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -68,6 +68,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SiggyPony"><img src="https://avatars.githubusercontent.com/u/11322269?v=4?s=100" width="100px;" alt="Sigourney Juneau"/><br /><sub><b>Sigourney Juneau</b></sub></a><br /><a href="#data-SiggyPony" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/alexanderadam"><img src="https://avatars.githubusercontent.com/u/372620?v=4?s=100" width="100px;" alt="Alexander ADAM"/><br /><sub><b>Alexander ADAM</b></sub></a><br /><a href="#promotion-alexanderadam" title="Promotion">📣</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/3DWORX-SA"><img src="https://avatars.githubusercontent.com/u/32925097?v=4?s=100" width="100px;" alt="3DWORX-SA"/><br /><sub><b>3DWORX-SA</b></sub></a><br /><a href="#ideas-3DWORX-SA" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
   </tbody>
 </table>
 
