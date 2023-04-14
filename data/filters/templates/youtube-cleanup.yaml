@@ -40,6 +40,7 @@ template: |
   www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
   {{/if}}
   {{#if remove-video-hashtags}}
+  www.youtube.com###description #info a[href^="/hashtag/"]
   www.youtube.com###super-title
   www.youtube.com##.super-title
   {{/if}}
@@ -69,6 +70,7 @@ tests:
   - params:
       remove-video-hashtags: true
     output: |
+      www.youtube.com###description #info a[href^="/hashtag/"]
       www.youtube.com###super-title
       www.youtube.com##.super-title
   - params:
