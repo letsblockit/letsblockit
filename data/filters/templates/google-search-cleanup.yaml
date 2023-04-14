@@ -24,6 +24,14 @@ params:
     description: Hide the search page footer showing your address
     type: checkbox
     default: false
+  - name: question-answer-box
+    description: Hide "Question and Answer" box in right hand pane
+    type: checkbox
+    default: false
+  - name: review-pane
+    description: Hide "Reviews" in right hand pane
+    type: checkbox
+    default: false
 tags:
   - google
 template: |
@@ -54,6 +62,12 @@ template: |
   {{#if page-footer}}
   www.google.*###footcnt > #fbarcnt
   {{/if}}
+  {{#if question-answer-box}}
+  www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(5)
+  {{/if}}
+  {{#if review-pane}}
+  www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(8)
+  {{/if}}
 tests:
   - params: {}
     output: ""
@@ -83,6 +97,14 @@ tests:
       similar-image-searches: true
     output: |
       www.google.*##div.isv-r[data-rfg]
+  - params:
+      question-answer-box: true
+    output: |
+      www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(5)
+  - params:
+      review-pane: true
+    output: |
+      www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(8)
   - params: {}
 ---
 
