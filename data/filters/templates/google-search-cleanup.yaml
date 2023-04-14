@@ -63,10 +63,10 @@ template: |
   www.google.*###footcnt > #fbarcnt
   {{/if}}
   {{#if question-answer-box}}
-  www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(5)
+  www.google.*###rhs div[jsdata]:has([class*="wholepage-card"]):nth-of-type(5)
   {{/if}}
   {{#if review-pane}}
-  www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(8)
+  www.google.*###rhs div[jsdata]:has([class*="wholepage-card"]):nth-of-type(8)
   {{/if}}
 tests:
   - params: {}
@@ -100,11 +100,11 @@ tests:
   - params:
       question-answer-box: true
     output: |
-      www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(5)
+      www.google.*###rhs div[jsdata]:has([class*="wholepage-card"]):nth-of-type(5)
   - params:
       review-pane: true
     output: |
-      www.google.*###rhs div[jsdata]:has([class*="wholepage"]):nth-of-type(8)
+      www.google.*###rhs div[jsdata]:has([class*="wholepage-card"]):nth-of-type(8)
   - params: {}
 ---
 
