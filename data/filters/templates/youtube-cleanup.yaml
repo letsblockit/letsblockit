@@ -24,6 +24,10 @@ params:
     description: Don't enter / exit fullscreen on double-click
     type: checkbox
     default: false
+  - name: no-swipe-actions
+    description: Disable touchscreen swipe actions (switch tab, PIP mode...)
+    type: checkbox
+    default: false
   - name: remove-comment-section
     description: Hide all comments below the video
     type: checkbox
@@ -57,6 +61,10 @@ template: |
   {{#if no-fullscreen-on-dblclick}}
   {{! Applied to both www. and m. sites, defuses dblclick events }}
   youtube.com##+js(aeld, dblclick)
+  {{/if}}
+  {{#if no-swipe-actions}}
+  {{! Applied to both www. and m. sites, defuses custom pan events for swipe }}
+  youtube.com##+js(aeld, /^pan(start|move|end)$/)
   {{/if}}
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
@@ -95,6 +103,10 @@ tests:
       no-fullscreen-on-dblclick: true
     output: |
       youtube.com##+js(aeld, dblclick)
+  - params:
+      no-swipe-actions: true
+    output: |
+      youtube.com##+js(aeld, /^pan(start|move|end)$/)
   - params:
       remove-comment-section: true
     output: |
