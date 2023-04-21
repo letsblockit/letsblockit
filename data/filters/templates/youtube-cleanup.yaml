@@ -28,6 +28,10 @@ params:
     description: Disable touchscreen swipe actions (switch tab, PIP mode...)
     type: checkbox
     default: false
+  - name: no-ambient-mode
+    description: Disable ambient mode
+    type: checkbox
+    default: false
   - name: remove-comment-section
     description: Hide all comments below the video
     type: checkbox
@@ -65,6 +69,9 @@ template: |
   {{#if no-swipe-actions}}
   {{! Applied to both www. and m. sites, defuses custom pan events for swipe }}
   youtube.com##+js(aeld, /^pan(start|move|end)$/)
+  {{/if}}
+  {{#if no-ambient-mode}}
+  www.youtube.com###cinematics.ytd-watch-flexy
   {{/if}}
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
@@ -107,6 +114,10 @@ tests:
       no-swipe-actions: true
     output: |
       youtube.com##+js(aeld, /^pan(start|move|end)$/)
+  - params:
+      no-ambient-mode: true
+    output: |
+      www.youtube.com###cinematics.ytd-watch-flexy
   - params:
       remove-comment-section: true
     output: |
