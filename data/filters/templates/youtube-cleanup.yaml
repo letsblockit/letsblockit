@@ -117,7 +117,7 @@ tests:
   - params:
       no-ambient-mode: true
     output: |
-      www.youtube.com###cinematics.ytd-watch-flexy
+      www.youtube.com###cinematics.ytd-watch-flexy:remove()
   - params:
       remove-comment-section: true
     output: |
