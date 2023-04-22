@@ -148,6 +148,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "Dosenpfand",
+      "name": "Dosenpfand",
+      "avatar_url": "https://avatars.githubusercontent.com/u/415415?v=4",
+      "profile": "https://github.com/Dosenpfand",
+      "contributions": [
+        "data"
+      ]
     }
   ],
   "contributorsPerLine": 7,
