@@ -70,6 +70,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/3DWORX-SA"><img src="https://avatars.githubusercontent.com/u/32925097?v=4?s=100" width="100px;" alt="3DWORX-SA"/><br /><sub><b>3DWORX-SA</b></sub></a><br /><a href="#ideas-3DWORX-SA" title="Ideas, Planning, & Feedback">🤔</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Dosenpfand"><img src="https://avatars.githubusercontent.com/u/415415?v=4?s=100" width="100px;" alt="Dosenpfand"/><br /><sub><b>Dosenpfand</b></sub></a><br /><a href="#data-Dosenpfand" title="Data">🔣</a></td>
     </tr>
   </tbody>
 </table>
