@@ -71,7 +71,7 @@ template: |
   youtube.com##+js(aeld, /^pan(start|move|end)$/)
   {{/if}}
   {{#if no-ambient-mode}}
-  www.youtube.com###cinematics.ytd-watch-flexy
+  www.youtube.com###cinematics.ytd-watch-flexy:remove()
   {{/if}}
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
