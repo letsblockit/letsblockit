@@ -157,6 +157,15 @@
       "contributions": [
         "data"
       ]
+    },
+    {
+      "login": "TheLovinator1",
+      "name": "Joakim Hellsén",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4153203?v=4",
+      "profile": "https://github.com/TheLovinator1",
+      "contributions": [
+        "financial"
+      ]
     }
   ],
   "contributorsPerLine": 7,
