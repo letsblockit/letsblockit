@@ -28,6 +28,11 @@ function watchForRestart() {
             reconnectTimeout += 100
         }
     };
+    window.addEventListener('beforeunload', function() {
+        // User is clicking on a non-boosted link, disconnect to
+        // avoid trapping the user on this page.
+        watchEventSource.close()
+    });
 }
 
 if (document.body.hasAttribute("data-hot-reload")) {
