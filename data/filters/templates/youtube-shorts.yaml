@@ -19,6 +19,8 @@ template: |
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer .ytd-thumbnail[href^="/shorts/"]:upward(ytd-item-section-renderer)
   {{! Channels homepage }}
   www.youtube.com##ytd-browse[page-subtype="channels"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
+  {{! Trending section }}
+  www.youtube.com##ytd-browse[page-subtype="trending"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
   {{! Search results }}
   www.youtube.com##ytd-search #contents ytd-reel-shelf-renderer
   {{! Mobile homepage shorts shelf }}
