@@ -20,7 +20,7 @@ template: |
   {{! Channels homepage }}
   www.youtube.com##ytd-browse[page-subtype="channels"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
   {{! Trending section }}
-  www.youtube.com##ytd-browse[page-subtype="trending"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
+  www.youtube.com##ytd-browse[page-subtype="trending"] .ytd-thumbnail[href^="/shorts/"]:upward(ytd-video-renderer)
   {{! Search results }}
   www.youtube.com##ytd-search #contents ytd-reel-shelf-renderer
   {{! Mobile homepage shorts shelf }}
