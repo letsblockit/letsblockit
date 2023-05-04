@@ -24,4 +24,5 @@ When you click on a link and you look at the URL, do you see all kinds of utm_so
 
 If you do, you can remove them with this filter.
 
-Please note that you can remove most of the tracking parameters with the AdGuard URL Tracking Protection list (which is shipped with uBO, but not enabled by default), but you can use this to easily create URL parameter filters.
+Please note that this list is far from completed. You can remove most of the tracking parameters with the [AdGuard URL Tracking Protection list](https://filters.adtidy.org/windows/filters/17.txt), or the [LegitimateURLShortener](https://github.com/DandelionSprout/adfilt/blob/master/LegitimateURLShortener.txt) and [ClearURLs for uBo](https://github.com/DandelionSprout/adfilt/blob/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt) from [@DandelionSprou](https://github.com/DandelionSprout/adfilt/).
+Those lists are maintained more often, and offer much more rules. However, if you don't want those lists you can use this to easily create URL parameter filters.
