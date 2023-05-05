@@ -166,6 +166,15 @@
       "contributions": [
         "financial"
       ]
+    },
+    {
+      "login": "BenMakesGames",
+      "name": "Ben Hendel-Doying",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1587505?v=4",
+      "profile": "http://benmakesgames.com/",
+      "contributions": [
+        "financial"
+      ]
     }
   ],
   "contributorsPerLine": 7,
