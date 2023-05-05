@@ -20,13 +20,14 @@ tests:
       *$removeparam=utm_medium
 ---
 
-When you click on a link and you look at the URL, do you see all kinds of utm_sources and utm_mediums, which make the URL longer?
+When you click on a link and you look at the URL, do you see all kinds of utm_sources and utm_mediums,
+which make the URL longer? These are used to track you between websites. uBlockOrigin and AdGuard can
+remove these parameters when you click on links, to protect your privacy.
 
-If you do, you can remove them with this filter.
+We recommend using one of the two following community lists (click to install them):
 
-Please note that this list is far from complete. You can remove most of the tracking parameters with the [AdGuard URL Tracking Protection list](https://filters.adtidy.org/windows/filters/17.txt), or the [LegitimateURLShortener](https://github.com/DandelionSprout/adfilt/blob/master/LegitimateURLShortener.txt) and [ClearURLs for uBo](https://github.com/DandelionSprout/adfilt/blob/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt) lists from [@DandelionSprout](https://github.com/DandelionSprout/adfilt/).
-Those lists are maintained more often, and offer much more rules. However, if you don't want those lists, you can use this template to easily create URL parameter filters.
+- AdGuard's [URL Tracking Protection list](abp:subscribe?location=https%3A%2F%2Ffilters.adtidy.org%2Fwindows%2Ffilters%2F17.txt&title=AdGuard%20URL%20Tracking%20filter)
+- DandelionSprout's [ClearURLs for uBo](abp:subscribe?location=https%3A%2F%2Fraw.githubusercontent.com%2FDandelionSprout%2Fadfilt%2Fmaster%2FClearURLs%20for%20uBo%2Fclear_urls_uboified.txt&title=ClearURLs%20for%20uBlock%20Origin)
 
-Click [here](https://subscribe.adblockplus.org/?location=https://filters.adtidy.org/windows/filters/17.txt&title=AdGuard%20URL%20Tracking%20Protection) to install the AdGuard URL Tracking Protection list.
-Click [here](https://subscribe.adblockplus.org/?location=https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt&title=LegitimateURLShortener) to install the LegitimateURLShortener list.
-Click [here](https://subscribe.adblockplus.org/?location=https://raw.githubusercontent.com/DandelionSprout/adfilt/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt&title=ClearURLs%20for%20uBo) to install the ClearURLs for uBo list.
+Additionally, you can use the template below to add custom rules and block specific parameters not
+included in the lists above.
