@@ -28,6 +28,10 @@ jobs:
         with:
           name: letsblockit
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Generate common container labels
+        run: |
+          nix run .#update-labels
+          cat nix/labels.nix
       - name: Build container images
         run: |
           nix build .#render-container && ./result | docker load
