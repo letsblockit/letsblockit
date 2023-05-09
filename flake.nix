@@ -11,6 +11,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         pinnedGo = pkgs.go_1_19;
+        commonImageLabels = import ./nix/labels.nix;
 
         # Scripts to wrap, with their dependencies, available via `nix run .#script-name`
         scripts = with pkgs; {
@@ -20,6 +21,7 @@
           run-tests = [ pinnedGo golangci-lint ];
           update-assets = [ pinnedGo nodejs-slim-18_x nodePackages.npm ];
           update-codegen = [ mockgen self.packages.${system}.sqlc ];
+          update-labels = [ coreutils ];
           update-vendorsha = [ nix-prefetch gnused ];
           upgrade-deps = [ nodejs-slim-18_x nodePackages.npm pinnedGo nix-prefetch git ];
         };
@@ -41,6 +43,10 @@
             contents = self.packages.${system}.render;
             config = {
               Cmd = [ "render" ];
+              Labels = {
+                "org.opencontainers.image.title" = "letsblock.it render CLI";
+                "org.opencontainers.image.documentation" = "https://github.com/letsblockit/letsblockit/blob/main/cmd/render/README.md";
+              } // commonImageLabels;
             };
           };
           server-container = pkgs.dockerTools.streamLayeredImage {
@@ -52,6 +58,10 @@
               Cmd = [ "/bin/server" ];
               Env = [ "LETSBLOCKIT_ADDRESS=:8765" "PATH=/bin" ];
               ExposedPorts."8765/tcp" = { };
+              Labels = {
+                "org.opencontainers.image.title" = "letsblock.it server";
+                "org.opencontainers.image.documentation" = "https://github.com/letsblockit/letsblockit/blob/main/cmd/server/README.md";
+              } // commonImageLabels;
             };
           };
         } // (builtins.mapAttrs

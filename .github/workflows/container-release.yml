@@ -30,6 +30,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Build container images
         run: |
+          nix run .#update-labels
           nix build .#render-container && ./result | docker load
           nix build .#server-container && ./result | docker load
       - run: docker image list
