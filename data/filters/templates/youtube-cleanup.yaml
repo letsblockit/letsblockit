@@ -51,13 +51,18 @@ template: |
   www.youtube.com###description #info a[href^="/hashtag/"]
   www.youtube.com###super-title
   www.youtube.com##.super-title
+  m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
+  m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
   {{/if}}
   {{#if remove-text-after-buttons-below-video}}
   www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
   www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
+  m.youtube.com##ytm-slim-video-action-bar-renderer button [class*="button-text-content"]:not(:has-text(/\d/))
+  m.youtube.com##ytm-slim-video-action-bar-renderer ytm-button-renderer div[class$="icon"]:style(margin-right: -6px !important; margin-left: -6px !important;)
   {{/if}}
   {{#if remove-copyright-notice}}
   www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
+  m.youtube.com##ytm-video-description-music-section-renderer
   {{/if}}
   {{#if remove-stream-chat}}
   www.youtube.com###chat:remove()
@@ -88,6 +93,8 @@ tests:
       www.youtube.com###description #info a[href^="/hashtag/"]
       www.youtube.com###super-title
       www.youtube.com##.super-title
+      m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
+      m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
   - params:
       channel-clarification: true
     output: |
@@ -98,10 +105,13 @@ tests:
     output: |
       www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
       www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
+      m.youtube.com##ytm-slim-video-action-bar-renderer button [class*="button-text-content"]:not(:has-text(/\d/))
+      m.youtube.com##ytm-slim-video-action-bar-renderer ytm-button-renderer div[class$="icon"]:style(margin-right: -6px !important; margin-left: -6px !important;)
   - params:
       remove-copyright-notice: true
     output: |
       www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
+      m.youtube.com##ytm-video-description-music-section-renderer
   - params:
       remove-stream-chat: true
     output: |
