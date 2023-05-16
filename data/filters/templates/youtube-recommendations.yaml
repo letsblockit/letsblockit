@@ -23,9 +23,11 @@ attribution:
 template: |
   {{#if related-videos}}
   www.youtube.com###related
+  m.youtube.com##ytm-watch ytm-item-section-renderer[data-content-type="related"]
   {{/if}}
   {{#if homepage-recommendations}}
   www.youtube.com##ytd-browse[page-subtype="home"]
+  m.youtube.com##ytm-browse div[tab-identifier="FEwhat_to_watch"]
   {{/if}}
   {{#if end-of-video-overlay}}
   www.youtube.com##.ytp-ce-element
@@ -40,6 +42,7 @@ tests:
       related-videos: true
     output: |
       www.youtube.com###related
+      m.youtube.com##ytm-watch ytm-item-section-renderer[data-content-type="related"]
   - params:
       end-of-video-overlay: true
     output: |
@@ -48,6 +51,7 @@ tests:
       homepage-recommendations: true
     output: |
       www.youtube.com##ytd-browse[page-subtype="home"]
+      m.youtube.com##ytm-browse div[tab-identifier="FEwhat_to_watch"]
   - params:
       related-videos: true
       homepage-recommendations: true
