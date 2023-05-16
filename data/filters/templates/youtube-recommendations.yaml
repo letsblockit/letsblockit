@@ -57,12 +57,15 @@ tests:
       homepage-recommendations: true
     output: |
       www.youtube.com###related
+      m.youtube.com##ytm-watch ytm-item-section-renderer[data-content-type="related"]
       www.youtube.com##ytd-browse[page-subtype="home"]
+      m.youtube.com##ytm-browse div[tab-identifier="FEwhat_to_watch"]
   - params:
       related-videos: true
       end-of-video-overlay: true
     output: |
       www.youtube.com###related
+      m.youtube.com##ytm-watch ytm-item-section-renderer[data-content-type="related"]
       www.youtube.com##.ytp-ce-element
   - params:
       related-videos: true
@@ -70,7 +73,9 @@ tests:
       end-of-video-overlay: true
     output: |
       www.youtube.com###related
+      m.youtube.com##ytm-watch ytm-item-section-renderer[data-content-type="related"]
       www.youtube.com##ytd-browse[page-subtype="home"]
+      m.youtube.com##ytm-browse div[tab-identifier="FEwhat_to_watch"]
       www.youtube.com##.ytp-ce-element
 ---
 
