@@ -19,7 +19,7 @@ require (
 	github.com/labstack/gommon v0.4.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/samber/lo v1.38.1
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	github.com/vearutop/statigz v1.3.0
 	golang.org/x/tools v0.9.1
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
@@ -51,7 +51,7 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea // indirect
+	golang.org/x/exp v0.0.0-20230519143937-03e91628a987 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
