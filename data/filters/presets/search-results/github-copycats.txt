@@ -64,6 +64,7 @@ pythonissues.com/
 pythonlang.dev/
 pythonrepo.com/
 pythontechworld.com/
+rat.dev/
 reposhub.com/
 rpkg.in/
 rustrepo.com/
