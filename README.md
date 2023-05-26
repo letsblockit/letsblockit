@@ -74,6 +74,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/TheLovinator1"><img src="https://avatars.githubusercontent.com/u/4153203?v=4?s=100" width="100px;" alt="Joakim Hellsén"/><br /><sub><b>Joakim Hellsén</b></sub></a><br /><a href="#financial-TheLovinator1" title="Financial">💵</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://benmakesgames.com/"><img src="https://avatars.githubusercontent.com/u/1587505?v=4?s=100" width="100px;" alt="Ben Hendel-Doying"/><br /><sub><b>Ben Hendel-Doying</b></sub></a><br /><a href="#financial-BenMakesGames" title="Financial">💵</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/chedani"><img src="https://avatars.githubusercontent.com/u/105243055?v=4?s=100" width="100px;" alt="Daniel Cheang"/><br /><sub><b>Daniel Cheang</b></sub></a><br /><a href="#data-chedani" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/leo1115"><img src="https://avatars.githubusercontent.com/u/54549454?v=4?s=100" width="100px;" alt="leo1115"/><br /><sub><b>leo1115</b></sub></a><br /><a href="#ideas-leo1115" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
