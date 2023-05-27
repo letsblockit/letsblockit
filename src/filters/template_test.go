@@ -49,6 +49,10 @@ func TestValidateTemplates(t *testing.T) {
 				_, found := contributors.Get(c)
 				assert.Truef(t, found, "unknown contributor %s", c)
 			}
+			for _, c := range filter.Sponsors {
+				_, found := contributors.Get(c)
+				assert.Truef(t, found, "unknown sponsor %s", c)
+			}
 		})
 
 		for i, tc := range filter.Tests {
