@@ -104,7 +104,7 @@ func (r *Repository) Render(w io.Writer, instance *Instance) error {
 
 	for _, preset := range tpl.presets {
 		if params[preset.EnableKey] == true {
-			if _, err := fmt.Fprintln(w, "!!", instance.Template, "with", preset.Name, "preset"); err != nil {
+			if _, err := fmt.Fprintln(w, preset.Header); err != nil {
 				return err
 			}
 			params := shallowCopy(params)

@@ -12,7 +12,13 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const presetFilePattern string = "filters/presets/%s/%s.txt"
+const (
+	presetFilePattern        string = "%s/%s.txt"
+	presetHeaderPattern      string = "!! %s with %s preset"
+	presetAttributionPattern string = `
+!! Source: %s
+!! License: %s`
+)
 
 func parseTemplate(name string, reader io.Reader) (*Template, error) {
 	tpl := &Template{Name: name}
@@ -76,11 +82,16 @@ func parsePresets(f *Template, presets fs.FS) error {
 			continue
 		}
 		for _, preset := range param.Presets {
+			header := fmt.Sprintf(presetHeaderPattern, f.Name, preset.Name)
+			if len(preset.Source) > 0 {
+				header += fmt.Sprintf(presetAttributionPattern, preset.Source, preset.License)
+			}
 			f.presets = append(f.presets, presetEntry{
 				EnableKey: param.BuildPresetParamName(preset.Name),
 				Name:      preset.Name,
 				TargetKey: param.Name,
 				Value:     preset.Values,
+				Header:    header,
 			})
 		}
 	}

@@ -13,11 +13,10 @@ import (
 //go:embed assets
 var Assets embed.FS
 
-//go:embed filters/templates
-var Templates embed.FS
-
-//go:embed filters/presets
-var Presets embed.FS
+//go:embed filters
+var filterData embed.FS
+var Templates, _ = fs.Sub(filterData, "filters/templates")
+var Presets, _ = fs.Sub(filterData, "filters/presets")
 
 //go:embed pages/*
 var Pages embed.FS
