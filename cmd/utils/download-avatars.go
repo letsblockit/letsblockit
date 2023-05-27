@@ -25,9 +25,9 @@ func (c *downloadAvatarsCmd) Run(k *kong.Context) error {
 
 	for _, contributor := range contributors {
 		targetFile := fmt.Sprintf(outputPathPattern, contributor.Login)
-		execOrFatal(k, "magick", contributor.AvatarUrl, "-resize", "96x96", targetFile)
+		execOrFatal(k, "magick", contributor.AvatarUrl, "-resize", "96x96", "PNG8:"+targetFile)
+		execOrFatal(k, "optipng", "-o7", targetFile)
 	}
-	execOrFatal(k, "pngcrush", "-brute", outputFolder)
 	execOrFatal(k, "git", "add", outputFolder)
 
 	return nil
