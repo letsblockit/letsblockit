@@ -55,15 +55,19 @@ params:
       - name: github-copycats
         description: Hide Github copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/github_copycats.txt
+        license: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/LICENSE
       - name: npm-copycats
         description: Hide npm copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/npm_copycats.txt
+        license: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/LICENSE
       - name: stackoverflow-copycats
         description: Hide Stackoverflow copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/stackoverflow_copycats.txt
+        license: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/LICENSE
       - name: wikipedia-copycats
         description: Hide Wikipedia copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
+        license: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/LICENSE
 tags:
   - bing
   - duckduckgo

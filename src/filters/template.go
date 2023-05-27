@@ -11,7 +11,8 @@ type Preset struct {
 	Name        string   `validate:"required"`
 	Description string   `validate:"required"`
 	Source      string   `validate:"omitempty,url" yaml:",omitempty"`
-	Values      []string `validate:"required"`
+	License     string   `validate:"required_with=Source" yaml:",omitempty"`
+	Values      []string `validate:"required_without=Source"`
 	Default     bool     `yaml:",omitempty"`
 }
 
@@ -30,6 +31,7 @@ type presetEntry struct {
 	EnableKey string
 	Name      string
 	TargetKey string
+	Header    string
 	Value     interface{}
 }
 
