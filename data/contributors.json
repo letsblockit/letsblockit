@@ -193,6 +193,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "mrjones2014",
+      "name": "Mat Jones",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8648891?v=4",
+      "profile": "https://mjones.network/",
+      "contributions": [
+        "data"
+      ]
     }
   ],
   "contributorsPerLine": 7,
