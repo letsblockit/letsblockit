@@ -1,4 +1,7 @@
 title: "YouTube: filter out videos by channel"
+contributors:
+  - JohnyP36
+  - xvello
 params:
   - name: channels
     description: Channels to filter out

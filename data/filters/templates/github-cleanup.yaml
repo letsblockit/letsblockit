@@ -1,4 +1,7 @@
 title: "GitHub: interface cleanups"
+contributors:
+  - mrjones2014
+  - xvello
 params:
   - name: homepage-foryou
     description: Hide the new "For you" feed on the homepage
@@ -14,9 +17,6 @@ params:
     default: true
 tags:
   - github
-contributors:
-  - mrjones2014
-  - xvello
 template: |
   {{#if homepage-foryou}}
   github.com###dashboard .js-feeds-tabs #feed-next

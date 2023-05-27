@@ -1,4 +1,6 @@
 title: "Linkedin: filter out posts by link target"
+contributors:
+  - xvello
 params:
   - name: sites
     description: Sites to hide

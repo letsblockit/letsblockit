@@ -1,4 +1,10 @@
 title: "YouTube: video playback interface cleanups"
+contributors:
+  - BPower0036
+  - Dosenpfand
+  - JohnyP36
+  - mailyspamy
+  - xvello
 params:
   - name: channel-clarification
     description: Hide the channel description box under videos and shorts

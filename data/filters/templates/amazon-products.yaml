@@ -1,4 +1,6 @@
 title: "Amazon: filter out products by name"
+contributors:
+  - xvello
 params:
   - name: rules
     description: Rules to hide products

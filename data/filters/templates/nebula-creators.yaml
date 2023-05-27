@@ -1,4 +1,6 @@
 title: "Nebula: filter out videos by creator"
+contributors:
+  - xvello
 params:
   - name: creators
     description: Creators to filter out

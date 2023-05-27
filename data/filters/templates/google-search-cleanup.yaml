@@ -1,4 +1,6 @@
 title: "Google Search: interface cleanups"
+contributors:
+  - xvello
 params:
   - name: rich-results
     description: Hide most rich-content results (images, stories, businesses...) in the web search
