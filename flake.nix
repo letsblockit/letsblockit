@@ -20,7 +20,7 @@
           run-server = [ pinnedGo reflex self.packages.${system}.ory ];
           run-tests = [ pinnedGo golangci-lint ];
           update-assets = [ pinnedGo nodejs-slim-18_x nodePackages.npm ];
-          update-contributors = [ pinnedGo curl imagemagick optipng git ];
+          update-contributors = [ pinnedGo curl imagemagick git ];
           update-codegen = [ mockgen self.packages.${system}.sqlc ];
           update-labels = [ coreutils ];
           update-vendorsha = [ nix-prefetch gnused ];
