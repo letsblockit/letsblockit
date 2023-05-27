@@ -2,10 +2,10 @@ package server
 
 import (
 	"fmt"
-	"github.com/letsblockit/letsblockit/data"
 	"net/url"
 	"strings"
 
+	"github.com/letsblockit/letsblockit/data"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/pages"
@@ -18,7 +18,7 @@ type echoInterface interface {
 func buildHelpers(e echoInterface) (map[string]interface{}, error) {
 	contributors, err := data.ParseContributors()
 	if err != nil {
-
+		return nil, err
 	}
 
 	return map[string]interface{}{

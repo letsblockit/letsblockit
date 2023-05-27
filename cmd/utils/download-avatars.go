@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
+	"os/exec"
+
 	"github.com/alecthomas/kong"
 	"github.com/letsblockit/letsblockit/data"
-	"os/exec"
 )
 
 const (
-	outputFolder      string = "data/assets/images/contributors"
-	outputPathPattern string = outputFolder + "/%s.png"
+	outputFolder      = "data/assets/images/contributors"
+	outputPathPattern = outputFolder + "/%s.png"
 )
 
 type downloadAvatarsCmd struct {
