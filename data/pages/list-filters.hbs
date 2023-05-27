@@ -4,11 +4,10 @@
         <nav class="navbar navbar-light flex-column align-items-stretch">
             <span class="navbar-brand">Contribute:</span>
             <nav class="nav nav-pills flex-column">
-                <a class="nav-link"
-                   href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml">Suggest
-                    a new filter</a>
-                <a class="nav-link" href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/templates/">Filter
-                    sources</a>
+                <a href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml"
+                   class="nav-link">Suggest a new template</a>
+                <a href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/templates/"
+                   class="nav-link">Template sources</a>
             </nav>
             {{#with (all_sponsors)}}
                 <span class="navbar-brand mt-3 mb-1">Our sponsors:</span>
@@ -21,7 +20,7 @@
                 <a href="https://github.com/sponsors/letsblockit">Github Sponsors</a>.
             </p>
             {{#if tag_search}}
-            <span class="navbar-brand mt-3">
+                <span class="navbar-brand mt-3">
                 <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
             </span>
             {{else}}
