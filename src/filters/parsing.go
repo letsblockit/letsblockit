@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	presetFilePattern        string = "filters/presets/%s/%s.txt"
+	presetFilePattern        string = "%s/%s.txt"
 	presetHeaderPattern      string = "!! %s with %s preset"
 	presetAttributionPattern string = `
 !! Source: %s

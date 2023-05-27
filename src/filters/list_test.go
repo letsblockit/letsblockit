@@ -2,6 +2,7 @@ package filters
 
 import (
 	"embed"
+	"io/fs"
 	"strings"
 	"testing"
 
@@ -12,8 +13,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//go:embed testdata/templates
-var testTemplates embed.FS
+//go:embed testdata
+var testData embed.FS
+
+var testTemplates, _ = fs.Sub(testData, "testdata/templates")
+var testPresets, _ = fs.Sub(testData, "testdata/presets")
 
 //go:embed testdata/list.yaml
 var testList []byte
