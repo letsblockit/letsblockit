@@ -15,7 +15,6 @@ var Assets embed.FS
 
 //go:embed filters
 var filterData embed.FS
-
 var Templates, _ = fs.Sub(filterData, "filters/templates")
 var Presets, _ = fs.Sub(filterData, "filters/presets")
 

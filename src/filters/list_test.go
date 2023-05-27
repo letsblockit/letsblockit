@@ -15,7 +15,6 @@ import (
 
 //go:embed testdata
 var testData embed.FS
-
 var testTemplates, _ = fs.Sub(testData, "testdata/templates")
 var testPresets, _ = fs.Sub(testData, "testdata/presets")
 

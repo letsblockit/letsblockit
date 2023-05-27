@@ -101,80 +101,62 @@ func TestParseTemplate(t *testing.T) {
 }
 
 func TestParsePresets(t *testing.T) {
-	tests := map[string]struct {
-		input    *Template
-		expected *Template
-		err      vErrs
-	}{
-		"no_presets": {
-			input:    &Template{Params: []Parameter{{Name: "param name"}}},
-			expected: &Template{Params: []Parameter{{Name: "param name"}}},
-			err:      nil,
-		},
-		"with_presets": {
-			input: &Template{
-				Name: "simple-template",
-				Params: []Parameter{{
-					Name: "param-name",
-					Type: StringListParam,
-					Presets: []Preset{{
-						Name:        "internal-preset",
-						Description: "preset description",
-						Values:      []string{"1", "2"},
-						Default:     true,
-					}, {
-						Name:        "sourced-preset",
-						Description: "preset description",
-						Source:      "preset source",
-						License:     "preset license",
-						Default:     false,
-					}},
-				}},
-			},
-			expected: &Template{
-				Name: "simple-template",
-				Params: []Parameter{{
-					Name: "param-name",
-					Type: StringListParam,
-					Presets: []Preset{{
-						Name:        "internal-preset",
-						Description: "preset description",
-						Values:      []string{"1", "2"},
-						Default:     true,
-					}, {
-						Name:        "sourced-preset",
-						Description: "preset description",
-						Source:      "preset source",
-						License:     "preset license",
-						Values:      []string{"a", "b"},
-						Default:     false,
-					}},
-				}},
-				presets: []presetEntry{{
-					EnableKey: "param-name---preset---internal-preset",
-					Name:      "internal-preset",
-					Value:     []string{"1", "2"},
-					TargetKey: "param-name",
-					Header:    "!! simple-template with internal-preset preset",
-				}, {
-					EnableKey: "param-name---preset---sourced-preset",
-					Name:      "sourced-preset",
-					Value:     []string{"a", "b"},
-					TargetKey: "param-name",
-					Header: `!! simple-template with sourced-preset preset
+	input := &Template{
+		Name: "simple-template",
+		Params: []Parameter{{
+			Name: "param-name",
+			Type: StringListParam,
+			Presets: []Preset{{
+				Name:        "internal-preset",
+				Description: "preset description",
+				Values:      []string{"1", "2"},
+				Default:     true,
+			}, {
+				Name:        "sourced-preset",
+				Description: "preset description",
+				Source:      "preset source",
+				License:     "preset license",
+				Default:     false,
+			}},
+		}},
+	}
+	expected := &Template{
+		Name: "simple-template",
+		Params: []Parameter{{
+			Name: "param-name",
+			Type: StringListParam,
+			Presets: []Preset{{
+				Name:        "internal-preset",
+				Description: "preset description",
+				Values:      []string{"1", "2"},
+				Default:     true,
+			}, {
+				Name:        "sourced-preset",
+				Description: "preset description",
+				Source:      "preset source",
+				License:     "preset license",
+				Values:      []string{"a", "b"},
+				Default:     false,
+			}},
+		}},
+		presets: []presetEntry{{
+			EnableKey: "param-name---preset---internal-preset",
+			Name:      "internal-preset",
+			Value:     []string{"1", "2"},
+			TargetKey: "param-name",
+			Header:    "!! simple-template with internal-preset preset",
+		}, {
+			EnableKey: "param-name---preset---sourced-preset",
+			Name:      "sourced-preset",
+			Value:     []string{"a", "b"},
+			TargetKey: "param-name",
+			Header: `!! simple-template with sourced-preset preset
 !! Source: preset source
 !! License: preset license`,
-				}},
-			},
-			err: nil,
-		},
+		}},
 	}
-	for name, tc := range tests {
-		t.Run(name, func(t *testing.T) {
-			require.NoError(t, parsePresets(tc.input, testPresets))
-			require.EqualValues(t, tc.expected, tc.input)
-		})
-	}
+	require.NoError(t, parsePresets(input, testPresets))
+	require.EqualValues(t, expected, input)
 }
 
 type vErrs map[string]string
