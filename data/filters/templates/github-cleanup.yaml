@@ -1,0 +1,49 @@
+title: "GitHub: interface cleanups"
+params:
+  - name: homepage-foryou
+    description: Hide the new "For you" feed on the homepage
+    type: checkbox
+    default: true
+  - name: homepage-changelog
+    description: Hide the changelog and announcements from the homepage
+    type: checkbox
+    default: true
+  - name: profile-achievements
+    description: Hide the achievements from user profiles
+    type: checkbox
+    default: true
+tags:
+  - linuxfr
+template: |
+  {{#if homepage-foryou}}
+  github.com###dashboard .js-feeds-tabs #feed-next
+  github.com###dashboard tab-container div[aria-labelledby="feed-next"]
+  {{/if}}
+  {{#if homepage-changelog}}
+  github.com##aside .dashboard-changelog.mb-4
+  github.com##.js-notice
+  {{/if}}
+  {{#if profile-achievements}}
+  github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      homepage-changelog: true
+    output: |
+      github.com##aside .dashboard-changelog.mb-4
+      github.com##.js-notice
+  - params:
+      homepage-foryou: true
+    output: |
+      github.com###dashboard .js-feeds-tabs #feed-next
+      github.com###dashboard tab-container div[aria-labelledby="feed-next"]
+  - params:
+      profile-achievements: true
+    output: |
+      github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
+---
+
+The GitHub interface can get cluttered and distracting. This template aims at reducing the
+noise, so that you can focus on the real thing. Don't hesitate to suggest more rules!
