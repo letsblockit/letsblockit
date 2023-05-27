@@ -111,6 +111,7 @@ func (s *Server) Start() error {
 		s.statsd = &statsd.NoOpClient{}
 	}
 
+	var helpers map[string]interface{}
 	concurrentRunOrPanic([]func([]error){
 		func(errs []error) { s.assets = statigz.FileServer(data.Assets) },
 		func(errs []error) { s.pages, errs[0] = pages.LoadPages() },
@@ -127,6 +128,7 @@ func (s *Server) Start() error {
 				s.preferences, errs[0] = users.NewPreferenceManager(s.store)
 			}
 		},
+		func(errs []error) { helpers, errs[0] = buildHelpers(s.echo) },
 		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
 	})
 
@@ -160,7 +162,7 @@ func (s *Server) Start() error {
 		return fmt.Errorf("unsupported auth method %s", s.options.AuthMethod)
 	}
 
-	s.pages.RegisterHelpers(buildHelpers(s.echo))
+	s.pages.RegisterHelpers(helpers)
 	s.pages.RegisterContextBuilder(s.buildPageContext)
 	s.setupRouter()
 	if s.options.DryRun {

@@ -17,13 +17,14 @@ type downloadAvatarsCmd struct {
 }
 
 func (c *downloadAvatarsCmd) Run(k *kong.Context) error {
-	contributors, err := data.ParseContributors()
+	list, err := data.ParseContributors()
 	k.FatalIfErrorf(err, "failed to parse contributors.json")
+	contributors := list.GetAll()
 	k.Printf("Downloading avatars for %d contributors", len(contributors))
 
 	for _, contributor := range contributors {
 		targetFile := fmt.Sprintf(outputPathPattern, contributor.Login)
-		execOrFatal(k, "magick", contributor.AvatarUrl, "-resize", "64x64", targetFile)
+		execOrFatal(k, "magick", contributor.AvatarUrl, "-resize", "96x96", targetFile)
 	}
 	execOrFatal(k, "pngcrush", "-brute", outputFolder)
 	execOrFatal(k, "git", "add", outputFolder)

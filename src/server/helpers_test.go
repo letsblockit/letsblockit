@@ -62,7 +62,8 @@ func TestHelpers(t *testing.T) {
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			helpers := buildHelpers(&mockedEcho{})
+			helpers, err := buildHelpers(&mockedEcho{})
+			assert.NoError(t, err)
 			tpl, err := mario.New().Parse(tc.input)
 			assert.NoError(t, err)
 			for n, f := range helpers {

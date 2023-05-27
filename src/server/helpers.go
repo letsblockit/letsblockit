@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/letsblockit/letsblockit/data"
 	"net/url"
 	"strings"
 
@@ -14,7 +15,12 @@ type echoInterface interface {
 	Reverse(name string, params ...interface{}) string
 }
 
-func buildHelpers(e echoInterface) map[string]interface{} {
+func buildHelpers(e echoInterface) (map[string]interface{}, error) {
+	contributors, err := data.ParseContributors()
+	if err != nil {
+
+	}
+
 	return map[string]interface{}{
 		"eq": func(a string, b string) bool {
 			return strings.Compare(a, b) == 0
@@ -66,7 +72,16 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 			}
 			return mode == string(c.Preferences.ColorMode)
 		},
-	}
+		"avatars": func(names []string) []*data.Contributor {
+			var output []*data.Contributor
+			for _, name := range names {
+				if c, found := contributors.Get(name); found {
+					output = append(output, c)
+				}
+			}
+			return output
+		},
+	}, nil
 }
 
 func href(e echoInterface, route string, args string) string {

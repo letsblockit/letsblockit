@@ -14,6 +14,9 @@ import (
 )
 
 func TestValidateTemplates(t *testing.T) {
+	contributors, err := data.ParseContributors()
+	require.NoErrorf(t, err, "failed to load contributors")
+
 	repo, err := Load(data.Templates, data.Presets)
 	assert.NoError(t, err)
 
@@ -39,6 +42,13 @@ func TestValidateTemplates(t *testing.T) {
 			require.NoError(t, checkRedundantPresetValues(filter, data.Presets), "Found redundant preset values")
 			require.NoError(t, parsePresets(filter, data.Presets), "Preset values did not parse OK")
 			assert.NoError(t, validate.Struct(filter), "Template did no pass input validation")
+		})
+
+		t.Run("Contributors/"+name, func(t *testing.T) {
+			for _, c := range filter.Contributors {
+				_, found := contributors.Get(c)
+				assert.Truef(t, found, "unknown contributor %s", c)
+			}
 		})
 
 		for i, tc := range filter.Tests {
