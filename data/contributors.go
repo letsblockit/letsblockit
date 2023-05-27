@@ -4,14 +4,17 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+
+	"github.com/samber/lo"
 )
 
 //go:embed contributors.json
 var contributorsFile []byte
 
 type Contributors struct {
-	list    []*Contributor
-	byLogin map[string]*Contributor
+	all      []*Contributor
+	sponsors []*Contributor
+	byLogin  map[string]*Contributor
 }
 
 type Contributor struct {
@@ -33,12 +36,15 @@ func ParseContributors() (*Contributors, error) {
 		return nil, err
 	}
 	output := &Contributors{
-		list:    list.Contributors,
+		all:     list.Contributors,
 		byLogin: make(map[string]*Contributor),
 	}
 	for _, c := range list.Contributors {
 		c.Asset = fmt.Sprintf("/assets/images/contributors/%s.png", c.Login)
 		output.byLogin[c.Login] = c
+		if lo.Contains(c.Contributions, "financial") {
+			output.sponsors = append(output.sponsors, c)
+		}
 	}
 
 	return output, nil
@@ -50,5 +56,9 @@ func (c *Contributors) Get(login string) (*Contributor, bool) {
 }
 
 func (c *Contributors) GetAll() []*Contributor {
-	return c.list
+	return c.all
+}
+
+func (c *Contributors) GetSponsors() []*Contributor {
+	return c.sponsors
 }

@@ -81,6 +81,12 @@ func buildHelpers(e echoInterface) (map[string]interface{}, error) {
 			}
 			return output
 		},
+		"all_avatars": func() []*data.Contributor {
+			return contributors.GetAll()
+		},
+		"all_sponsors": func() []*data.Contributor {
+			return contributors.GetSponsors()
+		},
 	}, nil
 }
 

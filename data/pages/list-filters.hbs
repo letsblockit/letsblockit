@@ -10,7 +10,12 @@
                 <a class="nav-link" href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/templates/">Filter
                     sources</a>
             </nav>
-            <span class="navbar-brand mt-3 mb-1">Sponsor us:</span>
+            {{#with (all_sponsors)}}
+                <span class="navbar-brand mt-3 mb-1">Our sponsors:</span>
+                {{>contributors}}
+            {{else}}
+                <span class="navbar-brand mt-3 mb-1">Sponsor us:</span>
+            {{/with}}
             <p>Help us run this project by sponsoring us on
                 <a href="https://opencollective.com/letsblockit/">OpenCollective</a> or
                 <a href="https://github.com/sponsors/letsblockit">Github Sponsors</a>.
