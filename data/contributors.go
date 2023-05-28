@@ -3,7 +3,6 @@ package data
 import (
 	_ "embed"
 	"encoding/json"
-	"fmt"
 
 	"github.com/samber/lo"
 )
@@ -18,7 +17,6 @@ type Contributors struct {
 }
 
 type Contributor struct {
-	Asset         string
 	Login         string
 	Name          string
 	AvatarUrl     string `json:"avatar_url"`
@@ -40,7 +38,6 @@ func ParseContributors() (*Contributors, error) {
 		byLogin: make(map[string]*Contributor),
 	}
 	for _, c := range list.Contributors {
-		c.Asset = fmt.Sprintf("/assets/images/contributors/%s.png", c.Login)
 		output.byLogin[c.Login] = c
 		if lo.Contains(c.Contributions, "financial") {
 			output.sponsors = append(output.sponsors, c)

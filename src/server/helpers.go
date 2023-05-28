@@ -16,9 +16,16 @@ type echoInterface interface {
 }
 
 func buildHelpers(e echoInterface) (map[string]interface{}, error) {
+	buster, err := data.HashFiles(data.Assets)
+	if err != nil {
+		return nil, err
+	}
 	contributors, err := data.ParseContributors()
 	if err != nil {
 		return nil, err
+	}
+	for _, c := range contributors.GetAll() {
+		c.AvatarUrl = fmt.Sprintf("/assets/images/contributors/%s.png?h=%s", c.Login, buster)
 	}
 
 	return map[string]interface{}{
@@ -29,6 +36,9 @@ func buildHelpers(e echoInterface) (map[string]interface{}, error) {
 			return fmt.Sprintf(
 				`<a href="%s" class="badge rounded-pill bg-secondary text-decoration-none me-2">%s</a>`,
 				href(e, "filters-for-tag", name), name)
+		},
+		"asset": func(file string) string {
+			return fmt.Sprintf("/assets/%s?h=%s", file, buster)
 		},
 		"href": func(route string, args string) string {
 			return href(e, route, args)
