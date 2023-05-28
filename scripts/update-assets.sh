@@ -17,4 +17,5 @@ else
   npm run build --prefix ./src/assets/
 fi
 
+git add data/assets/dist/
 go run ./cmd/utils/ hash-assets

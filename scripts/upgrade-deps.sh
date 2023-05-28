@@ -8,6 +8,11 @@ set -euox pipefail
 # Upgrade nix flake deps
 nix flake update
 
+# Upgrade golang deps
+go get -t -u ./...
+go mod tidy
+./scripts/update-vendorsha.sh
+
 # Upgrade npm deps
 cd src/assets
 npm upgrade -S
@@ -17,9 +22,3 @@ cd ../..
 # Rebuild assets, accounting for file renames
 git rm -rf data/assets/dist/
 ./scripts/update-assets.sh
-git add data/assets/dist/
-
-# Upgrade golang deps
-go get -t -u ./...
-go mod tidy
-./scripts/update-vendorsha.sh
