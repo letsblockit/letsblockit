@@ -16,3 +16,5 @@ else
   go run ./cmd/utils/ extract-icons
   npm run build --prefix ./src/assets/
 fi
+
+go run ./cmd/utils/ hash-assets

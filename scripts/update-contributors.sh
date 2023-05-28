@@ -5,3 +5,4 @@
 set -euox pipefail
 
 go run ./cmd/utils/ download-avatars
+go run ./cmd/utils/ hash-assets
