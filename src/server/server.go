@@ -221,7 +221,7 @@ func (s *Server) setupRouter() {
 
 	// Raw routes
 	s.echo.GET(healthPath, func(c echo.Context) error { return c.String(200, "OK") })
-	s.echo.GET("/assets/*", echo.WrapHandler(s.assets))
+	s.echo.GET("/assets/*", echo.WrapHandler(s.assets), assetCacheControlMiddleware)
 	s.echo.HEAD("/assets/*", echo.WrapHandler(s.assets))
 	s.echo.GET("/filters/youtube-streams-chat", func(c echo.Context) error {
 		return s.pages.RedirectToPage(c, "view-filter", "youtube-cleanup")
@@ -275,6 +275,15 @@ func (s *Server) setupRouter() {
 	authedRoutes.GET("/user/account", s.userAccount).Name = "user-account"
 	authedRoutes.POST("/user/rotate-token", s.rotateListToken).Name = "rotate-list-token"
 	authedRoutes.POST("/user/preferences", s.updatePreferences).Name = "update-preferences"
+}
+
+func assetCacheControlMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if c.Request().URL.Query().Has("h") {
+			c.Response().Header().Set("Cache-Control", "max-age=604800") // 7 days
+		}
+		return next(c)
+	}
 }
 
 func shouldReload(c echo.Context) error {

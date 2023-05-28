@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/letsblockit/letsblockit/data"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
 	"github.com/letsblockit/letsblockit/src/pages"
@@ -15,6 +16,7 @@ type echoInterface interface {
 }
 
 func buildHelpers(e echoInterface) map[string]interface{} {
+	buster, _ := data.HashFiles(data.Assets)
 	return map[string]interface{}{
 		"eq": func(a string, b string) bool {
 			return strings.Compare(a, b) == 0
@@ -23,6 +25,9 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 			return fmt.Sprintf(
 				`<a href="%s" class="badge rounded-pill bg-secondary text-decoration-none me-2">%s</a>`,
 				href(e, "filters-for-tag", name), name)
+		},
+		"asset": func(file string) string {
+			return fmt.Sprintf("/assets/%s?h=%s", file, buster)
 		},
 		"href": func(route string, args string) string {
 			return href(e, route, args)
