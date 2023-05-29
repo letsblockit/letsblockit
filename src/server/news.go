@@ -11,11 +11,7 @@ import (
 )
 
 func (s *Server) newsHandler(c echo.Context) error {
-	releases, _, err := s.releases.GetReleases()
-	if err != nil {
-		return err
-	}
-
+	releases, _ := s.releases.GetReleases()
 	hc := s.buildPageContext(c, "Release notes")
 
 	newReleases := make(map[string]bool) // handlebars lookup only supports string keys
@@ -48,10 +44,7 @@ func (s *Server) newsHandler(c echo.Context) error {
 }
 
 func (s *Server) newsAtomHandler(c echo.Context) error {
-	releases, etag, err := s.releases.GetReleases()
-	if err != nil {
-		return err
-	}
+	releases, etag := s.releases.GetReleases()
 
 	if m := getEtag(c); m != "" && m == etag {
 		return c.NoContent(http.StatusNotModified)

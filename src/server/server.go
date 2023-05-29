@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
@@ -130,6 +131,10 @@ func (s *Server) Start() error {
 		},
 		func(errs []error) { helpers, errs[0] = buildHelpers(s.echo) },
 		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
+		func(errs []error) {
+			tpl := data.Templates.(fs.ReadDirFS)
+			s.releases, errs[0] = news.DownloadReleases(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, tpl)
+		},
 	})
 
 	if s.options.LogsFolder != "" {
@@ -144,8 +149,6 @@ func (s *Server) Start() error {
 			MaxBackups: 3,
 		})
 	}
-
-	s.releases = news.NewReleaseClient(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, s.filters)
 
 	switch s.options.AuthMethod {
 	case "kratos":
@@ -351,7 +354,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		context.UserLoggedIn = true
 		context.Preferences, _ = s.preferences.Get(c, context.UserID)
 		if context.Preferences != nil {
-			latest, _ := s.releases.GetLatestAt()
+			latest := s.releases.GetLatestAt()
 			context.HasNews = latest.After(context.Preferences.NewsCursor)
 		}
 	}
