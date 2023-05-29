@@ -2,6 +2,11 @@
 
 $color-mode-type: data; // Make the default behaviour explicit
 
+// From https://github.com/system-fonts/modern-font-stacks
+$font-family-sans-serif: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
+$font-family-monospace: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+$headings-font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+
 $primary: #b83e51;
 $secondary: #DC926E;
 $success: #81a65e;
@@ -12,9 +17,18 @@ $light: #F4F4F0;
 $dark: #262432;
 
 $navbar-nav-link-padding-x: 1rem;
-$headings-margin-bottom: 1rem;
+$headings-line-height: 2;
+$headings-margin-bottom: 0;
 
 @import "node_modules/bootstrap/scss/bootstrap";
+
+.card-header, .accordion-button {
+  @extend h6;
+}
+
+.navbar-brand {
+  font-family: $headings-font-family;
+}
 
 svg.icon {
   width: 1.25em;
@@ -58,6 +72,12 @@ main li:not(.nav-item) {
 form label[title] {
   cursor: help;
   text-decoration: underline dashed !important;
+}
+
+// Firefox's default yellow does not work in dark mode
+form input:autofill {
+  color: $warning-text-emphasis;
+  background: $warning-bg-subtle;
 }
 
 // Hack until we rework the color palette

@@ -143,9 +143,11 @@ func (o *OryBackend) RegisterRoutes(group EchoRouter) {
 func (o *OryBackend) BuildMiddleware() echo.MiddlewareFunc {
 	authCache := zcache.New[string, string](15*time.Minute, 10*time.Minute)
 	endpoint := o.rootUrl + oryWhoamiPath
+	dnsPrefetchHeaderValue := fmt.Sprintf("<%s>; rel=dns-prefetch", o.rootUrl)
 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			c.Response().Header().Add("Link", dnsPrefetchHeaderValue)
 			cookies := c.Request().Header.Get(echo.HeaderCookie)
 			if !strings.Contains(cookies, oryCookieNamePrefix) {
 				return next(c)
