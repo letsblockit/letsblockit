@@ -26,7 +26,7 @@ func buildHelpers(e echoInterface) (map[string]interface{}, error) {
 		return nil, err
 	}
 	for _, c := range contributors.GetAll() {
-		c.AvatarUrl = assets.BuildURL("images/contributors/" + c.Login + ".png")
+		c.AvatarUrl = assets.BuildURL("images/contributors/" + c.Login + ".webp")
 	}
 
 	return map[string]interface{}{

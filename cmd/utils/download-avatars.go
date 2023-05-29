@@ -10,7 +10,7 @@ import (
 
 const (
 	outputFolder      = "data/assets/images/contributors"
-	outputPathPattern = outputFolder + "/%s.png"
+	outputPathPattern = outputFolder + "/%s.webp"
 )
 
 type downloadAvatarsCmd struct {
@@ -25,7 +25,10 @@ func (c *downloadAvatarsCmd) Run(k *kong.Context) error {
 
 	for _, contributor := range contributors {
 		targetFile := fmt.Sprintf(outputPathPattern, contributor.Login)
-		execOrFatal(k, "magick", contributor.AvatarUrl, "-resize", "96x96", "PNG8:"+targetFile)
+		execOrFatal(k, "magick", contributor.AvatarUrl,
+			"-quality", "80", "-define", "webp:image-hint=picture",
+			"-define", "webp:method=6", "-define", "webp:alpha-filtering=2",
+			"-resize", "96x96", targetFile)
 	}
 	execOrFatal(k, "git", "add", outputFolder)
 
