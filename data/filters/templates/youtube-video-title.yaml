@@ -1,4 +1,7 @@
 title: "YouTube: filter out videos by title"
+contributors:
+  - JohnyP36
+  - xvello
 params:
   - name: keywords
     description: Words to search for

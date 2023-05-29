@@ -1,4 +1,6 @@
 title: "LinuxFr: interface cleanups"
+contributors:
+  - xvello
 params:
   - name: homepage-pinned
     description: Hide the pinned article at the top of the homepage

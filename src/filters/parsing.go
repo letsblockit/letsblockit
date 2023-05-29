@@ -9,6 +9,7 @@ import (
 	"io/fs"
 
 	"github.com/russross/blackfriday/v2"
+	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 )
 
@@ -43,6 +44,10 @@ func parseTemplate(name string, reader io.Reader) (*Template, error) {
 	pos += len(yamlSeparator)
 	pos += bytes.Index(input[pos:], newLine)
 	tpl.Description = string(blackfriday.Run(input[pos:]))
+
+	// Make sure contributors and sponsors are sorted
+	slices.Sort(tpl.Contributors)
+	slices.Sort(tpl.Sponsors)
 
 	return tpl, nil
 }

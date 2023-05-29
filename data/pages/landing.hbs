@@ -43,12 +43,13 @@
         <div class="col-lg-8">
             <h3>It's all about <strong>us</strong></h3>
             <p>
-                Writing content filters is not trivial. Fixing them when websites change is a lot of work.
-            </p>
-            <p>
                 Customizable templates make it easy for everyone to get on board.
-                Broken filter? One contributor can fix it <em>for everyone</em>.
+                Broken rules? One person can fix it <em>for everyone</em>.
             </p>
+            <p>This project is maintained by a growing community:</p>
+            <p>{{#with (all_avatars)}}
+                {{>contributors}}
+            {{/with}}</p>
             <p><a class="btn btn-primary me-2" href="{{href "help" "contributing"}}">Learn how to contribute</a></p>
         </div>
         <p class="col-lg-4 d-none d-lg-block container landing-icon">

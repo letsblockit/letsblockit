@@ -17,14 +17,16 @@ type Preset struct {
 }
 
 type Template struct {
-	Name        string      `validate:"required" yaml:"-"`
-	Title       string      `validate:"required"`
-	Params      []Parameter `validate:"dive" yaml:",omitempty"`
-	Tags        []string    `validate:"dive,alphaunicode" yaml:",omitempty"`
-	Template    string      `validate:"required"`
-	Tests       []testCase
-	Description string        `validate:"required" yaml:"-"`
-	presets     []presetEntry `yaml:"-"` // Generated on parse from params and presets
+	Name         string      `validate:"required" yaml:"-"`
+	Title        string      `validate:"required"`
+	Params       []Parameter `validate:"dive" yaml:",omitempty"`
+	Tags         []string    `validate:"dive,alphaunicode" yaml:",omitempty"`
+	Template     string      `validate:"required"`
+	Tests        []testCase
+	Description  string `validate:"required" yaml:"-"`
+	Contributors []string
+	Sponsors     []string
+	presets      []presetEntry `yaml:"-"` // Generated on parse from params and presets
 }
 
 type presetEntry struct {

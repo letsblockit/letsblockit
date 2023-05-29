@@ -84,3 +84,26 @@ form input:autofill {
 html[data-bs-theme="dark"] .btn-dark, html[data-bs-theme="dark"] .btn-outline-dark {
   filter: invert(90%) !important;
 }
+
+.avatar-row {
+  display: block;
+  flex-direction: row;
+}
+
+.avatar-row img {
+  position: relative;
+  display: inline-flex;
+  border-radius: 50%;
+  object-fit: cover;
+  background: $card-bg;
+  border: solid 2px $card-border-color;
+  margin: 0 -12px 6px 0;
+  width: 48px;
+  height: 48px;
+}
+
+.avatar-row img:hover {
+  z-index: 5;
+  border-color: $input-focus-border-color;
+  box-shadow: $input-focus-box-shadow;
+}

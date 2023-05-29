@@ -1,4 +1,8 @@
 title: "Remove tracking URL parameters from links"
+contributors:
+  - androidkotlindev
+  - BPower0036
+  - xvello
 params:
   - name: url-params
     description: Parameters to remove from links

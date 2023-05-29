@@ -1,4 +1,10 @@
 title: "Search engines: filter out results by website"
+contributors:
+  - BPower0036
+  - quenhus
+  - xvello
+sponsors:
+  - Webswonder
 params:
   - name: bing
     description: Generate rules for Bing

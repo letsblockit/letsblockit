@@ -15,8 +15,20 @@ type echoInterface interface {
 	Reverse(name string, params ...interface{}) string
 }
 
-func buildHelpers(e echoInterface) map[string]interface{} {
-	buster, _ := data.HashFiles(data.Assets)
+func buildHelpers(e echoInterface) (map[string]interface{}, error) {
+	assets, err := data.ParseAssetHashes()
+	if err != nil {
+		return nil, err
+	}
+
+	contributors, err := data.ParseContributors()
+	if err != nil {
+		return nil, err
+	}
+	for _, c := range contributors.GetAll() {
+		c.AvatarUrl = assets.BuildURL("images/contributors/" + c.Login + ".webp")
+	}
+
 	return map[string]interface{}{
 		"eq": func(a string, b string) bool {
 			return strings.Compare(a, b) == 0
@@ -26,9 +38,7 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 				`<a href="%s" class="badge rounded-pill bg-secondary text-decoration-none me-2">%s</a>`,
 				href(e, "filters-for-tag", name), name)
 		},
-		"asset": func(file string) string {
-			return fmt.Sprintf("/assets/%s?h=%s", file, buster)
-		},
+		"asset": assets.BuildURL,
 		"href": func(route string, args string) string {
 			return href(e, route, args)
 		},
@@ -71,7 +81,22 @@ func buildHelpers(e echoInterface) map[string]interface{} {
 			}
 			return mode == string(c.Preferences.ColorMode)
 		},
-	}
+		"avatars": func(names []string) []*data.Contributor {
+			var output []*data.Contributor
+			for _, name := range names {
+				if c, found := contributors.Get(name); found {
+					output = append(output, c)
+				}
+			}
+			return output
+		},
+		"all_avatars": func() []*data.Contributor {
+			return contributors.GetAll()
+		},
+		"all_sponsors": func() []*data.Contributor {
+			return contributors.GetSponsors()
+		},
+	}, nil
 }
 
 func href(e echoInterface, route string, args string) string {

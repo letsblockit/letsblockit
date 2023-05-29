@@ -1,4 +1,8 @@
 title: "YouTube: hide video recommendations"
+contributors:
+  - BPower0036
+  - xbc5
+  - xvello
 params:
   - name: related-videos
     description: Hide the related videos sidebar when watching a video
