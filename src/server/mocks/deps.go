@@ -160,12 +160,11 @@ func (m *MockReleaseClient) EXPECT() *MockReleaseClientMockRecorder {
 }
 
 // GetLatestAt mocks base method.
-func (m *MockReleaseClient) GetLatestAt() (time.Time, error) {
+func (m *MockReleaseClient) GetLatestAt() time.Time {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetLatestAt")
 	ret0, _ := ret[0].(time.Time)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return ret0
 }
 
 // GetLatestAt indicates an expected call of GetLatestAt.
@@ -175,13 +174,12 @@ func (mr *MockReleaseClientMockRecorder) GetLatestAt() *gomock.Call {
 }
 
 // GetReleases mocks base method.
-func (m *MockReleaseClient) GetReleases() ([]*news.Release, string, error) {
+func (m *MockReleaseClient) GetReleases() ([]*news.Release, string) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetReleases")
 	ret0, _ := ret[0].([]*news.Release)
 	ret1, _ := ret[1].(string)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	return ret0, ret1
 }
 
 // GetReleases indicates an expected call of GetReleases.
