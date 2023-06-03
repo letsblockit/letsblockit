@@ -17,7 +17,7 @@ var (
 
 type releaseNoteRenderer struct {
 	officialInstance bool
-	templateExists   templateExists
+	templateProvider templateProvider
 	*blackfriday.HTMLRenderer
 }
 
@@ -36,7 +36,7 @@ func (r *releaseNoteRenderer) RenderNode(w io.Writer, node *blackfriday.Node, en
 			textNode := node.FirstChild.FirstChild
 
 			maybeName, _, foundSeparator := bytes.Cut(textNode.Literal, templateNameSeparator)
-			if foundSeparator && r.templateExists(string(maybeName)) {
+			if foundSeparator && r.templateProvider.Has(string(maybeName)) {
 				linkNode := blackfriday.NewNode(blackfriday.Link)
 				linkNode.LinkData.Destination = append(linkNode.LinkData.Destination, templateLinkPrefix...)
 				linkNode.LinkData.Destination = append(linkNode.LinkData.Destination, maybeName...)
@@ -85,11 +85,11 @@ func (r *releaseNoteRenderer) RenderNode(w io.Writer, node *blackfriday.Node, en
 	return r.HTMLRenderer.RenderNode(w, node, entering)
 }
 
-func initRenderer(officialInstance bool, tp templateExists) blackfriday.Option {
+func initRenderer(officialInstance bool, tp templateProvider) blackfriday.Option {
 	return blackfriday.WithRenderer(
 		&releaseNoteRenderer{
 			officialInstance: officialInstance,
-			templateExists:   tp,
+			templateProvider: tp,
 			HTMLRenderer: blackfriday.NewHTMLRenderer(blackfriday.HTMLRendererParameters{
 				HeadingLevelOffset: 2,
 			}),

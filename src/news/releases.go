@@ -5,17 +5,16 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io"
-	"io/fs"
 	"os"
 	"path"
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/russross/blackfriday/v2"
-	"github.com/samber/lo"
 )
 
 const (
@@ -28,7 +27,9 @@ var (
 	githubUserLink  = `$1[**@$2**](https://github.com/$2)$3`
 )
 
-type templateExists = func(name string) bool
+type templateProvider interface {
+	Has(name string) bool
+}
 
 type githubRelease struct {
 	HtmlUrl     string    `json:"html_url"`
@@ -55,43 +56,69 @@ func (r Release) Date() string {
 	return r.CreatedAt.Format("2006-01-02")
 }
 
-// Releases fetches and parses the github releases for a repository.
+// ReleaseClient fetches and parses the github releases for a repository.
 // The parsed results are cached in memory until the next restart.
-type Releases struct {
-	latestAt time.Time
-	releases []*Release
-	etag     string
+type ReleaseClient struct {
+	sync.Mutex
+	url              string
+	cacheDir         string
+	officialInstance bool
+	templateProvider templateProvider
+	latestAt         time.Time
+	releases         []*Release
+	etag             string
 }
 
-func (c *Releases) GetReleases() ([]*Release, string) {
-	return c.releases, c.etag
+func NewReleaseClient(url string, cacheDir string, officialInstance bool, tp templateProvider) *ReleaseClient {
+	return &ReleaseClient{
+		url:              url,
+		cacheDir:         cacheDir,
+		officialInstance: officialInstance,
+		templateProvider: tp,
+	}
 }
 
-func (c *Releases) GetLatestAt() time.Time {
-	return c.latestAt
+func (c *ReleaseClient) GetReleases() ([]*Release, string, error) {
+	c.Lock()
+	defer c.Unlock()
+	if c.releases != nil {
+		return c.releases, c.etag, nil
+	}
+
+	if err := c.populate(); err != nil {
+		return nil, "", err
+	}
+	return c.releases, c.etag, nil
 }
 
-func DownloadReleases(url string, cacheDir string, officialInstance bool, templates fs.ReadDirFS) (*Releases, error) {
-	contents, err := download(url, cacheDir, cacheFileName)
+func (c *ReleaseClient) GetLatestAt() (time.Time, error) {
+	c.Lock()
+	defer c.Unlock()
+	if !c.latestAt.IsZero() {
+		return c.latestAt, nil
+	}
+
+	if err := c.populate(); err != nil {
+		return time.Time{}, err
+	}
+	return c.latestAt, nil
+}
+
+func (c *ReleaseClient) populate() error {
+	contents, err := download(c.url, c.cacheDir, cacheFileName)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer func() { _ = contents.Close() }()
 
 	var githubReleases []githubRelease
 	if err = json.NewDecoder(contents).Decode(&githubReleases); err != nil {
-		return nil, err
+		return err
 	}
 
-	availableTemplates, err := enumerateTemplates(templates)
-	if err != nil {
-		return nil, err
-	}
 	etagHasher := fnv.New64()
-	renderer := initRenderer(officialInstance, availableTemplates)
-	output := &Releases{
-		releases: make([]*Release, 0, len(githubReleases)),
-	}
+	renderer := initRenderer(c.officialInstance, c.templateProvider)
+	c.releases = make([]*Release, 0, len(githubReleases))
 	for _, r := range githubReleases {
 		if r.Prerelease || r.Draft {
 			continue
@@ -102,7 +129,7 @@ func DownloadReleases(url string, cacheDir string, officialInstance bool, templa
 		// Insert links for github users
 		body = githubUserRegex.ReplaceAllString(body, githubUserLink)
 		desc := blackfriday.Run([]byte(body), renderer)
-		output.releases = append(output.releases, &Release{
+		c.releases = append(c.releases, &Release{
 			Id:          r.Id,
 			Link:        r.HtmlUrl,
 			Description: string(desc),
@@ -111,24 +138,12 @@ func DownloadReleases(url string, cacheDir string, officialInstance bool, templa
 			TagName:     r.TagName,
 			GithubUrl:   r.HtmlUrl,
 		})
-		if r.CreatedAt.After(output.latestAt) {
-			output.latestAt = r.CreatedAt
+		if r.CreatedAt.After(c.latestAt) {
+			c.latestAt = r.CreatedAt
 		}
 	}
-	output.etag = strconv.FormatUint(etagHasher.Sum64(), 36)
-	return output, nil
-}
-
-func enumerateTemplates(templates fs.ReadDirFS) (templateExists, error) {
-	entries, err := templates.ReadDir(".")
-	if err != nil {
-		return nil, err
-	}
-
-	present := lo.SliceToMap(entries, func(item fs.DirEntry) (string, bool) {
-		return strings.TrimSuffix(item.Name(), ".yaml"), true
-	})
-	return func(name string) bool { return present[name] }, nil
+	c.etag = strconv.FormatUint(etagHasher.Sum64(), 36)
+	return nil
 }
 
 func download(url string, cacheDir, cacheFileName string) (io.ReadCloser, error) {
