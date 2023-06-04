@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -101,6 +102,26 @@ func NewServer(options *Options) *Server {
 }
 
 func (s *Server) Start() error {
+	// Open the socket as soon as possible to avoid dropping requests on restarts
+	if s.options.UseSystemdSocket {
+		listeners, err := activation.Listeners()
+		if err != nil {
+			return err
+		}
+		if len(listeners) != 1 {
+			return errors.New("unexpected number of socket activation fds")
+		} else {
+			fmt.Println("reusing systemd socket...")
+		}
+		s.echo.Listener = listeners[0]
+	} else {
+		listener, err := net.Listen("tcp", s.options.Address)
+		if err != nil {
+			return err
+		}
+		s.echo.Listener = listener
+	}
+
 	if s.options.StatsdTarget != "" {
 		dsd, err := statsd.New(s.options.StatsdTarget, statsd.WithoutTelemetry())
 		if err != nil {
@@ -176,18 +197,7 @@ func (s *Server) Start() error {
 		go collectBusinessStats(s.echo.Logger, s.store, s.statsd)
 		go collectMemStats(s.statsd)
 	}
-	if s.options.UseSystemdSocket {
-		listeners, err := activation.Listeners()
-		if err != nil {
-			return err
-		}
-		if len(listeners) != 1 {
-			return errors.New("unexpected number of socket activation fds")
-		} else {
-			fmt.Println("reusing systemd socket...")
-		}
-		s.echo.Listener = listeners[0]
-	}
+
 	return s.echo.Start(s.options.Address)
 }
 
