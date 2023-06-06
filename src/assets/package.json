@@ -11,6 +11,7 @@
     }
   },
   "scripts": {
+    "postinstall": "patch-package",
     "clean": "rm -rf ../../data/assets/dist/ .parcel-cache/",
     "build": "parcel build",
     "watch": "parcel watch",
@@ -23,6 +24,7 @@
     "bootstrap": "^5.3.0",
     "eslint": "^8.42.0",
     "htmx.org": "^1.9.2",
-    "parcel": "^2.9.1"
+    "parcel": "^2.9.1",
+    "patch-package": "^7.0.0"
   }
 }

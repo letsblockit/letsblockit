@@ -1,6 +1,7 @@
 "use strict";
 
 import 'htmx.org'
+import 'htmx.org/dist/ext/preload'
 
 // import 'bootstrap/js/dist/alert';
 import 'bootstrap/js/dist/button';
@@ -19,5 +20,4 @@ import 'bootstrap/js/dist/tab';
 import './js/cond-visibility'
 import './js/hot-reload'
 import './js/htmx-errors'
-import './js/htmx-preload'
 import './js/view-filter'
