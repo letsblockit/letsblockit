@@ -10,6 +10,10 @@ params:
     description: Hide the channel description box under videos and shorts
     type: checkbox
     default: false
+  - name: misinformation-box
+    description: Hide the box telling you the video contains misinformation
+    type: checkbox
+    default: false
   - name: remove-video-hashtags
     description: Hide the hashtags above the video title
     type: checkbox
@@ -52,6 +56,9 @@ template: |
   {{#if channel-clarification}}
   www.youtube.com###clarify-box
   www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
+  {{/if}}
+  {{#if misinformation-box}}
+  www.youtube.com##.ytd-clarification-renderer
   {{/if}}
   {{#if remove-video-hashtags}}
   www.youtube.com###description #info a[href^="/hashtag/"]
@@ -106,6 +113,10 @@ tests:
     output: |
       www.youtube.com###clarify-box
       www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
+  - params: 
+      misinformation-box: true
+    output: |
+      www.youtube.com##.ytd-clarification-renderer
   - params:
       remove-text-after-buttons-below-video: true
     output: |
