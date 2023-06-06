@@ -16,11 +16,11 @@
             </p>
             {{#if tag_search}}
                 <span class="navbar-brand mt-3">
-                <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
+                <a class="nav-link" href="{{href "list-filters" ""}}" preload>← Back to list</a>
             </span>
             {{else}}
                 <span class="navbar-brand mt-3">Filter by tag:</span>
-                <nav class="nav nav-pills flex-column">
+                <nav class="nav nav-pills flex-column" preload>
                     <span class="nav-link">{{#each filter_tags}}<span class="d-block">{{{tag this}}}</span>{{/each}}
                     </span>
                 </nav>

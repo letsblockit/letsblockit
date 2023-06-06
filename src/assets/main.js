@@ -19,4 +19,5 @@ import 'bootstrap/js/dist/tab';
 import './js/cond-visibility'
 import './js/hot-reload'
 import './js/htmx-errors'
+import './js/htmx-preload'
 import './js/view-filter'

@@ -3,7 +3,7 @@
         <hr class="d-lg-none"/>
         <nav class="navbar navbar-light flex-column align-items-stretch">
             <span class="navbar-brand">
-                <a class="nav-link" href="{{href "list-filters" ""}}">← Back to list</a>
+                <a class="nav-link" href="{{href "list-filters" ""}}" preload>← Back to list</a>
             </span>
             {{#with (avatars filter.contributors)}}
                 <span class="navbar-brand mt-3 mb-1">Contributors:</span>
@@ -28,7 +28,7 @@
                 <a href="https://github.com/sponsors/letsblockit">Github Sponsors</a>.
             </p>
             <span class="navbar-brand mt-3">Filter tags:</span>
-            <nav class="nav nav-pills flex-column">
+            <nav class="nav nav-pills flex-column" preload>
                 <span class="nav-link">{{#each filter.tags}}{{{tag this}}}{{/each}}</span>
             </nav>
         </nav>
