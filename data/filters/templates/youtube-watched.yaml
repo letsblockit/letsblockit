@@ -27,21 +27,20 @@ params:
     default: false
 template: |
   {{#if homepage}}
-  www.youtube.com##ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
   {{/if}}
   {{#if subscriptions}}
-  www.youtube.com##ytd-browse[page-subtype="channels"] ytd-rich-item-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
-  www.youtube.com##ytd-browse[page-subtype="channels"] ytd-grid-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  www.youtube.com##ytd-browse[page-subtype="channels"] ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
   {{! Subscriptions in grid mode }}
-  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-grid-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-item-section-renderer)
   {{/if}}
   {{#if recommendations}}
-  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-compact-video-renderer)
   {{/if}}
   {{#if search}}
-  www.youtube.com##ytd-search ytd-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}})
+  www.youtube.com##ytd-search ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-video-renderer)
   {{/if}}
 
 tests:
@@ -49,16 +48,15 @@ tests:
       homepage: true
       subscriptions: true
     output: |
-      www.youtube.com##ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer)
-      www.youtube.com##ytd-browse[page-subtype="channels"] ytd-rich-item-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer)
-      www.youtube.com##ytd-browse[page-subtype="channels"] ytd-grid-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer)
-      www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-grid-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer)
+      www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail-overlay-resume-playback-renderer:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
+      www.youtube.com##ytd-browse[page-subtype="channels"] ytd-thumbnail-overlay-resume-playback-renderer:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
+      www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail-overlay-resume-playback-renderer:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail-overlay-resume-playback-renderer:upward(ytd-item-section-renderer)
   - params:
       only-fully: true
       recommendations: true
     output: |
-      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer:has(ytd-thumbnail-overlay-resume-playback-renderer #progress[style="width: 100%;"])
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail-overlay-resume-playback-renderer #progress[style="width: 100%;"]:upward(ytd-compact-video-renderer)
 ---
 
 This filter hides videos you already watched from the homepage, to allow to focus only on new content.
