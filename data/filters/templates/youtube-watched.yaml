@@ -54,9 +54,12 @@ tests:
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail-overlay-resume-playback-renderer:upward(ytd-item-section-renderer)
   - params:
       only-fully: true
+      search: true
       recommendations: true
     output: |
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail-overlay-resume-playback-renderer #progress[style="width: 100%;"]:upward(ytd-compact-video-renderer)
+      www.youtube.com##ytd-search ytd-thumbnail-overlay-resume-playback-renderer #progress[style="width: 100%;"]:upward(ytd-video-renderer)
+
 ---
 
 This filter hides videos you already watched from the homepage, to allow to focus only on new content.
