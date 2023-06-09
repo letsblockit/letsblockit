@@ -24,6 +24,7 @@ params:
     default: false
   - name: remove-channel-info
     description: Removes channel information below the video description
+    type: checkbox
     default: false
   - name: remove-stream-chat
     description: Hide the live chat when viewing streams
