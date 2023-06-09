@@ -22,6 +22,9 @@ params:
     description: Hide the copyright notice in the video description
     type: checkbox
     default: false
+  - name: remove-channel-info
+    description: Removes channel information below the video description
+    default: false
   - name: remove-stream-chat
     description: Hide the live chat when viewing streams
     type: checkbox
@@ -69,6 +72,9 @@ template: |
   {{#if remove-copyright-notice}}
   www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
   m.youtube.com##ytm-video-description-music-section-renderer
+  {{/if}}
+  {{#if remove-channel-info}}
+  www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
   {{/if}}
   {{#if remove-stream-chat}}
   www.youtube.com###chat:remove()
@@ -118,6 +124,10 @@ tests:
     output: |
       www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
       m.youtube.com##ytm-video-description-music-section-renderer
+  - params:
+      remove-channel-info: true
+    output: |
+      www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
   - params:
       remove-stream-chat: true
     output: |
