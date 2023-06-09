@@ -202,6 +202,15 @@
       "contributions": [
         "data"
       ]
+    },
+    {
+      "login": "henrikskott",
+      "name": "Henrik Skott",
+      "avatar_url": "https://images.opencollective.com/henrikskott/avatar/256.png",
+      "profile": "https://opencollective.com/henrikskott",
+      "contributions": [
+        "financial"
+      ]
     }
   ],
   "contributorsPerLine": 7,

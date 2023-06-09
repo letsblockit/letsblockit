@@ -77,6 +77,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/leo1115"><img src="https://avatars.githubusercontent.com/u/54549454?v=4?s=100" width="100px;" alt="leo1115"/><br /><sub><b>leo1115</b></sub></a><br /><a href="#ideas-leo1115" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://mjones.network/"><img src="https://avatars.githubusercontent.com/u/8648891?v=4?s=100" width="100px;" alt="Mat Jones"/><br /><sub><b>Mat Jones</b></sub></a><br /><a href="#data-mrjones2014" title="Data">🔣</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://opencollective.com/henrikskott"><img src="https://images.opencollective.com/henrikskott/avatar/256.png?s=100" width="100px;" alt="Henrik Skott"/><br /><sub><b>Henrik Skott</b></sub></a><br /><a href="#financial-henrikskott" title="Financial">💵</a></td>
+    </tr>
   </tbody>
 </table>
 
