@@ -6,11 +6,11 @@ require (
 	github.com/DataDog/datadog-go/v5 v5.3.0
 	github.com/alecthomas/kong v0.7.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
-	github.com/go-playground/validator/v10 v10.14.0
-	github.com/golang-migrate/migrate/v4 v4.16.0
+	github.com/go-playground/validator/v10 v10.14.1
+	github.com/golang-migrate/migrate/v4 v4.16.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
-	github.com/hashicorp/go-retryablehttp v0.7.2
+	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9
 	github.com/jackc/pgconn v1.14.0
 	github.com/jackc/pgtype v1.14.0
