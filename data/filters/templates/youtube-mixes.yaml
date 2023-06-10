@@ -10,15 +10,9 @@ template: |
   www.youtube.com##ytd-search ytd-radio-renderer
   www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
   www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
+  m.youtube.com##ytm-browse ytm-radio-renderer:upward(ytm-rich-item-renderer)
   m.youtube.com##ytm-search ytm-compact-radio-renderer
-tests:
-  - params: {}
-    output: |
-      www.youtube.com##ytd-browse #video-title-link[href*="&start_radio=1"]:upward(ytd-rich-item-renderer)
-      www.youtube.com##ytd-search ytd-radio-renderer
-      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
-      www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
-      m.youtube.com##ytm-search ytm-compact-radio-renderer
+
 ---
 
 This template removes the mixes / radios showing up in search results and recommendations.
