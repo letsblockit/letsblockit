@@ -1,6 +1,7 @@
 title: "YouTube: filter out mixes and radios"
 contributors:
   - BPower0036
+  - JohnyP36
   - xvello
 tags:
   - youtube
@@ -9,6 +10,7 @@ template: |
   www.youtube.com##ytd-search ytd-radio-renderer
   www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
   www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
+  m.youtube.com##ytm-search ytm-compact-radio-renderer
 tests:
   - params: {}
     output: |
@@ -16,6 +18,7 @@ tests:
       www.youtube.com##ytd-search ytd-radio-renderer
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
       www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
+      m.youtube.com##ytm-search ytm-compact-radio-renderer
 ---
 
 This template removes the mixes / radios showing up in search results and recommendations.
