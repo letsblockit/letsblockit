@@ -56,6 +56,7 @@ template: |
   {{#if channel-clarification}}
   www.youtube.com###clarify-box
   www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
+  m.youtube.com##shorts-video ytm-info-panel-container-renderer
   {{/if}}
   {{#if remove-video-hashtags}}
   www.youtube.com###description #info a[href^="/hashtag/"]
@@ -76,6 +77,7 @@ template: |
   {{/if}}
   {{#if remove-channel-info}}
   www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
+  m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
   {{/if}}
   {{#if remove-stream-chat}}
   www.youtube.com###chat:remove()
@@ -113,6 +115,7 @@ tests:
     output: |
       www.youtube.com###clarify-box
       www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
+      m.youtube.com##shorts-video ytm-info-panel-container-renderer
   - params:
       remove-text-after-buttons-below-video: true
     output: |
@@ -129,6 +132,7 @@ tests:
       remove-channel-info: true
     output: |
       www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
+      m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
   - params:
       remove-stream-chat: true
     output: |
