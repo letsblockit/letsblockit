@@ -6,10 +6,9 @@ tags:
   - youtube
 template: |
   {{! Non organic results such as For You, Previously Watched, People Also Watched... }}
-  www.youtube.com##ytd-search ytd-item-section-renderer ytd-shelf-renderer:style(border: 2px dashed red !important)
+  www.youtube.com##ytd-search ytd-item-section-renderer ytd-shelf-renderer
   {{! Related searches }}
-  www.youtube.com##ytd-search ytd-item-section-renderer ytd-horizontal-card-list-renderer:style(border: 2px dashed red !important)
-  m.youtube.com##ytm-search ytm-badge-and-byline-renderer + ytm-badge-and-byline-renderer:not(:has(span + span)):not(:has-text(4K)):upward(ytm-video-with-context-renderer):style(border: 2px dashed red !important)
+  www.youtube.com##ytd-search ytd-item-section-renderer ytd-horizontal-card-list-renderer
 ---
 
 These rules remove related searches and related results from the YouTube search results, only leaving organic
