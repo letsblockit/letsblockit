@@ -13,11 +13,9 @@ tags:
 template: |
   {{#each channels}}
   www.youtube.com##ytd-browse[page-subtype="home"] a[href$="{{ . }}"]:upward(ytd-rich-item-renderer)
-  www.youtube.com##ytd-search a[href$="{{ . }}"]:upward(ytd-video-renderer)
-  www.youtube.com##ytd-search a[href$="{{ . }}"]:upward(ytd-channel-renderer)
+  www.youtube.com##ytd-search a[href$="{{ . }}"]:upward(ytd-video-renderer,ytd-channel-renderer)
   m.youtube.com##ytm-browse a[href$="{{ . }}"]:upward(ytm-rich-item-renderer)
-  m.youtube.com##ytm-search a[href$="{{ . }}"]:upward(ytm-video-with-context-renderer)
-  m.youtube.com##ytm-search a[href$="{{ . }}"]:upward(ytm-compact-channel-renderer)
+  m.youtube.com##ytm-search a[href$="{{ . }}"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
   {{/each}}
 tests:
   - params: {}
