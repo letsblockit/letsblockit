@@ -27,8 +27,7 @@ tests:
       www.youtube.com##ytd-search a[href$="ChannelURL"]:upward(ytd-video-renderer)
       www.youtube.com##ytd-search a[href$="ChannelURL"]:upward(ytd-channel-renderer)
       m.youtube.com##ytm-browse a[href$="ChannelURL"]:upward(ytm-rich-item-renderer)
-      m.youtube.com##ytm-search a[href$="ChannelURL"]:upward(ytm-video-with-context-renderer)
-      m.youtube.com##ytm-search a[href$="ChannelURL"]:upward(ytm-compact-channel-renderer)
+      m.youtube.com##ytm-search a[href$="ChannelURL"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
 ---
 
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this.
