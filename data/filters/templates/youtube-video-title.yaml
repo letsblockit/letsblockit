@@ -1,5 +1,6 @@
 title: "YouTube: filter out videos by title"
 contributors:
+  - BPower0036
   - JohnyP36
   - xvello
 params:
@@ -21,6 +22,8 @@ template: |
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer #video-title[title]:has-text(/\b{{this}}\b/i):upward(ytd-item-section-renderer)
   m.youtube.com##ytm-browse div[tab-identifier="FEsubscriptions"] ytm-video-with-context-renderer:has(.media-item-headline:has-text(/\b{{this}}\b/i))
+  {{! Match the ytd-rich-grid-row element and its #contents child, to disable their CSS boxing }} 
+  youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
   {{/each}}
 tests:
   - params: {}
@@ -46,6 +49,7 @@ tests:
       m.youtube.com##.watch-below-the-player ytm-video-with-context-renderer:has(.media-item-headline:has-text(/\b#shorts\b/i))
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer #video-title[title]:has-text(/\b#shorts\b/i):upward(ytd-item-section-renderer)
       m.youtube.com##ytm-browse div[tab-identifier="FEsubscriptions"] ytm-video-with-context-renderer:has(.media-item-headline:has-text(/\b#shorts\b/i))
+      youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 ---
 
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this. With this filter, you can remove videos with a given word in their title.
