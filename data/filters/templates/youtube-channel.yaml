@@ -1,5 +1,6 @@
 title: "YouTube: filter out videos by channel"
 contributors:
+  - BPower0036
   - JohnyP36
   - xvello
 params:
@@ -11,12 +12,10 @@ tags:
   - youtube
 template: |
   {{#each channels}}
-  www.youtube.com##ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has(a[href$="{{ . }}"])
-  www.youtube.com##ytd-search ytd-video-renderer:has(a[href$="{{ . }}"])
-  www.youtube.com##ytd-search ytd-channel-renderer:has(a[href$="{{ . }}"])
-  m.youtube.com##ytm-browse ytm-rich-item-renderer:has(a[href$="{{ . }}"])
-  m.youtube.com##ytm-search ytm-video-with-context-renderer:has(a[href$="{{ . }}"])
-  m.youtube.com##ytm-search ytm-compact-channel-renderer:has(a[href$="{{ . }}"])
+  www.youtube.com##ytd-browse[page-subtype="home"] a[href$="{{ . }}"]:upward(ytd-rich-item-renderer)
+  www.youtube.com##ytd-search a[href$="{{ . }}"]:upward(ytd-video-renderer,ytd-channel-renderer)
+  m.youtube.com##ytm-browse a[href$="{{ . }}"]:upward(ytm-rich-item-renderer)
+  m.youtube.com##ytm-search a[href$="{{ . }}"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
   {{/each}}
 tests:
   - params: {}
@@ -24,12 +23,10 @@ tests:
   - params:
       channels: [ "ChannelURL" ]
     output: |
-      www.youtube.com##ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has(a[href$="ChannelURL"])
-      www.youtube.com##ytd-search ytd-video-renderer:has(a[href$="ChannelURL"])
-      www.youtube.com##ytd-search ytd-channel-renderer:has(a[href$="ChannelURL"])
-      m.youtube.com##ytm-browse ytm-rich-item-renderer:has(a[href$="ChannelURL"])
-      m.youtube.com##ytm-search ytm-video-with-context-renderer:has(a[href$="ChannelURL"])
-      m.youtube.com##ytm-search ytm-compact-channel-renderer:has(a[href$="ChannelURL"])
+      www.youtube.com##ytd-browse[page-subtype="home"] a[href$="ChannelURL"]:upward(ytd-rich-item-renderer)
+      www.youtube.com##ytd-search a[href$="ChannelURL"]:upward(ytd-video-renderer,ytd-channel-renderer)
+      m.youtube.com##ytm-browse a[href$="ChannelURL"]:upward(ytm-rich-item-renderer)
+      m.youtube.com##ytm-search a[href$="ChannelURL"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
 ---
 
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this.
