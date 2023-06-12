@@ -21,7 +21,8 @@ template: |
   youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 tests:
   - params: {}
-    output: ""
+    output: |
+      youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
   - params:
       channels: [ "ChannelURL" ]
     output: |
