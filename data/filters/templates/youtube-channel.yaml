@@ -17,9 +17,12 @@ template: |
   m.youtube.com##ytm-browse a[href$="{{ . }}"]:upward(ytm-rich-item-renderer)
   m.youtube.com##ytm-search a[href$="{{ . }}"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
   {{/each}}
+  {{! Match the ytd-rich-grid-row element and its #contents child, to disable their CSS boxing }} 
+  youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 tests:
   - params: {}
-    output: ""
+    output: |
+      youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
   - params:
       channels: [ "ChannelURL" ]
     output: |
@@ -27,6 +30,7 @@ tests:
       www.youtube.com##ytd-search a[href$="ChannelURL"]:upward(ytd-video-renderer,ytd-channel-renderer)
       m.youtube.com##ytm-browse a[href$="ChannelURL"]:upward(ytm-rich-item-renderer)
       m.youtube.com##ytm-search a[href$="ChannelURL"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
+      youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 ---
 
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this.
