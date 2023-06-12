@@ -41,6 +41,8 @@ template: |
   m.youtube.com##ytm-search ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]:upward(ytm-compact-video-renderer)
   {{! Mobile sidebar suggestions }}
   m.youtube.com##ytm-single-column-watch-next-results-renderer ytm-thumbnail-overlay-time-status-renderer span:has-text(/^(0:\d\d|1:0\d)$/):upward(ytm-video-with-context-renderer)
+  {{! Match the ytd-rich-grid-row element and its #contents child, to disable their CSS boxing }} 
+  youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 ---
 
 Youtube shorts are more and more prevalent, and I don't care one bit about that format. This filter hides most

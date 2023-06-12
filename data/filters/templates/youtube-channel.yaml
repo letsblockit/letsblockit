@@ -1,5 +1,6 @@
 title: "YouTube: filter out videos by channel"
 contributors:
+  - BPower0036
   - JohnyP36
   - xvello
 params:
@@ -17,6 +18,8 @@ template: |
   m.youtube.com##ytm-browse ytm-rich-item-renderer:has(a[href$="{{ . }}"])
   m.youtube.com##ytm-search ytm-video-with-context-renderer:has(a[href$="{{ . }}"])
   m.youtube.com##ytm-search ytm-compact-channel-renderer:has(a[href$="{{ . }}"])
+  {{! Match the ytd-rich-grid-row element and its #contents child, to disable their CSS boxing }} 
+  youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
   {{/each}}
 tests:
   - params: {}
@@ -30,6 +33,7 @@ tests:
       m.youtube.com##ytm-browse ytm-rich-item-renderer:has(a[href$="ChannelURL"])
       m.youtube.com##ytm-search ytm-video-with-context-renderer:has(a[href$="ChannelURL"])
       m.youtube.com##ytm-search ytm-compact-channel-renderer:has(a[href$="ChannelURL"])
+      youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 ---
 
 Not everything on the platform matches your interests, and the famous algorithm is not that great at understanding this.

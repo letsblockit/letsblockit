@@ -11,6 +11,8 @@ template: |
   www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
   www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
   m.youtube.com##ytm-search ytm-compact-radio-renderer
+  {{! Match the ytd-rich-grid-row element and its #contents child, to disable their CSS boxing }}
+  youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 tests:
   - params: {}
     output: |
@@ -19,6 +21,7 @@ tests:
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer
       www.youtube.com##ytd-player div.videowall-endscreen a[data-is-list=true]
       m.youtube.com##ytm-search ytm-compact-radio-renderer
+      youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
 ---
 
 This template removes the mixes / radios showing up in search results and recommendations.
