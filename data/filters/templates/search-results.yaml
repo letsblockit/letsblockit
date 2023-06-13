@@ -6,6 +6,10 @@ contributors:
 sponsors:
   - Webswonder
 params:
+  - name: bing
+    description: Generate rules for Bing
+    type: checkbox
+    default: false
   - name: duckduckgo
     description: Generate rules for DuckDuckGo
     type: checkbox
@@ -71,6 +75,7 @@ params:
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
         license: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/LICENSE
 tags:
+  - bing
   - duckduckgo
   - google
   - kagi
@@ -79,6 +84,12 @@ tags:
   - brave
 template: |
   {{#each sites as |site siteId|}}
+  {{#if ../bing}}
+  bing.com#?#[id$="results"] cite:has-text({{site}}):upward(li)
+  bing.com#?#a[href*="{{site}}"]:upward(li[data-idx][style^="width"])
+  bing.com#?#[id*="video"] > [href*="{{site}}"]:upward(.dg_u)
+  bing.com##.news-card[url*="{{site}}"]
+  {{/if}}
   {{#if ../google}}
   www.google.*##.g:has(a[href*="{{site}}"])
   www.google.*##a[href*="{{site}}"]:upward(1)
@@ -118,6 +129,7 @@ template: |
   {{/each}}
 tests:
   - params:
+      bing: true
       brave: true
       duckduckgo: true
       google: true
@@ -128,6 +140,10 @@ tests:
         - snapcraft.io/install
       startpage: true
     output: |
+      bing.com#?#[id$="results"] cite:has-text(.pinterest.):upward(li)
+      bing.com#?#a[href*=".pinterest."]:upward(li[data-idx][style^="width"])
+      bing.com#?#[id*="video"] > [href*=".pinterest."]:upward(.dg_u)
+      bing.com##.news-card[url*=".pinterest."]
       www.google.*##.g:has(a[href*=".pinterest."])
       www.google.*##a[href*=".pinterest."]:upward(1)
       duckduckgo.com##a[data-testid="result-title-a"][href*=".pinterest."]:upward(.nrn-react-div)
@@ -137,6 +153,10 @@ tests:
       search.brave.com###results a[href*=".pinterest."]:upward(.snippet)
       search.brave.com###img-results a[href*=".pinterest."]:upward([id^="img"])
       search.brave.com###results a[href*=".pinterest."]:upward(.card)
+      bing.com#?#[id$="results"] cite:has-text(snapcraft.io/install):upward(li)
+      bing.com#?#a[href*="snapcraft.io/install"]:upward(li[data-idx][style^="width"])
+      bing.com#?#[id*="video"] > [href*="snapcraft.io/install"]:upward(.dg_u)
+      bing.com##.news-card[url*="snapcraft.io/install"]
       www.google.*##.g:has(a[href*="snapcraft.io/install"])
       www.google.*##a[href*="snapcraft.io/install"]:upward(1)
       duckduckgo.com##a[data-testid="result-title-a"][href*="snapcraft.io/install"]:upward(.nrn-react-div)
