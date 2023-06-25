@@ -54,7 +54,6 @@ type Options struct {
 	CacheDir            string `group:"Development" placeholder:"/tmp" help:"folder to cache external resources in during local development"`
 	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
 	StatsdTarget        string `group:"Monitoring" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
-	VectorConfig        string `group:"Monitoring" help:"start the vector monitoring agent with a given yaml config"`
 	LogsFolder          string `group:"Monitoring" help:"output access logs to files instead of stdout"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
@@ -151,7 +150,6 @@ func (s *Server) Start() error {
 			}
 		},
 		func(errs []error) { helpers, errs[0] = buildHelpers(s.echo) },
-		func(errs []error) { errs[0] = runVector(s.options.VectorConfig) },
 		func(errs []error) {
 			tpl := data.Templates.(fs.ReadDirFS)
 			s.releases, errs[0] = news.DownloadReleases(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, tpl)

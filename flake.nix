@@ -35,7 +35,6 @@
           migrate = pkgs.callPackage ./nix/migrate.nix { };
           ory = pkgs.callPackage ./nix/ory.nix { };
           sqlc = pkgs.callPackage ./nix/sqlc.nix { };
-          vector = pkgs.callPackage ./nix/vector.nix { };
 
           render-container = pkgs.dockerTools.streamLayeredImage {
             name = "ghcr.io/letsblockit/render";
@@ -54,7 +53,7 @@
             name = "ghcr.io/letsblockit/server";
             tag = "latest";
             created = builtins.substring 0 8 self.lastModifiedDate;
-            contents = [ pkgs.cacert self.packages.${system}.vector self.packages.${system}.server ];
+            contents = [ pkgs.cacert self.packages.${system}.server ];
             config = {
               Cmd = [ "/bin/server" ];
               Env = [ "LETSBLOCKIT_ADDRESS=:8765" "PATH=/bin" ];
