@@ -73,7 +73,7 @@ params:
       - name: blockmodreposting
         description: Hide websites reposting game mods without permission
         source: https://github.com/rotgruengelb/BlockModReposting/blob/main/list.txt
-        license: unspecified
+        license: https://github.com/rotgruengelb/BlockModReposting/blob/main/LICENCE.md
 tags:
   - duckduckgo
   - google
