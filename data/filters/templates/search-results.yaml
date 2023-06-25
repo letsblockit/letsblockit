@@ -70,6 +70,10 @@ params:
         description: Hide Wikipedia copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
         license: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/LICENSE
+      - name: blockmodreposting
+        description: Hide websites reposting game mods without permission
+        source: https://github.com/rotgruengelb/BlockModReposting/blob/main/list.txt
+        license: unspecified
 tags:
   - duckduckgo
   - google
