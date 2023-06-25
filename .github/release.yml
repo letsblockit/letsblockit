@@ -6,6 +6,9 @@ changelog:
     authors:
       - app/dependabot
   categories:
+    - title: Deprecation notices
+      labels:
+        - deprecation
     - title: New filter templates
       labels:
         - new-filter
