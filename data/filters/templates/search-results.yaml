@@ -84,7 +84,7 @@ template: |
   www.google.*##a[href*="{{site}}"]:upward(1)
   {{/if}}
   {{#if ../duckduckgo}}
-  duckduckgo.com##a[data-testid="result-title-a"][href*="{{site}}"]:upward(.nrn-react-div)
+  duckduckgo.com##ol.react-results--main a[href*="{{site}}"]:upward(article)
   duckduckgo.com##.tile-wrap a[href*="{{site}}"]:upward(.tile)
   {{/if}}
   {{#if ../duckduckgo-html}}
@@ -130,7 +130,7 @@ tests:
     output: |
       www.google.*##.g:has(a[href*=".pinterest."])
       www.google.*##a[href*=".pinterest."]:upward(1)
-      duckduckgo.com##a[data-testid="result-title-a"][href*=".pinterest."]:upward(.nrn-react-div)
+      duckduckgo.com##ol.react-results--main a[href*=".pinterest."]:upward(article)
       duckduckgo.com##.tile-wrap a[href*=".pinterest."]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*=".pinterest."])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(.pinterest.))
@@ -139,7 +139,7 @@ tests:
       search.brave.com###results a[href*=".pinterest."]:upward(.card)
       www.google.*##.g:has(a[href*="snapcraft.io/install"])
       www.google.*##a[href*="snapcraft.io/install"]:upward(1)
-      duckduckgo.com##a[data-testid="result-title-a"][href*="snapcraft.io/install"]:upward(.nrn-react-div)
+      duckduckgo.com##ol.react-results--main a[href*="snapcraft.io/install"]:upward(article)
       duckduckgo.com##.tile-wrap a[href*="snapcraft.io/install"]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))
