@@ -28,6 +28,7 @@ params:
     default: false
   - name: remove-chapters
     description: Hides the chapters that are in a video from the video description box
+    type: checkbox
     default: false
   - name: remove-stream-chat
     description: Hide the live chat when viewing streams
