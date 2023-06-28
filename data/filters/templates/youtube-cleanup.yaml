@@ -142,7 +142,7 @@ tests:
     output: |
       www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
       m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
- - params:
+  - params:
       remove-chapters: true
     output: |
       www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
