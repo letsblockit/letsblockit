@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
@@ -228,7 +227,7 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 		TemplateName: "filter1",
 	})
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), pgtype.Null, stored.Params.Status)
+	require.Empty(s.T(), stored.Params)
 	s.requireInstanceCount("filter1", 1)
 }
 

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -52,7 +53,7 @@ func (s *Server) listFilters(c echo.Context) error {
 		if len(instances) > 0 {
 			if info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID); err == nil {
 				hc.Add("list_token", info.Token.String())
-				hc.Add("list_downloaded", info.DownloadedAt.Valid)
+				hc.Add("list_downloaded", !info.DownloadedAt.IsZero())
 			}
 		}
 		if len(updatedFilters) > 0 {
@@ -131,7 +132,7 @@ func (s *Server) viewFilter(c echo.Context) error {
 		case nil:
 			hc.Add("has_instance", true)
 			if instance.Params == nil {
-				if err = stored.Params.AssignTo(&instance.Params); err != nil {
+				if err = json.Unmarshal(stored.Params, &instance.Params); err != nil {
 					return err
 				}
 			}
@@ -223,12 +224,10 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 }
 
 func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filters.Instance) error {
-	out := pgtype.JSONB{
-		Bytes:  nil,
-		Status: pgtype.Null,
-	}
+	var out []byte
 	if len(instance.Params) > 0 {
-		if err := out.Set(&instance.Params); err != nil {
+		var err error
+		if out, err = json.Marshal(&instance.Params); err != nil {
 			return err
 		}
 	}
@@ -321,7 +320,7 @@ func (s *Server) hasMissingParams(instance db.GetInstancesForUserRow) bool {
 	}
 
 	params := make(map[string]interface{})
-	if err := instance.Params.AssignTo(&params); err != nil {
+	if err := json.Unmarshal(instance.Params, &params); err != nil {
 		return true
 	}
 	for _, p := range filter.Params {
