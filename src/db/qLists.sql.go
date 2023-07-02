@@ -7,9 +7,9 @@ package db
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countListsForUser = `-- name: CountListsForUser :one
@@ -53,7 +53,7 @@ LIMIT 1
 type GetListForTokenRow struct {
 	ID           int32
 	UserID       string
-	DownloadedAt time.Time
+	DownloadedAt pgtype.Timestamptz
 	LastUpdated  interface{}
 }
 
@@ -80,7 +80,7 @@ LIMIT 1
 
 type GetListForUserRow struct {
 	Token         uuid.UUID
-	DownloadedAt  time.Time
+	DownloadedAt  pgtype.Timestamptz
 	InstanceCount int64
 }
 

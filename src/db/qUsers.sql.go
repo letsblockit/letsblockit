@@ -7,7 +7,8 @@ package db
 
 import (
 	"context"
-	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addUserBan = `-- name: AddUserBan :exec
@@ -112,7 +113,7 @@ WHERE user_id = $1
 
 type UpdateNewsCursorParams struct {
 	UserID     string
-	NewsCursor time.Time
+	NewsCursor pgtype.Timestamptz
 }
 
 func (q *Queries) UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error {

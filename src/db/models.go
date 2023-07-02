@@ -7,7 +7,6 @@ package db
 import (
 	"database/sql/driver"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -59,9 +58,9 @@ func (ns NullColorMode) Value() (driver.Value, error) {
 type BannedUser struct {
 	ID         int32
 	UserID     string
-	CreatedAt  time.Time
+	CreatedAt  pgtype.Timestamptz
 	Reason     string
-	LiftedAt   time.Time
+	LiftedAt   pgtype.Timestamptz
 	LiftReason pgtype.Text
 }
 
@@ -71,8 +70,8 @@ type FilterInstance struct {
 	ListID       int32
 	TemplateName string
 	Params       []byte
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	CreatedAt    pgtype.Timestamptz
+	UpdatedAt    pgtype.Timestamptz
 	TestMode     bool
 }
 
@@ -80,13 +79,13 @@ type FilterList struct {
 	ID           int32
 	UserID       string
 	Token        uuid.UUID
-	CreatedAt    time.Time
-	DownloadedAt time.Time
+	CreatedAt    pgtype.Timestamptz
+	DownloadedAt pgtype.Timestamptz
 }
 
 type UserPreference struct {
 	UserID       string
-	NewsCursor   time.Time
+	NewsCursor   pgtype.Timestamptz
 	BetaFeatures bool
 	ColorMode    ColorMode
 }

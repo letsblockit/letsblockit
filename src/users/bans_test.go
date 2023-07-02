@@ -29,5 +29,4 @@ func TestLoadBannedUsers(t *testing.T) {
 	assert.True(t, bans.IsBanned("two"))
 	assert.False(t, bans.IsBanned("three")) // Never banned
 	assert.False(t, bans.IsBanned("five"))  // Ban lifted
-
 }
