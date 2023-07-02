@@ -2,7 +2,6 @@ package users
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgtype"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,11 +17,8 @@ import (
 
 const maxTimeSkew = 100 * time.Millisecond
 
-func pastNow(hours int64) pgtype.Timestamptz {
-	return pgtype.Timestamptz{
-		Time:  time.Now().Add(time.Duration(-1*hours) * time.Hour).Round(time.Second),
-		Valid: true,
-	}
+func pastNow(hours int64) time.Time {
+	return time.Now().Add(time.Duration(-1*hours) * time.Hour).Round(time.Second)
 }
 
 type PreferenceManagerSuite struct {
@@ -47,7 +43,7 @@ func (s *PreferenceManagerSuite) TestInitIfNotFound() {
 	got, err := s.prefs.Get(s.ctx, s.user)
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), s.user, got.UserID)
-	assert.WithinDuration(s.T(), time.Now(), got.NewsCursor.Time, maxTimeSkew)
+	assert.WithinDuration(s.T(), time.Now(), got.NewsCursor, maxTimeSkew)
 }
 
 func (s *PreferenceManagerSuite) TestGetCached() {
@@ -70,7 +66,7 @@ func (s *PreferenceManagerSuite) TestGetCached() {
 	// Out-of-band DB update will be ignored due to the cache
 	require.NoError(s.T(), s.store.UpdateNewsCursor(context.Background(), db.UpdateNewsCursorParams{
 		UserID:     s.user,
-		NewsCursor: pastNow(0),
+		NewsCursor: time.Now(),
 	}))
 
 	// Second get returns the cached value
@@ -102,7 +98,7 @@ func (s *PreferenceManagerSuite) TestUpdateNewsCursor() {
 	assert.EqualValues(s.T(), &initial, got)
 
 	// Update the value through the manager
-	assert.NoError(s.T(), s.prefs.UpdateNewsCursor(s.ctx, s.user, updated.NewsCursor.Time))
+	assert.NoError(s.T(), s.prefs.UpdateNewsCursor(s.ctx, s.user, updated.NewsCursor))
 
 	// Cache has been invalidated
 	got, err = s.prefs.Get(s.ctx, s.user)

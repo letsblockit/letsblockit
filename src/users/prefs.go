@@ -2,7 +2,6 @@ package users
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 
 	"zgo.at/zcache/v2"
@@ -48,11 +47,8 @@ func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user string, at tim
 		return err
 	}
 	err := m.store.UpdateNewsCursor(c.Request().Context(), db.UpdateNewsCursorParams{
-		UserID: user,
-		NewsCursor: pgtype.Timestamptz{
-			Time:  at,
-			Valid: true,
-		},
+		UserID:     user,
+		NewsCursor: at,
 	})
 	m.cache.Delete(user)
 	return err
