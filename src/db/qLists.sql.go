@@ -7,9 +7,8 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countListsForUser = `-- name: CountListsForUser :one
@@ -31,9 +30,9 @@ VALUES ($1)
 RETURNING token
 `
 
-func (q *Queries) CreateListForUser(ctx context.Context, userID string) (uuid.UUID, error) {
+func (q *Queries) CreateListForUser(ctx context.Context, userID string) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, createListForUser, userID)
-	var token uuid.UUID
+	var token pgtype.UUID
 	err := row.Scan(&token)
 	return token, err
 }
@@ -53,11 +52,11 @@ LIMIT 1
 type GetListForTokenRow struct {
 	ID           int32
 	UserID       string
-	DownloadedAt sql.NullTime
+	DownloadedAt pgtype.Timestamptz
 	LastUpdated  interface{}
 }
 
-func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error) {
+func (q *Queries) GetListForToken(ctx context.Context, token pgtype.UUID) (GetListForTokenRow, error) {
 	row := q.db.QueryRow(ctx, getListForToken, token)
 	var i GetListForTokenRow
 	err := row.Scan(
@@ -79,8 +78,8 @@ LIMIT 1
 `
 
 type GetListForUserRow struct {
-	Token         uuid.UUID
-	DownloadedAt  sql.NullTime
+	Token         pgtype.UUID
+	DownloadedAt  pgtype.Timestamptz
 	InstanceCount int64
 }
 
@@ -97,7 +96,7 @@ SET downloaded_at = NOW()
 WHERE token = $1
 `
 
-func (q *Queries) MarkListDownloaded(ctx context.Context, token uuid.UUID) error {
+func (q *Queries) MarkListDownloaded(ctx context.Context, token pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, markListDownloaded, token)
 	return err
 }
@@ -112,7 +111,7 @@ WHERE user_id = $1
 
 type RotateListTokenParams struct {
 	UserID string
-	Token  uuid.UUID
+	Token  pgtype.UUID
 }
 
 func (q *Queries) RotateListToken(ctx context.Context, arg RotateListTokenParams) error {

@@ -8,11 +8,11 @@ import (
 
 	"github.com/DataDog/datadog-go/v5/statsd"
 	"github.com/golang-migrate/migrate/v4"
-	mpgx "github.com/golang-migrate/migrate/v4/database/pgx"
+	mpgx "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 )
 
@@ -49,13 +49,13 @@ type pgxStore struct {
 
 func (s *pgxStore) RunTx(e echo.Context, f TxFunc) error {
 	c := e.Request().Context()
-	return s.pool.BeginFunc(c, func(tx pgx.Tx) error {
+	return pgx.BeginFunc(c, s.pool, func(tx pgx.Tx) error {
 		return f(c, New(tx))
 	})
 }
 
 func Connect(databaseUrl, poolOptions string, dsd statsd.ClientInterface) (Store, error) {
-	pool, err := pgxpool.Connect(context.Background(), databaseUrl+poolOptions)
+	pool, err := pgxpool.New(context.Background(), databaseUrl+poolOptions)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect: %w", err)
 	}

@@ -3,7 +3,7 @@ packages:
   - path: "."
     name: "db"
     engine: "postgresql"
-    sql_package: "pgx/v4"
+    sql_package: "pgx/v5"
     schema: "./migrations/"
     queries: "./queries/"
     output_querier_file_name: "interface.go"

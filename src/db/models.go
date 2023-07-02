@@ -5,13 +5,10 @@
 package db
 
 import (
-	"database/sql"
 	"database/sql/driver"
 	"fmt"
-	"time"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgtype"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type ColorMode string
@@ -60,10 +57,10 @@ func (ns NullColorMode) Value() (driver.Value, error) {
 type BannedUser struct {
 	ID         int32
 	UserID     string
-	CreatedAt  time.Time
+	CreatedAt  pgtype.Timestamptz
 	Reason     string
-	LiftedAt   sql.NullTime
-	LiftReason sql.NullString
+	LiftedAt   pgtype.Timestamptz
+	LiftReason pgtype.Text
 }
 
 type FilterInstance struct {
@@ -71,23 +68,23 @@ type FilterInstance struct {
 	UserID       string
 	ListID       int32
 	TemplateName string
-	Params       pgtype.JSONB
-	CreatedAt    time.Time
-	UpdatedAt    sql.NullTime
+	Params       []byte
+	CreatedAt    pgtype.Timestamptz
+	UpdatedAt    pgtype.Timestamptz
 	TestMode     bool
 }
 
 type FilterList struct {
 	ID           int32
 	UserID       string
-	Token        uuid.UUID
-	CreatedAt    time.Time
-	DownloadedAt sql.NullTime
+	Token        pgtype.UUID
+	CreatedAt    pgtype.Timestamptz
+	DownloadedAt pgtype.Timestamptz
 }
 
 type UserPreference struct {
 	UserID       string
-	NewsCursor   time.Time
+	NewsCursor   pgtype.Timestamptz
 	BetaFeatures bool
 	ColorMode    ColorMode
 }
