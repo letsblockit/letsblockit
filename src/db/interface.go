@@ -7,7 +7,7 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 )
 
 type Querier interface {
@@ -15,20 +15,20 @@ type Querier interface {
 	CountInstances(ctx context.Context, arg CountInstancesParams) (int64, error)
 	CountListsForUser(ctx context.Context, userID string) (int64, error)
 	CreateInstance(ctx context.Context, arg CreateInstanceParams) error
-	CreateListForUser(ctx context.Context, userID string) (pgtype.UUID, error)
+	CreateListForUser(ctx context.Context, userID string) (uuid.UUID, error)
 	DeleteInstance(ctx context.Context, arg DeleteInstanceParams) error
 	GetBannedUsers(ctx context.Context) ([]string, error)
 	GetInstance(ctx context.Context, arg GetInstanceParams) (GetInstanceRow, error)
 	GetInstanceStats(ctx context.Context) ([]GetInstanceStatsRow, error)
 	GetInstancesForList(ctx context.Context, listID int32) ([]GetInstancesForListRow, error)
 	GetInstancesForUser(ctx context.Context, userID string) ([]GetInstancesForUserRow, error)
-	GetListForToken(ctx context.Context, token pgtype.UUID) (GetListForTokenRow, error)
+	GetListForToken(ctx context.Context, token uuid.UUID) (GetListForTokenRow, error)
 	GetListForUser(ctx context.Context, userID string) (GetListForUserRow, error)
 	GetStats(ctx context.Context) (GetStatsRow, error)
 	GetUserPreferences(ctx context.Context, userID string) (UserPreference, error)
 	InitUserPreferences(ctx context.Context, userID string) (UserPreference, error)
 	LiftUserBan(ctx context.Context, arg LiftUserBanParams) error
-	MarkListDownloaded(ctx context.Context, token pgtype.UUID) error
+	MarkListDownloaded(ctx context.Context, token uuid.UUID) error
 	RotateListToken(ctx context.Context, arg RotateListTokenParams) error
 	UpdateInstance(ctx context.Context, arg UpdateInstanceParams) error
 	UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error

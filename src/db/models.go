@@ -8,6 +8,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -77,7 +78,7 @@ type FilterInstance struct {
 type FilterList struct {
 	ID           int32
 	UserID       string
-	Token        pgtype.UUID
+	Token        uuid.UUID
 	CreatedAt    pgtype.Timestamptz
 	DownloadedAt pgtype.Timestamptz
 }
