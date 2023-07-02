@@ -201,10 +201,8 @@ func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, 
 	checks(s.T(), rec)
 }
 
-func (s *ServerTestSuite) requireJSONEq(expected, actual any) {
+func (s *ServerTestSuite) requireJSONIs(expectedJSON []byte, actual any) {
 	s.T().Helper()
-	expectedJSON, err := json.Marshal(expected)
-	require.NoError(s.T(), err)
 	actualJSON, err := json.Marshal(actual)
 	require.NoError(s.T(), err)
 	require.JSONEq(s.T(), string(expectedJSON), string(actualJSON))

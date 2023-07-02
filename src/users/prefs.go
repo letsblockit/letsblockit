@@ -2,13 +2,12 @@ package users
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgtype"
 	"time"
 
-	"zgo.at/zcache/v2"
-
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
+	"zgo.at/zcache/v2"
 )
 
 type PreferenceManager struct {

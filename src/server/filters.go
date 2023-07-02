@@ -53,7 +53,7 @@ func (s *Server) listFilters(c echo.Context) error {
 		if len(instances) > 0 {
 			if info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID); err == nil {
 				hc.Add("list_token", info.Token.String())
-				hc.Add("list_downloaded", !info.DownloadedAt.IsZero())
+				hc.Add("list_downloaded", info.IsDownloaded)
 			}
 		}
 		if len(updatedFilters) > 0 {
@@ -224,10 +224,10 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 }
 
 func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filters.Instance) error {
-	var out []byte
+	var params []byte
 	if len(instance.Params) > 0 {
 		var err error
-		if out, err = json.Marshal(&instance.Params); err != nil {
+		if params, err = json.Marshal(&instance.Params); err != nil {
 			return err
 		}
 	}
@@ -248,14 +248,14 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filte
 			return q.CreateInstance(ctx, db.CreateInstanceParams{
 				UserID:       user,
 				TemplateName: instance.Template,
-				Params:       out,
+				Params:       params,
 				TestMode:     instance.TestMode,
 			})
 		} else {
 			return q.UpdateInstance(ctx, db.UpdateInstanceParams{
 				UserID:       user,
 				TemplateName: instance.Template,
-				Params:       out,
+				Params:       params,
 				TestMode:     instance.TestMode,
 			})
 		}

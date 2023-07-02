@@ -198,7 +198,7 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 		TemplateName: "filter2",
 	})
 	require.NoError(s.T(), err)
-	s.requireJSONEq(filter2Custom, stored.Params)
+	s.requireJSONIs(stored.Params, filter2Custom)
 	s.requireInstanceCount("filter2", 1)
 }
 
@@ -258,7 +258,7 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 	})
 	require.NoError(s.T(), err)
 	s.True(stored.TestMode)
-	s.requireJSONEq(filter2Preset, stored.Params)
+	s.requireJSONIs(stored.Params, filter2Preset)
 	s.requireInstanceCount("filter2", 1)
 }
 
