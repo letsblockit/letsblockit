@@ -1,6 +1,7 @@
 title: "YouTube: filter out Shorts"
 contributors:
   - BPower0036
+  - chedanix
   - kiriya-aoi
   - SiggyPony
   - xvello
@@ -37,7 +38,7 @@ template: |
   {{! Mobile channel video list }}
   m.youtube.com##ytm-browse ytm-item-section-renderer ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]:upward(ytm-compact-video-renderer)
   {{! Mobile search results }}
-  m.youtube.com##ytm-search ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]:upward(ytm-compact-video-renderer)
+  m.youtube.com##ytm-search ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]:upward(ytm-compact-video-renderer,ytm-video-with-context-renderer)
   {{! Mobile sidebar suggestions }}
   m.youtube.com##ytm-single-column-watch-next-results-renderer ytm-thumbnail-overlay-time-status-renderer span:has-text(/^(0:\d\d|1:0\d)$/):upward(ytm-video-with-context-renderer)
   {{! Match the ytd-rich-grid-row element and its #contents child, to disable their CSS boxing }} 
