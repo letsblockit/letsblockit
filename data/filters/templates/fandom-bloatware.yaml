@@ -2,175 +2,121 @@ title: "Fandom: video playback interface cleanups"
 contributors:
   - JohnyP36
 params:
-  - name: channel-clarification
-    description: Hide the channel description box under videos and shorts
+  - name: yellow-sidebar
+    description: Hide yellow sidebar
     type: checkbox
     default: false
-  - name: remove-video-hashtags
-    description: Hide the hashtags above the video title
+  - name: blue-wikia-bar
+    description: Hide the blue "Wikia" bar at the bottom-right corner, which starts with "Check out Fandom..."
     type: checkbox
     default: false
-  - name: remove-text-after-buttons-below-video
-    description: Hide the text label of the dislike/share/download/report/save buttons
+  - name: global-footer
+    description: Hide the global footer at the bottom of every page
     type: checkbox
     default: false
-  - name: remove-copyright-notice
-    description: Hide the copyright notice in the video description
+  - name: fan-footer
+    description: Hide the section "fan feed" at the bottom of the page
     type: checkbox
     default: false
-  - name: remove-channel-info
-    description: Removes channel information below the video description
+  - name: right-sidebar
+    description: Hide the rights sidebar, which contains "popular pages" and "others like you also viewed" sections
     type: checkbox
     default: false
-  - name: remove-chapters
-    description: Hide the chapter timeline in the video description box
+  - name: explore-menu
+    description: Hides the "explore" tab in the menu
     type: checkbox
     default: false
-  - name: remove-stream-chat
-    description: Hide the live chat when viewing streams
+  - name: selection-container
+    description: Hides tooltip that pops up when you try to highlight text
     type: checkbox
     default: false
-  - name: no-fullscreen-on-dblclick
-    description: Don't enter / exit fullscreen on double-click
+  - name: search
+    description: Hides "Top Trending Searches" when you open search
     type: checkbox
     default: false
-  - name: no-swipe-actions
-    description: Disable touchscreen swipe actions (switch tab, PIP mode...)
+  - name: edit-buttons
+    description: Hide edit buttons at the top-left of every page/article
     type: checkbox
     default: false
-  - name: no-ambient-mode
-    description: Disable ambient mode
-    type: checkbox
-    default: false
-  - name: remove-comment-section
-    description: Hide all comments below the video
-    type: checkbox
-    default: false
-  - name: remove-comments-with-words
-    description: Hide comments containing the following words
-    type: list
-    default: [ ]
 tags:
   - fandom
 template: |
-  {{#if channel-clarification}}
-  www.youtube.com###clarify-box
-  www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
-  m.youtube.com##shorts-video ytm-info-panel-container-renderer
+  {{#if yellow-sidebar}}
+  fandom.com##.global-navigation
+  fandom.com##.main-container:style(margin-left: auto !important; margin-right !important: auto; width: 100% !important)
+  fandom.com##.fandom-sticky-header:style(left: 0 !important)
+  fandom.com##.search-modal::before:style(left: 0 !important)
+  fandom.com##body:style(border-left: none !important)
   {{/if}}
-  {{#if remove-video-hashtags}}
-  www.youtube.com###description #info a[href^="/hashtag/"]
-  www.youtube.com###super-title
-  www.youtube.com##.super-title
-  m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
-  m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
+  {{#if blue-wikia-bar}}
+  fandom.com###WikiaBar
   {{/if}}
-  {{#if remove-text-after-buttons-below-video}}
-  www.youtube.com###actions.ytd-watch-metadata button > div[class$="text-content"]:not(:has-text(/[\d]/))
-  www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
-  www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
-  m.youtube.com##ytm-slim-video-action-bar-renderer button [class*="button-text-content"]:not(:has-text(/\d/))
-  m.youtube.com##ytm-slim-video-action-bar-renderer ytm-button-renderer div[class$="icon"]:style(margin-right: -6px !important; margin-left: -6px !important;)
+  {{#if global-footer}}
+  fandom.com##.global-footer
   {{/if}}
-  {{#if remove-copyright-notice}}
-  www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
-  m.youtube.com##ytm-video-description-music-section-renderer
+  {{#if fan-footer}}
+  fandom.com###mixed-content-footer
   {{/if}}
-  {{#if remove-channel-info}}
-  www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
-  m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
+  {{#if right-sidebar}}
+  fandom.com##.page__right-rail
   {{/if}}
-  {{#if remove-chapters}}
-  www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
-  m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+  {{#if explore-menu}}
+  fandom.com##.explore-menu.wds-dropdown
   {{/if}}
-  {{#if remove-stream-chat}}
-  www.youtube.com###chat:remove()
+  {{#if selection-container}}
+  fandom.com##.highlight__sticky-container
   {{/if}}
-  {{#if no-fullscreen-on-dblclick}}
-  {{! Applied to both www. and m. sites, defuses dblclick events }}
-  youtube.com##+js(aeld, dblclick)
+  {{#if search}}
+  fandom.com##.search-seeding
   {{/if}}
-  {{#if no-swipe-actions}}
-  {{! Applied to both www. and m. sites, defuses custom pan events for swipe }}
-  youtube.com##+js(aeld, /^pan(start|move|end)$/)
+  {{#if edit-buttons}}
+  fandom.com##.page-side-tool.page-side-edit
+  fandom.com##.mw-editsection
   {{/if}}
-  {{#if no-ambient-mode}}
-  www.youtube.com###cinematics.ytd-watch-flexy:remove()
-  {{/if}}
-  {{#if remove-comment-section}}
-  www.youtube.com###comments #contents:remove()
-  {{/if}}
-  {{#each remove-comments-with-words}}
-  www.youtube.com##ytd-comments #content-text:has-text(/\b{{this}}\b/i):upward(ytd-comment-thread-renderer)
-  {{/each}}
 tests:
   - params: {}
     output: ""
   - params:
-      remove-video-hashtags: true
+      yellow-sidebar: true
     output: |
-      www.youtube.com###description #info a[href^="/hashtag/"]
-      www.youtube.com###super-title
-      www.youtube.com##.super-title
-      m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
-      m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
+      fandom.com##.global-navigation
+      fandom.com##.main-container:style(margin-left: auto !important; margin-right !important: auto; width: 100% !important)
+      fandom.com##.fandom-sticky-header:style(left: 0 !important)
+      fandom.com##.search-modal::before:style(left: 0 !important)
+      fandom.com##body:style(border-left: none !important)
   - params:
-      channel-clarification: true
+      blue-wikia-bar: true
     output: |
-      www.youtube.com###clarify-box
-      www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
-      m.youtube.com##shorts-video ytm-info-panel-container-renderer
+      fandom.com###WikiaBar
   - params:
-      remove-text-after-buttons-below-video: true
+      global-footer: true
     output: |
-      www.youtube.com###actions.ytd-watch-metadata button > div[class$="text-content"]:not(:has-text(/[\d]/))
-      www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
-      www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
-      m.youtube.com##ytm-slim-video-action-bar-renderer button [class*="button-text-content"]:not(:has-text(/\d/))
-      m.youtube.com##ytm-slim-video-action-bar-renderer ytm-button-renderer div[class$="icon"]:style(margin-right: -6px !important; margin-left: -6px !important;)
+      fandom.com##.global-footer
   - params:
-      remove-copyright-notice: true
+      fan-footer: true
     output: |
-      www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
-      m.youtube.com##ytm-video-description-music-section-renderer
+      fandom.com###mixed-content-footer
   - params:
-      remove-channel-info: true
+      right-sidebar: true
     output: |
-      www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
-      m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
+      fandom.com##.page__right-rail
   - params:
-      remove-chapters: true
+      explore-menu: true
     output: |
-      www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
-      m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+      fandom.com##.explore-menu.wds-dropdown
   - params:
-      remove-stream-chat: true
+      selection-container: true
     output: |
-      www.youtube.com###chat:remove()
+      fandom.com##.highlight__sticky-container
   - params:
-      no-fullscreen-on-dblclick: true
+      search: true
     output: |
-      youtube.com##+js(aeld, dblclick)
+      fandom.com##.search-seeding
   - params:
-      no-swipe-actions: true
+      edit-buttons: true
     output: |
-      youtube.com##+js(aeld, /^pan(start|move|end)$/)
-  - params:
-      no-ambient-mode: true
-    output: |
-      www.youtube.com###cinematics.ytd-watch-flexy:remove()
-  - params:
-      remove-comment-section: true
-    output: |
-      www.youtube.com###comments #contents:remove()
-  - params:
-      remove-comments-with-words:
-        - word1
-        - word pair2
-    output: |
-      www.youtube.com##ytd-comments #content-text:has-text(/\bword1\b/i):upward(ytd-comment-thread-renderer)
-      www.youtube.com##ytd-comments #content-text:has-text(/\bword pair2\b/i):upward(ytd-comment-thread-renderer)
+      fandom.com##.page-side-tool.page-side-edit
+      fandom.com##.mw-editsection
 ---
 
 This filter template allows you to remove parts of the Fandom wiki pages interface for a cleaner experience.
