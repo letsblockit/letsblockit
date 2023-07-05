@@ -8,6 +8,7 @@ template: |
   news.ycombinator.com##html:style(filter:invert(100%) hue-rotate(180deg))
   news.ycombinator.com##body:style(background: #e6e6e6)
   news.ycombinator.com##tbody:style(background: #e6e6e6)
+  news.ycombinator.com###hnmain:remove-attr(bgcolor)
   news.ycombinator.com##:matches-path("/item") tbody:style(background: #dbdbdb)
   {{! Black ephemeral banner at the top of the page }}
   news.ycombinator.com##div.toptext:style(color: black)
