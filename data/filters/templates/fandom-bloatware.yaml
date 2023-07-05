@@ -1,7 +1,6 @@
 title: "Fandom: Wiki pages interface cleanups"
 contributors:
   - JohnyP36
-  - BPower0036
 params:
   - name: yellow-sidebar
     description: Hide yellow sidebar
@@ -44,7 +43,7 @@ tags:
 template: |
   {{#if yellow-sidebar}}
   fandom.com##.global-navigation
-  fandom.com##.main-container:style(margin-left: auto !important; margin-right: auto !important; width: 100% !important;)
+  fandom.com##.main-container:style(width: 100% !important; margin-left: auto !important; margin-right: auto !important;)
   fandom.com##.fandom-sticky-header:style(left: 0 !important;)
   fandom.com##.search-modal::before:style(left: 0 !important;)
   fandom.com##body:style(border-left: none !important;)
@@ -81,7 +80,7 @@ tests:
       yellow-sidebar: true
     output: |
       fandom.com##.global-navigation
-      fandom.com##.main-container:style(margin-left: auto !important; margin-right: auto !important; width: 100% !important;)
+      fandom.com##.main-container:style(width: 100% !important; margin-left: auto !important; margin-right: auto !important;)
       fandom.com##.fandom-sticky-header:style(left: 0 !important;)
       fandom.com##.search-modal::before:style(left: 0 !important;)
       fandom.com##body:style(border-left: none !important;)
