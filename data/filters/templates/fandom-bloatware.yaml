@@ -1,43 +1,43 @@
-title: "Fandom: video playback interface cleanups"
+title: "Fandom: interface cleanups"
 contributors:
   - JohnyP36
 params:
   - name: yellow-sidebar
     description: Hide yellow sidebar
     type: checkbox
-    default: false
+    default: true
   - name: blue-wikia-bar
     description: Hide the blue "Wikia" bar at the bottom-right corner, which starts with "Check out Fandom..."
     type: checkbox
-    default: false
+    default: true
   - name: global-footer
     description: Hide the global footer at the bottom of every page
     type: checkbox
-    default: false
+    default: true
   - name: fan-footer
     description: Hide the section "fan feed" at the bottom of the page
     type: checkbox
-    default: false
+    default: true
   - name: right-sidebar
     description: Hide the rights sidebar, which contains "popular pages" and "others like you also viewed" sections
     type: checkbox
-    default: false
+    default: true
   - name: explore-menu
     description: Hides the "explore" tab in the menu
     type: checkbox
-    default: false
+    default: true
   - name: selection-container
     description: Hides tooltip that pops up when you try to highlight text
     type: checkbox
-    default: false
+    default: true
   - name: search
     description: Hides "Top Trending Searches" when you open search
     type: checkbox
-    default: false
+    default: true
   - name: edit-buttons
     description: Hide edit buttons at the top-left of every page/article
     type: checkbox
-    default: false
+    default: true
 tags:
   - fandom
 template: |
