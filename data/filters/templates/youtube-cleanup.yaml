@@ -34,6 +34,10 @@ params:
     description: Hide the live chat when viewing streams
     type: checkbox
     default: false
+  - name: remove-chat-reaction-bar
+    description: Hide the reaction bar in the live chat, which hovers over messages
+    type: checkbox
+    default: false
   - name: no-fullscreen-on-dblclick
     description: Don't enter / exit fullscreen on double-click
     type: checkbox
@@ -90,6 +94,9 @@ template: |
   {{/if}}
   {{#if remove-stream-chat}}
   www.youtube.com###chat:remove()
+  {{/if}}
+  {{#if remove-chat-reaction-bar}}
+  www.youtube.com##.yt-reaction-control-panel-overlay-view-model
   {{/if}}
   {{#if no-fullscreen-on-dblclick}}
   {{! Applied to both www. and m. sites, defuses dblclick events }}
@@ -152,6 +159,10 @@ tests:
       remove-stream-chat: true
     output: |
       www.youtube.com###chat:remove()
+  - params:
+      remove-chat-reaction-bar: true
+    output: |
+      www.youtube.com##.yt-reaction-control-panel-overlay-view-model
   - params:
       no-fullscreen-on-dblclick: true
     output: |
