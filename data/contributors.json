@@ -211,6 +211,33 @@
       "contributions": [
         "financial"
       ]
+    },
+    {
+      "login": "lichtmetzger",
+      "name": " Danny Schmarsel ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1711691?v=4",
+      "profile": "https://github.com/lichtmetzger",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "lightbulbmeow",
+      "name": "lightbulbmeow",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62456216?v=4",
+      "profile": "https://github.com/lightbulbmeow",
+      "contributions": [
+        "data"
+      ]
+    },
+    {
+      "login": "tepozoa",
+      "name": "tepozoa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91332643?v=4",
+      "profile": "https://github.com/tepozoa",
+      "contributions": [
+        "data"
+      ]
     }
   ],
   "contributorsPerLine": 7,
