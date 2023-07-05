@@ -1,7 +1,8 @@
 title: "Fandom: Wiki pages interface cleanups"
 contributors:
-  - JohnyP36
   - BPower0036
+  - JohnyP36
+  - lightbulbmeow
 params:
   - name: yellow-sidebar
     description: Hide yellow sidebar
