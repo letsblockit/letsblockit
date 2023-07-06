@@ -1,0 +1,128 @@
+title: "Fandom: Wiki pages interface cleanups"
+contributors:
+  - BPower0036
+  - JohnyP36
+  - lightbulbmeow
+params:
+  - name: yellow-sidebar
+    description: Hide yellow sidebar
+    type: checkbox
+    default: true
+  - name: blue-wikia-bar
+    description: Hide the blue "Wikia" bar at the bottom-right corner, which starts with "Check out Fandom..."
+    type: checkbox
+    default: true
+  - name: global-footer
+    description: Hide the global footer at the bottom of every page
+    type: checkbox
+    default: true
+  - name: fan-footer
+    description: Hide the section "fan feed" at the bottom of the page
+    type: checkbox
+    default: true
+  - name: right-sidebar
+    description: Hide the rights sidebar, which contains "popular pages" and "others like you also viewed" sections
+    type: checkbox
+    default: true
+  - name: explore-menu
+    description: Hides the "explore" tab in the menu
+    type: checkbox
+    default: true
+  - name: selection-container
+    description: Hides tooltip that pops up when you try to highlight text
+    type: checkbox
+    default: true
+  - name: search
+    description: Hides "Top Trending Searches" when you open search
+    type: checkbox
+    default: true
+  - name: edit-buttons
+    description: Hide edit buttons at the top-left of every page/article
+    type: checkbox
+    default: true
+tags:
+  - fandom
+template: |
+  {{#if yellow-sidebar}}
+  fandom.com##.global-navigation
+  fandom.com##.main-container:style(width: 100% !important; margin-left: auto !important; margin-right: auto !important;)
+  fandom.com##.fandom-sticky-header:style(left: 0 !important;)
+  fandom.com##.search-modal::before:style(left: 0 !important;)
+  fandom.com##body:style(border-left: none !important;)
+  {{/if}}
+  {{#if blue-wikia-bar}}
+  fandom.com###WikiaBar
+  {{/if}}
+  {{#if global-footer}}
+  fandom.com##.global-footer
+  {{/if}}
+  {{#if fan-footer}}
+  fandom.com###mixed-content-footer
+  {{/if}}
+  {{#if right-sidebar}}
+  fandom.com##.page__right-rail
+  {{/if}}
+  {{#if explore-menu}}
+  fandom.com##.explore-menu.wds-dropdown
+  {{/if}}
+  {{#if selection-container}}
+  fandom.com##.highlight__sticky-container
+  {{/if}}
+  {{#if search}}
+  fandom.com##.search-seeding
+  {{/if}}
+  {{#if edit-buttons}}
+  fandom.com##.page-side-tool.page-side-edit
+  fandom.com##.mw-editsection
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      yellow-sidebar: true
+    output: |
+      fandom.com##.global-navigation
+      fandom.com##.main-container:style(width: 100% !important; margin-left: auto !important; margin-right: auto !important;)
+      fandom.com##.fandom-sticky-header:style(left: 0 !important;)
+      fandom.com##.search-modal::before:style(left: 0 !important;)
+      fandom.com##body:style(border-left: none !important;)
+  - params:
+      blue-wikia-bar: true
+    output: |
+      fandom.com###WikiaBar
+  - params:
+      global-footer: true
+    output: |
+      fandom.com##.global-footer
+  - params:
+      fan-footer: true
+    output: |
+      fandom.com###mixed-content-footer
+  - params:
+      right-sidebar: true
+    output: |
+      fandom.com##.page__right-rail
+  - params:
+      explore-menu: true
+    output: |
+      fandom.com##.explore-menu.wds-dropdown
+  - params:
+      selection-container: true
+    output: |
+      fandom.com##.highlight__sticky-container
+  - params:
+      search: true
+    output: |
+      fandom.com##.search-seeding
+  - params:
+      edit-buttons: true
+    output: |
+      fandom.com##.page-side-tool.page-side-edit
+      fandom.com##.mw-editsection
+---
+
+This filter template allows you to remove parts of the Fandom wiki pages interface for a cleaner experience.
+Fandom has bunch of bloat to their website which make it extremely annoying to navigate. 
+Most people who visit Fandom just want to read specific information about a particular show/video game and this template fixes this.
+
+Don't hesitate to suggest additions or fixes via the _Suggest a change_ link in the sidebar.
