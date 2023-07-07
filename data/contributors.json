@@ -238,6 +238,15 @@
       "contributions": [
         "data"
       ]
+    },
+    {
+      "login": "sammcj",
+      "name": "Sam McLeod",
+      "avatar_url": "https://avatars.githubusercontent.com/u/862951?v=4",
+      "profile": "https://smcleod.net/",
+      "contributions": [
+        "data"
+      ]
     }
   ],
   "contributorsPerLine": 7,
