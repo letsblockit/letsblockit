@@ -24,7 +24,9 @@ params:
     type: checkbox
     default: false
   - name: remove-channel-info
-    description: Removes channel information below the video description (Warning: in newer YT layouts enabling this rule may result in braking down the functionality of clicking on the information icon in the right-top corner of the video)
+    description: | 
+      Removes channel information below the video description 
+      Warning: in newer YT layouts enabling this rule may result in braking down the functionality of clicking on the information icon in the right-top corner of the video
     type: checkbox
     default: false
   - name: remove-chapters
