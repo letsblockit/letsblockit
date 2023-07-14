@@ -5,6 +5,7 @@ contributors:
   - kiriya-aoi
   - SiggyPony
   - xvello
+  - vimode
 tags:
   - youtube
 template: |
@@ -23,6 +24,8 @@ template: |
   www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-reel-shelf-renderer
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer .ytd-thumbnail[href^="/shorts/"]:upward(ytd-item-section-renderer)
+  {{! Hides Shorts section on the Subscriptions page }}
+  www.youtube.com##ytd-rich-section-renderer.ytd-rich-grid-renderer.style-scope
   {{! Channels homepage }}
   www.youtube.com##ytd-browse[page-subtype="channels"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
   {{! Trending section }}
