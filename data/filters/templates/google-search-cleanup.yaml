@@ -49,8 +49,7 @@ template: |
   www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   {{/if}}
   {{#if related-questions}}
-  www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div.related-question-pair)
-  www.google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
+  www.google.*###rso div.related-question-pair:upward(div[jscontroller])
   {{/if}}
   {{#if related-searches}}
   www.google.*###botstuff #bres
@@ -79,8 +78,7 @@ tests:
       related-questions: true
       related-searches: true
     output: |
-      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div.related-question-pair)
-      www.google.*###kp-wp-tab-overview > div:has(div.related-question-pair)
+      www.google.*###rso div.related-question-pair:upward(div[jscontroller])
       www.google.*###botstuff #bres
   - params:
       rich-results: true
