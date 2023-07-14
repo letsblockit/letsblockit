@@ -82,6 +82,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lichtmetzger"><img src="https://avatars.githubusercontent.com/u/1711691?v=4?s=100" width="100px;" alt=" Danny Schmarsel "/><br /><sub><b> Danny Schmarsel </b></sub></a><br /><a href="#data-lichtmetzger" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lightbulbmeow"><img src="https://avatars.githubusercontent.com/u/62456216?v=4?s=100" width="100px;" alt="lightbulbmeow"/><br /><sub><b>lightbulbmeow</b></sub></a><br /><a href="#data-lightbulbmeow" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tepozoa"><img src="https://avatars.githubusercontent.com/u/91332643?v=4?s=100" width="100px;" alt="tepozoa"/><br /><sub><b>tepozoa</b></sub></a><br /><a href="#data-tepozoa" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://smcleod.net/"><img src="https://avatars.githubusercontent.com/u/862951?v=4?s=100" width="100px;" alt="Sam McLeod"/><br /><sub><b>Sam McLeod</b></sub></a><br /><a href="#data-sammcj" title="Data">🔣</a></td>
     </tr>
   </tbody>
 </table>
