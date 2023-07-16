@@ -127,8 +127,11 @@ func (s *Server) viewFilter(c echo.Context) error {
 		case nil:
 			hc.Add("has_instance", true)
 			if instance.Params == nil {
-				if err = json.Unmarshal(stored.Params, &instance.Params); err != nil {
-					return err
+				instance.Params = make(map[string]any)
+				if len(stored.Params) > 0 {
+					if err = json.Unmarshal(stored.Params, &instance.Params); err != nil {
+						return err
+					}
 				}
 			}
 			instance.TestMode = stored.TestMode

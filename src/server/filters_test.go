@@ -115,7 +115,22 @@ func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 	s.runRequest(req, assertOk)
 }
 
-func (s *ServerTestSuite) TestViewFilter_HasInstance() {
+func (s *ServerTestSuite) TestViewFilter_HasInstanceNoParams() {
+	req := httptest.NewRequest(http.MethodGet, "/filters/filter1", nil)
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Template: "filter1",
+	}))
+	s.expectRender("view-filter", pages.ContextData{
+		"filter":       filter1,
+		"rendered":     "hello from one\n",
+		"params":       map[string]any{},
+		"has_instance": true,
+		"test_mode":    false,
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestViewFilter_HasInstanceWithParams() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
 
 	params := map[string]any{
