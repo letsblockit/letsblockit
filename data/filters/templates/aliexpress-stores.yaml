@@ -4,24 +4,19 @@ contributors:
   - sammcj
   - xvello
 params:
-  - name: store-name
+  - name: store-names
     description: Rules to hide search results which belongs to a certain store name
     type: list
     default: []
-    presets:
-      - name: fake-stores
-        description: Hide products from fake stores (starting with "Shop" and ending with "Store")
-        values:
-          - '/Shop \d+ Store/'
 tags:
   - aliexpress
 template: |
-  {{#each store-name}}
+  {{#each store-names}}
   aliexpress.com###card-list a[class^="cards--storeLink-"]:has-text({{{this}}}):upward(a.search-card-item)
   {{/each}}
 tests:
   - params:
-      store-name:
+      store-names:
         - "/shop/i"
         - "NAME"
     output: |
@@ -31,13 +26,14 @@ tests:
     output: ""
 ---
 
-This filter template allows you to hide products from selected stores from the AliExpress.
-It comes with some presets that might be useful for you, at the bottom of the parameters.
+This filter template allows you to hide products from selected stores from the AliExpress search results.
 
 Instead of simple word matching, this template uses Regular Expressions to reduce the risk of false positives.
+As an example, there is a wave of "throwaway" stores using the "Shop 12345 Store" pattern, the '/Shop \d+ Store/'
+pattern will hide articles from these stores.
 
-You should [read this documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) to learn the syntax,
-but the following examples should help you get started:
+You should [read this documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
+to learn the syntax, but the following examples should help you get started:
 
 - You can specify any sequence of characters that will be searched in the store name of the product. For example:
   - `/Echo Show/` will match the products of the store name `Echo Show 8`, but not the `Echo Dot`
