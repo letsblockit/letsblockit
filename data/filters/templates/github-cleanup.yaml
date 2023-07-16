@@ -18,7 +18,7 @@ params:
   - name: unwatch-suggestions
     description: Hide the "Overwhelmed by notifications?" prompt
     type: checkbox
-    default: true
+    default: false
 tags:
   - github
 template: |
