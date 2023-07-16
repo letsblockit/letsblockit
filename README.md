@@ -84,6 +84,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/tepozoa"><img src="https://avatars.githubusercontent.com/u/91332643?v=4?s=100" width="100px;" alt="tepozoa"/><br /><sub><b>tepozoa</b></sub></a><br /><a href="#data-tepozoa" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://smcleod.net/"><img src="https://avatars.githubusercontent.com/u/862951?v=4?s=100" width="100px;" alt="Sam McLeod"/><br /><sub><b>Sam McLeod</b></sub></a><br /><a href="#data-sammcj" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vimode"><img src="https://avatars.githubusercontent.com/u/39148877?v=4?s=100" width="100px;" alt="vimode"/><br /><sub><b>vimode</b></sub></a><br /><a href="#data-vimode" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hianick"><img src="https://avatars.githubusercontent.com/u/93717800?v=4?s=100" width="100px;" alt="hianick"/><br /><sub><b>hianick</b></sub></a><br /><a href="#data-hianick" title="Data">🔣</a></td>
     </tr>
   </tbody>
 </table>
