@@ -1,6 +1,7 @@
 title: "Fandom: Wiki pages interface cleanups"
 contributors:
   - BPower0036
+  - hianick
   - JohnyP36
   - lightbulbmeow
 params:
@@ -8,6 +9,10 @@ params:
     description: Hide yellow sidebar
     type: checkbox
     default: true
+  - name: bottom-notifications
+    description: Hide notification popups at the bottom of the page
+    type: checkbox
+    default: true   
   - name: blue-wikia-bar
     description: Hide the blue "Wikia" bar at the bottom-right corner, which starts with "Check out Fandom..."
     type: checkbox
@@ -50,6 +55,9 @@ template: |
   fandom.com##.search-modal::before:style(left: 0 !important;)
   fandom.com##body:style(border-left: none !important;)
   {{/if}}
+  {{#if bottom-notifications}}
+  fandom.com##.notifications-placeholder
+  {{/if}}
   {{#if blue-wikia-bar}}
   fandom.com###WikiaBar
   {{/if}}
@@ -86,6 +94,10 @@ tests:
       fandom.com##.fandom-sticky-header:style(left: 0 !important;)
       fandom.com##.search-modal::before:style(left: 0 !important;)
       fandom.com##body:style(border-left: none !important;)
+  - params:
+      bottom-notifications: true
+    output: |
+      fandom.com##.notifications-placeholder
   - params:
       blue-wikia-bar: true
     output: |
