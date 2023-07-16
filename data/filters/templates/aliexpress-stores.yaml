@@ -5,7 +5,7 @@ contributors:
   - xvello
 params:
   - name: store-names
-    description: Rules to hide search results which belongs to a certain store name
+    description: Patterns for store names to hide from results
     type: list
     default: []
 tags:
