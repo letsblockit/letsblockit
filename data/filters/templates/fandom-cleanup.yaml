@@ -10,7 +10,7 @@ params:
     type: checkbox
     default: true
   - name: bottom-notifications
-    description: Hide notifications at the bottom of the page
+    description: Hide notification popups at the bottom of the page
     type: checkbox
     default: true   
   - name: blue-wikia-bar
