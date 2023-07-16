@@ -15,6 +15,10 @@ params:
     description: Hide the achievements from user profiles
     type: checkbox
     default: true
+  - name: unwatch-suggestions
+    description: Hide the "Overwhelmed by notifications?" prompt
+    type: checkbox
+    default: false
 tags:
   - github
 template: |
@@ -28,6 +32,9 @@ template: |
   {{/if}}
   {{#if profile-achievements}}
   github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
+  {{/if}}
+  {{#if unwatch-suggestions}}
+  github.com##.js-unwatch-suggestions
   {{/if}}
 tests:
   - params: {}
@@ -46,6 +53,10 @@ tests:
       profile-achievements: true
     output: |
       github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
+  - params:
+      unwatch-suggestions: true
+    output: |
+      github.com##.js-unwatch-suggestions
 ---
 
 The GitHub interface can get cluttered and distracting. This template aims at reducing the
