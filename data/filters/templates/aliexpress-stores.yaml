@@ -29,7 +29,7 @@ tests:
 This filter template allows you to hide products from selected stores from the AliExpress search results.
 
 Instead of simple word matching, this template uses Regular Expressions to reduce the risk of false positives.
-As an example, there is a wave of "throwaway" stores using the names like "Shop 12345 Store", the '/Shop \d+ Store/'
+As an example, there is a wave of "throwaway" stores using the names like "Shop 12345 Store", the `/Shop \d+ Store/`
 pattern will hide articles sold by these stores.
 
 You should [read this documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
