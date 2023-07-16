@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
@@ -104,10 +103,6 @@ func (s *Server) viewFilter(c echo.Context) error {
 	switch {
 	case hc.UserLoggedIn && action == actionSave:
 		// Save filter params if requested
-		var out pgtype.JSONB
-		if err = out.Set(instance.Params); err != nil {
-			return err
-		}
 		if err = s.upsertFilterParams(c, hc.UserID, instance); err != nil {
 			return err
 		}
