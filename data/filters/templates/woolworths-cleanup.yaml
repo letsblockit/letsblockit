@@ -1,0 +1,43 @@
+title: "Woolworths (AU): Cleanup search results"
+contributors:
+  - sammcj
+  - xvello
+params:
+  - name: market-partners
+    description: Hide reseller items from market partners in search results
+    type: checkbox
+    default: true
+  - name: non-product-titles
+    description: Hide non-product titles in search results
+    type: checkbox
+    default: true
+tags:
+  - woolworths
+  - australia
+template: |
+  {{#if market-partners}}
+  www.woolworths.com.au###search-content ##[class*="market-product-message-wrapper"]
+  {{/if}}
+  {{#if non-product-titles}}
+  www.woolworths.com.au###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      market-partners: true
+    output: |
+      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ##[class*="market-product-message-wrapper"]
+  - params:
+      non-product-titles: true
+    output: |
+      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
+  - params:
+      market-partners: true
+      non-product-titles: true
+    output: |
+      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ##[class*="market-product-message-wrapper"]
+      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
+
+---
+This filter template allows you to hide reseller ("market partner") items/ads and non-product titles from the Woolworths (AU) search results.
