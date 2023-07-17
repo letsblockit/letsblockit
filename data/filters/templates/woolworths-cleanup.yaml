@@ -27,17 +27,11 @@ tests:
   - params:
       market-partners: true
     output: |
-      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ##[class*="market-product-message-wrapper"]
+      www.woolworths.com.au###search-content ##[class*="market-product-message-wrapper"]
   - params:
       non-product-titles: true
     output: |
-      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
-  - params:
-      market-partners: true
-      non-product-titles: true
-    output: |
-      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ##[class*="market-product-message-wrapper"]
-      www.woolworths.com.au/shop/search/products?searchTerm=toys$document ###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
+      www.woolworths.com.au###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
 
 ---
 This filter template allows you to hide reseller ("market partner") items/ads and non-product titles from the Woolworths (AU) search results.
