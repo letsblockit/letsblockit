@@ -9,7 +9,7 @@ params:
     type: checkbox
     default: true
   - name: non-product-titles
-    description: Hide non-product titles in search results
+    description: Hide non-product tiles in search results
     type: checkbox
     default: true
 tags:
