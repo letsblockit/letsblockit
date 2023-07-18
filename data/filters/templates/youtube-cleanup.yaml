@@ -69,7 +69,6 @@ template: |
   {{/if}}
   {{#if remove-video-hashtags}}
   www.youtube.com###description #info a[href^="/hashtag/"]
-  www.youtube.com###super-title
   www.youtube.com##.super-title
   m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
   m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
@@ -123,7 +122,6 @@ tests:
       remove-video-hashtags: true
     output: |
       www.youtube.com###description #info a[href^="/hashtag/"]
-      www.youtube.com###super-title
       www.youtube.com##.super-title
       m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
       m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
