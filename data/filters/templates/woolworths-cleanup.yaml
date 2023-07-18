@@ -28,7 +28,7 @@ tests:
   - params:
       market-partners: true
     output: |
-      www.woolworths.com.au###search-content ##[class*="market-product-message-wrapper"]
+      www.woolworths.com.au###search-content shared-product-vendor-message:upward(div.product-grid-v2--tile)
   - params:
       non-product-titles: true
     output: |
