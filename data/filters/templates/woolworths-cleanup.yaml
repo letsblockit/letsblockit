@@ -17,7 +17,7 @@ tags:
   - australia
 template: |
   {{#if market-partners}}
-  www.woolworths.com.au###search-content ##[class*="market-product-message-wrapper"]
+  www.woolworths.com.au###search-content shared-product-vendor-message:upward(div.product-grid-v2--tile)
   {{/if}}
   {{#if non-product-titles}}
   www.woolworths.com.au###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
