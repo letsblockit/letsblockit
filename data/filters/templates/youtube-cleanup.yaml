@@ -3,6 +3,7 @@ contributors:
   - BPower0036
   - Dosenpfand
   - JohnyP36
+  - lichtmetzger
   - mailyspamy
   - xvello
 params:
@@ -26,8 +27,16 @@ params:
     description: Removes channel information below the video description
     type: checkbox
     default: false
+  - name: remove-chapters
+    description: Hide the chapter timeline in the video description box
+    type: checkbox
+    default: false
   - name: remove-stream-chat
     description: Hide the live chat when viewing streams
+    type: checkbox
+    default: false
+  - name: remove-chat-reaction-bar
+    description: Hide the reaction bar in the live chat, which hovers over messages
     type: checkbox
     default: false
   - name: no-fullscreen-on-dblclick
@@ -60,12 +69,12 @@ template: |
   {{/if}}
   {{#if remove-video-hashtags}}
   www.youtube.com###description #info a[href^="/hashtag/"]
-  www.youtube.com###super-title
   www.youtube.com##.super-title
   m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
   m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
   {{/if}}
   {{#if remove-text-after-buttons-below-video}}
+  www.youtube.com###actions.ytd-watch-metadata button > div[class$="text-content"]:not(:has-text(/[\d]/))
   www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
   www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
   m.youtube.com##ytm-slim-video-action-bar-renderer button [class*="button-text-content"]:not(:has-text(/\d/))
@@ -79,8 +88,15 @@ template: |
   www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
   m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
   {{/if}}
+  {{#if remove-chapters}}
+  www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
+  m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+  {{/if}}
   {{#if remove-stream-chat}}
   www.youtube.com###chat:remove()
+  {{/if}}
+  {{#if remove-chat-reaction-bar}}
+  www.youtube.com##.yt-reaction-control-panel-overlay-view-model
   {{/if}}
   {{#if no-fullscreen-on-dblclick}}
   {{! Applied to both www. and m. sites, defuses dblclick events }}
@@ -106,7 +122,6 @@ tests:
       remove-video-hashtags: true
     output: |
       www.youtube.com###description #info a[href^="/hashtag/"]
-      www.youtube.com###super-title
       www.youtube.com##.super-title
       m.youtube.com##.standalone-collection-badge a[href^="/hashtag/"]
       m.youtube.com##ytm-video-description-header-renderer button-view-model a[href^="/hashtag/"]
@@ -119,6 +134,7 @@ tests:
   - params:
       remove-text-after-buttons-below-video: true
     output: |
+      www.youtube.com###actions.ytd-watch-metadata button > div[class$="text-content"]:not(:has-text(/[\d]/))
       www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next .yt-spec-button-shape-next--button-text-content
       www.youtube.com###actions.ytd-watch-metadata ytd-button-renderer .yt-spec-button-shape-next__icon:style(margin-right: -6px !important; margin-left: -6px !important;)
       m.youtube.com##ytm-slim-video-action-bar-renderer button [class*="button-text-content"]:not(:has-text(/\d/))
@@ -134,9 +150,18 @@ tests:
       www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
       m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
   - params:
+      remove-chapters: true
+    output: |
+      www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
+      m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+  - params:
       remove-stream-chat: true
     output: |
       www.youtube.com###chat:remove()
+  - params:
+      remove-chat-reaction-bar: true
+    output: |
+      www.youtube.com##.yt-reaction-control-panel-overlay-view-model
   - params:
       no-fullscreen-on-dblclick: true
     output: |

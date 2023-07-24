@@ -1,0 +1,38 @@
+title: "Woolworths (AU): Cleanup search results"
+contributors:
+  - JohnyP36
+  - sammcj
+  - xvello
+params:
+  - name: market-partners
+    description: Hide reseller items from market partners in search results
+    type: checkbox
+    default: true
+  - name: non-product-tiles
+    description: Hide non-product tiles in search results
+    type: checkbox
+    default: true
+tags:
+  - woolworths
+  - australia
+template: |
+  {{#if market-partners}}
+  www.woolworths.com.au###search-content shared-product-vendor-message:upward(div.product-grid-v2--tile)
+  {{/if}}
+  {{#if non-product-tiles}}
+  www.woolworths.com.au###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      market-partners: true
+    output: |
+      www.woolworths.com.au###search-content shared-product-vendor-message:upward(div.product-grid-v2--tile)
+  - params:
+      non-product-tiles: true
+    output: |
+      www.woolworths.com.au###search-content shared-inspiration-tile:upward(div.product-grid-v2--tile)
+
+---
+This filter template allows you to hide reseller ("market partner") items/ads and non-product tiles from the Woolworths (AU) search results.

@@ -4,11 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"os"
-	"os/exec"
-	"os/signal"
 	"runtime"
-	"syscall"
 	"time"
 
 	"github.com/DataDog/datadog-go/v5/statsd"
@@ -107,52 +103,4 @@ func collectMemStats(dsd statsd.ClientInterface) {
 	for range time.Tick(time.Minute) {
 		collect()
 	}
-}
-
-func runVector(config string) error {
-	if config == "" {
-		return nil
-	}
-	if err := os.MkdirAll(os.TempDir(), 0750); err != nil {
-		return err
-	}
-
-	cleanupConfigFile := true
-	f, err := os.CreateTemp(os.TempDir(), "vector-*.yaml")
-	if err != nil {
-		return fmt.Errorf("failed to create vector config file: %w", err)
-	}
-	defer func() {
-		if cleanupConfigFile {
-			_ = os.Remove(f.Name())
-		}
-	}()
-
-	if _, err = f.WriteString(config); err != nil {
-		return fmt.Errorf("failed to write to vector config file: %w", err)
-	}
-	if err = f.Close(); err != nil {
-		return fmt.Errorf("failed to close vector config file: %w", err)
-	}
-
-	fmt.Println("Starting vector with config in", f.Name())
-	vector := exec.Command("vector", "--config", f.Name())
-	vector.Stderr = os.Stderr
-
-	if err := vector.Start(); err != nil {
-		return fmt.Errorf("vector process failed: %w", err)
-	}
-
-	cleanupConfigFile = false
-	// TODO: move to common logic and support several SIGINT hooks
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		for sig := range sigs {
-			_ = vector.Process.Signal(sig)
-			_ = os.Remove(f.Name())
-		}
-	}()
-
-	return nil
 }

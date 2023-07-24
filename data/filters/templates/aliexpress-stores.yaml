@@ -1,0 +1,48 @@
+title: "AliExpress: filter out results by store name"
+contributors:
+  - JohnyP36
+  - sammcj
+  - xvello
+params:
+  - name: store-names
+    description: Patterns for store names to hide from results
+    type: list
+    default: []
+tags:
+  - aliexpress
+template: |
+  {{#each store-names}}
+  aliexpress.com###card-list a[class^="cards--storeLink-"]:has-text({{{this}}}):upward(a.search-card-item)
+  {{/each}}
+tests:
+  - params:
+      store-names:
+        - "/shop/i"
+        - "NAME"
+    output: |
+      aliexpress.com###card-list a[class^="cards--storeLink-"]:has-text(/shop/i):upward(a.search-card-item)
+      aliexpress.com###card-list a[class^="cards--storeLink-"]:has-text(NAME):upward(a.search-card-item)
+  - params: {}
+    output: ""
+---
+
+This filter template allows you to hide products from selected stores from the AliExpress search results.
+
+Instead of simple word matching, this template uses Regular Expressions to reduce the risk of false positives.
+As an example, there is a wave of "throwaway" stores using the names like "Shop 12345 Store", the `/Shop \d+ Store/`
+pattern will hide articles sold by these stores.
+
+You should [read this documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions)
+to learn the syntax, but the following examples should help you get started:
+
+- You can specify any sequence of characters that will be searched in the store name of the product. For example:
+  - `/Echo Show/` will match the products of the store name `Echo Show 8`, but not the `Echo Dot`
+  - `/Store/` will match `Store Hammock`, but also `Storehouse`
+- For a case-insensitive search, simply add `i` at the end of your expression. For example:
+  - `/shop/i` will match both `Shop`, `shop` and `SHOP`
+- To make sure you match on the exact word, you should use the `\b` "word boundary" matcher. For example:
+  - `/\bstore\b/i` will match `Store Food`, but not `Storehouse` or `superstore`
+- You can also use other operators for a better match, for example
+  - `/\bstore(s)?\b/i` will match both occurrences of singular `Store`, but also the plural `Stores`
+
+You can test your rules at [regex101](https://regex101.com/).

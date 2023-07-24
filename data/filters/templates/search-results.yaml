@@ -74,6 +74,10 @@ params:
         description: Hide Wikipedia copycat websites
         source: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/data/wikipedia_copycats.txt
         license: https://github.com/quenhus/uBlock-Origin-dev-filter/blob/main/LICENSE
+      - name: blockmodreposting
+        description: Hide websites reposting game mods without permission
+        source: https://github.com/rotgruengelb/BlockModReposting/blob/main/list.txt
+        license: https://github.com/rotgruengelb/BlockModReposting/blob/main/LICENCE.md
 tags:
   - bing
   - duckduckgo
@@ -95,7 +99,7 @@ template: |
   www.google.*##a[href*="{{site}}"]:upward(1)
   {{/if}}
   {{#if ../duckduckgo}}
-  duckduckgo.com##a[data-testid="result-title-a"][href*="{{site}}"]:upward(.nrn-react-div)
+  duckduckgo.com##ol.react-results--main a[href*="{{site}}"]:upward(article)
   duckduckgo.com##.tile-wrap a[href*="{{site}}"]:upward(.tile)
   {{/if}}
   {{#if ../duckduckgo-html}}
@@ -146,7 +150,7 @@ tests:
       bing.com##.news-card[url*=".pinterest."]
       www.google.*##.g:has(a[href*=".pinterest."])
       www.google.*##a[href*=".pinterest."]:upward(1)
-      duckduckgo.com##a[data-testid="result-title-a"][href*=".pinterest."]:upward(.nrn-react-div)
+      duckduckgo.com##ol.react-results--main a[href*=".pinterest."]:upward(article)
       duckduckgo.com##.tile-wrap a[href*=".pinterest."]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*=".pinterest."])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(.pinterest.))
@@ -159,7 +163,7 @@ tests:
       bing.com##.news-card[url*="snapcraft.io/install"]
       www.google.*##.g:has(a[href*="snapcraft.io/install"])
       www.google.*##a[href*="snapcraft.io/install"]:upward(1)
-      duckduckgo.com##a[data-testid="result-title-a"][href*="snapcraft.io/install"]:upward(.nrn-react-div)
+      duckduckgo.com##ol.react-results--main a[href*="snapcraft.io/install"]:upward(article)
       duckduckgo.com##.tile-wrap a[href*="snapcraft.io/install"]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))

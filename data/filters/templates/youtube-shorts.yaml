@@ -1,6 +1,8 @@
 title: "YouTube: filter out Shorts"
 contributors:
   - BPower0036
+  - chedanix
+  - JohnyP36
   - kiriya-aoi
   - SiggyPony
   - xvello
@@ -10,24 +12,19 @@ template: |
   {{! Navigation links }}
   www.youtube.com##ytd-guide-renderer a.yt-simple-endpoint path[d^="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33"]:upward(ytd-guide-entry-renderer)
   www.youtube.com##ytd-mini-guide-renderer a.yt-simple-endpoint path[d^="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33"]:upward(ytd-mini-guide-entry-renderer)
-  {{! Homepage shelf }}
-  www.youtube.com##ytd-browse #dismissible ytd-rich-grid-slim-media[is-short]:upward(ytd-rich-section-renderer)
   {{! New style with logo, desktop }}
   www.youtube.com##ytd-browse[page-subtype="home"] .ytd-thumbnail[href^="/shorts/"]:upward(ytd-rich-item-renderer)
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] .ytd-thumbnail[href^="/shorts/"]:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
   www.youtube.com##ytd-search .ytd-thumbnail[href^="/shorts/"]:upward(ytd-video-renderer)
-  {{! Suggestions, old layout }}
-  www.youtube.com##ytd-watch-next-secondary-results-renderer .ytd-thumbnail[href^="/shorts/"]:upward(ytd-compact-video-renderer,ytd-shelf-renderer)
-  {{! Suggestions, new layout }}
-  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-reel-shelf-renderer
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer .ytd-thumbnail[href^="/shorts/"]:upward(ytd-item-section-renderer)
-  {{! Channels homepage }}
-  www.youtube.com##ytd-browse[page-subtype="channels"] #contents.ytd-reel-shelf-renderer:upward(ytd-item-section-renderer)
   {{! Trending section }}
   www.youtube.com##ytd-browse[page-subtype="trending"] .ytd-thumbnail[href^="/shorts/"]:upward(ytd-video-renderer)
   {{! Search results }}
-  www.youtube.com##ytd-search #contents ytd-reel-shelf-renderer
+  www.youtube.com##ytd-search .ytd-thumbnail[href^="/shorts/"]:upward(ytd-video-renderer)
+  {{! Wide-band rules to hide generic forms of short shelves across different pages }}
+  www.youtube.com##ytd-rich-shelf-renderer[is-shorts]
+  www.youtube.com##ytd-reel-shelf-renderer
   {{! Mobile homepage shorts shelf }}
   m.youtube.com##ytm-reel-shelf-renderer
   {{! Mobile navbar item }}
@@ -37,7 +34,7 @@ template: |
   {{! Mobile channel video list }}
   m.youtube.com##ytm-browse ytm-item-section-renderer ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]:upward(ytm-compact-video-renderer)
   {{! Mobile search results }}
-  m.youtube.com##ytm-search ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]:upward(ytm-compact-video-renderer)
+  m.youtube.com##ytm-search ytm-thumbnail-overlay-time-status-renderer[data-style="SHORTS"]:upward(ytm-compact-video-renderer,ytm-video-with-context-renderer)
   {{! Mobile sidebar suggestions }}
   m.youtube.com##ytm-single-column-watch-next-results-renderer ytm-thumbnail-overlay-time-status-renderer span:has-text(/^(0:\d\d|1:0\d)$/):upward(ytm-video-with-context-renderer)
   {{! Match the ytd-rich-grid-row element and its #contents child, to disable their CSS boxing }} 

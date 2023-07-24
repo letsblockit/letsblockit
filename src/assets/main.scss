@@ -7,6 +7,9 @@ $font-family-sans-serif: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu San
 $font-family-monospace: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 $headings-font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
 
+// Lighter text color to increase contrast
+$body-color-dark: #ced4da; // $gray-400 instead of 500
+
 $primary: #b83e51;
 $secondary: #DC926E;
 $success: #81a65e;
