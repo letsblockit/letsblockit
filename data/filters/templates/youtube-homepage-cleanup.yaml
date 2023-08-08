@@ -1,0 +1,28 @@
+title: "YouTube: homepage interface cleanups"
+contributors:
+  - JohnyP36
+  - xvello
+params:
+  - name: new-posts-section
+    description: Hide section called "New Posts" on the homepage
+    type: checkbox
+    default: false
+tags:
+  - youtube
+template: |
+  {{#if new-posts-section}}
+  www.youtube.com##ytd-rich-item-renderer[is-post].ytd-rich-shelf-renderer:upward(ytd-rich-section-renderer)
+  {{/if}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      new-posts-section: true
+    output: |
+      www.youtube.com##ytd-rich-item-renderer[is-post].ytd-rich-shelf-renderer:upward(ytd-rich-section-renderer)
+---
+
+This filter template allows you to remove parts of the Youtube homepage interface, for a cleaner experience.
+
+Check out the [other Youtube filters](/filters/tag/youtube) too, and don't hesitate to suggest additions or fixes
+via the _Suggest a change_ link in the sidebar.
