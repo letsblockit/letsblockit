@@ -1,7 +1,6 @@
 title: "YouTube: homepage interface cleanups"
 contributors:
   - JohnyP36
-  - xvello
 params:
   - name: only-videos
     description: Hide all section on the homepage, which doesn't contain videos. If this rule is enabled the other rules are not needed.
