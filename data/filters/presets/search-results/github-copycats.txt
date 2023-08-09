@@ -25,12 +25,14 @@ geeksrepos.com/
 gitanswer.com/
 gitcode.net/
 gitdetail.com/
+giterhub.com/
 giters.com/
 gitfreak.com/
 github.astrophel.org/
 github.innominds.com/
 github.phala.one/
 githubhelp.com/
+githubissues.com/
 githubja.com/
 githublab.com/
 githubmate.com/
