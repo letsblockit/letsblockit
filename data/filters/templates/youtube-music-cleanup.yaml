@@ -1,0 +1,106 @@
+title: "YouTube Music: interface cleanups"
+contributors:
+  - BPower0036
+params:
+  - name: hide-promo
+    description: Hide promo for YouTube Premium
+    type: checkbox
+    default: false
+  - name: remove-mixed-for-you
+    description: Hide "Mixed for you"
+    type: checkbox
+    default: false
+  - name: remove-recommended-playlists
+    description: Hide "Recommended playlists"
+    type: checkbox
+    default: false
+  - name: remove-youtube-made-playlists
+    description: Hide playlists made by Youtube Music
+    type: checkbox
+    default: false
+  - name: remove-related-tab
+    description: Hide "Related" tab next to the music video
+    type: checkbox
+    default: false
+  - name: remove-videos-by-channel
+    description: Hide videos/albums of certain channels
+    type: list
+    default: [ ]
+  - name: remove-playlists-by-channel
+    description: Hide playlist with or from certain channels
+    type: list
+    default: [ ]
+tags:
+  - youtube
+template: |
+  {{#if hide-promo}}
+  music.youtube.com##ytmusic-mealbar-promo-renderer
+  {{/if}}
+  {{#if remove-mixed-for-you}}
+  music.youtube.com##h2 a[href="mixed_for_you"]:upward(ytmusic-carousel-shelf-renderer)
+  {{/if}}
+  {{#if remove-recommended-playlists}}
+  music.youtube.com##h2 a[href="moods_and_genres"]:upward(ytmusic-carousel-shelf-renderer)
+  {{/if}}
+  {{#if remove-youtube-made-playlists}}
+  music.youtube.com##yt-formatted-string > .yt-formatted-string:has-text(YouTube Music):upward(.ytmusic-carousel)
+  music.youtube.com##ytmusic-grid-renderer[grid-type="library"] yt-formatted-string:has-text(YouTube Music):upward(ytmusic-two-row-item-renderer)
+  music.youtube.com###contentContainer ytmusic-guide-entry-renderer[play-button-state] .subtitle-group:has-text(YouTube Music):upward(ytmusic-guide-entry-renderer)
+  {{/if}}
+  {{#if remove-related-tab}}
+  music.youtube.com##.ytmusic-player-page.tab-header-container .tab-header:nth-of-type(3)
+  {{/if}}
+  {{#each remove-videos-by-channel}}
+  music.youtube.com##a:not([href^="playlist"]) + div yt-formatted-string.subtitle:has-text(/{{this}}/i):upward(ytmusic-two-row-item-renderer)
+  music.youtube.com###ytmusic-carousel .secondary-flex-columns [title*="{{ . }}"]:nth-of-type(1):upward(ytmusic-responsive-list-item-renderer)
+  {{/each}}
+  {{#each remove-playlists-by-channel}}
+  music.youtube.com##a[href^="playlist"] + div yt-formatted-string.subtitle:has-text(/{{this}}/i):upward(ytmusic-two-row-item-renderer)
+  {{/each}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      hide-promo: true
+    output: |
+      music.youtube.com##ytmusic-mealbar-promo-renderer
+  - params:
+      remove-mixed-for-you: true
+    output: |
+      music.youtube.com##h2 a[href="mixed_for_you"]:upward(ytmusic-carousel-shelf-renderer)
+  - params:
+      remove-recommended-playlists: true
+    output: |
+      music.youtube.com##h2 a[href="moods_and_genres"]:upward(ytmusic-carousel-shelf-renderer)
+  - params:
+      remove-youtube-made-playlists: true
+    output: |
+      music.youtube.com##yt-formatted-string > .yt-formatted-string:has-text(YouTube Music):upward(.ytmusic-carousel)
+      music.youtube.com##ytmusic-grid-renderer[grid-type="library"] yt-formatted-string:has-text(YouTube Music):upward(ytmusic-two-row-item-renderer)
+      music.youtube.com###contentContainer ytmusic-guide-entry-renderer[play-button-state] .subtitle-group:has-text(YouTube Music):upward(ytmusic-guide-entry-renderer)
+  - params:
+      remove-related-tab: true
+    output: |
+      music.youtube.com##.ytmusic-player-page.tab-header-container .tab-header:nth-of-type(3)
+  - params:
+      remove-videos-by-channel:
+        - channel
+        - channel name
+    output: |
+      music.youtube.com##a:not([href^="playlist"]) + div yt-formatted-string.subtitle:has-text(/channel/i):upward(ytmusic-two-row-item-renderer)
+      music.youtube.com###ytmusic-carousel .secondary-flex-columns [title*="channel"]:nth-of-type(1):upward(ytmusic-responsive-list-item-renderer)
+      music.youtube.com##a:not([href^="playlist"]) + div yt-formatted-string.subtitle:has-text(/channel name/i):upward(ytmusic-two-row-item-renderer)
+      music.youtube.com###ytmusic-carousel .secondary-flex-columns [title*="channel name"]:nth-of-type(1):upward(ytmusic-responsive-list-item-renderer)
+  - params:
+      remove-playlists-by-channel:
+        - channel
+        - channel name
+    output: |
+      music.youtube.com##a[href^="playlist"] + div yt-formatted-string.subtitle:has-text(/channel/i):upward(ytmusic-two-row-item-renderer)
+      music.youtube.com##a[href^="playlist"] + div yt-formatted-string.subtitle:has-text(/channel name/i):upward(ytmusic-two-row-item-renderer)
+---
+
+This filter template allows you to remove parts of the Youtube Music interface on the homepage, explore page and when watching videos, for a cleaner experience.
+
+Check out the [other Youtube filters](/filters/tag/youtube) too, and don't hesitate to suggest additions or fixes
+via the _Suggest a change_ link in the sidebar.
