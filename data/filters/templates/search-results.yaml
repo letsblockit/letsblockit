@@ -24,7 +24,7 @@ params:
     default: false
   - name: duckduckgo-onion
     description: Also support DuckDuckGo's .onion website
-    link: duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion
+    link: https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion
     type: checkbox
     onlyif: duckduckgo
     default: false
@@ -56,7 +56,7 @@ params:
     default: false
   - name: brave-onion
     description: Also support Brave's .onion website
-    link: search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion
+    link: https://search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion
     type: checkbox
     onlyif: brave
     default: false
