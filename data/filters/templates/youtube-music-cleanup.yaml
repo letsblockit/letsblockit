@@ -27,7 +27,7 @@ params:
     type: list
     default: [ ]
   - name: remove-playlists-by-channel
-    description: Hide playlist with or from ceratin channels
+    description: Hide playlist with or from certain channels
     type: list
     default: [ ]
 tags:
