@@ -22,6 +22,12 @@ params:
     type: checkbox
     onlyif: duckduckgo
     default: false
+  - name: duckduckgo-onion
+    description: Also support DuckDuckGo's .onion website
+    link: duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion
+    type: checkbox
+    onlyif: duckduckgo
+    default: false
   - name: google
     description: Generate rules for Google Search
     type: checkbox
@@ -47,6 +53,12 @@ params:
   - name: brave
     description: Generate rules for Search.Brave.com
     type: checkbox
+    default: false
+  - name: brave-onion
+    description: Also support Brave's .onion website
+    link: search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion
+    type: checkbox
+    onlyif: brave
     default: false
   - name: sites
     description: Sites to hide
@@ -90,8 +102,6 @@ template: |
   {{#if ../duckduckgo}}
   duckduckgo.com##ol.react-results--main a[href*="{{site}}"]:upward(article)
   duckduckgo.com##.tile-wrap a[href*="{{site}}"]:upward(.tile)
-  duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##ol.react-results--main a[href*="{{site}}"]:upward(article)
-  duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##.tile-wrap a[href*="{{site}}"]:upward(.tile)
   {{/if}}
   {{#if ../duckduckgo-html}}
   html.duckduckgo.com##.results a.result__a[href*="{{site}}"]:upward(.result)
@@ -102,6 +112,10 @@ template: |
   lite.duckduckgo.com##.result-link[href*="{{site}}"]:upward(tr) + tr + tr
   lite.duckduckgo.com##.result-link[href*="{{site}}"]:upward(tr) + tr + tr + tr
   {{/if}}
+  {{#if ../duckduckgo-onion}}
+  duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##ol.react-results--main a[href*="{{site}}"]:upward(article)
+  duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##.tile-wrap a[href*="{{site}}"]:upward(.tile)
+  {{/if}}  
   {{#if ../kagi}}
   kagi.com##.search-result:has(a.__sri-url[href*="{{site}}"])
   kagi.com##.sri-group:has(a.__sri-url[href*="{{site}}"])
@@ -115,6 +129,11 @@ template: |
   search.brave.com###results a[href*="{{site}}"]:upward(.snippet)
   search.brave.com###img-results a[href*="{{site}}"]:upward([id^="img"])
   search.brave.com###results a[href*="{{site}}"]:upward(.card)
+  search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*="{{site}}"]:upward(.snippet)
+  search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###img-results a[href*="{{site}}"]:upward([id^="img"])
+  search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*="{{site}}"]:upward(.card)
+  {{/if}}
+  {{#if ../brave-onion}}
   search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*="{{site}}"]:upward(.snippet)
   search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###img-results a[href*="{{site}}"]:upward([id^="img"])
   search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*="{{site}}"]:upward(.card)
@@ -141,30 +160,20 @@ tests:
       www.google.*##a[href*=".pinterest."]:upward(1)
       duckduckgo.com##ol.react-results--main a[href*=".pinterest."]:upward(article)
       duckduckgo.com##.tile-wrap a[href*=".pinterest."]:upward(.tile)
-      duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##ol.react-results--main a[href*=".pinterest."]:upward(article)
-      duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##.tile-wrap a[href*=".pinterest."]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*=".pinterest."])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(.pinterest.))
       search.brave.com###results a[href*=".pinterest."]:upward(.snippet)
       search.brave.com###img-results a[href*=".pinterest."]:upward([id^="img"])
       search.brave.com###results a[href*=".pinterest."]:upward(.card)
-      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*=".pinterest."]:upward(.snippet)
-      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###img-results a[href*=".pinterest."]:upward([id^="img"])
-      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*=".pinterest."]:upward(.card)
       www.google.*##.g:has(a[href*="snapcraft.io/install"])
       www.google.*##a[href*="snapcraft.io/install"]:upward(1)
       duckduckgo.com##ol.react-results--main a[href*="snapcraft.io/install"]:upward(article)
       duckduckgo.com##.tile-wrap a[href*="snapcraft.io/install"]:upward(.tile)
-      duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##ol.react-results--main a[href*="snapcraft.io/install"]:upward(article)
-      duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##.tile-wrap a[href*="snapcraft.io/install"]:upward(.tile)
       startpage.com##.w-gl__result:has(a[href*="snapcraft.io/install"])
       startpage.com##.image-container:has(div.image-quick-details span:has-text(snapcraft.io/install))
       search.brave.com###results a[href*="snapcraft.io/install"]:upward(.snippet)
       search.brave.com###img-results a[href*="snapcraft.io/install"]:upward([id^="img"])
       search.brave.com###results a[href*="snapcraft.io/install"]:upward(.card)
-      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*="snapcraft.io/install"]:upward(.snippet)
-      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###img-results a[href*="snapcraft.io/install"]:upward([id^="img"])
-      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*="snapcraft.io/install"]:upward(.card)
   - params:
       kagi: true
       searx-enable: true
@@ -200,6 +209,21 @@ tests:
       lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr
       lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr + tr
       lite.duckduckgo.com##.result-link[href*=".pinterest."]:upward(tr) + tr + tr + tr
+  - params: 
+      duckduckgo-onion: true
+      sites: 
+        - .pinterest.
+    output: |
+      duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##ol.react-results--main a[href*=".pinterest."]:upward(article)
+      duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion##.tile-wrap a[href*=".pinterest."]:upward(.tile)
+  - params: 
+      brave-onion: true
+      sites: 
+        - .pinterest.
+    output: |
+      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*=".pinterest."]:upward(.snippet)
+      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###img-results a[href*=".pinterest."]:upward([id^="img"])
+      search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion###results a[href*=".pinterest."]:upward(.card)
   - output: ""
 ---
 
