@@ -363,7 +363,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		context.Preferences, _ = s.preferences.Get(c, context.UserID)
 		if context.Preferences != nil {
 			latest := s.releases.GetLatestAt()
-			context.HasNews = latest.After(context.Preferences.NewsCursor)
+			context.HasNews = latest.After(context.Preferences.NewsCursor.Time)
 		}
 	}
 	return context

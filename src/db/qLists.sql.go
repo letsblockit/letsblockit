@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -41,7 +40,7 @@ func (q *Queries) CreateListForUser(ctx context.Context, userID string) (uuid.UU
 const getListForToken = `-- name: GetListForToken :one
 SELECT fl.id,
        fl.user_id,
-       fl.downloaded_at,
+       (fl.downloaded_at IS NOT NULL)::bool as is_downloaded,
        (SELECT max(coalesce(fi.updated_at, fi.created_at))
         from filter_instances fi
         where fi.list_id = fl.id) as last_updated
@@ -53,7 +52,7 @@ LIMIT 1
 type GetListForTokenRow struct {
 	ID           int32
 	UserID       string
-	DownloadedAt sql.NullTime
+	IsDownloaded bool
 	LastUpdated  interface{}
 }
 
@@ -63,7 +62,7 @@ func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetList
 	err := row.Scan(
 		&i.ID,
 		&i.UserID,
-		&i.DownloadedAt,
+		&i.IsDownloaded,
 		&i.LastUpdated,
 	)
 	return i, err
@@ -71,7 +70,7 @@ func (q *Queries) GetListForToken(ctx context.Context, token uuid.UUID) (GetList
 
 const getListForUser = `-- name: GetListForUser :one
 SELECT token,
-       downloaded_at,
+       (downloaded_at IS NOT NULL)::bool as is_downloaded,
        (SELECT COUNT(*) FROM filter_instances WHERE filter_instances.user_id = $1) AS instance_count
 FROM filter_lists
 WHERE filter_lists.user_id = $1
@@ -80,14 +79,14 @@ LIMIT 1
 
 type GetListForUserRow struct {
 	Token         uuid.UUID
-	DownloadedAt  sql.NullTime
+	IsDownloaded  bool
 	InstanceCount int64
 }
 
 func (q *Queries) GetListForUser(ctx context.Context, userID string) (GetListForUserRow, error) {
 	row := q.db.QueryRow(ctx, getListForUser, userID)
 	var i GetListForUserRow
-	err := row.Scan(&i.Token, &i.DownloadedAt, &i.InstanceCount)
+	err := row.Scan(&i.Token, &i.IsDownloaded, &i.InstanceCount)
 	return i, err
 }
 

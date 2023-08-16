@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -137,9 +138,10 @@ func convertFilterList(storedInstances []db.GetInstancesForListRow) (*filters.Li
 			Params:   make(map[string]interface{}),
 			TestMode: storedInstance.TestMode,
 		}
-		err := storedInstance.Params.AssignTo(&instance.Params)
-		if err != nil {
-			return nil, err
+		if len(storedInstance.Params) > 0 {
+			if err := json.Unmarshal(storedInstance.Params, &instance.Params); err != nil {
+				return nil, err
+			}
 		}
 		if instance.Template == filters.CustomRulesFilterName {
 			customFilterInstances = append(customFilterInstances, instance)

@@ -5,12 +5,12 @@ WHERE lifted_at IS NULL;
 
 -- name: AddUserBan :exec
 INSERT INTO banned_users (user_id, reason)
-VALUES ($1,$2);
+VALUES ($1, $2);
 
 -- name: LiftUserBan :exec
 UPDATE banned_users
-SET lift_reason     = $2,
-    lifted_at = NOW()
+SET lift_reason = sqlc.arg(reason)::text,
+    lifted_at   = NOW()
 WHERE (user_id = $1);
 
 -- name: InitUserPreferences :one
