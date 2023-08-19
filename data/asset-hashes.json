@@ -39,5 +39,8 @@
     "images/pages/help-refresh-list.webm": "87dd03c",
     "images/pages/help-remove-list.webm": "0c0cf0c",
     "images/pages/help-use-list-easy.png": "c1cc9b8",
-    "robots.txt": "ce46f96"
+    "robots.txt": "ce46f96",
+    "sponsors/logo-datadog.svg": "e36a0f5",
+    "sponsors/logo-jetbrains.svg": "0269993",
+    "sponsors/logo-ory.svg": "920c3df"
 }
