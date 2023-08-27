@@ -21,6 +21,7 @@ func (m *mockedEcho) Reverse(name string, params ...interface{}) string {
 }
 
 func TestHelpers(t *testing.T) {
+	t.Parallel()
 	tests := map[string]struct {
 		input    string
 		ctx      map[string]interface{}
