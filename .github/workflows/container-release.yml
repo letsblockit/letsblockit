@@ -32,17 +32,25 @@ jobs:
         run: |
           nix run .#update-labels
           cat nix/labels.nix
-      - name: Build container images
-        run: |
-          nix build .#render-container && ./result | docker load
-          nix build .#server-container && ./result | docker load
-      - run: docker image list
       - name: Login to GHCR
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build server image
+        run: |
+          nix build .#server-container && ./result | docker load
+      - name: Push server-dev image from branch
+        if: ${{ github.ref_type == 'branch' }}
+        run: |
+          ./scripts/push-container.sh server:latest server-dev:$GITHUB_REF_NAME
+          ./scripts/push-container.sh server:latest server-dev:staging
+          ./scripts/push-container.sh server:latest server-dev:${GITHUB_SHA::7}
+      - name: Build render image
+        if: ${{ github.ref_type == 'tag' }}
+        run: |
+          nix build .#render-container && ./result | docker load
       - name: Push releases from tag
         if: ${{ github.ref_type == 'tag' }}
         run: |
@@ -50,9 +58,4 @@ jobs:
           ./scripts/push-container.sh render:latest
           ./scripts/push-container.sh server:latest server:$GITHUB_REF_NAME
           ./scripts/push-container.sh server:latest
-      - name: Push dev images from branch
-        if: ${{ github.ref_type == 'branch' }}
-        run: |
-          ./scripts/push-container.sh server:latest server-dev:$GITHUB_REF_NAME
-          ./scripts/push-container.sh server:latest server-dev:staging
-          ./scripts/push-container.sh server:latest server-dev:${GITHUB_SHA::7}
+      - run: docker image list
