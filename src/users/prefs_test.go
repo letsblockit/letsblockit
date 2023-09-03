@@ -34,7 +34,6 @@ type PreferenceManagerSuite struct {
 }
 
 func (s *PreferenceManagerSuite) SetupTest() {
-	s.store = db.NewTestStore(s.T())
 	s.user = random.String(12)
 	s.ctx = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
 
@@ -167,5 +166,8 @@ func (s *PreferenceManagerSuite) TestUpdatePreferences() {
 }
 
 func TestPreferenceManagerSuite(t *testing.T) {
-	suite.Run(t, new(PreferenceManagerSuite))
+	t.Parallel()
+	suite.Run(t, &PreferenceManagerSuite{
+		store: db.NewTestStore(t),
+	})
 }

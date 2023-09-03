@@ -10,6 +10,7 @@ import (
 )
 
 func TestLoadBannedUsers(t *testing.T) {
+	t.Parallel()
 	store := db.NewTestStore(t)
 	for _, user := range []string{"one", "two", "four", "five"} {
 		require.NoError(t, store.AddUserBan(context.Background(), db.AddUserBanParams{
