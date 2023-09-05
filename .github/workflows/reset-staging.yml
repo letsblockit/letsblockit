@@ -14,5 +14,5 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'letsblockit/letsblockit'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: git push origin main:staging --force
