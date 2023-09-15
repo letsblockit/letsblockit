@@ -6,7 +6,7 @@ require (
 	github.com/DataDog/datadog-go/v5 v5.3.0
 	github.com/alecthomas/kong v0.8.0
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
-	github.com/go-playground/validator/v10 v10.15.3
+	github.com/go-playground/validator/v10 v10.15.4
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.1

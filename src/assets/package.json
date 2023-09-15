@@ -20,7 +20,7 @@
     "@parcel/compressor-gzip": "^2.9.3",
     "@parcel/transformer-sass": "^2.9.3",
     "@tabler/icons": "^2.34.0",
-    "bootstrap": "^5.3.1",
+    "bootstrap": "^5.3.2",
     "eslint": "^8.49.0",
     "htmx.org": "^1.9.5",
     "parcel": "^2.9.3"
