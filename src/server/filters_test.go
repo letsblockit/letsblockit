@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
@@ -116,7 +115,22 @@ func (s *ServerTestSuite) TestViewFilter_NoInstance() {
 	s.runRequest(req, assertOk)
 }
 
-func (s *ServerTestSuite) TestViewFilter_HasInstance() {
+func (s *ServerTestSuite) TestViewFilter_HasInstanceNoParams() {
+	req := httptest.NewRequest(http.MethodGet, "/filters/filter1", nil)
+	require.NoError(s.T(), s.server.upsertFilterParams(s.c, s.user, &filters.Instance{
+		Template: "filter1",
+	}))
+	s.expectRender("view-filter", pages.ContextData{
+		"filter":       filter1,
+		"rendered":     "hello from one\n",
+		"params":       map[string]any{},
+		"has_instance": true,
+		"test_mode":    false,
+	})
+	s.runRequest(req, assertOk)
+}
+
+func (s *ServerTestSuite) TestViewFilter_HasInstanceWithParams() {
 	req := httptest.NewRequest(http.MethodGet, "/filters/filter2", nil)
 
 	params := map[string]any{
@@ -199,7 +213,7 @@ func (s *ServerTestSuite) TestViewFilter_Create() {
 		TemplateName: "filter2",
 	})
 	require.NoError(s.T(), err)
-	s.requireJSONEq(filter2Custom, stored.Params)
+	s.requireJSONIs(stored.Params, filter2Custom)
 	s.requireInstanceCount("filter2", 1)
 }
 
@@ -228,7 +242,7 @@ func (s *ServerTestSuite) TestViewFilter_CreateEmptyParams() {
 		TemplateName: "filter1",
 	})
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), pgtype.Null, stored.Params.Status)
+	require.Empty(s.T(), stored.Params)
 	s.requireInstanceCount("filter1", 1)
 }
 
@@ -259,7 +273,7 @@ func (s *ServerTestSuite) TestViewFilter_Update() {
 	})
 	require.NoError(s.T(), err)
 	s.True(stored.TestMode)
-	s.requireJSONEq(filter2Preset, stored.Params)
+	s.requireJSONIs(stored.Params, filter2Preset)
 	s.requireInstanceCount("filter2", 1)
 }
 

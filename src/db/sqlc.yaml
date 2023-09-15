@@ -3,8 +3,14 @@ packages:
   - path: "."
     name: "db"
     engine: "postgresql"
-    sql_package: "pgx/v4"
+    sql_package: "pgx/v5"
     schema: "./migrations/"
     queries: "./queries/"
     output_querier_file_name: "interface.go"
     emit_interface: true
+    overrides:
+      - db_type: "uuid"
+        go_type: "github.com/google/uuid.UUID"
+      - db_type: "uuid"
+        go_type: "github.com/google/uuid.NullUUID"
+        nullable: true

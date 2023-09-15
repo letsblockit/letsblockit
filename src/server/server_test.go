@@ -14,6 +14,7 @@ import (
 )
 
 func TestServerDryRun(t *testing.T) {
+	t.Parallel()
 	assert.Equal(t, ErrDryRunFinished, NewServer(&Options{
 		AuthMethod:    "kratos",
 		AuthKratosUrl: "http://localhost:4000/.ory",

@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/random"
 	"github.com/letsblockit/letsblockit/src/db"
@@ -17,8 +18,11 @@ import (
 
 const maxTimeSkew = 100 * time.Millisecond
 
-func pastNow(hours int64) time.Time {
-	return time.Now().Add(time.Duration(-1*hours) * time.Hour).Round(time.Second)
+func pastNow(hours int64) pgtype.Timestamptz {
+	return pgtype.Timestamptz{
+		Time:  time.Now().Add(time.Duration(-1*hours) * time.Hour).Round(time.Second),
+		Valid: true,
+	}
 }
 
 type PreferenceManagerSuite struct {
@@ -30,7 +34,6 @@ type PreferenceManagerSuite struct {
 }
 
 func (s *PreferenceManagerSuite) SetupTest() {
-	s.store = db.NewTestStore(s.T())
 	s.user = random.String(12)
 	s.ctx = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
 
@@ -43,7 +46,7 @@ func (s *PreferenceManagerSuite) TestInitIfNotFound() {
 	got, err := s.prefs.Get(s.ctx, s.user)
 	assert.NoError(s.T(), err)
 	assert.Equal(s.T(), s.user, got.UserID)
-	assert.WithinDuration(s.T(), time.Now(), got.NewsCursor, maxTimeSkew)
+	assert.WithinDuration(s.T(), time.Now(), got.NewsCursor.Time, maxTimeSkew)
 }
 
 func (s *PreferenceManagerSuite) TestGetCached() {
@@ -66,7 +69,7 @@ func (s *PreferenceManagerSuite) TestGetCached() {
 	// Out-of-band DB update will be ignored due to the cache
 	require.NoError(s.T(), s.store.UpdateNewsCursor(context.Background(), db.UpdateNewsCursorParams{
 		UserID:     s.user,
-		NewsCursor: time.Now(),
+		NewsCursor: pastNow(0),
 	}))
 
 	// Second get returns the cached value
@@ -98,7 +101,7 @@ func (s *PreferenceManagerSuite) TestUpdateNewsCursor() {
 	assert.EqualValues(s.T(), &initial, got)
 
 	// Update the value through the manager
-	assert.NoError(s.T(), s.prefs.UpdateNewsCursor(s.ctx, s.user, updated.NewsCursor))
+	assert.NoError(s.T(), s.prefs.UpdateNewsCursor(s.ctx, s.user, updated.NewsCursor.Time))
 
 	// Cache has been invalidated
 	got, err = s.prefs.Get(s.ctx, s.user)
@@ -163,5 +166,8 @@ func (s *PreferenceManagerSuite) TestUpdatePreferences() {
 }
 
 func TestPreferenceManagerSuite(t *testing.T) {
-	suite.Run(t, new(PreferenceManagerSuite))
+	t.Parallel()
+	suite.Run(t, &PreferenceManagerSuite{
+		store: db.NewTestStore(t),
+	})
 }

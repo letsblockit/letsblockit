@@ -2,6 +2,7 @@
 accordeonmuseum.nl/
 algebra.com/
 buildwiki.ru/
+cyclowiki.org/
 datewiki.ru/
 dewiki.de/
 encyclopaedia.bid/
@@ -16,6 +17,7 @@ globalwikionline.com/
 hmong.ru/
 livepcwiki.ru/
 mediawiki.feverous.co.uk/
+ru-wiki.ru/
 scholarship.edu.vn/wiki/
 second.wiki/
 secret-bases.co.uk/wiki/

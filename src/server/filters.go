@@ -2,10 +2,10 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strings"
 
-	"github.com/jackc/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
 	"github.com/letsblockit/letsblockit/src/filters"
@@ -52,7 +52,7 @@ func (s *Server) listFilters(c echo.Context) error {
 		if len(instances) > 0 {
 			if info, err := s.store.GetListForUser(c.Request().Context(), hc.UserID); err == nil {
 				hc.Add("list_token", info.Token.String())
-				hc.Add("list_downloaded", info.DownloadedAt.Valid)
+				hc.Add("list_downloaded", info.IsDownloaded)
 			}
 		}
 		if len(updatedFilters) > 0 {
@@ -103,10 +103,6 @@ func (s *Server) viewFilter(c echo.Context) error {
 	switch {
 	case hc.UserLoggedIn && action == actionSave:
 		// Save filter params if requested
-		var out pgtype.JSONB
-		if err = out.Set(instance.Params); err != nil {
-			return err
-		}
 		if err = s.upsertFilterParams(c, hc.UserID, instance); err != nil {
 			return err
 		}
@@ -131,8 +127,11 @@ func (s *Server) viewFilter(c echo.Context) error {
 		case nil:
 			hc.Add("has_instance", true)
 			if instance.Params == nil {
-				if err = stored.Params.AssignTo(&instance.Params); err != nil {
-					return err
+				instance.Params = make(map[string]any)
+				if len(stored.Params) > 0 {
+					if err = json.Unmarshal(stored.Params, &instance.Params); err != nil {
+						return err
+					}
 				}
 			}
 			instance.TestMode = stored.TestMode
@@ -223,12 +222,10 @@ func (s *Server) viewFilterRender(c echo.Context) error {
 }
 
 func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filters.Instance) error {
-	out := pgtype.JSONB{
-		Bytes:  nil,
-		Status: pgtype.Null,
-	}
+	var params []byte
 	if len(instance.Params) > 0 {
-		if err := out.Set(&instance.Params); err != nil {
+		var err error
+		if params, err = json.Marshal(&instance.Params); err != nil {
 			return err
 		}
 	}
@@ -249,14 +246,14 @@ func (s *Server) upsertFilterParams(c echo.Context, user string, instance *filte
 			return q.CreateInstance(ctx, db.CreateInstanceParams{
 				UserID:       user,
 				TemplateName: instance.Template,
-				Params:       out,
+				Params:       params,
 				TestMode:     instance.TestMode,
 			})
 		} else {
 			return q.UpdateInstance(ctx, db.UpdateInstanceParams{
 				UserID:       user,
 				TemplateName: instance.Template,
-				Params:       out,
+				Params:       params,
 				TestMode:     instance.TestMode,
 			})
 		}
@@ -321,7 +318,7 @@ func (s *Server) hasMissingParams(instance db.GetInstancesForUserRow) bool {
 	}
 
 	params := make(map[string]interface{})
-	if err := instance.Params.AssignTo(&params); err != nil {
+	if err := json.Unmarshal(instance.Params, &params); err != nil {
 		return true
 	}
 	for _, p := range filter.Params {

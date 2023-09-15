@@ -7,8 +7,6 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgtype"
 )
 
 const countInstances = `-- name: CountInstances :one
@@ -37,7 +35,7 @@ VALUES ((SELECT id FROM filter_lists WHERE user_id = $1), $1, $2, $3, $4)
 type CreateInstanceParams struct {
 	UserID       string
 	TemplateName string
-	Params       pgtype.JSONB
+	Params       []byte
 	TestMode     bool
 }
 
@@ -79,7 +77,7 @@ type GetInstanceParams struct {
 }
 
 type GetInstanceRow struct {
-	Params   pgtype.JSONB
+	Params   []byte
 	TestMode bool
 }
 
@@ -99,7 +97,7 @@ ORDER BY template_name ASC
 
 type GetInstancesForListRow struct {
 	TemplateName string
-	Params       pgtype.JSONB
+	Params       []byte
 	TestMode     bool
 }
 
@@ -131,7 +129,7 @@ WHERE user_id = $1
 
 type GetInstancesForUserRow struct {
 	TemplateName string
-	Params       pgtype.JSONB
+	Params       []byte
 	TestMode     bool
 }
 
@@ -166,7 +164,7 @@ WHERE (user_id = $1 AND template_name = $2)
 type UpdateInstanceParams struct {
 	UserID       string
 	TemplateName string
-	Params       pgtype.JSONB
+	Params       []byte
 	TestMode     bool
 }
 

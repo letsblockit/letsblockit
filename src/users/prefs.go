@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"zgo.at/zcache/v2"
-
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 	"github.com/letsblockit/letsblockit/src/db"
+	"zgo.at/zcache/v2"
 )
 
 type PreferenceManager struct {
@@ -47,8 +47,11 @@ func (m *PreferenceManager) UpdateNewsCursor(c echo.Context, user string, at tim
 		return err
 	}
 	err := m.store.UpdateNewsCursor(c.Request().Context(), db.UpdateNewsCursorParams{
-		UserID:     user,
-		NewsCursor: at,
+		UserID: user,
+		NewsCursor: pgtype.Timestamptz{
+			Time:  at,
+			Valid: true,
+		},
 	})
 	m.cache.Delete(user)
 	return err

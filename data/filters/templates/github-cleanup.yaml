@@ -11,6 +11,10 @@ params:
     description: Hide the changelog and announcements from the homepage
     type: checkbox
     default: true
+  - name: copilot-upsells
+    description: Hide prompts to test copilot
+    type: checkbox
+    default: false
   - name: profile-achievements
     description: Hide the achievements from user profiles
     type: checkbox
@@ -29,6 +33,9 @@ template: |
   {{#if homepage-changelog}}
   github.com##aside .dashboard-changelog.mb-4
   github.com##.js-notice
+  {{/if}}
+  {{#if copilot-upsells}}
+  github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
   {{/if}}
   {{#if profile-achievements}}
   github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
@@ -49,6 +56,10 @@ tests:
     output: |
       github.com###dashboard .js-feeds-tabs #feed-next
       github.com###dashboard tab-container div[aria-labelledby="feed-next"]
+  - params:
+      copilot-upsells: true
+    output: |
+      github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
   - params:
       profile-achievements: true
     output: |

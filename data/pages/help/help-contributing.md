@@ -4,12 +4,6 @@ Thanks for your interest in moving this project forward! If you have any questio
 [open an issue on GitHub](https://github.com/letsblockit/letsblockit/issues) for any question or bug, or send us an email
 at `hello@<this-domain>.it`.
 
-### Financial contributions
-
-To help keep the official instance running, you can sponsor the project on
-[OpenCollective](https://opencollective.com/letsblockit) or
-[Github Sponsors](https://github.com/sponsors/letsblockit).
-
 ### Contributing filters {#filters}
 
 The best way you can help the project is by contributing new filters or improving existing ones:
@@ -28,6 +22,19 @@ The best way you can help the project is by contributing new filters or improvin
 - support for content blockers other than `uBlock Origin` is left out for now, to limit the maintenance cost
 - as a protest against the toxic endeavours of the Facebook / Meta company, no filter improving any of its websites will
   be accepted in the project.
+
+### Financial contributions and sponsorships
+
+To help keep the official instance running, you can sponsor the project on
+[OpenCollective](https://opencollective.com/letsblockit) or
+[Github Sponsors](https://github.com/sponsors/letsblockit).
+
+We don't want to rely on free tiers, but gladly accept corporate sponsorships.
+The following companies help us operate the official instance by providing services free of charge:
+
+![Datadog logo](/assets/sponsors/logo-datadog.svg "Thanks to Datadog for providing free monitoring for servers hosting the official instance")
+![Jetbrains logo](/assets/sponsors/logo-jetbrains.svg "Thanks to Jetbrains for providing free GoLand licenses")
+![Ory logo](/assets/sponsors/logo-ory.svg "Thanks to Ory for powering the official instance's account management with Ory Network")
 
 ### Helping with the code {#code}
 

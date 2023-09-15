@@ -29,7 +29,7 @@ func (s *Server) newsHandler(c echo.Context) error {
 		// Compute new releases to highlight
 		if hc.Preferences != nil {
 			for i, r := range releases {
-				if r.CreatedAt.After(hc.Preferences.NewsCursor) {
+				if r.CreatedAt.After(hc.Preferences.NewsCursor.Time) {
 					newReleases[strconv.Itoa(i)] = true
 				} else {
 					break

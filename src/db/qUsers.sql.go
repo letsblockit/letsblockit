@@ -7,13 +7,13 @@ package db
 
 import (
 	"context"
-	"database/sql"
-	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addUserBan = `-- name: AddUserBan :exec
 INSERT INTO banned_users (user_id, reason)
-VALUES ($1,$2)
+VALUES ($1, $2)
 `
 
 type AddUserBanParams struct {
@@ -90,18 +90,18 @@ func (q *Queries) InitUserPreferences(ctx context.Context, userID string) (UserP
 
 const liftUserBan = `-- name: LiftUserBan :exec
 UPDATE banned_users
-SET lift_reason     = $2,
-    lifted_at = NOW()
+SET lift_reason = $2::text,
+    lifted_at   = NOW()
 WHERE (user_id = $1)
 `
 
 type LiftUserBanParams struct {
-	UserID     string
-	LiftReason sql.NullString
+	UserID string
+	Reason string
 }
 
 func (q *Queries) LiftUserBan(ctx context.Context, arg LiftUserBanParams) error {
-	_, err := q.db.Exec(ctx, liftUserBan, arg.UserID, arg.LiftReason)
+	_, err := q.db.Exec(ctx, liftUserBan, arg.UserID, arg.Reason)
 	return err
 }
 
@@ -113,7 +113,7 @@ WHERE user_id = $1
 
 type UpdateNewsCursorParams struct {
 	UserID     string
-	NewsCursor time.Time
+	NewsCursor pgtype.Timestamptz
 }
 
 func (q *Queries) UpdateNewsCursor(ctx context.Context, arg UpdateNewsCursorParams) error {

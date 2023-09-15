@@ -100,7 +100,6 @@ func (s *ServerTestSuite) SetupTest() {
 	s.expectR = rm.EXPECT()
 
 	s.c = echo.New().NewContext(httptest.NewRequest(http.MethodGet, "/", nil), httptest.NewRecorder())
-	s.store = db.NewTestStore(s.T())
 	s.csrf = random.String(32)
 	s.user = uuid.New().String()
 	pref, err := users.NewPreferenceManager(s.store)
@@ -201,10 +200,8 @@ func (s *ServerTestSuite) runRequest(req *http.Request, checks func(*testing.T, 
 	checks(s.T(), rec)
 }
 
-func (s *ServerTestSuite) requireJSONEq(expected, actual any) {
+func (s *ServerTestSuite) requireJSONIs(expectedJSON []byte, actual any) {
 	s.T().Helper()
-	expectedJSON, err := json.Marshal(expected)
-	require.NoError(s.T(), err)
 	actualJSON, err := json.Marshal(actual)
 	require.NoError(s.T(), err)
 	require.JSONEq(s.T(), string(expectedJSON), string(actualJSON))
@@ -221,6 +218,7 @@ func (s *ServerTestSuite) requireInstanceCount(filter string, expected int64) {
 }
 
 func TestServerTestSuite(t *testing.T) {
+	t.Parallel()
 	var err error
 	filterRepo, err = filters.Load(testTemplates, testTemplates)
 	require.NoError(t, err)
@@ -230,5 +228,7 @@ func TestServerTestSuite(t *testing.T) {
 	filter3, _ = filterRepo.Get("custom-rules")
 
 	// Run test suite
-	suite.Run(t, new(ServerTestSuite))
+	suite.Run(t, &ServerTestSuite{
+		store: db.NewTestStore(t),
+	})
 }

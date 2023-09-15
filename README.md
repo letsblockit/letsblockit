@@ -94,16 +94,21 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## Thanks to our sponsors
+## Thanks to our corporate sponsors
 
 <table>
   <tr>
-    <td align="center"><a href="https://www.ory.sh/"><img src=".github/logo-ory.svg?raw=true"/></a></td>
-    <td>Thanks to Ory for hosting the official instance's<br/>
-        user database on <a href="https://www.ory.sh/cloud/">Ory Cloud.</a></td>
+    <td align="center"><a href="https://www.ory.sh/"><img src="data/assets/sponsors/logo-ory.svg?raw=true"/></a></td>
+    <td>Thanks to Ory for powering the official instance's<br/>
+        account management with Ory Network.</td>
   </tr>
   <tr>
-    <td align="center"><a href="https://www.jetbrains.com/opensource/"><img src=".github/logo-jetbrains.svg?raw=true"/></a></td>
+    <td align="center"><a href="https://www.jetbrains.com/opensource/"><img src="data/assets/sponsors/logo-jetbrains.svg?raw=true"/></a></td>
     <td>Thanks to Jetbrains for providing free GoLand licenses.</td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://www.datadoghq.com/"><img src="data/assets/sponsors/logo-datadog.svg?raw=true"/></a></td>
+    <td>Thanks to Datadog for providing free monitoring for<br/>
+        servers hosting the official instance.</td>
   </tr>
 </table>

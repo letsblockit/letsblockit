@@ -2,7 +2,6 @@ package users
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 
 	"github.com/letsblockit/letsblockit/src/db"
@@ -11,6 +10,7 @@ import (
 )
 
 func TestLoadBannedUsers(t *testing.T) {
+	t.Parallel()
 	store := db.NewTestStore(t)
 	for _, user := range []string{"one", "two", "four", "five"} {
 		require.NoError(t, store.AddUserBan(context.Background(), db.AddUserBanParams{
@@ -20,10 +20,7 @@ func TestLoadBannedUsers(t *testing.T) {
 	}
 	require.NoError(t, store.LiftUserBan(context.Background(), db.LiftUserBanParams{
 		UserID: "five",
-		LiftReason: sql.NullString{
-			String: "just testing",
-			Valid:  true,
-		},
+		Reason: "just testing",
 	}))
 
 	bans, err := LoadUserBans(store)
@@ -33,5 +30,4 @@ func TestLoadBannedUsers(t *testing.T) {
 	assert.True(t, bans.IsBanned("two"))
 	assert.False(t, bans.IsBanned("three")) // Never banned
 	assert.False(t, bans.IsBanned("five"))  // Ban lifted
-
 }

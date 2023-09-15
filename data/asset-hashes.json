@@ -1,8 +1,8 @@
 {
-    "dist/main.css": "b4fc975",
-    "dist/main.css.gz": "b4fc975",
-    "dist/main.js": "9c4c9d3",
-    "dist/main.js.gz": "9c4c9d3",
+    "dist/main.css": "2a12caa",
+    "dist/main.css.gz": "2a12caa",
+    "dist/main.js": "6330b89",
+    "dist/main.js.gz": "6330b89",
     "images/contributors/3DWORX-SA.webp": "cb55c06",
     "images/contributors/BPower0036.webp": "8d697b5",
     "images/contributors/BenMakesGames.webp": "51ea294",
@@ -39,5 +39,8 @@
     "images/pages/help-refresh-list.webm": "87dd03c",
     "images/pages/help-remove-list.webm": "0c0cf0c",
     "images/pages/help-use-list-easy.png": "c1cc9b8",
-    "robots.txt": "ce46f96"
+    "robots.txt": "ce46f96",
+    "sponsors/logo-datadog.svg": "e36a0f5",
+    "sponsors/logo-jetbrains.svg": "0269993",
+    "sponsors/logo-ory.svg": "920c3df"
 }
