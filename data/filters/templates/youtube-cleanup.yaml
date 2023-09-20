@@ -64,6 +64,7 @@ tags:
 template: |
   {{#if channel-clarification}}
   www.youtube.com###clarify-box
+  www.youtube.com###above-the-fold #middle-row ytd-info-panel-content-renderer
   www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
   m.youtube.com##shorts-video ytm-info-panel-container-renderer
   {{/if}}
@@ -129,6 +130,7 @@ tests:
       channel-clarification: true
     output: |
       www.youtube.com###clarify-box
+      www.youtube.com###above-the-fold #middle-row ytd-info-panel-content-renderer
       www.youtube.com##ytd-shorts .disclaimer-container:upward(#info-panel)
       m.youtube.com##shorts-video ytm-info-panel-container-renderer
   - params:
