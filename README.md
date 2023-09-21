@@ -86,6 +86,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vimode"><img src="https://avatars.githubusercontent.com/u/39148877?v=4?s=100" width="100px;" alt="vimode"/><br /><sub><b>vimode</b></sub></a><br /><a href="#data-vimode" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hianick"><img src="https://avatars.githubusercontent.com/u/93717800?v=4?s=100" width="100px;" alt="hianick"/><br /><sub><b>hianick</b></sub></a><br /><a href="#data-hianick" title="Data">🔣</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/datsudo"><img src="https://avatars.githubusercontent.com/u/76833632?v=4?s=100" width="100px;" alt="Darylle Villanueva"/><br /><sub><b>Darylle Villanueva</b></sub></a><br /><a href="#data-datsudo" title="Data">🔣</a></td>
+    </tr>
   </tbody>
 </table>
 
