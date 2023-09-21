@@ -1,8 +1,9 @@
 title: "GitHub: interface cleanups"
 contributors:
+  - datsudo
+  - BPower0036
   - mrjones2014
   - xvello
-  - BPower0036
 params:
   - name: homepage-foryou
     description: Hide the new "For you" feed on the homepage
@@ -40,7 +41,7 @@ template: |
   github.com##.js-notice
   {{/if}}
   {{#if homepage-explore}}
-  github.com##aside[aria-label="Explore"]
+  github.com##aside.feed-right-sidebar[aria-label="Explore"]
   {{/if}}
   {{#if copilot-upsells}}
   github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
@@ -67,7 +68,7 @@ tests:
   - params:
       homepage-explore: true
     output: |
-      github.com##aside[aria-label="Explore"]
+      github.com##aside.feed-right-sidebar[aria-label="Explore"]
   - params:
       copilot-upsells: true
     output: |
