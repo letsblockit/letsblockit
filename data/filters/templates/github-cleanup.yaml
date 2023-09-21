@@ -1,5 +1,7 @@
 title: "GitHub: interface cleanups"
 contributors:
+  - BPower0036
+  - datsudo
   - mrjones2014
   - xvello
 params:
@@ -9,6 +11,10 @@ params:
     default: true
   - name: homepage-changelog
     description: Hide the changelog and announcements from the homepage
+    type: checkbox
+    default: true
+  - name: homepage-explore
+    description: Hide the explore section from the homepage
     type: checkbox
     default: true
   - name: copilot-upsells
@@ -34,6 +40,9 @@ template: |
   github.com##aside .dashboard-changelog.mb-4
   github.com##.js-notice
   {{/if}}
+  {{#if homepage-explore}}
+  github.com##aside.feed-right-sidebar[aria-label="Explore"]
+  {{/if}}
   {{#if copilot-upsells}}
   github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
   {{/if}}
@@ -56,6 +65,10 @@ tests:
     output: |
       github.com###dashboard .js-feeds-tabs #feed-next
       github.com###dashboard tab-container div[aria-labelledby="feed-next"]
+  - params:
+      homepage-explore: true
+    output: |
+      github.com##aside.feed-right-sidebar[aria-label="Explore"]
   - params:
       copilot-upsells: true
     output: |
