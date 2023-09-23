@@ -83,6 +83,7 @@ template: |
   {{/if}}
   {{#if remove-copyright-notice}}
   www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
+  www.youtube.com###description .ytd-watch-metadata #items > ytd-horizontal-card-list-renderer:has(ytd-video-attribute-view-model)
   m.youtube.com##ytm-video-description-music-section-renderer
   {{/if}}
   {{#if remove-channel-info}}
@@ -145,6 +146,7 @@ tests:
       remove-copyright-notice: true
     output: |
       www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
+      www.youtube.com###description .ytd-watch-metadata #items > ytd-horizontal-card-list-renderer:has(ytd-video-attribute-view-model)
       m.youtube.com##ytm-video-description-music-section-renderer
   - params:
       remove-channel-info: true
