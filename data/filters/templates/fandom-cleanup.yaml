@@ -45,6 +45,10 @@ params:
     description: Hide edit buttons at the top-left of every page/article
     type: checkbox
     default: true
+  - name: age-gate
+    description: Hide the popup menu which asks you for your age for better browsing experiences
+    type: checkbox
+    default: false
 tags:
   - fandom
 template: |
@@ -83,6 +87,9 @@ template: |
   {{#if edit-buttons}}
   fandom.com##.page-side-tool.page-side-edit
   fandom.com##.mw-editsection
+  {{/if}}
+  {{#if age-gate}}
+  fandom.com###age-gate
   {{/if}}
 tests:
   - params: {}
@@ -133,6 +140,10 @@ tests:
     output: |
       fandom.com##.page-side-tool.page-side-edit
       fandom.com##.mw-editsection
+  - params:
+      age-gate: true
+    output: |
+      fandom.com###age-gate
 ---
 
 This filter template allows you to remove parts of the Fandom wiki pages interface for a cleaner experience.
