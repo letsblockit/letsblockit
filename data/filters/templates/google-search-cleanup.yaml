@@ -57,6 +57,7 @@ template: |
   {{#if also-search}}
   {{! These unfurl after clicking on a result and going back to the results page }}
   www.google.*###rso div.g div[jscontroller][id^="eob_"]
+  www.google.*###rso div.MjjYud:has(div[jsname="Cpkphb"] a[href^="/search?"])
   {{/if}}
   {{#if similar-image-searches}}
   www.google.*##div.isv-r[data-rfg]
@@ -94,6 +95,7 @@ tests:
     output: |
       www.google.*###botstuff #bres
       www.google.*###rso div.g div[jscontroller][id^="eob_"]
+      www.google.*###rso div.MjjYud:has(div[jsname="Cpkphb"] a[href^="/search?"])
       www.google.*###footcnt > #fbarcnt
   - params:
       similar-image-searches: true
