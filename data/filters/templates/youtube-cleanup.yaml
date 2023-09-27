@@ -31,6 +31,10 @@ params:
     description: Hide the chapter timeline in the video description box
     type: checkbox
     default: false
+  - name: remove-transcript
+    description: Hides the section that says "follow the transcript" in the video description box
+    type: checkbox
+    default: false
   - name: remove-stream-chat
     description: Hide the live chat when viewing streams
     type: checkbox
@@ -93,6 +97,9 @@ template: |
   {{#if remove-chapters}}
   www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
   m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+  {{/if}}
+  {{#if remove-transcript}}
+  www.youtube.com##ytd-video-description-transcript-section-renderer
   {{/if}}
   {{#if remove-stream-chat}}
   www.youtube.com###chat:remove()
@@ -158,6 +165,10 @@ tests:
     output: |
       www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
       m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+  - params:
+      remove-transcript: true
+    output: |
+      www.youtube.com##ytd-video-description-transcript-section-renderer
   - params:
       remove-stream-chat: true
     output: |
