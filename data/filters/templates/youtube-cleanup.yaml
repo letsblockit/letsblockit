@@ -57,7 +57,7 @@ params:
     type: checkbox
     default: false
   - name: disable-inifite-scrolling-shorts
-    description: Disable infinite scrolling in the Short player
+    description: Disable infinite srolling in Youtube Shorts
     type: checkbox
     default: false
   - name: remove-comment-section
