@@ -88,6 +88,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/datsudo"><img src="https://avatars.githubusercontent.com/u/76833632?v=4?s=100" width="100px;" alt="Darylle Villanueva"/><br /><sub><b>Darylle Villanueva</b></sub></a><br /><a href="#data-datsudo" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/parigi-n"><img src="https://avatars.githubusercontent.com/u/20981240?v=4?s=100" width="100px;" alt="Nicolas P."/><br /><sub><b>Nicolas P.</b></sub></a><br /><a href="#data-parigi-n" title="Data">🔣</a></td>
     </tr>
   </tbody>
 </table>
