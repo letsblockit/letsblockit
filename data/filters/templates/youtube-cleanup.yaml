@@ -5,6 +5,7 @@ contributors:
   - JohnyP36
   - lichtmetzger
   - mailyspamy
+  - parigi-n
   - xvello
 params:
   - name: channel-clarification
@@ -53,6 +54,10 @@ params:
     default: false
   - name: no-ambient-mode
     description: Disable ambient mode
+    type: checkbox
+    default: false
+  - name: disable-inifite-scrolling-shorts
+    description: Disable infinite srolling in Youtube Shorts
     type: checkbox
     default: false
   - name: remove-comment-section
@@ -117,6 +122,9 @@ template: |
   {{/if}}
   {{#if no-ambient-mode}}
   www.youtube.com###cinematics.ytd-watch-flexy:remove()
+  {{/if}}
+  {{#if disable-inifite-scrolling-shorts}}
+  www.youtube.com##ytd-reel-video-renderer~ytd-reel-video-renderer:matches-path(/shorts/)
   {{/if}}
   {{#if remove-comment-section}}
   www.youtube.com###comments #contents:remove()
