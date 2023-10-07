@@ -110,3 +110,8 @@ html[data-bs-theme="dark"] .btn-dark, html[data-bs-theme="dark"] .btn-outline-da
   border-color: $input-focus-border-color;
   box-shadow: $input-focus-box-shadow;
 }
+
+#htmx-alert {
+  @extend .sticky-top;
+  top: 1em;
+}
