@@ -95,6 +95,9 @@ template: |
   {{#if age-gate}}
   fandom.com###age-gate
   {{/if}}
+  {{#if reviews}}
+  fandom.com##.reviews
+  {{/if}}
 tests:
   - params: {}
     output: ""
