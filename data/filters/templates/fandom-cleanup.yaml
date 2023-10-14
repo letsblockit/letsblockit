@@ -49,6 +49,10 @@ params:
     description: Hide the popup menu which asks you for your age for better browsing experiences
     type: checkbox
     default: false
+  - name: reviews
+    description: Hide the Gamespot Expert Reviews section
+    type: checkbox
+    default: false
 tags:
   - fandom
 template: |
@@ -144,6 +148,10 @@ tests:
       age-gate: true
     output: |
       fandom.com###age-gate
+  - params:
+      reviews: true
+    output: |
+      fandom.com##.reviews
 ---
 
 This filter template allows you to remove parts of the Fandom wiki pages interface for a cleaner experience.
