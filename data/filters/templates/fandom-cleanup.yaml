@@ -4,6 +4,7 @@ contributors:
   - JohnyP36
   - lightbulbmeow
   - Nomes77
+  - woodiertexas
 params:
   - name: yellow-sidebar
     description: Hide yellow sidebar
@@ -49,6 +50,10 @@ params:
     description: Hide the popup menu which asks you for your age for better browsing experiences
     type: checkbox
     default: false
+  - name: reviews
+    description: Hide the Gamespot Expert Reviews section
+    type: checkbox
+    default: false
 tags:
   - fandom
 template: |
@@ -90,6 +95,9 @@ template: |
   {{/if}}
   {{#if age-gate}}
   fandom.com###age-gate
+  {{/if}}
+  {{#if reviews}}
+  fandom.com##.reviews
   {{/if}}
 tests:
   - params: {}
@@ -144,6 +152,10 @@ tests:
       age-gate: true
     output: |
       fandom.com###age-gate
+  - params:
+      reviews: true
+    output: |
+      fandom.com##.reviews
 ---
 
 This filter template allows you to remove parts of the Fandom wiki pages interface for a cleaner experience.
