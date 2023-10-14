@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.3.0
-	github.com/alecthomas/kong v0.8.0
+	github.com/alecthomas/kong v0.8.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.15.5
 	github.com/golang-migrate/migrate/v4 v4.16.2
@@ -13,7 +13,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9
 	github.com/jackc/pgx/v5 v5.4.3
-	github.com/labstack/echo/v4 v4.11.1
+	github.com/labstack/echo/v4 v4.11.2
 	github.com/labstack/gommon v0.4.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/samber/lo v1.38.1
@@ -29,7 +29,7 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
@@ -51,7 +51,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/mod v0.13.0 // indirect
-	golang.org/x/net v0.16.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sync v0.4.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
