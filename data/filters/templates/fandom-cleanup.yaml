@@ -4,6 +4,7 @@ contributors:
   - JohnyP36
   - lightbulbmeow
   - Nomes77
+  - woodiertexas
 params:
   - name: yellow-sidebar
     description: Hide yellow sidebar
