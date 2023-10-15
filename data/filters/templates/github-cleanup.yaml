@@ -5,10 +5,6 @@ contributors:
   - Nomes77
   - xvello
 params:
-  - name: homepage-foryou
-    description: Hide the new "For you" feed on the homepage
-    type: checkbox
-    default: true
   - name: homepage-changelog
     description: Hide the changelog and announcements from the homepage
     type: checkbox
@@ -32,10 +28,6 @@ params:
 tags:
   - github
 template: |
-  {{#if homepage-foryou}}
-  github.com###dashboard .js-feeds-tabs #feed-next
-  github.com###dashboard tab-container div[aria-labelledby="feed-next"]
-  {{/if}}
   {{#if homepage-changelog}}
   github.com##aside .dashboard-changelog.mb-4
   github.com##.js-notice
@@ -60,11 +52,6 @@ tests:
     output: |
       github.com##aside .dashboard-changelog.mb-4
       github.com##.js-notice
-  - params:
-      homepage-foryou: true
-    output: |
-      github.com###dashboard .js-feeds-tabs #feed-next
-      github.com###dashboard tab-container div[aria-labelledby="feed-next"]
   - params:
       homepage-explore: true
     output: |
