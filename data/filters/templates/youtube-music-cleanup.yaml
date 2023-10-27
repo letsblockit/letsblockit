@@ -53,6 +53,7 @@ template: |
   {{#each remove-videos-by-channel}}
   music.youtube.com##a:not([href^="playlist"]) + div yt-formatted-string.subtitle:has-text(/{{this}}/i):upward(ytmusic-two-row-item-renderer)
   music.youtube.com###ytmusic-carousel .secondary-flex-columns [title*="{{ . }}"]:nth-of-type(1):upward(ytmusic-responsive-list-item-renderer)
+  music.youtube.com##[player-page-open] ytmusic-player-queue yt-formatted-string.byline[title*="{{ . }}"]:upward(ytmusic-player-queue-item)
   {{/each}}
   {{#each remove-playlists-by-channel}}
   music.youtube.com##a[href^="playlist"] + div yt-formatted-string.subtitle:has-text(/{{this}}/i):upward(ytmusic-two-row-item-renderer)
@@ -89,8 +90,10 @@ tests:
     output: |
       music.youtube.com##a:not([href^="playlist"]) + div yt-formatted-string.subtitle:has-text(/channel/i):upward(ytmusic-two-row-item-renderer)
       music.youtube.com###ytmusic-carousel .secondary-flex-columns [title*="channel"]:nth-of-type(1):upward(ytmusic-responsive-list-item-renderer)
+      music.youtube.com##[player-page-open] ytmusic-player-queue yt-formatted-string.byline[title*="channel"]:upward(ytmusic-player-queue-item)
       music.youtube.com##a:not([href^="playlist"]) + div yt-formatted-string.subtitle:has-text(/channel name/i):upward(ytmusic-two-row-item-renderer)
       music.youtube.com###ytmusic-carousel .secondary-flex-columns [title*="channel name"]:nth-of-type(1):upward(ytmusic-responsive-list-item-renderer)
+      music.youtube.com##[player-page-open] ytmusic-player-queue yt-formatted-string.byline[title*="channel name"]:upward(ytmusic-player-queue-item)
   - params:
       remove-playlists-by-channel:
         - channel
