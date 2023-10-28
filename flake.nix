@@ -12,7 +12,11 @@
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
-            (final: prev: { pinnedGo = prev.go; }) # 1.20 on nixos-23.05
+            (final: prev: {
+              # Pin the golang version to 1.20 on nixos-23.05
+              pinnedGo = prev.go;
+              buildGoModule = prev.buildGoModule.override { go = final.pinnedGo; };
+            })
           ];
         };
         commonImageLabels = import ./nix/labels.nix;
