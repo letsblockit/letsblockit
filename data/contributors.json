@@ -292,6 +292,15 @@
       "contributions": [
         "data"
       ]
+    },
+    {
+      "login": "someguyinbaltimore",
+      "name": "Mr. Bizzle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9001416?v=4",
+      "profile": "https://github.com/someguyinbaltimore",
+      "contributions": [
+        "data"
+      ]
     }
   ],
   "contributorsPerLine": 7,
