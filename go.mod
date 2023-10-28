@@ -9,7 +9,7 @@ require (
 	github.com/go-playground/validator/v10 v10.15.5
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.4.0
 	github.com/hashicorp/go-retryablehttp v0.7.4
 	github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9
 	github.com/jackc/pgx/v5 v5.4.3
