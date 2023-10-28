@@ -9,8 +9,12 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
-        pinnedGo = pkgs.go_1_19;
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            (final: prev: { pinnedGo = prev.go; }) # 1.20 on nixos-23.05
+          ];
+        };
         commonImageLabels = import ./nix/labels.nix;
 
         # Scripts to wrap, with their dependencies, available via `nix run .#script-name`
@@ -28,6 +32,7 @@
         };
       in
       {
+        formatter = pkgs.nixpkgs-fmt;
         defaultPackage = self.packages.${system}.run-server;
         packages = {
           render = pkgs.callPackage ./nix/letsblockit.nix { cmd = "render"; };

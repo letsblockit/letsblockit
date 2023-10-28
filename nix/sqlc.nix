@@ -1,5 +1,5 @@
-{ buildGoModule, fetchFromGitHub, go_1_19 }:
-buildGoModule.override { go = go_1_19; } rec {
+{ buildGoModule, fetchFromGitHub, pinnedGo }:
+buildGoModule.override { go = pinnedGo; } rec {
   pname = "sqlc";
   version = "1.19.0";
 
