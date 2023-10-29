@@ -29,7 +29,8 @@ Then comes the `params` list. It describes what parameters the filter accepts. E
     - `list`: a list of strings, in the YAML list format (e.g. `["one", "two"]`)
 
 The `template` for the filter is defined in [Handlebars](https://handlebarsjs.com/guide/) format. Every param is
-accessible via their `name`. If a parameter is not specified by the user, the default value will be used.
+accessible via their `name`. If a parameter is not specified by the user, the default value will be used. For simple
+templates with only checkbox parameters, a `rules` field can be added to the parameter, and the `template` omitted.
 
 To check that your syntax is correct and guard against regression, `tests` cases are written as a list of objects, with
 the following fields:
