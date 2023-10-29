@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"strings"
 
 	"github.com/russross/blackfriday/v2"
 	"golang.org/x/exp/slices"
@@ -14,6 +15,7 @@ import (
 )
 
 const (
+	newline                  string = "\n"
 	presetFilePattern        string = "%s/%s.txt"
 	presetHeaderPattern      string = "!! %s with %s preset"
 	presetAttributionPattern string = `
@@ -48,10 +50,13 @@ func parseTemplate(name string, reader io.Reader) (*Template, error) {
 	// If no template is provided, check whether all params have raw rules
 	if len(tpl.Template) == 0 {
 		tpl.rawRules = true
-		for _, p := range tpl.Params {
+		for i, p := range tpl.Params {
 			if p.Type != BooleanParam || len(p.Rules) == 0 {
 				tpl.rawRules = false
-				break
+				return nil, fmt.Errorf("%s has no template but param %s has no raw rules", tpl.Name, p.Name)
+			}
+			if !strings.HasSuffix(p.Rules, newline) {
+				tpl.Params[i].Rules = p.Rules + newline
 			}
 		}
 	}

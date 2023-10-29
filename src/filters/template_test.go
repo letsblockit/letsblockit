@@ -43,6 +43,7 @@ func TestValidateTemplates(t *testing.T) {
 			require.NoError(t, parsePresets(filter, data.Presets), "Preset values did not parse OK")
 			assert.NoError(t, validate.Struct(filter), "Template did no pass input validation")
 		})
+		require.NotNil(t, filter, "Template did not parse OK")
 
 		t.Run("Contributors/"+name, func(t *testing.T) {
 			for _, c := range filter.Contributors {
