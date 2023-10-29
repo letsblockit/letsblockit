@@ -26,7 +26,7 @@ type Template struct {
 	Title        string      `validate:"required"`
 	Params       []Parameter `validate:"dive" yaml:",omitempty"`
 	Tags         []string    `validate:"dive,alphaunicode" yaml:",omitempty"`
-	Template     string      `validate:"required_without=rawRules"`
+	Template     string      `validate:"required_without=rawRules,excluded_with=rawRules"`
 	Tests        []testCase
 	Description  string `validate:"required" yaml:"-"`
 	Contributors []string

@@ -47,17 +47,24 @@ func parseTemplate(name string, reader io.Reader) (*Template, error) {
 	pos += bytes.Index(input[pos:], newLine)
 	tpl.Description = string(blackfriday.Run(input[pos:]))
 
-	// If no template is provided, check whether all params have raw rules
-	if len(tpl.Template) == 0 {
-		tpl.rawRules = true
-		for i, p := range tpl.Params {
-			if p.Type != BooleanParam || len(p.Rules) == 0 {
-				tpl.rawRules = false
-				return nil, fmt.Errorf("%s has no template but param %s has no raw rules", tpl.Name, p.Name)
+	// Check for presence of raw rules if template not given.
+	// Must have either, but not both.
+	hasTemplate := len(tpl.Template) > 0
+	tpl.rawRules = len(tpl.Params) > 0
+	for i, p := range tpl.Params {
+		if p.Type == BooleanParam && len(p.Rules) > 0 {
+			if hasTemplate {
+				return nil, fmt.Errorf("%s has a template AND raw rules on %s, not allowed", tpl.Name, p.Name)
 			}
 			if !strings.HasSuffix(p.Rules, newline) {
 				tpl.Params[i].Rules = p.Rules + newline
 			}
+		} else {
+			if !hasTemplate {
+				return nil, fmt.Errorf("%s has no template but param %s has no raw rules", tpl.Name, p.Name)
+			}
+			tpl.rawRules = false
+			break
 		}
 	}
 
