@@ -45,6 +45,17 @@ func parseTemplate(name string, reader io.Reader) (*Template, error) {
 	pos += bytes.Index(input[pos:], newLine)
 	tpl.Description = string(blackfriday.Run(input[pos:]))
 
+	// If no template is provided, check whether all params have raw rules
+	if len(tpl.Template) == 0 {
+		tpl.rawRules = true
+		for _, p := range tpl.Params {
+			if p.Type != BooleanParam || len(p.Rules) == 0 {
+				tpl.rawRules = false
+				break
+			}
+		}
+	}
+
 	// Make sure contributors and sponsors are sorted
 	slices.Sort(tpl.Contributors)
 	slices.Sort(tpl.Sponsors)

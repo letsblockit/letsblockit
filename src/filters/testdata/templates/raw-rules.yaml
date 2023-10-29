@@ -1,0 +1,19 @@
+title: Template with raw rules
+params:
+  - name: boolean_param
+    description: A boolean parameter
+    type: checkbox
+    default: false
+    rules: |
+      helloA
+      helloB
+  - name: another_boolean
+    description: A disabled boolean parameter
+    type: checkbox
+    default: false
+    rules: |
+      helloC
+tags: ["tag1", "tag2"]
+---
+
+## Test description title

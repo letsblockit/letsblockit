@@ -98,6 +98,9 @@ func (r *Repository) Render(w io.Writer, instance *Instance) error {
 	if instance.TestMode {
 		w = NewTestModeTransformer(w)
 	}
+	if tpl.rawRules {
+		return tpl.renderRawRules(w, params)
+	}
 	if err := r.main.Execute(w, params); err != nil {
 		return err
 	}

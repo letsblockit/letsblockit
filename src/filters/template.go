@@ -1,5 +1,10 @@
 package filters
 
+import (
+	"fmt"
+	"io"
+)
+
 var (
 	presetNameSeparator = "---preset---"
 	filenameSuffix      = ".yaml"
@@ -21,12 +26,13 @@ type Template struct {
 	Title        string      `validate:"required"`
 	Params       []Parameter `validate:"dive" yaml:",omitempty"`
 	Tags         []string    `validate:"dive,alphaunicode" yaml:",omitempty"`
-	Template     string      `validate:"required"`
+	Template     string      `validate:"required_without=rawRules"`
 	Tests        []testCase
 	Description  string `validate:"required" yaml:"-"`
 	Contributors []string
 	Sponsors     []string
 	presets      []presetEntry `yaml:"-"` // Generated on parse from params and presets
+	rawRules     bool
 }
 
 type presetEntry struct {
@@ -44,6 +50,7 @@ type Parameter struct {
 	Type        ParamType   `validate:"required,oneof=checkbox string list multiline"`
 	OnlyIf      string      `validate:"omitempty,valid_only_if" yaml:",omitempty"`
 	Default     interface{} `validate:"valid_default"`
+	Rules       string      `validate:"omitempty,raw_rules_allowed" yaml:",omitempty"`
 	Presets     []Preset    `validate:"omitempty,preset_allowed,dive" yaml:",omitempty"`
 }
 
@@ -68,6 +75,23 @@ func (f *Template) HasTag(tag string) bool {
 		}
 	}
 	return false
+}
+
+func (f *Template) renderRawRules(w io.Writer, params map[string]interface{}) error {
+	for _, param := range f.Params {
+		if param.Type != BooleanParam {
+			return fmt.Errorf("unsupported param type %s for %s", param.Type, param.Name)
+		}
+		if len(param.Rules) == 0 {
+			return fmt.Errorf("no rules for param %s", param.Name)
+		}
+		if value, found := params[param.Name]; found && value == true {
+			if _, err := fmt.Fprint(w, param.Rules); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (p *Parameter) BuildPresetParamName(preset string) string {

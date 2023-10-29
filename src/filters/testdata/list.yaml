@@ -8,3 +8,7 @@ instances:
       string_list:
         - one
         - two
+  - template: raw-rules
+    params:
+      boolean_param: true
+      another_boolean: false
