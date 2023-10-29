@@ -21,42 +21,50 @@ params:
     description: Hide notification popups at the bottom of the page
     type: checkbox
     default: true
-    rules: "fandom.com##.notifications-placeholder"
+    rules: |
+      fandom.com##.notifications-placeholder
   - name: blue-wikia-bar
     description: Hide the blue "Wikia" bar at the bottom-right corner, which starts with "Check out Fandom..."
     type: checkbox
     default: true
-    rules: "fandom.com###WikiaBar"
+    rules: |
+      fandom.com###WikiaBar
   - name: global-footer
     description: Hide the global footer at the bottom of every page
     type: checkbox
     default: true
-    rules: "fandom.com##.global-footer"
+    rules: |
+      fandom.com##.global-footer
   - name: fan-footer
     description: Hide the section "fan feed" at the bottom of the page
     type: checkbox
     default: true
-    rules: "fandom.com###mixed-content-footer"
+    rules: |
+      fandom.com###mixed-content-footer
   - name: right-sidebar
     description: Hide the rights sidebar, which contains "popular pages" and "others like you also viewed" sections
     type: checkbox
     default: true
-    rules: "fandom.com##.page__right-rail"
+    rules: |
+      fandom.com##.page__right-rail
   - name: explore-menu
     description: Hides the "explore" tab in the menu
     type: checkbox
     default: true
-    rules: "fandom.com##.explore-menu.wds-dropdown"
+    rules: |
+      fandom.com##.explore-menu.wds-dropdown
   - name: selection-container
     description: Hides tooltip that pops up when you try to highlight text
     type: checkbox
     default: true
-    rules: "fandom.com##.highlight__sticky-container"
+    rules: |
+      fandom.com##.highlight__sticky-container
   - name: search
     description: Hides "Top Trending Searches" when you open search
     type: checkbox
     default: true
-    rules: "fandom.com##.search-seeding"
+    rules: |
+      fandom.com##.search-seeding
   - name: edit-buttons
     description: Hide edit buttons at the top-left of every page/article
     type: checkbox
@@ -68,12 +76,14 @@ params:
     description: Hide the popup menu which asks you for your age for better browsing experiences
     type: checkbox
     default: false
-    rules: "fandom.com###age-gate"
+    rules: |
+      fandom.com###age-gate
   - name: reviews
     description: Hide the Gamespot Expert Reviews section
     type: checkbox
     default: false
-    rules: "fandom.com##.reviews"
+    rules: |
+      fandom.com##.reviews
 tags:
   - fandom
 tests:
