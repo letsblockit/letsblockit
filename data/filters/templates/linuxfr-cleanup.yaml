@@ -6,32 +6,17 @@ params:
     description: Hide the pinned article at the top of the homepage
     type: checkbox
     default: true
+    rules: |
+      linuxfr.org###phare
   - name: homepage-banner
     description: Hide the advertising banner on the homepage
     type: checkbox
     default: false
+    rules: |
+      linuxfr.org###phare + aside.banner
 tags:
   - linuxfr
-template: |
-  {{#if homepage-pinned}}
-  linuxfr.org###phare
-  {{/if}}
-  {{#if homepage-banner}}
-  linuxfr.org###phare + aside.banner
-  {{/if}}
-tests:
-  - params: {}
-    output: ""
-  - params:
-      homepage-pinned: true
-    output: |
-      linuxfr.org###phare
-  - params:
-      homepage-pinned: true
-      homepage-banner: true
-    output: |
-      linuxfr.org###phare
-      linuxfr.org###phare + aside.banner
+
 ---
 
 The LinuxFR.org homepage has a low information density, with the most recent article usually barely above the fold.

@@ -9,65 +9,36 @@ params:
     description: Hide the changelog and announcements from the homepage
     type: checkbox
     default: true
+    rules: |
+      github.com##aside .dashboard-changelog.mb-4
+      github.com##.js-notice
   - name: homepage-explore
     description: Hide the explore section from the homepage
     type: checkbox
     default: true
+    rules: |
+      github.com##aside.feed-right-sidebar[aria-label="Explore"]
   - name: copilot-upsells
     description: Hide prompts to test copilot
     type: checkbox
     default: false
+    rules: |
+      github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
   - name: profile-achievements
     description: Hide the achievements from user profiles
     type: checkbox
     default: true
+    rules: |
+      github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
   - name: unwatch-suggestions
     description: Hide the "Overwhelmed by notifications?" prompt
     type: checkbox
     default: false
+    rules: |
+      github.com##.js-unwatch-suggestions
 tags:
   - github
-template: |
-  {{#if homepage-changelog}}
-  github.com##aside .dashboard-changelog.mb-4
-  github.com##.js-notice
-  {{/if}}
-  {{#if homepage-explore}}
-  github.com##aside.feed-right-sidebar[aria-label="Explore"]
-  {{/if}}
-  {{#if copilot-upsells}}
-  github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
-  {{/if}}
-  {{#if profile-achievements}}
-  github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
-  {{/if}}
-  {{#if unwatch-suggestions}}
-  github.com##.js-unwatch-suggestions
-  {{/if}}
-tests:
-  - params: {}
-    output: ""
-  - params:
-      homepage-changelog: true
-    output: |
-      github.com##aside .dashboard-changelog.mb-4
-      github.com##.js-notice
-  - params:
-      homepage-explore: true
-    output: |
-      github.com##aside.feed-right-sidebar[aria-label="Explore"]
-  - params:
-      copilot-upsells: true
-    output: |
-      github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
-  - params:
-      profile-achievements: true
-    output: |
-      github.com##.js-profile-editable-replace img.achievement-badge-sidebar:upward(div.border-top)
-  - params:
-      unwatch-suggestions: true
-    output: |
-      github.com##.js-unwatch-suggestions
+
 ---
 
 The GitHub interface can get cluttered and distracting. This template aims at reducing the

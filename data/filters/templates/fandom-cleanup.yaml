@@ -86,6 +86,7 @@ params:
       fandom.com##.reviews
 tags:
   - fandom
+
 ---
 
 This filter template allows you to remove parts of the Fandom wiki pages interface for a cleaner experience.
