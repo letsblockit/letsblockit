@@ -1,10 +1,12 @@
 package filters
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
 	"io/fs"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -75,6 +77,53 @@ func TestValidateTemplates(t *testing.T) {
 		return nil
 	})
 	assert.NoError(t, err)
+}
+
+func TestRenderRawRules(t *testing.T) {
+	repo, err := Load(testTemplates, testTemplates)
+	require.NoError(t, err)
+	tpl, err := repo.Get("raw-rules")
+	require.NoError(t, err)
+
+	cases := []struct {
+		params   map[string]interface{}
+		expected string
+	}{{
+		params:   nil,
+		expected: "",
+	}, {
+		params: map[string]interface{}{
+			"boolean_param":   false,
+			"another_boolean": false,
+		},
+		expected: "",
+	}, {
+		params: map[string]interface{}{
+			"boolean_param":   true,
+			"another_boolean": false,
+		},
+		expected: "helloA\nhelloB\n",
+	}, {
+		params: map[string]interface{}{
+			"boolean_param":   false,
+			"another_boolean": true,
+		},
+		expected: "helloC\n",
+	}, {
+		params: map[string]interface{}{
+			"boolean_param":   true,
+			"another_boolean": true,
+		},
+		expected: "helloA\nhelloB\nhelloC\n",
+	}}
+
+	for i, tc := range cases {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			buf := bytes.Buffer{}
+			assert.NoError(t, tpl.renderRawRules(&buf, tc.params))
+			assert.Equal(t, tc.expected, buf.String())
+		})
+	}
 }
 
 func checkRedundantPresetValues(f *Template, presets fs.FS) error {
