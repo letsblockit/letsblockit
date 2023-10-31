@@ -30,6 +30,11 @@ func buildValidator(t *testing.T) *validator.Validate {
 		return paramType == StringListParam
 	})
 	require.NoError(t, err)
+	err = validate.RegisterValidation("raw_rules_allowed", func(fl validator.FieldLevel) bool {
+		paramType := ParamType(fl.Parent().FieldByName("Type").String())
+		return paramType == BooleanParam
+	})
+	require.NoError(t, err)
 	err = validate.RegisterValidation("valid_only_if", func(fl validator.FieldLevel) bool {
 		target := fl.Field().String()
 		if fl.Parent().FieldByName("Name").String() == target {
@@ -180,7 +185,7 @@ func TestValidateTemplate(t *testing.T) {
 			err: vErrs{
 				"Template.Name":        "required",
 				"Template.Title":       "required",
-				"Template.Template":    "required",
+				"Template.Template":    "required_without",
 				"Template.Description": "required",
 			},
 		},

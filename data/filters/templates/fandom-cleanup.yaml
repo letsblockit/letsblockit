@@ -10,152 +10,83 @@ params:
     description: Hide yellow sidebar
     type: checkbox
     default: true
-  - name: bottom-notifications
-    description: Hide notification popups at the bottom of the page
-    type: checkbox
-    default: true   
-  - name: blue-wikia-bar
-    description: Hide the blue "Wikia" bar at the bottom-right corner, which starts with "Check out Fandom..."
-    type: checkbox
-    default: true
-  - name: global-footer
-    description: Hide the global footer at the bottom of every page
-    type: checkbox
-    default: true
-  - name: fan-footer
-    description: Hide the section "fan feed" at the bottom of the page
-    type: checkbox
-    default: true
-  - name: right-sidebar
-    description: Hide the rights sidebar, which contains "popular pages" and "others like you also viewed" sections
-    type: checkbox
-    default: true
-  - name: explore-menu
-    description: Hides the "explore" tab in the menu
-    type: checkbox
-    default: true
-  - name: selection-container
-    description: Hides tooltip that pops up when you try to highlight text
-    type: checkbox
-    default: true
-  - name: search
-    description: Hides "Top Trending Searches" when you open search
-    type: checkbox
-    default: true
-  - name: edit-buttons
-    description: Hide edit buttons at the top-left of every page/article
-    type: checkbox
-    default: true
-  - name: age-gate
-    description: Hide the popup menu which asks you for your age for better browsing experiences
-    type: checkbox
-    default: false
-  - name: reviews
-    description: Hide the Gamespot Expert Reviews section
-    type: checkbox
-    default: false
-tags:
-  - fandom
-template: |
-  {{#if yellow-sidebar}}
-  fandom.com##.global-navigation
-  fandom.com##.main-container:style(width: 100% !important; margin-left: auto !important; margin-right: auto !important;)
-  fandom.com##.fandom-community-header__background:style(width: 100% !important)
-  fandom.com##.fandom-sticky-header:style(left: 0 !important;)
-  fandom.com##.search-modal::before:style(left: 0 !important;)
-  fandom.com##body:style(border-left: none !important;)
-  {{/if}}
-  {{#if bottom-notifications}}
-  fandom.com##.notifications-placeholder
-  {{/if}}
-  {{#if blue-wikia-bar}}
-  fandom.com###WikiaBar
-  {{/if}}
-  {{#if global-footer}}
-  fandom.com##.global-footer
-  {{/if}}
-  {{#if fan-footer}}
-  fandom.com###mixed-content-footer
-  {{/if}}
-  {{#if right-sidebar}}
-  fandom.com##.page__right-rail
-  {{/if}}
-  {{#if explore-menu}}
-  fandom.com##.explore-menu.wds-dropdown
-  {{/if}}
-  {{#if selection-container}}
-  fandom.com##.highlight__sticky-container
-  {{/if}}
-  {{#if search}}
-  fandom.com##.search-seeding
-  {{/if}}
-  {{#if edit-buttons}}
-  fandom.com##.page-side-tool.page-side-edit
-  fandom.com##.mw-editsection
-  {{/if}}
-  {{#if age-gate}}
-  fandom.com###age-gate
-  {{/if}}
-  {{#if reviews}}
-  fandom.com##.reviews
-  {{/if}}
-tests:
-  - params: {}
-    output: ""
-  - params:
-      yellow-sidebar: true
-    output: |
+    rules: |
       fandom.com##.global-navigation
       fandom.com##.main-container:style(width: 100% !important; margin-left: auto !important; margin-right: auto !important;)
       fandom.com##.fandom-community-header__background:style(width: 100% !important)
       fandom.com##.fandom-sticky-header:style(left: 0 !important;)
       fandom.com##.search-modal::before:style(left: 0 !important;)
       fandom.com##body:style(border-left: none !important;)
-  - params:
-      bottom-notifications: true
-    output: |
+  - name: bottom-notifications
+    description: Hide notification popups at the bottom of the page
+    type: checkbox
+    default: true
+    rules: |
       fandom.com##.notifications-placeholder
-  - params:
-      blue-wikia-bar: true
-    output: |
+  - name: blue-wikia-bar
+    description: Hide the blue "Wikia" bar at the bottom-right corner, which starts with "Check out Fandom..."
+    type: checkbox
+    default: true
+    rules: |
       fandom.com###WikiaBar
-  - params:
-      global-footer: true
-    output: |
+  - name: global-footer
+    description: Hide the global footer at the bottom of every page
+    type: checkbox
+    default: true
+    rules: |
       fandom.com##.global-footer
-  - params:
-      fan-footer: true
-    output: |
+  - name: fan-footer
+    description: Hide the section "fan feed" at the bottom of the page
+    type: checkbox
+    default: true
+    rules: |
       fandom.com###mixed-content-footer
-  - params:
-      right-sidebar: true
-    output: |
+  - name: right-sidebar
+    description: Hide the rights sidebar, which contains "popular pages" and "others like you also viewed" sections
+    type: checkbox
+    default: true
+    rules: |
       fandom.com##.page__right-rail
-  - params:
-      explore-menu: true
-    output: |
+  - name: explore-menu
+    description: Hides the "explore" tab in the menu
+    type: checkbox
+    default: true
+    rules: |
       fandom.com##.explore-menu.wds-dropdown
-  - params:
-      selection-container: true
-    output: |
+  - name: selection-container
+    description: Hides tooltip that pops up when you try to highlight text
+    type: checkbox
+    default: true
+    rules: |
       fandom.com##.highlight__sticky-container
-  - params:
-      search: true
-    output: |
+  - name: search
+    description: Hides "Top Trending Searches" when you open search
+    type: checkbox
+    default: true
+    rules: |
       fandom.com##.search-seeding
-  - params:
-      edit-buttons: true
-    output: |
+  - name: edit-buttons
+    description: Hide edit buttons at the top-left of every page/article
+    type: checkbox
+    default: true
+    rules: |
       fandom.com##.page-side-tool.page-side-edit
       fandom.com##.mw-editsection
-  - params:
-      age-gate: true
-    output: |
+  - name: age-gate
+    description: Hide the popup menu which asks you for your age for better browsing experiences
+    type: checkbox
+    default: false
+    rules: |
       fandom.com###age-gate
-  - params:
-      reviews: true
-    output: |
+  - name: reviews
+    description: Hide the Gamespot Expert Reviews section
+    type: checkbox
+    default: false
+    rules: |
       fandom.com##.reviews
+tags:
+  - fandom
+
 ---
 
 This filter template allows you to remove parts of the Fandom wiki pages interface for a cleaner experience.

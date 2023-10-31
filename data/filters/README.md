@@ -28,14 +28,16 @@ Then comes the `params` list. It describes what parameters the filter accepts. E
     - `list` and `multiline`: a single string between double quotes
     - `list`: a list of strings, in the YAML list format (e.g. `["one", "two"]`)
 
-The `template` for the filter is defined in [Handlebars](https://handlebarsjs.com/guide/) format. Every param is
-accessible via their `name`. If a parameter is not specified by the user, the default value will be used.
+There are two ways to define what content blocking rules to output:
 
-To check that your syntax is correct and guard against regression, `tests` cases are written as a list of objects, with
-the following fields:
+- For simple templates with only checkbox parameters, add a `rules` field to each parameter, for rules
+  to add when that parameter is enabled
 
-- `params` is a key/value object, defining the test case input
-- `output` is the expected output of the filter template, the test will fail if it differs
+- If other parameter types are used, you'll pass a `template` property, in [Handlebars](https://handlebarsjs.com/guide/)
+  format. Every param is accessible via their `name`. To check that your syntax is correct and guard against regression,
+  `tests` cases are written as a list of objects, with the following fields:
+    - `params` is a key/value object, defining the test case input
+    - `output` is the expected output of the filter template, the test will fail if it differs
 
 If you have the Go compiler [installed](https://go.dev/doc/install), you can run `go test -v ./src/filters/`
 in the project's root directory. The tests will validate the filters' format and syntax, and run their test cases.

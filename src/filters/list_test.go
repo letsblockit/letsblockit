@@ -71,6 +71,10 @@ Hello
 ! simple
 one
 two
+
+! raw-rules
+helloA
+helloB
 `, buf.String())
 }
 
