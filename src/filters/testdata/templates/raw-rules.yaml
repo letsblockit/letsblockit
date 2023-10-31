@@ -11,8 +11,7 @@ params:
     description: A disabled boolean parameter
     type: checkbox
     default: false
-    rules: |
-      helloC
+    rules: "helloC" # Intentional "normal quotes" to make sure we don't mess up newlines
 tags: ["tag1", "tag2"]
 ---
 
