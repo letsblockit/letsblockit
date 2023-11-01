@@ -72,18 +72,18 @@ params:
     rules: |
       fandom.com##.page-side-tool.page-side-edit
       fandom.com##.mw-editsection
+  - name: reviews
+    description: Hide the Gamespot Expert Reviews section
+    type: checkbox
+    default: true
+    rules: |
+      fandom.com##.reviews
   - name: age-gate
     description: Hide the popup menu which asks you for your age for better browsing experiences
     type: checkbox
     default: false
     rules: |
       fandom.com###age-gate
-  - name: reviews
-    description: Hide the Gamespot Expert Reviews section
-    type: checkbox
-    default: false
-    rules: |
-      fandom.com##.reviews
 tags:
   - fandom
 

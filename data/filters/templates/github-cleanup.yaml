@@ -21,7 +21,7 @@ params:
   - name: copilot-upsells
     description: Hide prompts to test copilot
     type: checkbox
-    default: false
+    default: true
     rules: |
       github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
   - name: profile-achievements
