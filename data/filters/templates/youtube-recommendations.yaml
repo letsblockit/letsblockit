@@ -8,37 +8,32 @@ params:
     description: Hide the related videos sidebar when watching a video
     type: checkbox
     default: true
+    rules: |
+      www.youtube.com###related
+      m.youtube.com##ytm-watch ytm-item-section-renderer[data-content-type="related"]
   - name: homepage-recommendations
     description: Hide video suggestions on the homepage
     type: checkbox
     default: true
+    rules: |
+      www.youtube.com##ytd-browse[page-subtype="home"]
+      m.youtube.com##ytm-browse div[tab-identifier="FEwhat_to_watch"]
   - name: end-of-video-overlay
     description: Hide video suggestions that obscure the end of the video
     type: checkbox
     default: true
+    rules: |
+      www.youtube.com##.ytp-ce-element
   - name:  endscreen-content
     description: Hide the video grid shown after a video ends
     type: checkbox
     default: true
+    rules: |
+      www.youtube.com##.ytp-endscreen-content
 tags:
   - youtube
 attribution:
   - "@link2xt"
-template: |
-  {{#if related-videos}}
-  www.youtube.com###related
-  m.youtube.com##ytm-watch ytm-item-section-renderer[data-content-type="related"]
-  {{/if}}
-  {{#if homepage-recommendations}}
-  www.youtube.com##ytd-browse[page-subtype="home"]
-  m.youtube.com##ytm-browse div[tab-identifier="FEwhat_to_watch"]
-  {{/if}}
-  {{#if end-of-video-overlay}}
-  www.youtube.com##.ytp-ce-element
-  {{/if}}
-  {{#if endscreen-content}}
-  www.youtube.com##.ytp-endscreen-content
-  {{/if}}
 tests:
   - params: {}
     output: ""
