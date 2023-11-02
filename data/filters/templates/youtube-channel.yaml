@@ -14,6 +14,7 @@ template: |
   {{#each channels}}
   www.youtube.com##ytd-browse[page-subtype="home"] a[href$="{{ . }}"]:upward(ytd-rich-item-renderer)
   www.youtube.com##ytd-search a[href$="{{ . }}"]:upward(ytd-video-renderer,ytd-channel-renderer)
+  www.youtube.com##ytd-shorts:matches-path(/shorts) a.ytd-reel-player-header-renderer[href$="{{ . }}"]:upward(ytd-reel-video-renderer)
   m.youtube.com##ytm-browse a[href$="{{ . }}"]:upward(ytm-rich-item-renderer)
   m.youtube.com##ytm-search a[href$="{{ . }}"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
   {{/each}}
@@ -28,6 +29,7 @@ tests:
     output: |
       www.youtube.com##ytd-browse[page-subtype="home"] a[href$="ChannelURL"]:upward(ytd-rich-item-renderer)
       www.youtube.com##ytd-search a[href$="ChannelURL"]:upward(ytd-video-renderer,ytd-channel-renderer)
+      www.youtube.com##ytd-shorts:matches-path(/shorts) a.ytd-reel-player-header-renderer[href$="ChannelURL"]:upward(ytd-reel-video-renderer)
       m.youtube.com##ytm-browse a[href$="ChannelURL"]:upward(ytm-rich-item-renderer)
       m.youtube.com##ytm-search a[href$="ChannelURL"]:upward(ytm-video-with-context-renderer,ytm-compact-channel-renderer)
       youtube.com##ytd-rich-grid-row, #contents.ytd-rich-grid-row:style(display:contents !important;)
