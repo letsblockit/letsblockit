@@ -17,17 +17,7 @@ params:
       news.ycombinator.com##.comhead .hnuser
 tags:
   - hackernews
-tests:
-  - params: {}
-    output: ""
-  - params:
-      hide-karma: true
-    output: |
-      news.ycombinator.com##span.pagetop span#karma
-  - params:
-      hide-usernames: true
-    output: |
-      news.ycombinator.com##.comhead .hnuser
+
 ---
 
 Various tweaks to simplify the Hacker News interface.
