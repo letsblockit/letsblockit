@@ -7,19 +7,16 @@ params:
     description: Hide your karma in the navigation bar
     type: checkbox
     default: false
+    rules: |
+      news.ycombinator.com##span.pagetop span#karma
   - name: hide-usernames
     description: Hide usernames from comments
     type: checkbox
     default: false
+    rules: |
+      news.ycombinator.com##.comhead .hnuser
 tags:
   - hackernews
-template: |
-  {{#if hide-karma}}
-  news.ycombinator.com##span.pagetop span#karma
-  {{/if}}
-  {{#if hide-usernames}}
-  news.ycombinator.com##.comhead .hnuser
-  {{/if}}
 tests:
   - params: {}
     output: ""
