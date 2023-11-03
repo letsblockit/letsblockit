@@ -72,6 +72,11 @@ main li:not(.nav-item) {
   opacity: 0;
 }
 
+form cond-visible {
+  display: block;
+  padding-left: $form-check-padding-start;
+}
+
 form label[title] {
   cursor: help;
   text-decoration: underline dashed !important;

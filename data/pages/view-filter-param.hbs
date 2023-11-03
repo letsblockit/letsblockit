@@ -1,5 +1,6 @@
+{{#with OnlyIf}}<cond-visible only-if="{{this}}">{{/with}}
 {{#if (eq type "checkbox")}}
-    <div class="mb-3 form-check form-switch{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <div class="mb-3 form-check form-switch">
         <input type="checkbox" role="switch" class="form-check-input" id="{{name}}" name="{{name}}"
                {{#equal true (lookup @root.data.params name)}}checked{{/equal}}>
         <label class="form-check-label" for="{{name}}">
@@ -8,7 +9,7 @@
         </label>
     </div>
 {{else if (eq type "string")}}
-    <div class="mb-3{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <div class="mb-3">
         <label class="form-label" for="{{name}}">
             {{description}}{{>view-filter-param-link this}}:
             {{>view-filter-pill-new name}}
@@ -17,7 +18,7 @@
                value="{{lookup @root.data.params name}}">
     </div>
 {{else if (eq type "multiline")}}
-    <div class="mb-3{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <div class="mb-3">
         <label class="form-label" for="{{name}}">
             {{description}}{{>view-filter-param-link this}}:
             {{>view-filter-pill-new name}}
@@ -26,7 +27,7 @@
             {{~lookup @root.data.params name}}</textarea>
     </div>
 {{else if (eq type "list")}}
-    <fieldset class="row mb-3{{#with OnlyIf}} ms-lg-4" data-hide-unless="{{this}}{{/with}}">
+    <fieldset class="row mb-3">
         <legend class="col-form-label col-sm-auto pt-0">
             {{description}}{{>view-filter-param-link this}}:
             {{>view-filter-pill-new name}}
@@ -77,3 +78,4 @@
         </div>
     </fieldset>
 {{/if}}
+{{#with OnlyIf}}</cond-visible>{{/with}}
