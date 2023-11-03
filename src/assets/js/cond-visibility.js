@@ -1,34 +1,29 @@
 "use strict";
 
 /*
- * Implements behaviour for the custom data-hide-unless attribute:
+ * Web component to implement the `onlyif` parameter property:
  * add or remove the hidden attribute based on the target checkbox state.
  */
 
-import * as htmx from "htmx.org";
+class condVisible extends HTMLElement {
+    setVisibility(source) {
+        if (source.checked) {
+            this.removeAttribute("hidden")
+        } else {
+            this.setAttribute("hidden", "true")
+        }
+    }
 
-function toggleConditionalVisibility(checkbox, target) {
-    if (checkbox.checked){
-        target.removeAttribute("hidden")
-    } else {
-        target.setAttribute("hidden", "true")
+    connectedCallback() {
+        const sourceId = this.getAttribute("only-if")
+        const source = document.getElementById(sourceId)
+        if (source) {
+            source.addEventListener('change', () => this.setVisibility(source))
+            this.setVisibility(source)
+        } else {
+            console.error("cannot find only-if source " + sourceId)
+        }
     }
 }
 
-function wireConditionalVisibility(content) {
-    content.querySelectorAll('[data-hide-unless]').forEach(function (target) {
-        const sourceId = target.getAttribute("data-hide-unless")
-        const source = document.getElementById(sourceId)
-        if (source) {
-            source.addEventListener('change', function () {
-                toggleConditionalVisibility(source, target)
-            })
-            toggleConditionalVisibility(source, target)
-        } else {
-            console.error("cannot find hide-unless source " + sourceId)
-        }
-    })
-}
-
-wireConditionalVisibility(document.body)
-htmx.onLoad(wireConditionalVisibility)
+customElements.define("cond-visible", condVisible);
