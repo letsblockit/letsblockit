@@ -95,7 +95,13 @@ func (s *pgxStore) cleanup(t *testing.T, name string) {
 
 // mustExec uses string interpolation to execute schema operations
 func mustExec(t *testing.T, p *pgx.Conn, pattern string, args ...interface{}) {
-	_, err := p.Exec(context.Background(), fmt.Sprintf(pattern, args...))
+	var err error
+	for i := 0; i < 5; i++ {
+		_, err = p.Exec(context.Background(), fmt.Sprintf(pattern, args...))
+		if err == nil {
+			break
+		}
+	}
 	require.NoError(t, err)
 }
 
