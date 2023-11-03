@@ -82,6 +82,10 @@ form label[title] {
   text-decoration: underline dashed !important;
 }
 
+form div.input-group button[class*="btn-outline-"] {
+  --bs-btn-bg: var(--bs-body-bg);
+}
+
 // Firefox's default yellow does not work in dark mode
 form input:autofill {
   color: $warning-text-emphasis;
