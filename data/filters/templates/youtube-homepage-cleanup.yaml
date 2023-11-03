@@ -1,13 +1,14 @@
 title: "YouTube: homepage interface cleanups"
 contributors:
   - JohnyP36
+  - Nomes77
 params:
   - name: only-videos
     description: Hide all sections on the homepage that doesn't contain videos. If this rule is enabled the other rules are not needed.
     type: checkbox
     default: false
     rules: |
-      www.youtube.com##ytd-browse[page-subtype="home"] ytd-rich-section-renderer
+      www.youtube.com##ytd-browse[page-subtype="home"] ytd-rich-section-renderer:not(:has(ytd-feed-nudge-renderer))
   - name: new-posts-section
     description: Hide section called "New Posts" on the homepage
     type: checkbox
