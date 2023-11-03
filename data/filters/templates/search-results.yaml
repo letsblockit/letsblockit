@@ -259,9 +259,3 @@ Results will be hidden if their link destination contains one of the values you 
 The [uBlock-Origin-dev-filter](https://github.com/quenhus/uBlock-Origin-dev-filter) project maintains a list
 if copycat websites for Github and Stackoverflow. You can use their list by ticking the boxes at the bottom
 of the form. Rules to block these websites will be added at the bottom of the filter.
-
-<div role="alert" class="alert alert-secondary bg-secondary-subtle">
-Due to technical limitations, this template has lower performance and compatibility than dedicated
-extensions such as <a href="https://iorate.github.io/ublacklist/docs">uBlacklist</a>.
-We suggest testing this extension if you need compatibility with search engines we don't support, such as Bing.
-</div>
