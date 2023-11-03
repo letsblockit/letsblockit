@@ -24,12 +24,18 @@ params:
     default: true
     rules: |
       www.youtube.com##.ytp-ce-element
-  - name:  endscreen-content
+  - name: endscreen-content
     description: Hide the video grid shown after a video ends
     type: checkbox
     default: true
     rules: |
       www.youtube.com##.ytp-endscreen-content
+  - name: playlist-recommendations
+    description: Hide playlist suggestions on playlist pages
+    type: checkbox
+    default: true
+    rules: |
+      www.youtube.com##ytd-browse[page-subtype="playlist"] ytd-grid-playlist-renderer:upward(#dismissible)
 tags:
   - youtube
 attribution:
