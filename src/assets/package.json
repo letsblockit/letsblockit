@@ -17,12 +17,12 @@
     "lint": "eslint --fix ."
   },
   "devDependencies": {
-    "@parcel/compressor-gzip": "^2.10.1",
-    "@parcel/transformer-sass": "^2.10.1",
+    "@parcel/compressor-gzip": "^2.10.2",
+    "@parcel/transformer-sass": "^2.10.2",
     "@tabler/icons": "^2.40.0",
     "bootstrap": "^5.3.2",
-    "eslint": "^8.52.0",
-    "htmx.org": "^1.9.6",
-    "parcel": "^2.10.1"
+    "eslint": "^8.53.0",
+    "htmx.org": "^1.9.8",
+    "parcel": "^2.10.2"
   }
 }
