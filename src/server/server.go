@@ -269,6 +269,12 @@ func (s *Server) setupRouter() {
 			CookiePath:     "/",
 			CookieSameSite: http.SameSiteStrictMode,
 			CookieHTTPOnly: true,
+			ErrorHandler: func(err error, c echo.Context) error {
+				if auth.GetUserId(c) == "" {
+					return nil // Ignore missing CSRF if the session is anonymous
+				}
+				return err
+			},
 		}),
 	)
 	s.auth.RegisterRoutes(authedRoutes)
