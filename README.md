@@ -91,6 +91,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/parigi-n"><img src="https://avatars.githubusercontent.com/u/20981240?v=4?s=100" width="100px;" alt="Nicolas P."/><br /><sub><b>Nicolas P.</b></sub></a><br /><a href="#data-parigi-n" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/woodiertexas"><img src="https://avatars.githubusercontent.com/u/17211100?v=4?s=100" width="100px;" alt="woodiertexas"/><br /><sub><b>woodiertexas</b></sub></a><br /><a href="#data-woodiertexas" title="Data">🔣</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/someguyinbaltimore"><img src="https://avatars.githubusercontent.com/u/9001416?v=4?s=100" width="100px;" alt="Mr. Bizzle"/><br /><sub><b>Mr. Bizzle</b></sub></a><br /><a href="#data-someguyinbaltimore" title="Data">🔣</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ItsProfessional"><img src="https://avatars.githubusercontent.com/u/63961221?v=4?s=100" width="100px;" alt="Professsional"/><br /><sub><b>Professsional</b></sub></a><br /><a href="#data-ItsProfessional" title="Data">🔣</a></td>
     </tr>
   </tbody>
 </table>
