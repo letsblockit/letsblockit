@@ -7,8 +7,10 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset "images/logo-small.svg" }}">
     <link rel="stylesheet" href="{{ asset "dist/main.css" }}">
     <script defer src="{{ asset "dist/main.js" }}"></script>
+    {{#with PlausibleScript}}
+    <script defer data-domain="letsblock.it" src="{{.}}"></script>
+    {{/with}}
     <title>{{ Title }} :: letsblock.it</title>
-
     <meta property="og:title" content="{{ Title }}"/>
     <meta property="og:description"
           content="Remove low-quality content and useless nags, focus on what matters. A community-maintained uBlock Origin filter set."/>

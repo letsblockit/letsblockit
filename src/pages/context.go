@@ -25,6 +25,7 @@ type Context struct {
 	OfficialInstance bool
 	GreyLogo         bool
 	RequestInfo      RequestInfo
+	PlausibleScript  string
 
 	CurrentSection  string
 	NavigationLinks interface{}
