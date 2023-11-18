@@ -24,6 +24,8 @@ template: |
   www.youtube.com##ytd-browse[page-subtype="trending"] .ytd-thumbnail[href^="/shorts/"]:upward(ytd-video-renderer)
   {{! Search results }}
   www.youtube.com##ytd-search .ytd-thumbnail[href^="/shorts/"]:upward(ytd-video-renderer)
+  {{! Notifications menu }}
+  www.youtube.com##ytd-notification-renderer:has(> a[href^="/shorts/"])
   {{! Wide-band rules to hide generic forms of short shelves across different pages }}
   www.youtube.com##ytd-rich-shelf-renderer[is-shorts]
   www.youtube.com##ytd-rich-shelf-renderer[is-shorts].ytd-rich-section-renderer:upward(ytd-rich-section-renderer)
