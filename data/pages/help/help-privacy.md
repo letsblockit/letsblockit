@@ -49,8 +49,12 @@ some obscurity here to keep them effective :)
 This will also allow users to split their filters into several private lists to avoid one single list holding enough
 information to identify them. Contributions are welcome to move this forward if you are interested!
 
-### Zero third-party tracking
+### Monitoring and analytics
 
-While some javascript is present for progressive enhancement (shout-out to the [htmx](https://htmx.org/) project),
-third-party tracking will **never** be present on this website. Access logs are indexed and analysed to build
-aggregated usage metrics and to combat abuse.
+To help understand how it is used and combat abuse, the official instance is monitored through:
+
+- Datadog's EU datacenter, ingesting server metrics and access logs. No IP or private information is stored.
+- A self-hosted Plausible web analytics instance, hosted in Germany. [This page](https://plausible.io/privacy-focused-web-analytics)
+  describes how they ensure privacy while collecting usage data.
+
+Third-party tracking will **never** be present on this website. No telemetry exists on self-hosted instances.
