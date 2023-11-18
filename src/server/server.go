@@ -55,6 +55,7 @@ type Options struct {
 	HotReload           bool   `group:"Development" help:"reload frontend when the backend restarts"`
 	StatsdTarget        string `group:"Monitoring" placeholder:"localhost:8125" help:"address to send statsd metrics to, disabled by default"`
 	LogsFolder          string `group:"Monitoring" help:"output access logs to files instead of stdout"`
+	PlausibleScript     string `group:"Monitoring" help:"URL to the Plausible script for web analytics"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
 	DryRun              bool   `hidden:""`
@@ -355,6 +356,7 @@ func (s *Server) buildPageContext(c echo.Context, title string) *pages.Context {
 		NavigationLinks:  navigationLinks,
 		Title:            title,
 		OfficialInstance: s.options.OfficialInstance,
+		PlausibleScript:  s.options.PlausibleScript,
 		GreyLogo:         s.options.OfficialInstance && c.Request().Host != mainDomain,
 		HotReload:        s.options.HotReload,
 		RequestInfo:      c,
