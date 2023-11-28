@@ -23,7 +23,7 @@ jobs:
           npm install -g all-contributors-cli
           npx all-contributors \
               add ${{ github.event.inputs.username }} ${{ github.event.inputs.contribution }}
-      - uses: cachix/install-nix-action@v23
+      - uses: cachix/install-nix-action@v24
       - uses: cachix/cachix-action@v12
         with:
           name: letsblockit
