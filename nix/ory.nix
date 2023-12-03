@@ -9,7 +9,7 @@ buildGoModule rec {
     rev = "v${version}";
     sha256 = "sha256-5N69/Gv4eYLbZNN+sEx+RcFyhGCT0hUxDCje1qrbWiY";
   };
-  vendorSha256 = "sha256-J9jyeLIT+1pFnHOUHrzmblVCJikvY05Sw9zMz5qaDOk";
+  vendorHash = "sha256-J9jyeLIT+1pFnHOUHrzmblVCJikvY05Sw9zMz5qaDOk";
 
   doCheck = false;
   installPhase = ''

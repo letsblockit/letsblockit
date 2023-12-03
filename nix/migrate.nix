@@ -9,7 +9,7 @@ buildGoModule rec {
     rev = "v${version}";
     sha256 = "sha256-nVR6zMG/a4VbGgR9a/6NqMNYwFTifAZW3F6rckvOEJM=";
   };
-  vendorSha256 = "sha256-lPNPl6fqBT3XLQie9z93j91FLtrMjKbHnXUQ6b4lDb4=";
+  vendorHash = "sha256-lPNPl6fqBT3XLQie9z93j91FLtrMjKbHnXUQ6b4lDb4=";
 
   tags = [ "pgx" ];
   subPackages = [ "cmd/migrate" ];

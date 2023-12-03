@@ -2,7 +2,6 @@ linters:
   enable:
     - asciicheck
     - bidichk
-    - depguard
     - durationcheck
     - exhaustive
     - gochecknoinits
@@ -14,9 +13,3 @@ linters:
     - prealloc
     - predeclared
     - unconvert
-
-linters-settings:
-  depguard:
-    list-type: denylist
-    packages-with-error-message:
-      - gopkg.in/yaml.v2: 'use gopkg.in/yaml.v3 instead'

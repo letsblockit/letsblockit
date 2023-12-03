@@ -2,7 +2,7 @@
   description = "letsblock.it server and helpers";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -13,7 +13,7 @@
           inherit system;
           overlays = [
             (final: prev: {
-              # Pin the golang version to 1.20 on nixos-23.05
+              # Pin the golang version to 1.21 on nixos-23.11
               pinnedGo = prev.go;
               buildGoModule = prev.buildGoModule.override { go = final.pinnedGo; };
             })
