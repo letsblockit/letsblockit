@@ -1,16 +1,16 @@
 { buildGoModule, fetchFromGitHub }:
 buildGoModule rec {
   pname = "sqlc";
-  version = "1.19.0";
+  version = "1.24.0";
 
   src = fetchFromGitHub {
     owner = "kyleconroy";
     repo = "sqlc";
     rev = "v${version}";
-    sha256 = "sha256-/6CqzkdZMog0ldoMN0PH8QhL1QsOBaDAnqTHlgtHdP8=";
+    sha256 = "sha256-j+pyj1CJw0L3s4Nyhy+XXUgX2wbrOWveEJQ4cFhQEvs=";
   };
 
-  vendorSha256 = "sha256-AsOm86apA5EiZ9Ss7RPgVn/b2/O6wPj/ur0zG91JoJo=";
+  vendorHash = "sha256-xOMqZCuENGuCs+VkbCxMpXOEr4MALhlveTfUHEPnP1w=";
   proxyVendor = true; # pg_query_go ships the C headers in its module
   doCheck = false;
 }
