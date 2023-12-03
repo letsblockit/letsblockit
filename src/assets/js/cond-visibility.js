@@ -7,11 +7,7 @@
 
 class condVisible extends HTMLElement {
     setVisibility(source) {
-        if (source.checked) {
-            this.removeAttribute("hidden")
-        } else {
-            this.setAttribute("hidden", "true")
-        }
+        this.hidden = !source.checked
     }
 
     connectedCallback() {
