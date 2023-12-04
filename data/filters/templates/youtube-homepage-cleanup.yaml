@@ -15,18 +15,6 @@ params:
     default: false
     rules: |
       www.youtube.com##ytd-rich-item-renderer[is-post].ytd-rich-shelf-renderer:upward(ytd-rich-section-renderer)
-  - name: explore
-    description: Hide section called "Explore" in the sidebar on the homepage
-    type: checkbox
-    default: false
-    rules: |
-      www.youtube.com##a.ytd-guide-entry-renderer[href^="/feed/trending"]:upward(ytd-guide-section-renderer)
-  - name: more-from-youtube
-    description: Hide section called "More from YouTube" in the sidebar on the homepage
-    type: checkbox
-    default: false
-    rules: |
-      www.youtube.com##h3 > #guide-section-title:has-text(YouTube):upward(ytd-guide-section-renderer)
 tags:
   - youtube
 
