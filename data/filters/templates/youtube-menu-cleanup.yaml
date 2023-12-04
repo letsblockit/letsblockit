@@ -32,7 +32,7 @@ template: |
   www.youtube.com##h3 > #guide-section-title:has-text(YouTube):upward(ytd-guide-section-renderer)
   {{/if}}
   {{#each remove-list-entry-by-name}}
-  www.youtube.comytd-guide-renderer yt-formatted-string:has-text({{this}}):upward(ytd-guide-entry-renderer)
+  www.youtube.com##ytd-guide-renderer yt-formatted-string:has-text({{this}}):upward(ytd-guide-entry-renderer)
   {{/each}}
 tests:
   - params: {}
