@@ -1,0 +1,32 @@
+title: "YouTube: homepage interface cleanups"
+contributors:
+  - JohnyP36
+  - Nomes77
+params:
+  - name: Your feed
+    description: Hide heading called "You" in the sidebar on the homepage
+    type: checkbox
+    default: false
+    rules: |
+      www.youtube.com##tp-yt-app-drawer#guide .ytd-guide-section-renderer > #header:has(a[href="/feed/you"])
+  - name: explore
+    description: Hide section called "Explore" in the sidebar on the homepage
+    type: checkbox
+    default: false
+    rules: |
+      www.youtube.com##a.ytd-guide-entry-renderer[href^="/feed/trending"]:upward(ytd-guide-section-renderer)
+  - name: more-from-youtube
+    description: Hide section called "More from YouTube" in the sidebar on the homepage
+    type: checkbox
+    default: false
+    rules: |
+      www.youtube.com##h3 > #guide-section-title:has-text(YouTube):upward(ytd-guide-section-renderer)
+tags:
+  - youtube
+
+---
+
+This filter template allows you to remove parts of sidebar of the Youtube homepage interface, for a cleaner experience.
+
+Check out the [other Youtube filters](/filters/tag/youtube) too, and don't hesitate to suggest additions or fixes
+via the _Suggest a change_ link in the sidebar.
