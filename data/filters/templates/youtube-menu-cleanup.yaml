@@ -1,0 +1,65 @@
+title: "YouTube: left menu interface cleanups"
+contributors:
+  - JohnyP36
+  - Nomes77
+params:
+  - name: your-feed
+    description: Hide heading called "You" in the sidebar on the homepage
+    type: checkbox
+    default: false
+  - name: explore
+    description: Hide section called "Explore" in the sidebar on the homepage
+    type: checkbox
+    default: false
+  - name: more-from-youtube
+    description: Hide section called "More from YouTube" in the sidebar on the homepage
+    type: checkbox
+    default: false
+  - name: remove-list-entry-by-name
+    description: Hides list entries by name
+    type: list
+    default: [ ]
+tags:
+  - youtube
+template: |
+  {{#if your-feed}}
+  www.youtube.com##tp-yt-app-drawer#guide .ytd-guide-section-renderer > #header:has(a[href="/feed/you"])
+  {{/if}}
+  {{#if explore}}
+  www.youtube.com##a.ytd-guide-entry-renderer[href^="/feed/trending"]:upward(ytd-guide-section-renderer)
+  {{/if}}
+  {{#if more-from-youtube}}
+  www.youtube.com##h3 > #guide-section-title:has-text(YouTube):upward(ytd-guide-section-renderer)
+  {{/if}}
+  {{#each remove-list-entry-by-name}}
+  www.youtube.com##ytd-guide-renderer yt-formatted-string:has-text({{this}}):upward(ytd-guide-entry-renderer)
+  {{/each}}
+tests:
+  - params: {}
+    output: ""
+  - params:
+      your-feed: true
+    output: |
+      www.youtube.com##tp-yt-app-drawer#guide .ytd-guide-section-renderer > #header:has(a[href="/feed/you"])
+  - params:
+      explore: true
+    output: |
+      www.youtube.com##a.ytd-guide-entry-renderer[href^="/feed/trending"]:upward(ytd-guide-section-renderer)
+  - params:
+      more-from-youtube: true
+    output: |
+      www.youtube.com##h3 > #guide-section-title:has-text(YouTube):upward(ytd-guide-section-renderer)
+  - params:
+      remove-list-entry-by-name:
+        - your
+        - your videos
+    output: |
+      www.youtube.com##ytd-guide-renderer yt-formatted-string:has-text(your):upward(ytd-guide-entry-renderer)
+      www.youtube.com##ytd-guide-renderer yt-formatted-string:has-text(your videos):upward(ytd-guide-entry-renderer)
+
+---
+
+This filter template allows you to remove parts of sidebar of the Youtube homepage interface, for a cleaner experience.
+
+Check out the [other Youtube filters](/filters/tag/youtube) too, and don't hesitate to suggest additions or fixes
+via the _Suggest a change_ link in the sidebar.
