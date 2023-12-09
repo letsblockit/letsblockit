@@ -3,7 +3,7 @@ module github.com/letsblockit/letsblockit
 go 1.19
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.3.0
+	github.com/DataDog/datadog-go/v5 v5.4.0
 	github.com/alecthomas/kong v0.8.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.16.0
@@ -16,10 +16,10 @@ require (
 	github.com/labstack/echo/v4 v4.11.3
 	github.com/labstack/gommon v0.4.1
 	github.com/russross/blackfriday/v2 v2.1.0
-	github.com/samber/lo v1.38.1
+	github.com/samber/lo v1.39.0
 	github.com/stretchr/testify v1.8.4
 	github.com/vearutop/statigz v1.4.0
-	golang.org/x/exp v0.0.0-20231127185646-65229373498e
+	golang.org/x/exp v0.0.0-20231206192017-f3f8817b8deb
 	golang.org/x/tools v0.16.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
