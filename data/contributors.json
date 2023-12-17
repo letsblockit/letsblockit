@@ -304,11 +304,20 @@
     },
     {
       "login": "ItsProfessional",
-      "name": "Professsional",
+      "name": "ItsProfesssional",
       "avatar_url": "https://avatars.githubusercontent.com/u/63961221?v=4",
       "profile": "https://github.com/ItsProfessional",
       "contributions": [
         "data"
+      ]
+    },
+    {
+      "login": "eleve",
+      "name": "eleve",
+      "avatar_url": "https://images.opencollective.com/eleve/avatar/256.png",
+      "profile": "https://opencollective.com/eleve",
+      "contributions": [
+        "financial"
       ]
     }
   ],
