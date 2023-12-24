@@ -26,8 +26,7 @@ The best way you can help the project is by contributing new filters or improvin
 ### Financial contributions and sponsorships
 
 To help keep the official instance running, you can sponsor the project on
-[OpenCollective](https://opencollective.com/letsblockit) or
-[Github Sponsors](https://github.com/sponsors/letsblockit).
+[OpenCollective](https://opencollective.com/letsblockit).
 
 We don't want to rely on free tiers, but gladly accept corporate sponsorships.
 The following companies help us operate the official instance by providing services free of charge:
