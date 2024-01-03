@@ -93,15 +93,15 @@ template: |
   {{#if remove-copyright-notice}}
   www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
   www.youtube.com###description .ytd-watch-metadata #items > ytd-horizontal-card-list-renderer:has(ytd-video-attribute-view-model)
-  m.youtube.com##ytm-video-description-music-section-renderer
+  m.youtube.com##.video-attribute-card-shelf:has(yt-video-attribute-view-model):upward(ytm-horizontal-card-list-renderer)
   {{/if}}
   {{#if remove-channel-info}}
   www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
-  m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
+  m.youtube.com##ytm-video-description-infocards-section-renderer
   {{/if}}
   {{#if remove-chapters}}
-  www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
-  m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+  www.youtube.com###structured-description ytd-horizontal-card-list-renderer:not(:has(ytd-video-attribute-view-model))
+  m.youtube.com##.macromarker:upward(ytm-horizontal-card-list-renderer):not(:has(.video-attribute-card-shelf))
   {{/if}}
   {{#if remove-transcript}}
   www.youtube.com##ytd-video-description-transcript-section-renderer
@@ -162,17 +162,17 @@ tests:
     output: |
       www.youtube.com###description .ytd-watch-metadata #items:has(.ytd-video-description-music-section-renderer)
       www.youtube.com###description .ytd-watch-metadata #items > ytd-horizontal-card-list-renderer:has(ytd-video-attribute-view-model)
-      m.youtube.com##ytm-video-description-music-section-renderer
+      m.youtube.com##.video-attribute-card-shelf:has(yt-video-attribute-view-model):upward(ytm-horizontal-card-list-renderer)
   - params:
       remove-channel-info: true
     output: |
       www.youtube.com###structured-description ytd-video-description-infocards-section-renderer
-      m.youtube.com##.modern-sd-container ytm-video-description-infocards-section-renderer
+      m.youtube.com##ytm-video-description-infocards-section-renderer
   - params:
       remove-chapters: true
     output: |
-      www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
-      m.youtube.com##.modern-sd-container ytm-horizontal-card-list-renderer
+      www.youtube.com###structured-description ytd-horizontal-card-list-renderer:not(:has(ytd-video-attribute-view-model))
+      m.youtube.com##.macromarker:upward(ytm-horizontal-card-list-renderer):not(:has(.video-attribute-card-shelf))
   - params:
       remove-transcript: true
     output: |
