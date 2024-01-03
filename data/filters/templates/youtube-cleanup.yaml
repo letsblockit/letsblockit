@@ -100,7 +100,7 @@ template: |
   m.youtube.com##ytm-video-description-infocards-section-renderer
   {{/if}}
   {{#if remove-chapters}}
-  www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
+  www.youtube.com###structured-description ytd-horizontal-card-list-renderer:not(:has(ytd-video-attribute-view-model))
   m.youtube.com##.macromarker:upward(ytm-horizontal-card-list-renderer):not(:has(.video-attribute-card-shelf))
   {{/if}}
   {{#if remove-transcript}}
@@ -171,7 +171,7 @@ tests:
   - params:
       remove-chapters: true
     output: |
-      www.youtube.com###structured-description ytd-horizontal-card-list-renderer.ytd-structured-description-content-renderer
+      www.youtube.com###structured-description ytd-horizontal-card-list-renderer:not(:has(ytd-video-attribute-view-model))
       m.youtube.com##.macromarker:upward(ytm-horizontal-card-list-renderer):not(:has(.video-attribute-card-shelf))
   - params:
       remove-transcript: true
