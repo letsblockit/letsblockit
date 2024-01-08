@@ -1,6 +1,7 @@
 title: "Google Search: interface cleanups"
 contributors:
   - JohnyP36
+  - Nomes77
   - xvello
 params:
   - name: rich-results
@@ -78,6 +79,7 @@ template: |
   {{/if}}
   {{#if search-pane}}
   www.google.*###searchform ul[role="listbox"] > li.sbre:upward(div[jsname][role="presentation"])
+  www.google.*###searchform:style(--rhs-width: 0px !important;)
   {{/if}}
 tests:
   - params: {}
@@ -121,6 +123,7 @@ tests:
       search-pane: true
     output: |
       www.google.*###searchform ul[role="listbox"] > li.sbre:upward(div[jsname][role="presentation"])
+      www.google.*###searchform:style(--rhs-width: 0px !important;)
   - params: {}
 ---
 
