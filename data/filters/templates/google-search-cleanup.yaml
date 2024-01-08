@@ -79,7 +79,7 @@ template: |
   {{/if}}
   {{#if search-pane}}
   www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
-  www.google.*###searchform:style(--rhs-width: 0px !important;)
+  www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
   {{/if}}
 tests:
   - params: {}
@@ -123,7 +123,7 @@ tests:
       search-pane: true
     output: |
       www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
-      www.google.*###searchform:style(--rhs-width: 0px !important;)
+      www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
   - params: {}
 ---
 
