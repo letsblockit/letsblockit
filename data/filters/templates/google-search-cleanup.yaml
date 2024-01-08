@@ -78,7 +78,7 @@ template: |
   www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
   {{/if}}
   {{#if search-pane}}
-  www.google.*###searchform ul[role="listbox"] > li.sbre:upward(div[jsname][role="presentation"])
+  www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
   www.google.*###searchform:style(--rhs-width: 0px !important;)
   {{/if}}
 tests:
@@ -122,7 +122,7 @@ tests:
   - params:
       search-pane: true
     output: |
-      www.google.*###searchform ul[role="listbox"] > li.sbre:upward(div[jsname][role="presentation"])
+      www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
       www.google.*###searchform:style(--rhs-width: 0px !important;)
   - params: {}
 ---
