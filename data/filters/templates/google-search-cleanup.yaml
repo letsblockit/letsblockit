@@ -1,6 +1,7 @@
 title: "Google Search: interface cleanups"
 contributors:
   - JohnyP36
+  - Nomes77
   - xvello
 params:
   - name: rich-results
@@ -33,6 +34,10 @@ params:
     default: false
   - name: review-pane
     description: Hide "Reviews" in right hand pane
+    type: checkbox
+    default: false
+  - name: search-pane
+    description: Hide instant answer and rich context result section in the search box
     type: checkbox
     default: false
 tags:
@@ -72,6 +77,10 @@ template: |
   www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="review_summary"]
   www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
   {{/if}}
+  {{#if search-pane}}
+  www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
+  www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
+  {{/if}}
 tests:
   - params: {}
     output: ""
@@ -110,6 +119,11 @@ tests:
     output: |
       www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="review_summary"]
       www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
+  - params:
+      search-pane: true
+    output: |
+      www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
+      www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
   - params: {}
 ---
 
