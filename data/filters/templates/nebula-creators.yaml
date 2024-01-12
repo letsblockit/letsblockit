@@ -5,7 +5,7 @@ params:
   - name: creators
     description: Creators to filter out
     type: list
-    default: [ "reneritchie", "apple-talk" ]
+    default: [ ]
 tags:
   - nebula
 template: |

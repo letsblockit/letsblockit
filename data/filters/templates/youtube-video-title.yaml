@@ -7,7 +7,7 @@ params:
   - name: keywords
     description: Words to search for
     type: list
-    default: [ "lofi", "#shorts" ]
+    default: [ ]
 tags:
   - youtube
 template: |
