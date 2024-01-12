@@ -1,0 +1,27 @@
+title: "SoundCloud: hide comments"
+contributors:
+  - veyndan
+params:
+  - name: waveform
+    description: Hide comments on waveforms
+    type: checkbox
+    default: true
+    rules: |
+      soundcloud.com##.waveformCommentsNode,.commentPlaceholder,.commentPopover
+  - name: form
+    description: Hide the comment form so you can't comment on songs
+    type: checkbox
+    default: true
+    rules: |
+      soundcloud.com##.commentForm
+  - name: song-page
+    description: Hide the comments on the song page
+    type: checkbox
+    default: true
+    rules: |
+      soundcloud.com##.commentsList
+tags:
+  - soundcloud
+
+---
+This filter template allows you to hide comments and the option to comment on SoundCloud.
