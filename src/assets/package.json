@@ -19,7 +19,7 @@
   "devDependencies": {
     "@parcel/compressor-gzip": "^2.11.0",
     "@parcel/transformer-sass": "^2.11.0",
-    "@tabler/icons": "^2.45.0",
+    "@tabler/icons": "^2.46.0",
     "bootstrap": "^5.3.2",
     "eslint": "^8.56.0",
     "htmx.org": "^1.9.10",
