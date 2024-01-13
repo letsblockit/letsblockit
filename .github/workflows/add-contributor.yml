@@ -24,7 +24,7 @@ jobs:
           npx all-contributors \
               add ${{ github.event.inputs.username }} ${{ github.event.inputs.contribution }}
       - uses: cachix/install-nix-action@v24
-      - uses: cachix/cachix-action@v13
+      - uses: cachix/cachix-action@v14
         with:
           name: letsblockit
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
