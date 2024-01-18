@@ -21,7 +21,7 @@ template: |
   {{! Trending section }}
   www.youtube.com##ytd-browse[page-subtype="trending"] ytd-thumbnail #time-status > span:has-text(/^({{this}})$/):upward(ytd-video-renderer)
   {{! Search results }}
-  www.youtube.com##ytd-search ytd-thumbnail #time-status >r span:has-text(/^({{this}})$/):upward(ytd-video-renderer)
+  www.youtube.com##ytd-search ytd-thumbnail #time-status > span:has-text(/^({{this}})$/):upward(ytd-video-renderer)
   {{/each}}
 tests:
   - params:
@@ -32,7 +32,7 @@ tests:
       www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-item-section-renderer)
       www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-compact-video-renderer,ytd-shelf-renderer)
       www.youtube.com##ytd-browse[page-subtype="trending"] ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-video-renderer)
-      www.youtube.com##ytd-search ytd-thumbnail #time-status >r span:has-text(/^(0:\d\d)$/):upward(ytd-video-renderer)
+      www.youtube.com##ytd-search ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-video-renderer)
 ---
 
 Youtube short videos are prevalent, and I don't care one bit about that format. This filter hides most
