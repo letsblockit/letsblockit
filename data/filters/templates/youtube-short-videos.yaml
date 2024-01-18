@@ -1,0 +1,42 @@
+title: "YouTube: filter out short videos"
+contributors:
+  - JohnyP36
+  - Nomes77
+params:
+  - name: duration
+    description: Video duration to filter out
+    type: list
+    default: [ ]
+tags:
+  - youtube
+template: |
+  {{#each duration}}
+  {{! New style with logo, desktop }}
+  www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail #time-status > span:has-text(/^({{this}})$/):upward(ytd-rich-item-renderer)
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail #time-status > span:has-text(/^({{this}})$/):upward(ytd-rich-item-renderer)
+  {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail #time-status > span:has-text(/^({{this}})$/):upward(ytd-item-section-renderer)
+  {{! Suggestion sidebar, individual shorts }}
+  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail #time-status > span:has-text(/^({{this}})$/):upward(ytd-compact-video-renderer,ytd-shelf-renderer)
+  {{! Trending section }}
+  www.youtube.com##ytd-browse[page-subtype="trending"] ytd-thumbnail #time-status > span:has-text(/^({{this}})$/):upward(ytd-video-renderer)
+  {{! Search results }}
+  www.youtube.com##ytd-search ytd-thumbnail #time-status >r span:has-text(/^({{this}})$/):upward(ytd-video-renderer)
+  {{/each}}
+tests:
+  - params:
+      duration: [ "0:\d\d" ]
+    output: |
+      www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-rich-item-renderer)
+      www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-rich-item-renderer)
+      www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-item-section-renderer)
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-compact-video-renderer,ytd-shelf-renderer)
+      www.youtube.com##ytd-browse[page-subtype="trending"] ytd-thumbnail #time-status > span:has-text(/^(0:\d\d)$/):upward(ytd-video-renderer)
+      www.youtube.com##ytd-search ytd-thumbnail #time-status >r span:has-text(/^(0:\d\d)$/):upward(ytd-video-renderer)
+---
+
+Youtube short videos are prevalent, and I don't care one bit about that format. This filter hides most
+occurrences of this format:
+
+- videos in the subscription and search pages
+- dedicated shelves in the homepage and channel list
