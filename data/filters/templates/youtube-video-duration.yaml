@@ -1,0 +1,58 @@
+title: "YouTube: filter out videos by duration"
+contributors:
+  - JohnyP36
+  - Nomes77
+params:
+  - name: duration
+    description: Video duration to filter out
+    type: list
+    default: [ ]
+tags:
+  - youtube
+template: |
+  {{#each duration}}
+  {{! New style with logo, desktop }}
+  www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-rich-item-renderer)
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-rich-item-renderer)
+  {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-item-section-renderer)
+  {{! Suggestion sidebar, individual shorts }}
+  www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-compact-video-renderer,ytd-shelf-renderer)
+  {{! Trending section }}
+  www.youtube.com##ytd-browse[page-subtype="trending"] ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-video-renderer)
+  {{! Search results }}
+  www.youtube.com##ytd-search ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-video-renderer)
+  {{/each}}
+tests:
+  - params:
+      duration: [ '0:\d\d' ]
+    output: |
+      www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail #time-status > span:has-text(/\s(0:\d\d)\s/):upward(ytd-rich-item-renderer)
+      www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail #time-status > span:has-text(/\s(0:\d\d)\s/):upward(ytd-rich-item-renderer)
+      www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail #time-status > span:has-text(/\s(0:\d\d)\s/):upward(ytd-item-section-renderer)
+      www.youtube.com##ytd-watch-next-secondary-results-renderer ytd-thumbnail #time-status > span:has-text(/\s(0:\d\d)\s/):upward(ytd-compact-video-renderer,ytd-shelf-renderer)
+      www.youtube.com##ytd-browse[page-subtype="trending"] ytd-thumbnail #time-status > span:has-text(/\s(0:\d\d)\s/):upward(ytd-video-renderer)
+      www.youtube.com##ytd-search ytd-thumbnail #time-status > span:has-text(/\s(0:\d\d)\s/):upward(ytd-video-renderer)
+---
+
+With this filter format it is possible to filter out videos with any duration. This filter hides most
+occurrences of this format:
+
+- videos in the subscription and search pages
+- dedicated shelves in the homepage and channel list
+
+The input should be a regexp. In regexp '`\d`' is for every possible digit. Multiple options should be separated be a '`|`', some examples:
+
+- less than a minute: `0:\d\d`
+- between one and two minutes: `1:\d\d`
+- one minute or more: `[1-9]:\d\d|\d\d:\d\d|\d:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `([1-9]|\d\d):\d\d|(\d|\d\d):\d\d:\d\d`
+- less than 10 minutes: `\d:\d\d`
+- 10 minutes or more: `[1-9]\d:\d\d|\d:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `[1-9]\d:\d\d|(\d|\d\d):\d\d:\d\d`
+- between 10 and 25 minutes: `1\d:\d\d|2[0-5]:\d\d`
+- less than one hour: `\d\d:\d\d`
+- one hour or more: `1:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `(1|\d\d):\d\d:\d\d`
+- 2 hours or more: `2:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `(2|\d\d):\d\d:\d\d`
+
+So if you want a regexp with less than a minute and between one and two minutes, the rule becomes: `0:\d\d|1:\d\d` or shorter `[0-1]:\d\d`
+
+
