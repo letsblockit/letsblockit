@@ -13,7 +13,7 @@ template: |
   {{#each duration}}
   {{! New style with logo, desktop }}
   www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-rich-item-renderer)
-  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail #time-status > span:has-text((/\s({{this}})\s/):upward(ytd-rich-item-renderer)
+  www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-rich-item-renderer)
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-video-renderer ytd-thumbnail #time-status > span:has-text(/\s({{this}})\s/):upward(ytd-item-section-renderer)
   {{! Suggestion sidebar, individual shorts }}
