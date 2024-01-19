@@ -41,13 +41,16 @@ occurrences of this format:
 - videos in the subscription and search pages
 - dedicated shelves in the homepage and channel list
 
-The input should be a regexp. In regexp '\d' is for every possible digit, some examples:
+The input should be a regexp. In regexp '\d' is for every possible digit. Multiple options should be divided be a '|', some examples:
 
 - less than a minute: 0:\d\d
+- between one and two minutes: 1:\d\d
 - one minute or more: 1:\d\d|\d:\d\d|\d\d:\d\d|\d\d:\d\d:\d\d
 - less than 10 minutes: \d:\d\d
 - 10 minutes or more: 1\d:\d\d|\d:\d\d:\d\d|\d\d:\d\d:\d\d
 - one hour or more: 1:\d\d:\d\d|\d\d:\d\d:\d\d
 - 2 hours or more: 2:\d\d:\d\d|\d\d:\d\d:\d\d
+
+So if you want a regexp with less than a minute and between one and two minutes, the rule becomes: 0:\d\d|1:\d\d
 
 
