@@ -45,7 +45,7 @@ The input should be a regexp. In regexp '\d' is for every possible digit. Multip
 
 - less than a minute: `0:\d\d`
 - between one and two minutes: `1:\d\d`
-- one minute or more: `[1-9]:\d\d|\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `([1-9]|\d\d):\d\d|\d\d:\d\d:\d\d`
+- one minute or more: `[1-9]:\d\d|\d\d:\d\d|\d:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `([1-9]|\d\d):\d\d|(\d|\d\d):\d\d:\d\d`
 - less than 10 minutes: `\d:\d\d`
 - 10 minutes or more: `[1-9]\d):\d\d|\d:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `[1-9]\d):\d\d|(\d|\d\d):\d\d:\d\d`
 - between 10 and 25 minutes: `1\d:\d\d|2[0-5]:\d\d`
