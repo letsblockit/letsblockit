@@ -1,4 +1,4 @@
-title: "YouTube: filter out short videos"
+title: "YouTube: filter out videos of any duration"
 contributors:
   - JohnyP36
   - Nomes77
@@ -35,8 +35,19 @@ tests:
       www.youtube.com##ytd-search ytd-thumbnail #time-status > span:has-text(/\s(0:\d\d)\s/):upward(ytd-video-renderer)
 ---
 
-Youtube short videos are prevalent, and I don't care one bit about that format. This filter hides most
+With this filter format it is possible to filter out videos with any duration. This filter hides most
 occurrences of this format:
 
 - videos in the subscription and search pages
 - dedicated shelves in the homepage and channel list
+
+The input should be a regexp. In regexp '\d' is for every possible digit, some examples:
+
+- less than a minute: 0:\d\d
+- one minute or more: 1:\d\d|\d:\d\d|\d\d:\d\d|\d\d:\d\d:\d\d
+- less than 10 minutes: \d:\d\d
+- 10 minutes or more: 1\d:\d\d|\d:\d\d:\d\d|\d\d:\d\d:\d\d
+- one hour or more: 1:\d\d:\d\d|\d\d:\d\d:\d\d
+- 2 hours or more: 2:\d\d:\d\d|\d\d:\d\d:\d\d
+
+
