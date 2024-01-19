@@ -53,6 +53,6 @@ The input should be a regexp. In regexp '\d' is for every possible digit. Multip
 - one hour or more: `1:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `(1|\d\d):\d\d:\d\d`
 - 2 hours or more: `2:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `(2|\d\d):\d\d:\d\d`
 
-So if you want a regexp with less than a minute and between one and two minutes, the rule becomes: 0:\d\d|1:\d\d
+So if you want a regexp with less than a minute and between one and two minutes, the rule becomes: `0:\d\d|1:\d\d` or shorter `[0-1]:\d\d`
 
 
