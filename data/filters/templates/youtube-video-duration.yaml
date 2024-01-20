@@ -51,7 +51,7 @@ The input should be a regexp. In regexp '`\d`' is for every possible digit. Mult
 - between 10 and 25 minutes: `1\d:\d\d|2[0-5]:\d\d`
 - less than one hour: `\d\d:\d\d`
 - one hour or more: `[1-9]:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `([1-9]|\d\d):\d\d:\d\d`
-- less than 10 hours: `\d:\d\d:\d\d`
+- between 1 and 9 hours: `\d:\d\d:\d\d`
 - 10 hours or more: `\d\d:\d\d:\d\d`
 - 15 hours or more: `(1[5-9]|[2-9]\d):\d\d:\d\d`
 
