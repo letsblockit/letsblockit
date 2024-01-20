@@ -50,8 +50,10 @@ The input should be a regexp. In regexp '`\d`' is for every possible digit. Mult
 - 10 minutes or more: `[1-9]\d:\d\d|\d:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `[1-9]\d:\d\d|(\d|\d\d):\d\d:\d\d`
 - between 10 and 25 minutes: `1\d:\d\d|2[0-5]:\d\d`
 - less than one hour: `\d\d:\d\d`
-- one hour or more: `1:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `(1|\d\d):\d\d:\d\d`
-- 2 hours or more: `2:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `(2|\d\d):\d\d:\d\d`
+- one hour or more: `[1-9]:\d\d:\d\d|\d\d:\d\d:\d\d` or shorter `([1-9]|\d\d):\d\d:\d\d`
+- less than 10 hours: `\d:\d\d:\d\d`
+- 10 hours or more: `\d\d:\d\d:\d\d`
+- 15 hours or more: `(1[5-9]|[2-9]\d):\d\d:\d\d`
 
 So if you want a regexp with less than a minute and between one and two minutes, the rule becomes: `0:\d\d|1:\d\d` or shorter `[0-1]:\d\d`
 
