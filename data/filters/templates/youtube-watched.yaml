@@ -52,6 +52,7 @@ template: |
 tests:
   - params:
       homepage: true
+      channels: true
       subscriptions: true
     output: |
       www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail-overlay-resume-playback-renderer:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
