@@ -13,8 +13,12 @@ params:
     description: Hide watched videos on the homepage
     type: checkbox
     default: true
+  - name: channels
+    description: Hide watched videos on channel pages
+    type: checkbox
+    default: true
   - name: subscriptions
-    description: Hide watched videos on the subscriptions and channel pages
+    description: Hide watched videos on the subscription page
     type: checkbox
     default: true
   - name: recommendations
@@ -29,8 +33,10 @@ template: |
   {{#if homepage}}
   www.youtube.com##ytd-browse[page-subtype="home"] ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
   {{/if}}
-  {{#if subscriptions}}
+  {{#if channels}}
   www.youtube.com##ytd-browse[page-subtype="channels"] ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
+  {{/if}}
+  {{#if subscriptions}}
   {{! Subscriptions in grid mode }}
   www.youtube.com##ytd-browse[page-subtype="subscriptions"] ytd-thumbnail-overlay-resume-playback-renderer{{#if only-fully}} #progress[style="width: 100%;"]{{/if}}:upward(ytd-grid-video-renderer,ytd-rich-item-renderer)
   {{! Subscriptions in list mode, hide the whole section as subsequent videos from same channel are currently pushed in separate sections }}
