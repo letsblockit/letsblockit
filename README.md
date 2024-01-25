@@ -95,6 +95,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://opencollective.com/eleve"><img src="https://images.opencollective.com/eleve/avatar/256.png?s=100" width="100px;" alt="eleve"/><br /><sub><b>eleve</b></sub></a><br /><a href="#financial-eleve" title="Financial">💵</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/veyndan"><img src="https://avatars.githubusercontent.com/u/6900601?v=4?s=100" width="100px;" alt="Veyndan Stuart"/><br /><sub><b>Veyndan Stuart</b></sub></a><br /><a href="#data-veyndan" title="Data">🔣</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/HyperCriSiS"><img src="https://avatars.githubusercontent.com/u/11708192?v=4?s=100" width="100px;" alt="HyperCriSiS"/><br /><sub><b>HyperCriSiS</b></sub></a><br /><a href="#data-HyperCriSiS" title="Data">🔣</a></td>
+    </tr>
   </tbody>
 </table>
 
