@@ -3,13 +3,13 @@ module github.com/letsblockit/letsblockit
 go 1.19
 
 require (
-	github.com/DataDog/datadog-go/v5 v5.4.0
+	github.com/DataDog/datadog-go/v5 v5.5.0
 	github.com/alecthomas/kong v0.8.1
 	github.com/coreos/go-systemd v0.0.0-20191104093116-d3cd4ed1dbcf
 	github.com/go-playground/validator/v10 v10.17.0
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-retryablehttp v0.7.5
 	github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9
 	github.com/jackc/pgx/v5 v5.5.2
@@ -41,7 +41,7 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/kr/text v0.1.0 // indirect
-	github.com/leodido/go-urn v1.2.4 // indirect
+	github.com/leodido/go-urn v1.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
