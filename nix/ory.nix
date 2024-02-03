@@ -1,15 +1,15 @@
 { buildGoModule, fetchFromGitHub }:
 buildGoModule rec {
   pname = "ory";
-  version = "0.2.2";
+  version = "0.3.1";
 
   src = fetchFromGitHub {
     owner = "ory";
     repo = "cli";
     rev = "v${version}";
-    sha256 = "sha256-5N69/Gv4eYLbZNN+sEx+RcFyhGCT0hUxDCje1qrbWiY";
+    hash = "sha256-dO595NzdkVug955dqji/ttAPb+sMGLxJftXHzHA37Lo=";
   };
-  vendorHash = "sha256-J9jyeLIT+1pFnHOUHrzmblVCJikvY05Sw9zMz5qaDOk";
+  vendorHash = "sha256-H1dM/r7gJvjnexQwlA4uhJ7rUH15yg4AMRW/f0k1Ixw=";
 
   doCheck = false;
   installPhase = ''
