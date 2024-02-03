@@ -44,6 +44,15 @@ params:
     rules: |
       www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
       www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
+  - name: search-zero-prefix
+    description: Block the "Trending searches" / "Related to recent searches" default autocomplete options
+    type: checkbox
+    default: false
+    rules: |
+      ## Desktop browsers
+      ||google.*/complete/search?q&cp=0$domain=google.*,important
+      ## Mobile browsers
+      ||google.*/complete/search?q&pq&cp=0$domain=google.*,important
   - name: similar-image-searches
     description: Hide the "Similar searches" contextual content in image searches
     type: checkbox
