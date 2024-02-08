@@ -8,123 +8,78 @@ params:
     description: Hide most rich-content results (images, stories, businesses...) in the web search
     type: checkbox
     default: true
+    rules: |
+      ## Toplevel rich content above columns
+      www.google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel,g-img)
+      ## Rich content in normal pages
+      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(g-more-link,g-section-with-header)
+      ## "Find results on" carousel
+      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div[role="heading"]+g-scrolling-carousel)
+      ## New page layout for books / movies / shows, some rich elements are not handled yet
+      www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
   - name: related-questions
     description: Hide the "People also ask" contextual content
     type: checkbox
     default: true
+    rules: |
+      www.google.*###rso div.related-question-pair:upward(div[jscontroller])
   - name: related-searches
     description: Hide the "Related searches" bottom content
     type: checkbox
     default: true
+    rules: |
+      www.google.*###botstuff #bres
   - name: also-search
     description: Hide the "People also search for" popup shown when returning to results
     type: checkbox
     default: true
+    rules: |
+      ## These unfurl after clicking on a result and going back to the results page
+      www.google.*###rso div.g div[jscontroller][id^="eob_"]
+      www.google.*###rso div.MjjYud:has(div[jsname="Cpkphb"] a[href^="/search?"])
+  - name: search-pane
+    description: Hide instant answer and rich context result section in the search box
+    type: checkbox
+    default: true
+    rules: |
+      www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
+      www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
+  - name: search-zero-prefix
+    description: Block the "Trending searches" / "Related to recent searches" default autocomplete options
+    type: checkbox
+    default: false
+    rules: |
+      ## Desktop browsers
+      ||google.*/complete/search?q&cp=0$domain=google.*,important
+      ## Mobile browsers
+      ||google.*/complete/search?q&pq&cp=0$domain=google.*,important
   - name: similar-image-searches
     description: Hide the "Similar searches" contextual content in image searches
     type: checkbox
     default: true
+    rules: |
+      www.google.*##div.isv-r[data-rfg]
+  - name: question-answer-box
+    description: Hide the "Question and Answer" box in right hand pane
+    type: checkbox
+    default: true
+    rules: |
+      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$=" qa"]
+  - name: review-pane
+    description: Hide the "Reviews" box in right hand pane
+    type: checkbox
+    default: true
+    rules: |
+      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="review_summary"]
+      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
   - name: page-footer
     description: Hide the search page footer showing your address
     type: checkbox
     default: false
-  - name: question-answer-box
-    description: Hide "Question and Answer" box in right hand pane
-    type: checkbox
-    default: false
-  - name: review-pane
-    description: Hide "Reviews" in right hand pane
-    type: checkbox
-    default: false
-  - name: search-pane
-    description: Hide instant answer and rich context result section in the search box
-    type: checkbox
-    default: false
+    rules: |
+      www.google.*###footcnt > #fbarcnt
 tags:
   - google
-template: |
-  {{#if rich-results}}
-  {{! Toplevel rich content above columns }}
-  www.google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel,g-img)
-  {{! Rich content in normal pages }}
-  www.google.*###rso:has(> div:nth-of-type(6)) > div:has(g-more-link,g-section-with-header)
-  {{! "Find results on" carousel }}
-  www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div[role="heading"]+g-scrolling-carousel)
-  {{! New page layout for books / movies / shows, some rich elements are not handled yet }}
-  www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
-  {{/if}}
-  {{#if related-questions}}
-  www.google.*###rso div.related-question-pair:upward(div[jscontroller])
-  {{/if}}
-  {{#if related-searches}}
-  www.google.*###botstuff #bres
-  {{/if}}
-  {{#if also-search}}
-  {{! These unfurl after clicking on a result and going back to the results page }}
-  www.google.*###rso div.g div[jscontroller][id^="eob_"]
-  www.google.*###rso div.MjjYud:has(div[jsname="Cpkphb"] a[href^="/search?"])
-  {{/if}}
-  {{#if similar-image-searches}}
-  www.google.*##div.isv-r[data-rfg]
-  {{/if}}
-  {{#if page-footer}}
-  www.google.*###footcnt > #fbarcnt
-  {{/if}}
-  {{#if question-answer-box}}
-  www.google.*###rhs #kp-wp-tab-overview div[data-attrid$=" qa"]
-  {{/if}}
-  {{#if review-pane}}
-  www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="review_summary"]
-  www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
-  {{/if}}
-  {{#if search-pane}}
-  www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
-  www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
-  {{/if}}
-tests:
-  - params: {}
-    output: ""
-  - params:
-      related-questions: true
-      related-searches: true
-    output: |
-      www.google.*###rso div.related-question-pair:upward(div[jscontroller])
-      www.google.*###botstuff #bres
-  - params:
-      rich-results: true
-    output: |
-      www.google.*###rcnt > div:first-of-type:not([id]) > div:has(g-more-link,g-scrolling-carousel,g-img)
-      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(g-more-link,g-section-with-header)
-      www.google.*###rso:has(> div:nth-of-type(6)) > div:has(div[role="heading"]+g-scrolling-carousel)
-      www.google.*###kp-wp-tab-overview > div:has(g-more-link,g-section-with-header,#media_result_group)
-  - params:
-      page-footer: true
-      related-searches: true
-      also-search: true
-    output: |
-      www.google.*###botstuff #bres
-      www.google.*###rso div.g div[jscontroller][id^="eob_"]
-      www.google.*###rso div.MjjYud:has(div[jsname="Cpkphb"] a[href^="/search?"])
-      www.google.*###footcnt > #fbarcnt
-  - params:
-      similar-image-searches: true
-    output: |
-      www.google.*##div.isv-r[data-rfg]
-  - params:
-      question-answer-box: true
-    output: |
-      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$=" qa"]
-  - params:
-      review-pane: true
-    output: |
-      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="review_summary"]
-      www.google.*###rhs #kp-wp-tab-overview div[data-attrid$="third_party_aggregator_ratings"]
-  - params:
-      search-pane: true
-    output: |
-      www.google.*###searchform ul[role="listbox"] > li:upward(div[jsname][role="presentation"])
-      www.google.*###searchform:style(--rhs-width: 0px !important; --rhs-margin: 0px !important;)
-  - params: {}
 ---
 
 Google has dramatically decreased the information density of their search results, by mixing in more and more "Rich
