@@ -19,11 +19,12 @@ params:
     rules: |
       github.com##aside.feed-right-sidebar[aria-label="Explore"]
   - name: copilot-upsells
-    description: Hide prompts to test copilot
+    description: Hide copilot upsells and settings
     type: checkbox
     default: true
     rules: |
       github.com##react-app[app-name="react-code-view"] button[data-testid="copilot-popover-button"]
+      github.com##ul.ActionListWrap svg.octicon-copilot:upward(li)
   - name: profile-achievements
     description: Hide the achievements from user profiles
     type: checkbox
