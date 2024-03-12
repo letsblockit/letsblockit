@@ -8,24 +8,8 @@
             {{#with (avatars filter.contributors)}}
                 <span class="navbar-brand mt-3 mb-1">Contributors:</span>
                 {{>contributors}}
-            {{else}}
-                <span class="navbar-brand mt-3 mb-1">Contribute:</span>
             {{/with}}
-            <nav class="nav nav-pills flex-column">
-                <a href="https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target={{filter.name}}"
-                   class="nav-link">Suggest a change</a>
-                <a href="https://github.com/letsblockit/letsblockit/blob/main/data/filters/templates/{{filter.name}}.yaml"
-                   class="nav-link">Template source</a>
-            </nav>
-            {{#with (avatars filter.sponsors)}}
-                <span class="navbar-brand mt-3 mb-1">Sponsors:</span>
-                {{>contributors}}
-            {{else}}
-                <span class="navbar-brand mt-3 mb-1">Sponsor us:</span>
-            {{/with}}
-            <p>Help us run this project by sponsoring us on
-                <a href="https://opencollective.com/letsblockit/">OpenCollective</a>.
-            </p>
+
             <span class="navbar-brand mt-3">Filter tags:</span>
             <nav class="nav nav-pills flex-column">
                 <span class="nav-link">{{#each filter.tags}}{{{tag this}}}{{/each}}</span>

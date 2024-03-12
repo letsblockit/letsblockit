@@ -33,5 +33,3 @@ Have a look at the following pages to learn about the syntax:
 - The uBlock Origin wiki pages: [Static filter syntax](https://github.com/gorhill/uBlock/wiki/Static-filter-syntax) and
   [Procedural cosmetic filters](https://github.com/gorhill/uBlock/wiki/Procedural-cosmetic-filters).
 - [This cheatsheet](https://github.com/DandelionSprout/adfilt/blob/master/Wiki/SyntaxMeaningsThatAreActuallyHumanReadable.md) by DandelionSprout.
-
-Of course, if you think a filter would be useful to others, don't hesitate to [suggest it as a new filter](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=new-filter.yaml)!

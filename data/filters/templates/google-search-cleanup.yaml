@@ -94,6 +94,4 @@ content" and contextual suggestions. This filter template helps reducing that no
 Another issue with Google search results is the amount of irrelevant websites that manage to get into the top results.
 To remove these, you should checkout the [Hide websites from search results](search-results) filter template too.
 
-As new contextual blocks are regularly added and modified, we expect some of them to pass through the filter, but
-don't hesitate to [open an issue](https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=google-search-cleanup)
-to report them. Don't forget to add a screenshot and a search link to help us reproduce.
+As new contextual blocks are regularly added and modified, we expect some of them to pass through the filter.

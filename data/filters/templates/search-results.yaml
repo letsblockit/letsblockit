@@ -247,10 +247,7 @@ than providing useful content. While there is not much we can do ourselves to av
 results returned to us by search engines.
 
 This template allows you to remove search results based on their URL for **both text and image searches**.
-It supports several search engines (and [contributions]
-(https://github.com/letsblockit/letsblockit/issues/new?labels=filter-data&template=update-filter.yaml&what_filter_does_this_issue_target=search-results)
-are welcome to add suport for more!).
-Results will be hidden if their link destination contains one of the values you pass. For example:
+It supports several search engines and will hide results if their link destination contains one of the values you pass. For example:
 
 - Pinterest publishes content on an army of subdomains and country-specific domains; using `.pinterest.` allows you to block them all
 - snapcraft.io's SEO efforts focus on `snapcraft.io/install/X/Y` pages; using `snapcraft.io/install` limits the blocking to these pages

@@ -1,19 +1,13 @@
 ## Contributing to the project
 
-Thanks for your interest in moving this project forward! If you have any question or suggestion, don't hesitate to
-[open an issue on GitHub](https://github.com/letsblockit/letsblockit/issues) for any question or bug, or send us an email
-at `hello@<this-domain>.it`.
-
 ### Contributing filters {#filters}
 
 The best way you can help the project is by contributing new filters or improving existing ones:
 
-- If you know how to open a pull request, check out
+If you know how to open a pull request, check out
   [the syntax documentation](https://github.com/letsblockit/letsblockit/blob/main/data/filters/README.md) and
   [the existing filter sources](https://github.com/letsblockit/letsblockit/tree/main/data/filters). Please enable the
   `Allow edits by maintainers` option on your PR to allow me to help fix syntax issues.
-- Don't hesitate to open a GitHub issue to suggest filter improvements, [open an account](https://github.com/join)
-  and [use the relevant issue template](https://github.com/letsblockit/letsblockit/issues/new/choose).
 
 *Please note the following scope limitations:*
 
