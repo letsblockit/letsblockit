@@ -58,6 +58,7 @@ type Options struct {
 	PlausibleScript     string `group:"Monitoring" help:"URL to the Plausible script for web analytics"`
 	ListDownloadDomain  string `group:"Miscellaneous" help:"domain to use for list downloads, leave empty to use the main domain"`
 	OfficialInstance    bool   `group:"Miscellaneous" help:"turn on behaviours specific to the official letsblock.it instances"`
+	Sunset              bool   `group:"Miscellaneous" help:"Project sunset mode: require an existing account to use"`
 	DryRun              bool   `hidden:""`
 }
 
@@ -175,7 +176,7 @@ func (s *Server) Start() error {
 		if s.options.AuthKratosUrl == "" {
 			return fmt.Errorf("missing required parameter auth-kratos-url")
 		}
-		s.auth = auth.NewOryBackend(s.options.AuthKratosUrl, s.pages, s.statsd)
+		s.auth = auth.NewOryBackend(s.options.AuthKratosUrl, s.pages, s.statsd, s.options.Sunset)
 	case "proxy":
 		if s.options.AuthProxyHeaderName == "" {
 			return fmt.Errorf("missing required parameter auth-proxy-header-name")
@@ -280,10 +281,25 @@ func (s *Server) setupRouter() {
 	)
 	s.auth.RegisterRoutes(authedRoutes)
 
+	// TODO: uncomment to disable all anon browsing
+	//if s.options.Sunset {
+	//	authedRoutes = authedRoutes.Group("",
+	//		func(next echo.HandlerFunc) echo.HandlerFunc {
+	//			return func(c echo.Context) error {
+	//				hc := s.buildPageContext(c, "My account")
+	//				if !hc.UserLoggedIn {
+	//					return s.pages.Render(c, "sunset", hc)
+	//				}
+	//				return next(c)
+	//			}
+	//		})
+	//}
+
 	authedRoutes.GET("/", s.landingPageHandler).Name = "landing"
 	authedRoutes.GET("/help", s.helpPages).Name = "help-main"
 	authedRoutes.GET("/help/:page", s.helpPages).Name = "help"
 	authedRoutes.GET("/news", s.newsHandler).Name = "news"
+	authedRoutes.GET("/sunset", s.sunsetHandler).Name = "sunset"
 
 	authedRoutes.GET("/filters", s.listFilters).Name = "list-filters"
 	authedRoutes.GET("/filters/tag/:tag", s.listFilters).Name = "filters-for-tag"

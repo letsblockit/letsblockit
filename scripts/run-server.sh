@@ -11,4 +11,4 @@ export LETSBLOCKIT_CACHE_DIR="/tmp/lbi-cache"
 export LETSBLOCKIT_OFFICIAL_INSTANCE=true
 
 mkdir -p $LETSBLOCKIT_CACHE_DIR
-reflex -r "(cmd|src|data)/" -s -- go run -race ./cmd/server --hot-reload
+reflex -r "(cmd|src|data)/" -s -- go run -race ./cmd/server --hot-reload --sunset
