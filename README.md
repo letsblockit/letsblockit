@@ -1,3 +1,6 @@
+> [!WARNING]
+> ## The project is shutting down. Please read [this dicussion](https://github.com/letsblockit/letsblockit/discussions/663).
+----
 [<img width="70%" src=".github/logo.svg?raw=true"/>](https://letsblock.it)
 
 ## Remove low-quality content and useless nags, focus on what matters.
