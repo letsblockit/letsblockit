@@ -4,6 +4,6 @@ buildGoModule {
   pname = "letsblockit";
   src = ./..;
   subPackages = "cmd/" + cmd;
-  vendorHash = "sha256-0iJWVFAPKeMsBqC79+AR+J4wAl3M7V6qwJ7JzvHuZh0=";
+  vendorHash = "sha256-hdz263mKawGOJQHoX5FQL707cNTC9QR9WpTUaA4UnmQ=";
   version = "1.0";
 }
