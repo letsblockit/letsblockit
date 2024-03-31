@@ -88,12 +88,12 @@
     <div class="col col-lg-9">
     {{/if}}
     {{#if Page.partial}}
-        <div class="alert alert-warning" role="alert">
+        <div class="alert alert-warning pt-0 pb-1" role="alert">
             <h2 class="alert-heading">The project is shutting down</h2>
             {{#if OfficialInstance}}
                 <h5>Registration of new accounts is disabled, and this instance will shut down in June 2024.</h5>
             {{/if}}
-            <h5>Please read <a href="{{href "sunset" ""}}">this announcement</a> for more information.</h5>
+            <h5>Please read <a href="{{href "sunset" ""}}">this announcement</a> for more information and alternatives.</h5>
         </div>
         {{#with Data}}{{>(Page.partial)}}{{else}}{{>(Page.partial)}}{{/with}}
     {{else}}
