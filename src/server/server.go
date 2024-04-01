@@ -281,20 +281,6 @@ func (s *Server) setupRouter() {
 	)
 	s.auth.RegisterRoutes(authedRoutes)
 
-	// TODO: uncomment to disable all anon browsing
-	//if s.options.Sunset {
-	//	authedRoutes = authedRoutes.Group("",
-	//		func(next echo.HandlerFunc) echo.HandlerFunc {
-	//			return func(c echo.Context) error {
-	//				hc := s.buildPageContext(c, "My account")
-	//				if !hc.UserLoggedIn {
-	//					return s.pages.Render(c, "sunset", hc)
-	//				}
-	//				return next(c)
-	//			}
-	//		})
-	//}
-
 	authedRoutes.GET("/", s.landingPageHandler).Name = "landing"
 	authedRoutes.GET("/help", s.helpPages).Name = "help-main"
 	authedRoutes.GET("/help/:page", s.helpPages).Name = "help"
