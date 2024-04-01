@@ -116,19 +116,22 @@ type OryBackend struct {
 	rootUrl  string
 	renderer renderer
 	statsd   statsd.ClientInterface
+	sunset   bool
 }
 
-func NewOryBackend(rootUrl string, renderer renderer, statsd statsd.ClientInterface) *OryBackend {
+func NewOryBackend(rootUrl string, renderer renderer, statsd statsd.ClientInterface, sunset bool) *OryBackend {
 	client := retryablehttp.NewClient()
 	client.RetryMax = 2
 	client.RetryWaitMin = 100 * time.Millisecond
 	client.RetryWaitMax = time.Second
 	client.HTTPClient.Timeout = 5 * time.Second
+
 	return &OryBackend{
 		client:   client,
 		rootUrl:  rootUrl,
 		renderer: renderer,
 		statsd:   statsd,
+		sunset:   sunset,
 	}
 }
 
@@ -208,6 +211,10 @@ func (o *OryBackend) renderKratosForm(c echo.Context) error {
 		if !ok {
 			return nil, fmt.Errorf("unsupported form type %s", formType)
 		}
+		if o.sunset && formSettings.Tabs != nil {
+			// Disable the registration tab
+			formSettings.Tabs = formSettings.Tabs[1:]
+		}
 
 		body := make(map[string]interface{})
 		endpoint := o.rootUrl + fmt.Sprintf(oryGetFlowPattern, formType, flowID)
@@ -222,6 +229,7 @@ func (o *OryBackend) renderKratosForm(c echo.Context) error {
 		hc := o.renderer.BuildPageContext(c, formSettings.Title)
 		hc.NoBoost = true
 		hc.Add("type", formType)
+		hc.Add("sunset", o.sunset)
 		hc.Add("ui", ui)
 		hc.Add("settings", formSettings)
 		if rto, ok := body[returnToKey]; ok {
@@ -258,6 +266,10 @@ func (o *OryBackend) startKratosFlow(c echo.Context) error {
 		}
 	case "login", "registration":
 		allowReturnTo = true
+	}
+
+	if o.sunset && target == "registration" {
+		target = "login"
 	}
 
 	redirect := o.rootUrl + fmt.Sprintf(oryStartFlowPattern, target)

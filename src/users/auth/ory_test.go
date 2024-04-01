@@ -99,7 +99,7 @@ func (s *OryBackendSuite) SetupTest() {
 
 	s.user = uuid.New().String()
 
-	ory := NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{})
+	ory := NewOryBackend(s.kratosServer.URL, pm, &statsd.NoOpClient{}, false)
 	s.echo = echo.New()
 	s.echo.Use(ory.BuildMiddleware())
 	s.echo.Any("/", func(c echo.Context) error {
@@ -211,7 +211,8 @@ func (s *OryBackendSuite) TestRenderKratosForm_OK() {
 		DoAndReturn(func(_ echo.Context, _ string, c *pages.Context) error {
 			assert.True(s.T(), c.OfficialInstance)
 			assert.EqualValues(s.T(), pages.ContextData{
-				"type": "login",
+				"type":   "login",
+				"sunset": false,
 				"ui": map[string]interface{}{
 					"a": "1",
 					"b": "2",

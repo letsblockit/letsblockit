@@ -43,17 +43,6 @@
                 <a href="{{href "view-filter" "search-results"}}">
                     hiding pinterest in your search results?</a>
             </div>
-        {{else}}
-            <div role="alert" class="alert alert-secondary bg-secondary-subtle">
-                <form method="POST" class="form-inline" action="{{href "user-action" "loginOrRegistration"}}">
-                    {{{csrf @root}}}
-                    <span class="align-middle">This website is a collaborative repository of uBlock content filters
-                        you can customize and sync across your browsers.
-                        <a href="/help/about">Learn more about it</a> and</span>
-                    <button type="submit" class="btn btn-link p-0">create an account</button>
-                    <span class="align-middle">to start building your filter list.</span>
-                </form>
-            </div>
         {{/if}}
 
         {{#with available_filters}}
