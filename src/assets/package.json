@@ -22,7 +22,7 @@
     "@tabler/icons": "^2.47.0",
     "bootstrap": "^5.3.3",
     "eslint": "^8.57.0",
-    "htmx.org": "^1.9.10",
+    "htmx.org": "^1.9.11",
     "parcel": "^2.12.0"
   }
 }
