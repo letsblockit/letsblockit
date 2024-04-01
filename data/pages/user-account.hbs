@@ -1,6 +1,6 @@
 {{#if @root.UserLoggedIn}}
     <div class="card mb-3 shadow-sm">
-        <div class="card-header">My filters</div>
+        <div class="card-header">Exporting my data</div>
         <div class="card-body">
             <p>
                 {{#if filter_count}}
@@ -8,14 +8,15 @@
                 {{else}}
                     Start adding filters to your list
                 {{/if}}
-                from the <a href="{{href "list-filters" ""}}">filter list page</a>.
+                from the <a href="{{href "list-filters" ""}}">filter list page</a>. Here are options
+                to export your data:
             </p>
             <ul>
-                <li>To use your filters in you browser, <a href="{{href "help" "use-list"}}">follow these
-                    instructions</a>.
+                <li>Download the <a href="{{href "render-filterlist" list_token}}">generated rules as a file</a>
+                    , to copy into your content blocker.
                 </li>
-                <li>Alternatively, you can <a href="{{href "export-filterlist" list_token}}">export your list</a>
-                    for local use.
+                <li>Alternatively, you can <a href="{{href "export-filterlist" list_token}}">export your paramers</a>
+                    to import elsewhere or use locally.
                 </li>
             </ul>
         </div>
