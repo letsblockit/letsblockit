@@ -13,11 +13,11 @@ go get -t -u ./...
 go mod tidy
 ./scripts/update-vendorsha.sh
 
-# Upgrade npm deps
-cd src/assets
-npm upgrade -S
-npm prune
-cd ../..
+# Upgrade npm deps - skipped for project shutdown
+# cd src/assets
+# npm upgrade -S
+# npm prune
+# cd ../..
 
 # Rebuild assets, accounting for file renames
 git rm -rf data/assets/dist/
