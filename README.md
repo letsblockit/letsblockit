@@ -1,5 +1,5 @@
 > [!WARNING]
-> ## The project is shutting down. Please read [this dicussion](https://github.com/letsblockit/letsblockit/discussions/663).
+> ## The project is shutting down. Please read [this discussion](https://github.com/letsblockit/letsblockit/discussions/663).
 ----
 [<img width="70%" src=".github/logo.svg?raw=true"/>](https://letsblock.it)
 
