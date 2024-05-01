@@ -24,10 +24,6 @@ low-quality content and anti-features down our throats.
 - Existing users can go to their [user preferences page](/user/account) to download a generated version
   of their rules, or export their parameters to use on another instance.
 
-- I would be happy to support any user who wants to fork the project and carry it forward. If that's you,
-  feel free to comment on [this discussion](https://github.com/letsblockit/letsblockit/discussions/663).
-  If that were to happen, I would link to the new project from this page, so check in later.
-
 - **I encourage you to look out for non-commercial or more user-centric alternatives to the websites
   you have been using letsblock.it for**, but in the meantime, you can check out:
 
