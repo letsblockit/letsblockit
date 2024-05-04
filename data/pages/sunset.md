@@ -17,12 +17,12 @@ low-quality content and anti-features down our throats.
   - The official instance hosted at letsblock.it will be shut down and its database destroyed.
   - Self-hosting will not be supported anymore, and no release of the server will happen after June. The GitHub
     project will be archived for a short while, then deleted.
-  - In the meantime, security maintenance will continue, but the rules will not receive any fix or update.
+  - In the meantime, security maintenance will continue, but creating new accounts is disabled and the rules will not receive any fix or update.
 
 ## What's next for you
 
-- Existing users can go to their [user preferences page](/user/account) to download a generated version
-  of their rules, or export their parameters to use on another instance.
+- Existing users can still log in and update their filters. They should go to their [user preferences page](/user/account) and
+  download a generated version of their rules, or export their parameters to use on another instance.
 
 - **I encourage you to look out for non-commercial or more user-centric alternatives to the websites
   you have been using letsblock.it for**, but in the meantime, you can check out:
