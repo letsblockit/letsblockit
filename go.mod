@@ -12,16 +12,16 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
-	github.com/hashicorp/go-retryablehttp v0.7.6
+	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/imantung/mario v0.9.1-0.20211124221804-dc993f6091b9
-	github.com/jackc/pgx/v5 v5.5.5
+	github.com/jackc/pgx/v5 v5.6.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/labstack/gommon v0.4.2
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/samber/lo v1.39.0
 	github.com/stretchr/testify v1.9.0
 	github.com/vearutop/statigz v1.4.0
-	golang.org/x/exp v0.0.0-20240525044651-4c93da0ed11d
+	golang.org/x/exp v0.0.0-20240531132922-fd00a4e0eefc
 	golang.org/x/tools v0.21.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v3 v3.0.1
