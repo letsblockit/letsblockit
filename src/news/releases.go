@@ -6,6 +6,7 @@ import (
 	"hash/fnv"
 	"io"
 	"io/fs"
+	"net/http"
 	"os"
 	"path"
 	"regexp"
@@ -13,13 +14,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hashicorp/go-retryablehttp"
 	"github.com/russross/blackfriday/v2"
 	"github.com/samber/lo"
 )
 
 const (
-	GithubReleasesEndpoint string = "https://api.github.com/repos/xvello/letsblockit/releases?per_page=20"
+	GithubReleasesEndpoint string = "https://api.github.com/repos/letsblockit/letsblockit/releases?per_page=20"
 	cacheFileName          string = "lbi-releases.json"
 )
 
@@ -119,6 +119,14 @@ func DownloadReleases(url string, cacheDir string, officialInstance bool, templa
 	return output, nil
 }
 
+func BuildFallback() *Releases {
+	return &Releases{
+		latestAt: time.Unix(0, 0),
+		releases: make([]*Release, 0),
+		etag:     "",
+	}
+}
+
 func enumerateTemplates(templates fs.ReadDirFS) (templateExists, error) {
 	entries, err := templates.ReadDir(".")
 	if err != nil {
@@ -140,7 +148,7 @@ func download(url string, cacheDir, cacheFileName string) (io.ReadCloser, error)
 	}
 
 	// Else, download it from the server
-	resp, err := retryablehttp.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}

@@ -155,6 +155,10 @@ func (s *Server) Start() error {
 		func(errs []error) {
 			tpl := data.Templates.(fs.ReadDirFS)
 			s.releases, errs[0] = news.DownloadReleases(news.GithubReleasesEndpoint, s.options.CacheDir, s.options.OfficialInstance, tpl)
+			if !s.options.OfficialInstance && errs[0] != nil {
+				fmt.Println("Ignoring release fetch error:", errs[0])
+				s.releases, errs[0] = news.BuildFallback(), nil
+			}
 		},
 	})
 
